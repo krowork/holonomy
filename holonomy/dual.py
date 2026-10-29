@@ -10,7 +10,7 @@ Todas las funciones reciben `eps(n, Delta, Phi)`: puede ser
 import numpy as np
 from scipy.optimize import brentq, minimize_scalar
 
-DELTA_MIN = -0.99  # para Delta <= -1 el cociente es > 1 (Teorema 6, hecho 3)
+DELTA_MIN = -0.99  # para Delta <= -1 el cociente es > 1 (Teorema 9, hecho 3)
 DELTA_MAX = 60.0
 
 

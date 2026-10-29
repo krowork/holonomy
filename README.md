@@ -56,15 +56,16 @@ figuras en `figures/`.
 | `tri.py` | Estado explícito del triángulo | 3 | 1 s |
 | `chk.py` | SDP primal independiente para n = 3 a 6, y φ fuera de [0, π/4] | 4, 5 | 2 min |
 | `witness_n.py` | Valor dual por sectores frente al primal, n = 3 a 8 | 5.1 | 1 min |
-| `primalU1.py` | Primal reducido por U(1) hasta n = 7, también dentro de la ventana | 5.1, 5.3 | 1 min |
+| `primalU1.py` | Primal reducido por U(1) hasta n = 7, también dentro de la ventana | 5.1, 5.4 | 1 min |
 | `witness_check.py` | Testigo óptimo explícito de 128 × 128 en n = 7 | 5.1 | 2 s |
 | `xxz.py` | λ_max del testigo simétrico = 4rn ε_n (Prop. 4), matrices de 2ⁿ | 5.1 | 1 s |
 | `sec.py` | Los sectores de magnetización mínima y el ferromagnético bastan | 5.1 | 15 s |
 | `table62.py` | Tabla 2 (v_max por diagonalización exacta, n = 3 a 16) | 5.2 | 1 min |
 | `edge.py` | Bordes de la ventana (tabla 1, n ≤ 20), diagonalización y Bethe | 5.2 | 5 min |
 | `phistar.py` | Flujo óptimo libre Φ⋆(Θ) y barridos completos en el flujo; datos de la figura 1 | 5.2 | 4 min |
-| `rank.py` | Rango del óptimo primal en n = 5, 6 y 7 | 5.3 | 40 s |
-| `ba.py` | Bethe frente a diagonalización exacta (385 combinaciones, n ≤ 14) | 5.4 | 20 s |
+| `rank.py` | Rango del óptimo primal en n = 5, 6 y 7 | 5.4 | 40 s |
+| `cusp.py` | Hipótesis (H) del Teorema 7 para n = 6 a 13, pesos del óptimo primal y monotonía de la ventana | 5.3 | 1 min |
+| `ba.py` | Bethe frente a diagonalización exacta (385 combinaciones, n ≤ 14) | 5.5 | 20 s |
 | `baedge2.py` | Coeficiente de 1/n², D_n y bordes para n grande (tabla 3) | 6.2, 6.3 | ~10 min en 4 procesos; caché en `data/bethe_cache/` |
 | `bafit.py` | Ajustes de escalado con correcciones logarítmicas | 6.2, 6.3 | 1 s |
 | `figures.py` | Figuras 1 y 2 a partir de `data/` | 5.2, 6.2 | 10 s |
