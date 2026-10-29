@@ -8,6 +8,12 @@ y, por separado en cada paridad, la anchura psi_n/pi (predicción:
 1 - 3/(8 (ln 2 - 1/4))). Se recorren varios modelos de corrección y varios
 n mínimos: en el punto isótropo la dispersión entre modelos es mayor que el
 error estadístico de cada ajuste, y es la que debe citarse.
+
+Para D_n se hace además, por paridad, el ajuste de forma RG
+  D_n = D_inf [1 + a / (ln n + c + b ln ln n)],
+con la amplitud libre y con la amplitud universal a = 1/2 fijada (operador
+marginal del punto isótropo; Laflorencie, Capponi y Sørensen, EPJB 24, 77).
+Fijar la amplitud reduce la dispersión entre modelos.
 """
 import numpy as np
 from scipy.optimize import curve_fit
@@ -53,6 +59,38 @@ def free_asymptote(n, y, model):
     return popt[0], np.sqrt(pcov[0, 0])
 
 
+def rg_fit(n, D, amplitude=None):
+    """D_inf [1 + a/(ln n + c + b ln ln n)]; con amplitude fija, a = amplitude.
+    Devuelve (D_inf, error, a)."""
+    L, LL = np.log(n), np.log(np.log(n))
+    if amplitude is None:
+        f = lambda n, D_inf, a, c: D_inf * (1 + a / (L + c))
+        p0 = (0.25, 0.5, 1.0)
+    else:
+        f = lambda n, D_inf, c, b: D_inf * (1 + amplitude / (L + c + b * LL))
+        p0 = (0.25, 2.0, 0.0)
+    popt, pcov = curve_fit(f, n, D, p0=p0, maxfev=50000)
+    a = popt[1] if amplitude is None else amplitude
+    return popt[0], np.sqrt(pcov[0, 0]), a
+
+
+def rg_scan():
+    print("\nD_inf con la forma RG D_inf [1 + a/(ln n + c [+ b ln ln n])], por paridad")
+    rows = read_csv("bethe_large.csv")
+    fixed = []
+    for n_min in N_MINS:
+        for p, name in ((0, "par"), (1, "impar")):
+            sel = [r for r in rows if r["n"] >= n_min and int(r["n"]) % 2 == p]
+            n = np.array([r["n"] for r in sel], dtype=float)
+            D = np.array([r["D_n"] for r in sel])
+            v, e, a = rg_fit(n, D)
+            vf, ef, _ = rg_fit(n, D, amplitude=0.5)
+            fixed.append(vf)
+            print(f"  n >= {n_min:<4} {name:5s}  a libre: D_inf = {v:.4f}±{e:.4f} (a = {a:.3f})"
+                  f"   a = 1/2: D_inf = {vf:.4f}±{ef:.4f}")
+    print(f"  intervalo con a = 1/2: [{min(fixed):.4f}, {max(fixed):.4f}]")
+
+
 def scan(label, key, exact, transform=lambda v: v):
     print(f"\n{label} (exacto {exact:.4f}); valor ± error estadístico")
     values = []
@@ -80,6 +118,7 @@ def main():
     print(f"{len(rows)} valores de n entre {int(n.min())} y {int(n.max())}")
 
     scan("D_inf", "D_n", 0.25)
+    rg_scan()
     scan("|coef|_inf", "coef", np.pi ** 2 / 6, transform=np.abs)
     for r in rows:
         if r["n"] in (1537, 2048):
