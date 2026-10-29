@@ -65,6 +65,7 @@ figuras en `figures/`.
 | `phistar.py` | Flujo óptimo libre Φ⋆(Θ) y barridos completos en el flujo; datos de la figura 1 | 5.2 | 4 min |
 | `rank.py` | Rango del óptimo primal en n = 5, 6 y 7 | 5.4 | 40 s |
 | `cusp.py` | Hipótesis (H) del Teorema 7 para n = 6 a 13, pesos del óptimo primal y monotonía de la ventana | 5.3 | 1 min |
+| `certify_h.py` | Certificación asistida por ordenador de (H) en todo el tramo de Δ⋆, n = 6 a 18 (bloques de Bloch, cotas de Weyl, bisección); escribe `data/certify_h.csv` | 5.3 | 12 min |
 | `ba.py` | Bethe frente a diagonalización exacta (385 combinaciones, n ≤ 14) | 5.5 | 20 s |
 | `baedge2.py` | Coeficiente de 1/n², D_n y bordes para n grande (tabla 3) | 6.2, 6.3 | ~10 min en 4 procesos; caché en `data/bethe_cache/` |
 | `bafit.py` | Ajustes de escalado con correcciones logarítmicas | 6.2, 6.3 | 1 s |
