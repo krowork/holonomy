@@ -71,3 +71,13 @@ def test_bethe_preciso_cerca_de_isotropo(n):
         assert up == pytest.approx(-down, rel=1e-4)
     v_heis = 4 * e1 / 3
     assert dual.v_cusp(bethe.eps, n, 0.0, xatol=1e-12)[0] >= v_heis - 1e-15
+
+
+def test_escalera_flujos_y_primal_u1():
+    from holonomy import ladder
+    ph = ladder.abelian_phases(4, 0.7, periodic=True, psi=0.3)
+    f, legs = ladder.plaquette_fluxes(4, ph, periodic=True)
+    assert np.allclose(f, 0.7) and np.allclose(legs, (2 * 0.7 + 0.3, -2 * 0.7 + 0.3))
+    # Escalera abierta 2x2 = anillo de 4 (Teorema 1).
+    v = sdp.primal_u1_graph(4, ladder.ladder_edges(2), ladder.abelian_phases(2, 1.0))
+    assert v == pytest.approx(f4(1.0), abs=1e-7)

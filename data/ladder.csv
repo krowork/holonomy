@@ -1,0 +1,41 @@
+contorno,L,holonomia,v_max
+abierta,3,"(0.00pi, 0.00pi)",0.5555555541645288
+abierta,3,"(0.25pi, 0.25pi)",0.5133433939830635
+abierta,3,"(0.50pi, 0.50pi)",0.4761736563868119
+abierta,3,"(0.75pi, 0.75pi)",0.45485070039217923
+abierta,3,"(1.00pi, 1.00pi)",0.44784045996685606
+abierta,3,"(0.50pi, 0)",0.49826799962694585
+abierta,3,"(0.50pi, -0.50pi)",0.47972187105210257
+abierta,3,"Rz(0.50pi), Rx(0.50pi)",0.47007869312605205
+abierta,3,"(1.00pi, 0)",0.47037997134234383
+abierta,3,"(1.00pi, -1.00pi)",0.44784047150453493
+abierta,3,"Rz(1.00pi), Rx(1.00pi)",0.4334961564274146
+abierta,4,uniforme pi/2,0.4691894796395684
+abierta,4,uniforme pi,0.43991924160766904
+periodica (dual),4,uniforme 0.000pi,0.535565486041643
+periodica (dual),4,uniforme 0.125pi,0.5045043061399885
+periodica (dual),4,uniforme 0.250pi,0.46927125246980145
+periodica (dual),4,uniforme 0.375pi,0.4448664965687406
+periodica (dual),4,uniforme 0.500pi,0.4309878668411675
+periodica (dual),4,uniforme 0.625pi,0.42522691552849246
+periodica (dual),4,uniforme 0.750pi,0.42630509024786756
+periodica (dual),4,uniforme 0.875pi,0.4309261976158023
+periodica (dual),4,uniforme 1.000pi,0.43302961452126537
+periodica (dual),5,uniforme 0.000pi,0.4817180918007226
+periodica (dual),5,uniforme 0.125pi,0.46945984686175307
+periodica (dual),5,uniforme 0.250pi,0.4585240257134526
+periodica (dual),5,uniforme 0.375pi,0.44803454057028963
+periodica (dual),5,uniforme 0.500pi,0.4379225912675572
+periodica (dual),5,uniforme 0.625pi,0.4219001927755536
+periodica (dual),5,uniforme 0.750pi,0.41102911215488475
+periodica (dual),5,uniforme 0.875pi,0.4065333538593774
+periodica (dual),5,uniforme 1.000pi,0.40694355927403647
+periodica (dual),6,uniforme 0.000pi,0.5181371655344976
+periodica (dual),6,uniforme 0.125pi,0.4981507141492774
+periodica (dual),6,uniforme 0.250pi,0.47638761980554506
+periodica (dual),6,uniforme 0.375pi,0.46044510244285086
+periodica (dual),6,uniforme 0.500pi,0.44918471271674854
+periodica (dual),6,uniforme 0.625pi,0.4409822391316588
+periodica (dual),6,uniforme 0.750pi,0.43489871821042997
+periodica (dual),6,uniforme 0.875pi,0.4305001607328523
+periodica (dual),6,uniforme 1.000pi,0.42886502619872147

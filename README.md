@@ -26,7 +26,7 @@ SymPy 1.14.0; Matplotlib y una instalación de LaTeX para las figuras.)
 ```bash
 .venv/bin/python -m pytest          # pruebas rápidas (~15 s)
 ./run_all.sh --rapido               # comprobaciones de menos de ~1 min
-./run_all.sh                        # todo (~15 min con la caché de Bethe incluida)
+./run_all.sh                        # todo (~1 h 30 min con la caché de Bethe; ladder.py son ~75 min)
 ```
 
 Cada guion de `scripts/` imprime una línea `OK`/`FALLO` por comprobación y
@@ -38,10 +38,11 @@ figuras en `figures/`.
 | Módulo | Contenido |
 |---|---|
 | `paulis` | Operadores de Pauli en n qubits, rotaciones, estados de Werner rotados |
-| `sdp` | SDP primal del pegado, completo y reducido por U(1) |
+| `sdp` | SDP primal del pegado, completo y reducido por U(1) (anillo o grafo cualquiera con datos abelianos) |
 | `xxz` | Diagonalización exacta del anillo XXZ con flujo, por sectores de magnetización |
 | `bethe` | Ecuaciones de Bethe con flujo en los tres regímenes (Δ > 0), con derivada implícita en el flujo |
 | `dual` | Objetivo dual (Prop. 4), fórmula de un parámetro, criterio de borde (Prop. 6), anchura de la ventana |
+| `ladder` | Escaleras de dos patas: aristas, flujos de plaqueta, dual reducido de la escalera periódica |
 | `asymptotics` | Coeficiente de 1/n², rigidez finita D_n y anchura asintótica |
 | `report` | Salida OK/FALLO y lectura/escritura de datos |
 
@@ -70,6 +71,7 @@ figuras en `figures/`.
 | `baedge2.py` | Coeficiente de 1/n², D_n y bordes para n grande (tabla 3) | 6.2, 6.3 | ~10 min en 4 procesos; caché en `data/bethe_cache/` |
 | `bafit.py` | Ajustes de escalado con correcciones logarítmicas | 6.2, 6.3 | 1 s |
 | `figures.py` | Figuras 1 y 2 a partir de `data/` | 5.3, 6.2 | 10 s |
+| `ladder.py` | Exploración: escalera 2×3 abierta (primal completo, holonomías abelianas y no abelianas), cotas de estrella y de plaqueta, primal U(1) en grafos, primal U(1)+traslación y dual reducido de la escalera periódica (2×4, 2×5) frente al primal, barrido del dual hasta 2×6; escribe `data/ladder.csv` | problema abierto 5 | ~75 min |
 
 `baedge2.py` guarda cada n en `data/bethe_cache/`; el repositorio incluye esa
 caché, así que `python scripts/baedge2.py --report` reproduce la tabla 3 sin

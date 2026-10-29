@@ -7,7 +7,7 @@ PY=${PY:-.venv/bin/python}
 export OMP_NUM_THREADS=${OMP_NUM_THREADS:-2}
 
 FAST=(verify_sym verify_step3 verify_unique tri witness_check xxz sec ba verify_holonomia)
-SLOW=(table62 edge phistar primalU1 rank cusp certify_h witness_n chk baedge2)
+SLOW=(table62 edge phistar primalU1 rank cusp certify_h witness_n chk baedge2 ladder)
 
 scripts=("${FAST[@]}")
 [[ "${1:-}" == "--rapido" ]] || scripts+=("${SLOW[@]}")

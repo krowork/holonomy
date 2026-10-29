@@ -8,6 +8,7 @@ import itertools
 
 import cvxpy as cp
 import numpy as np
+import scipy.sparse as sp
 
 from .paulis import pauli_string
 
@@ -62,66 +63,90 @@ def _bit(s, n, i):
     return (s >> (n - 1 - i)) & 1
 
 
-def primal_u1(n, Theta, solver=DEFAULT_SOLVER, return_blocks=False, **kw):
-    """Primal en el gauge uniforme T^e = -R_z(Theta/n), con rho en bloques de
-    número de giros fijo (la optimalidad no se pierde: el problema es invariante
-    bajo U(1) alrededor de z y se puede promediar).
+def u1_sector_operators(n, edges, k):
+    """Operadores de las restricciones en el sector de k giros (base de
+    `_sector_basis`), como matrices dispersas: por arista (i, j),
+    A = -(X_iX_j+Y_iY_j), B = X_iY_j-Y_iX_j y C = -Z_iZ_j; por sitio, Z_i.
+
+    Devuelve (basis, ops), con ops[("A", e)], ops[("B", e)], ops[("C", e)] y
+    ops[("Z", i)]; e es el índice de la arista en `edges`.
+    """
+    basis = _sector_basis(n, k)
+    idx = {s: m for m, s in enumerate(basis)}
+    dim = len(basis)
+    ops = {}
+    for i in range(n):
+        ops[("Z", i)] = sp.diags([float(1 - 2 * _bit(s, n, i)) for s in basis], shape=(dim, dim))
+    for e, (i, j) in enumerate(edges):
+        Cd = np.zeros(dim)
+        rows, cols, va, vb = [], [], [], []
+        for m, s in enumerate(basis):
+            zi = 1 - 2 * _bit(s, n, i)
+            zj = 1 - 2 * _bit(s, n, j)
+            Cd[m] = -zi * zj
+            if zi != zj:
+                t = s ^ (1 << (n - 1 - i)) ^ (1 << (n - 1 - j))
+                rows.append(idx[t])
+                cols.append(m)
+                # XX+YY = 2(s+_i s-_j + h.c.): intercambio con elemento 2.
+                va.append(-2.0)
+                # XY-YX = 2i(s+_i s-_j - h.c.). s+ = |0><1| sube |1> -> |0>.
+                # Si i está en |1> (zi=-1) y j en |0>, s+_i s-_j actúa.
+                vb.append(2j * (1.0 if zi == -1 else -1.0))
+        ops[("A", e)] = sp.csr_matrix((va, (rows, cols)), shape=(dim, dim), dtype=complex)
+        ops[("B", e)] = sp.csr_matrix((vb, (rows, cols)), shape=(dim, dim), dtype=complex)
+        ops[("C", e)] = sp.diags(Cd, shape=(dim, dim))
+    return basis, ops
+
+
+def primal_u1_graph(n, edges, phis, solver=DEFAULT_SOLVER, return_blocks=False, **kw):
+    """Primal de un grafo cualquiera con datos abelianos, T^e = -R_z(phi_e) en
+    cada arista orientada e = (i -> j), y rho en bloques de número de giros
+    fijo (la optimalidad no se pierde: el problema es invariante bajo U(1)
+    alrededor de z y se puede promediar).
 
     En un estado U(1)-invariante las únicas correlaciones de arista no nulas son
     XX+YY, XY-YX y ZZ, y <Z_i> es la única marginal posible. Se imponen
-    tr(rho A_i) = 2v cos(phi), tr(rho B_i) = 2v sin(phi), tr(rho C_i) = v y
-    <Z_i> = 0, con A_i = -(XX+YY), B_i = XY-YX, C_i = -ZZ.
+    tr(rho A_e) = 2v cos(phi_e), tr(rho B_e) = 2v sin(phi_e), tr(rho C_e) = v y
+    <Z_i> = 0.
     """
-    phi = Theta / n
     blocks, cons = [], []
     trace = 0
-    lin = {key: 0 for key in itertools.product(range(n), ("A", "B", "C", "Z"))}
+    lin = {}
     v = cp.Variable()
     for k in range(n + 1):
-        basis = _sector_basis(n, k)
-        idx = {s: m for m, s in enumerate(basis)}
+        basis, ops = u1_sector_operators(n, edges, k)
         dim = len(basis)
         rb = cp.Variable((dim, dim), hermitian=True)
         blocks.append(rb)
         cons.append(rb >> 0)
         trace = trace + cp.real(cp.trace(rb))
-        for i in range(n):
-            j = (i + 1) % n
-            Cd = np.zeros(dim)
-            Zd = np.zeros(dim)
-            A = np.zeros((dim, dim), dtype=complex)
-            B = np.zeros((dim, dim), dtype=complex)
-            for m, s in enumerate(basis):
-                zi = 1 - 2 * _bit(s, n, i)
-                zj = 1 - 2 * _bit(s, n, j)
-                Cd[m] = -zi * zj
-                Zd[m] = zi
-                if zi != zj:
-                    t = s ^ (1 << (n - 1 - i)) ^ (1 << (n - 1 - j))
-                    mt = idx[t]
-                    # XX+YY = 2(s+_i s-_j + h.c.): intercambio con elemento 2.
-                    A[mt, m] += -2.0
-                    # XY-YX = 2i(s+_i s-_j - h.c.). s+ = |0><1| sube |1> -> |0>.
-                    # Si i está en |1> (zi=-1) y j en |0>, s+_i s-_j actúa.
-                    sign = 1.0 if zi == -1 else -1.0
-                    B[mt, m] += 2j * sign
-            lin[(i, "A")] += _tr(A, rb)
-            lin[(i, "B")] += _tr(B, rb)
-            lin[(i, "C")] += cp.real(cp.sum(cp.multiply(Cd, cp.real(cp.diag(rb)))))
-            lin[(i, "Z")] += cp.real(cp.sum(cp.multiply(Zd, cp.real(cp.diag(rb)))))
+        for key, M in ops.items():
+            if key[0] in ("C", "Z"):
+                term = cp.sum(cp.multiply(M.diagonal().real, cp.real(cp.diag(rb))))
+            else:
+                term = _tr(M.toarray(), rb)
+            lin[key] = lin.get(key, 0) + term
     cons.append(trace == 1)
-    for i in range(n):
+    for e, phi in enumerate(phis):
         cons += [
-            lin[(i, "A")] == 2 * v * np.cos(phi),
-            lin[(i, "B")] == 2 * v * np.sin(phi),
-            lin[(i, "C")] == v,
-            lin[(i, "Z")] == 0,
+            lin[("A", e)] == 2 * v * np.cos(phi),
+            lin[("B", e)] == 2 * v * np.sin(phi),
+            lin[("C", e)] == v,
         ]
+    cons += [lin[("Z", i)] == 0 for i in range(n)]
     prob = cp.Problem(cp.Maximize(v), cons)
     prob.solve(solver=solver, **kw)
     if return_blocks:
         return float(v.value), [np.asarray(b.value) for b in blocks], prob.status
     return float(v.value)
+
+
+def primal_u1(n, Theta, solver=DEFAULT_SOLVER, return_blocks=False, **kw):
+    """Primal del anillo en el gauge uniforme T^e = -R_z(Theta/n), reducido
+    por U(1) (caso particular de `primal_u1_graph`)."""
+    return primal_u1_graph(n, ring_edges(n), [Theta / n] * n, solver=solver,
+                           return_blocks=return_blocks, **kw)
 
 
 def numerical_rank(rho, tol=1e-6):
