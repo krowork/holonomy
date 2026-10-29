@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "holonomy"
+version = "1.0.0"
+description = "Holonomía y pegado de perspectivas de Werner en anillos de qubits"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy==2.5.4",
+    "scipy==1.18.1",
+    "cvxpy==1.9.3",
+    "clarabel==0.11.1",
+    "scs==3.3.1",
+    "sympy==1.14.0",
+    "matplotlib>=3.9",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[tool.setuptools]
+packages = ["holonomy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: pruebas largas (SDP de n >= 6, Bethe de n grande)"]
