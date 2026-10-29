@@ -1,4 +1,4 @@
-"""Ecuaciones de Bethe del anillo XXZ con flujo (sección 5.4 del artículo).
+"""Ecuaciones de Bethe del anillo XXZ con flujo (sección 5.2 del artículo).
 
     n p(l_j) - sum_k theta(l_j - l_k) = 2 pi I_j + Phi,
     E0 = n Delta / 4 + sum_j e(l_j),

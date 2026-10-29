@@ -1,5 +1,5 @@
 """Objetivo dual del anillo de n sitios (Proposición 4) y la estructura de
-cúspide y ventana de desanclaje (sección 5.2).
+cúspide y ventana de desanclaje (sección 5.3).
 
 Todas las funciones reciben `eps(n, Delta, Phi)`: puede ser
 `holonomy.xxz.eps` (diagonalización exacta) o `holonomy.bethe.eps`.
@@ -10,7 +10,7 @@ Todas las funciones reciben `eps(n, Delta, Phi)`: puede ser
 import numpy as np
 from scipy.optimize import brentq, minimize_scalar
 
-DELTA_MIN = -0.99  # para Delta <= -1 el cociente es > 1 (Teorema 9, hecho 3)
+DELTA_MIN = -0.99  # para Delta <= -1 el cociente es > 1 (Lema 5)
 DELTA_MAX = 60.0
 
 
@@ -111,7 +111,7 @@ def v_free(eps, n, Theta, grid=33, xatol=1e-9):
 
 
 # ---------------------------------------------------------------------------
-# Pendiente en la cúspide y criterio de borde (Proposición 5)
+# Pendiente en la cúspide y criterio de borde (Proposición 6)
 # ---------------------------------------------------------------------------
 
 def cusp_slope_fd(eps, n, Delta, h=2e-3):
@@ -130,7 +130,7 @@ def cusp_slope_fd(eps, n, Delta, h=2e-3):
 
 
 def edge_function(eps, n, Theta, slope=None):
-    """g_n(Theta) de la Proposición 5. slope(n, Delta) por defecto: diferencias."""
+    """g_n(Theta) de la Proposición 6. slope(n, Delta) por defecto: diferencias."""
     v, Ds = v_cusp(eps, n, Theta)
     d = abs(cusp_flux(n) - Theta) / n
     s = slope(n, Ds) if slope is not None else cusp_slope_fd(eps, n, Ds)

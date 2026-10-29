@@ -1,4 +1,4 @@
-"""Optimalidad global de la cúspide (sección 5.3, Lema 6 y Teorema 7).
+"""Optimalidad global de la cúspide (sección 5.4, Lema 7 y Teorema 8).
 
 Comprueba numéricamente lo que el Teorema de la cúspide supone o predice:
   1. Hipótesis (H): en (Delta*, Phi_c) el estado fundamental en todo el espacio

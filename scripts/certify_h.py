@@ -1,11 +1,11 @@
-"""Certificación de la hipótesis espectral (H) del Teorema 7 para cada n.
+"""Certificación de la hipótesis espectral (H) del Teorema 8 para cada n.
 
 (H): en (Delta*, Phi_c) el nivel fundamental de H_XXZ en todo el espacio es un
 doblete (n par) o dos dobletes con S^z = +-1/2 (n impar); en cada sector de S^z
 sus dos estados tienen momentos distintos, y la pendiente lateral es s_n > 0.
 
 Se certifica en todo un intervalo I_n de Delta que contiene el tramo de Delta*:
-Delta*(d) crece con d (sección 5.3), así que basta con [Delta*(0), Delta*(pi/n)]
+Delta*(d) crece con d (sección 5.4), así que basta con [Delta*(0), Delta*(pi/n)]
 y un margen. Método:
 
   * Bloques. H(Delta, Phi_c) conmuta con S^z y con la traslación T (gauge

@@ -1,4 +1,4 @@
-"""Magnitudes de las secciones 5.2 y 6: anchura de la ventana, coeficiente de
+"""Magnitudes de las secciones 5.3 y 6: anchura de la ventana, coeficiente de
 1/n^2 y rigidez finita, para un n dado y un `eps` (diagonalización o Bethe).
 
     coef   = n^2 [v(n, 0) - v(n, pi)]

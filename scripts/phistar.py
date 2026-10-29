@@ -1,4 +1,4 @@
-"""Flujo óptimo libre Phi*(Theta) y barridos completos en el flujo (sección 5.2).
+"""Flujo óptimo libre Phi*(Theta) y barridos completos en el flujo (sección 5.3).
 
 1. Barridos completos: para n = 4..13 y holonomías fuera de la ventana, el
    objetivo minimizado en Delta, como función del flujo en [0, pi], tiene su

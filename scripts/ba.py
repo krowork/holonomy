@@ -1,4 +1,4 @@
-"""Ecuaciones de Bethe con flujo frente a diagonalización exacta (sección 5.4).
+"""Ecuaciones de Bethe con flujo frente a diagonalización exacta (sección 5.2).
 
 Para n = 4..14, cinco anisotropías en los tres regímenes (Delta < 1, = 1, > 1)
 y siete flujos en [0, pi] (385 combinaciones):

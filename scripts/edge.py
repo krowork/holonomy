@@ -1,4 +1,4 @@
-"""Bordes de la ventana de desanclaje por el criterio de la Proposición 5.
+"""Bordes de la ventana de desanclaje por el criterio de la Proposición 6.
 
 Para n = 4..20 por diagonalización exacta (sector de magnetización mínima,
 Lanczos con arranque en caliente para n grande) y, por separado, con las
