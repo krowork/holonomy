@@ -242,6 +242,71 @@ class LadderDual:
         prob.solve(solver=solver, **kw)
         return float(t.value), np.asarray(y.value), prob.status
 
+    def v_dual_cg(self, phis, y0=None, tol=1e-8, r0=6, add=4, box=50.0, maxiter=200,
+                  solver="CLARABEL", **kw):
+        """El SDP de v_dual_sdp por generación de columnas, para bloques en los
+        que el SDP completo no cabe en memoria (L >= 6: Clarabel forma bloques
+        densos de tamaño (n(n+1)/2)^2 por cono).
+
+        Cada bloque se comprime a un subespacio U: min t con
+        t I - U^H W_blk(y) U >= 0, N(y) = 1 y |y_m| <= box. Comprimir no sube
+        lambda_max, así que t es una cota inferior de v_max (con la caja, si
+        el testigo óptimo está dentro de ella); lambda_max(W(y)) en el y
+        obtenido es una cota superior. Se añaden a cada U los `add`
+        autovectores de mayor autovalor por encima de t y se repite hasta que
+        las cotas difieran menos de tol. Arranca en y0 (o en Heisenberg con
+        la fase de los datos) con los r0 autovectores superiores de cada
+        bloque.
+
+        Devuelve (v, y, estado, diferencia de cotas): v es la cota superior;
+        estado 'optimal' si la diferencia es < tol y el testigo no toca la
+        caja."""
+        import cvxpy as cp
+
+        g = self.norm_grad(phis)
+        if y0 is None:
+            pb, pt = phis[0], phis[self.L]
+            y0 = np.array([np.cos(pb), np.sin(pb), 1.0, np.cos(pt), np.sin(pt), 1.0, 1.0, 1.0])
+        y0 = np.asarray(y0, float) / (g @ y0)
+
+        def blocks_at(y):
+            return [sum(c * red[key] for key, c in zip(self.KEYS, y)) for red in self.blocks]
+
+        U = []
+        for W in blocks_at(y0):
+            _, V = np.linalg.eigh(W)
+            U.append(V[:, -min(r0, W.shape[0]):])
+        best = (np.inf, y0)
+        lower = -np.inf
+        for _ in range(maxiter):
+            y = cp.Variable(8)
+            t = cp.Variable()
+            cons = [g @ y == 1, cp.abs(y) <= box]
+            for red, Ub in zip(self.blocks, U):
+                Wc = sum(y[m] * (Ub.conj().T @ red[key] @ Ub) for m, key in enumerate(self.KEYS))
+                cons.append(t * np.eye(Ub.shape[1]) - Wc >> 0)
+            prob = cp.Problem(cp.Minimize(t), cons)
+            prob.solve(solver=solver, **kw)
+            if y.value is None:
+                return best[0], best[1], prob.status, best[0] - lower
+            lower, yv = float(t.value), np.asarray(y.value)
+            Ws = blocks_at(yv)
+            eig = [np.linalg.eigh(W) for W in Ws]
+            upper = max(w[-1] for w, _ in eig)
+            if upper < best[0]:
+                best = (upper, yv)
+            if best[0] - lower < tol:
+                break
+            for b, (w, V) in enumerate(eig):
+                new = V[:, w > lower + tol / 2][:, -add:]
+                if new.shape[1]:
+                    Q, s, _ = np.linalg.svd(np.hstack([U[b], new]), full_matrices=False)
+                    U[b] = Q[:, s > 1e-10 * s[0]]
+        gap = best[0] - lower
+        on_box = np.max(np.abs(best[1])) > 0.99 * box
+        st = "optimal" if gap < tol and not on_box else ("en_caja" if on_box else "no_converge")
+        return best[0], best[1], st, gap
+
     def witness_spread(self, phis, v_opt, eps, solver="CLARABEL", **kw):
         """Rango de cada coeficiente del testigo dentro del conjunto casi óptimo
         {y : N(y) = 1, lambda_max(W(y)) <= v_opt + eps}: mínimo y máximo de

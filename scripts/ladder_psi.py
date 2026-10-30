@@ -15,7 +15,13 @@ simetrías con psi != 0. Comprobaciones:
   2. v(f, psi) = v(f, -psi) en varios puntos (<= 1e-6);
   3. en cada punto, v <= cota de estrella 5/9, cota de plaqueta
      2/(3 + sin(f/2)) y cota de cada pata como anillo de L sitios,
-     v_anillo(L, psi_b) y v_anillo(L, psi_t) (dual del anillo, sección 5).
+     v_anillo(L, psi_b) y v_anillo(L, psi_t) (dual del anillo, sección 5);
+  4. con L >= 6, en cada punto las cotas inferior y superior de la
+     generación de columnas difieren menos de 1e-8.
+El dual se resuelve como SDP completo (LadderDual.v_dual_sdp) para L <= 5;
+para L >= 6, en el que Clarabel no cabe en memoria, como el mismo SDP por
+generación de columnas (LadderDual.v_dual_cg, ~8 s y ~0,4 GB por punto en
+L = 6), desde el testigo del punto anterior de la fila.
 En cada punto se guardan v, los bloques (k, q) en lambda_max del testigo
 óptimo, su flujo de plaqueta y sus holonomías de pata. En cada fila de f se
 refina además el mínimo en psi por el método de Brent alrededor del menor
@@ -28,7 +34,7 @@ psi de cada fila (con M != N, ladder_psi_min_L<L>_<N>x<M>.csv).
 Uso: (ulimit -v 12000000; python scripts/ladder_psi.py L N [M [procesos]])
      por defecto L = 4, N = 21, M = N, 1 proceso. Con varios procesos, las
      filas de f se reparten entre ellos (cada uno con OMP_NUM_THREADS hilos y
-     ~2,6 GB de pico en L = 5).
+     ~2,6 GB de pico en L = 5, ~0,4 GB en L = 6).
 """
 import _common  # noqa: F401  (fija OMP_NUM_THREADS antes de numpy)
 from _common import CLARABEL_OPTS, Checker
@@ -46,6 +52,7 @@ from holonomy.sdp import primal_u1_graph
 TOL = 1e-6
 STAR = 5 / 9
 GAP_TOL = 1e-5
+SDP_MAX_L = 5
 
 
 def wrap(a):
@@ -69,9 +76,14 @@ def v_ring(L, theta):
     return _ring[key]
 
 
-def solve(L, f, psi):
+def solve(L, f, psi, y0=None):
+    """Dual en (f, psi): SDP completo para L <= SDP_MAX_L; si no, por
+    generación de columnas desde el testigo y0."""
     ph = ladder.abelian_phases(L, f, periodic=True, psi=psi)
-    v, y, st = _dual(L).v_dual_sdp(ph, **CLARABEL_OPTS)
+    if L <= SDP_MAX_L:
+        v, y, st = _dual(L).v_dual_sdp(ph, **CLARABEL_OPTS)
+    else:
+        v, y, st, _ = _dual(L).v_dual_cg(ph, y0=y0, **CLARABEL_OPTS)
     return v, y, st, ph
 
 
@@ -79,9 +91,10 @@ def row(args):
     """Una fila de f: puntos de la malla en psi y mínimo refinado en psi."""
     L, f, psis = args
     D = _dual(L)
-    out = []
+    out, ys, y = [], [], None
     for psi in psis:
-        v, y, st, ph = solve(L, f, psi)
+        v, y, st, ph = solve(L, f, psi, y)
+        ys.append(y)
         psib, psit = L * f / 2 + psi, -L * f / 2 + psi
         bound = min(STAR, 2 / (3 + np.sin(f / 2)), v_ring(L, psib), v_ring(L, psit))
         gaps = D.block_gaps(y, D.labels)
@@ -89,10 +102,10 @@ def row(args):
         wf = np.arctan2(y[1], y[0]) - np.arctan2(y[4], y[3])
         wb, wt = L * np.arctan2(y[1], y[0]), L * np.arctan2(y[4], y[3])
         out.append((f, psi, v, bound, wrap(wf), wrap(wb), wrap(wt),
-                    " ".join(f"{k}:{q}" for k, q in top)))
+                    " ".join(f"{k}:{q}" for k, q in top), st))
     j = int(np.argmin([r[2] for r in out]))
     lo, hi = psis[max(j - 1, 0)], psis[min(j + 1, len(psis) - 1)]
-    res = minimize_scalar(lambda p: solve(L, f, p)[0], bounds=(lo, hi), method="bounded",
+    res = minimize_scalar(lambda p: solve(L, f, p, ys[j])[0], bounds=(lo, hi), method="bounded",
                           options=dict(xatol=1e-5))
     # Brent no evalúa los extremos: el mínimo de la malla gana si es menor.
     pm, vm = (res.x, res.fun) if res.fun < out[j][2] else (psis[j], out[j][2])
@@ -114,6 +127,7 @@ def main():
             vp, _, st = primal_u1_graph(2 * L, D.edges, ph, return_blocks=True, **CLARABEL_OPTS)
             chk.check(abs(v - vp) < TOL, f"f/pi={f / np.pi:.2f} psi/pi={psi / np.pi:.2f}: dual = {v:.9f}, "
                       f"primal U(1) = {vp:.9f}, |dif| = {abs(v - vp):.1e}{chk.status_note(st)}")
+    fs, psis = np.linspace(0, np.pi, N), np.linspace(0, np.pi, M)
     for f, psi in ((0.3 * np.pi, 0.4 * np.pi), (0.7 * np.pi, 0.9 * np.pi), (1.0 * np.pi, 0.5 * np.pi)):
         v1, v2 = solve(L, f, psi)[0], solve(L, f, -psi)[0]
         chk.check(abs(v1 - v2) < TOL, f"simetría psi -> -psi en f/pi={f / np.pi:.2f}, psi/pi={psi / np.pi:.2f}: "
@@ -121,8 +135,7 @@ def main():
 
     print("== Malla")
     rows, mins, viol = [], [], 0
-    psis = np.linspace(0, np.pi, M)
-    tasks = [(L, f, psis) for f in np.linspace(0, np.pi, N)]
+    tasks = [(L, f, psis) for f in fs]
     if procs > 1:
         with Pool(procs) as pool:
             results = pool.map(row, tasks, chunksize=1)
@@ -139,6 +152,9 @@ def main():
         chk.info(f"f/pi={f / np.pi:.3f}: v(psi) = " + " ".join(f"{r[2]:.4f}" for r in out))
         chk.info(f"   mínimo en psi/pi = {mn[1] / np.pi:.5f}, v = {mn[2]:.9f}, variación en psi = {mn[3]:.1e}")
     chk.check(viol == 0, f"{len(rows)} puntos: v <= min(estrella, plaqueta, patas como anillos) en todos")
+    bad = sum(r[8] not in ("optimal", "optimal_inaccurate") for r in rows)
+    chk.check(bad == 0, f"{len(rows)} puntos resueltos ({bad} con estado de fallo del solver)")
+    rows = [r[:8] for r in rows]
     suffix = "" if M == N else f"_{N}x{M}"
     write_csv(f"ladder_psi_L{L}{suffix}.csv", ["f", "psi", "v_max", "cota", "flujo_testigo", "pata_b_testigo",
                                                "pata_t_testigo", "bloques"], rows)

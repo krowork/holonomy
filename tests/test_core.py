@@ -81,3 +81,15 @@ def test_escalera_flujos_y_primal_u1():
     # Escalera abierta 2x2 = anillo de 4 (Teorema 1).
     v = sdp.primal_u1_graph(4, ladder.ladder_edges(2), ladder.abelian_phases(2, 1.0))
     assert v == pytest.approx(f4(1.0), abs=1e-7)
+
+
+def test_escalera_dual_por_generacion_de_columnas():
+    # v_dual_cg (el SDP por generación de columnas, para L >= 6) = SDP completo.
+    from holonomy import ladder
+    D = ladder.LadderDual(4)
+    ph = ladder.abelian_phases(4, 0.5 * np.pi, periodic=True, psi=0.3 * np.pi)
+    opts = dict(tol_gap_abs=1e-10, tol_gap_rel=1e-10, tol_feas=1e-10)
+    vs, _, _ = D.v_dual_sdp(ph, **opts)
+    vc, _, st, gap = D.v_dual_cg(ph, **opts)
+    assert st == "optimal" and gap < 1e-8
+    assert vc == pytest.approx(vs, abs=1e-8)
