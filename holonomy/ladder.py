@@ -136,7 +136,7 @@ def symmetric_blocks(L):
     return out
 
 
-def primal_symmetric(L, phis, solver="CLARABEL", **kw):
+def primal_symmetric(L, phis, solver="CLARABEL", return_blocks=False, **kw):
     """Primal de la escalera periódica con flujo uniforme, reducido por U(1) y
     por traslación (rho = suma directa de bloques (k, q)). Las restricciones de
     las aristas de cada tipo se suman: son equivalentes porque los datos son
@@ -146,10 +146,11 @@ def primal_symmetric(L, phis, solver="CLARABEL", **kw):
     kinds = edge_kinds(L, periodic=True)
     phase = {kd: phis[kinds.index(kd)] for kd in "btr"}
     v = cp.Variable()
-    cons, lin, tr = [], {}, 0
-    for _, _, red in symmetric_blocks(L):
+    cons, lin, tr, Xs = [], {}, 0, []
+    for k, q, red in symmetric_blocks(L):
         d = red[("C", "b")].shape[0]
         X = cp.Variable((d, d), hermitian=True)
+        Xs.append(((k, q), X))
         cons.append(X >> 0)
         tr = tr + cp.real(cp.trace(X))
         for key, M in red.items():
@@ -162,6 +163,8 @@ def primal_symmetric(L, phis, solver="CLARABEL", **kw):
     cons += [lin[("Z", "b")] == 0, lin[("Z", "t")] == 0]
     prob = cp.Problem(cp.Maximize(v), cons)
     prob.solve(solver=solver, **kw)
+    if return_blocks:
+        return float(v.value), prob.status, [(lab, np.asarray(X.value)) for lab, X in Xs]
     return float(v.value), prob.status
 
 
