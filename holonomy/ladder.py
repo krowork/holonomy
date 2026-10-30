@@ -239,6 +239,33 @@ class LadderDual:
         prob.solve(solver=solver, **kw)
         return float(t.value), np.asarray(y.value), prob.status
 
+    def witness_spread(self, phis, v_opt, eps, solver="CLARABEL", **kw):
+        """Rango de cada coeficiente del testigo dentro del conjunto casi óptimo
+        {y : N(y) = 1, lambda_max(W(y)) <= v_opt + eps}: mínimo y máximo de
+        cada y_m (16 SDP). Si el testigo óptimo es único, el rango tiende a 0
+        con eps; si hay una cara de óptimos, queda finito."""
+        import cvxpy as cp
+
+        g = self.norm_grad(phis)
+        y = cp.Variable(8)
+        cons = [g @ y == 1]
+        for red in self.blocks:
+            d = red[("C", "b")].shape[0]
+            W = sum(y[m] * red[key] for m, key in enumerate(self.KEYS))
+            cons.append((v_opt + eps) * np.eye(d) - W >> 0)
+        out = []
+        for m in range(8):
+            lo_hi = []
+            for sense in (cp.Minimize, cp.Maximize):
+                prob = cp.Problem(sense(y[m]), cons)
+                try:
+                    prob.solve(solver=solver, **kw)
+                    lo_hi.append(float(y.value[m]) if y.value is not None else np.nan)
+                except cp.error.SolverError:
+                    lo_hi.append(np.nan)
+            out.append(tuple(lo_hi))
+        return out
+
     def v_dual_grad(self, phis, y0):
         """min lambda_max(W)/N con BFGS (gradiente exacto) desde y0 y pulido
         final con Nelder-Mead. Devuelve (v, y) con N(y) = 1."""

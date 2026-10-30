@@ -75,6 +75,7 @@ figuras en `figures/`.
 | `ladder_flux.py` | Exploración: barrido fino del flujo de plaqueta en la escalera periódica 2×4, 2×5 (dual-SDP) y 2×6 (Nelder-Mead), flujo del testigo y mínimo en el flujo; escribe `data/ladder_flux.csv`. No está en `run_all.sh`; conviene limitar la memoria (`ulimit -v 12000000`) | problema abierto 5 | ~2 h |
 | `ladder_jump.py` | Exploración: ventana de la escalera 2×5 (f ≈ 0,510π–0,531π) en la que el flujo del testigo se mueve deprisa entre dos regímenes de bloques degenerados; escribe `data/ladder_jump.csv` | problema abierto 5 | ~15 min |
 | `ladder_regimes.py` | Exploración: mapa de regímenes (bloques degenerados en λ_max del testigo óptimo) en todo el rango de flujo, bordes por extrapolación lineal; `python scripts/ladder_regimes.py 4` escribe `data/ladder_regimes_L4.csv` | problema abierto 5 | 7 min (L = 4) |
+| `ladder_unique.py` | Exploración: unicidad del testigo óptimo de la 2×4 (rango de cada coeficiente en el conjunto casi óptimo, ε = 10⁻⁴…10⁻⁶) | problema abierto 5 | 11 min |
 
 `baedge2.py` guarda cada n en `data/bethe_cache/`; el repositorio incluye esa
 caché, así que `python scripts/baedge2.py --report` reproduce la tabla 3 sin
