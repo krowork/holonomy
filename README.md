@@ -77,7 +77,7 @@ figuras en `figures/`.
 | `ladder_regimes.py` | Exploración: mapa de regímenes (bloques degenerados en λ_max del testigo óptimo) en todo el rango de flujo, bordes por extrapolación lineal; `python scripts/ladder_regimes.py 4` escribe `data/ladder_regimes_L4.csv`; para 2×5: `5 0 1 0.01` (51 min) y `5 0 0.012 0.0005` (14 min) | problema abierto 5 | 7 min (L = 4) |
 | `ladder_unique.py` | Exploración: unicidad del testigo óptimo de la 2×4 (rango de cada coeficiente en el conjunto casi óptimo, ε = 10⁻⁴…10⁻⁶) | problema abierto 5 | 11 min |
 | `ladder_weights.py` | Exploración: rango y pesos por bloque del estado óptimo simétrico de la 2×4 en f = 0,70π–0,85π; escribe `data/ladder_weights_L4.csv` | problema abierto 5 | 2 min |
-| `ladder_psi.py` | Exploración: holonomía de las patas ψ en la escalera periódica; mapa v(f, ψ), cotas de estrella, plaqueta y patas como anillos, simetría ψ → −ψ y contraste con el primal (L = 4); `python scripts/ladder_psi.py 4 21` escribe `data/ladder_psi_L4.csv` | problema abierto 5 | 13 min (L = 4; pico de 9,8 GB por el contraste con el primal) |
+| `ladder_psi.py` | Exploración: holonomía de las patas ψ en la escalera periódica; mapa v(f, ψ), cotas de estrella, plaqueta y patas como anillos, simetría ψ → −ψ y contraste con el primal (L = 4); `python scripts/ladder_psi.py 4 21` escribe `data/ladder_psi_L4.csv`; `python scripts/ladder_psi.py 5 11`, `data/ladder_psi_L5.csv` | problema abierto 5 | 13 min (L = 4; pico de 9,8 GB por el contraste con el primal); 61 min (L = 5, malla 11×11; pico de 2,6 GB) |
 
 `baedge2.py` guarda cada n en `data/bethe_cache/`; el repositorio incluye esa
 caché, así que `python scripts/baedge2.py --report` reproduce la tabla 3 sin
