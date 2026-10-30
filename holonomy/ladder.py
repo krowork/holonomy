@@ -27,6 +27,7 @@ el primal se calculan por bloques de número de giros k y momento q.
 """
 import numpy as np
 import scipy.sparse as sp
+from scipy.linalg import eigh
 from scipy.optimize import minimize
 
 from .sdp import u1_sector_operators
@@ -189,6 +190,76 @@ class LadderDual:
             best = max(best, np.linalg.eigvalsh(W)[-1])
         return float(best)
 
+    KEYS = (("A", "b"), ("B", "b"), ("C", "b"), ("A", "t"), ("B", "t"), ("C", "t"),
+            ("A", "r"), ("C", "r"))
+
+    def lam_max_grad(self, y):
+        """lambda_max y su gradiente en y (Hellmann-Feynman con el autovector del
+        bloque que da el máximo; es un subgradiente si hay degeneración)."""
+        best, vec, blk = -np.inf, None, None
+        for red in self.blocks:
+            W = sum(c * red[key] for key, c in zip(self.KEYS, y))
+            d = W.shape[0]
+            w, V = eigh(W, subset_by_index=[d - 1, d - 1])
+            if w[0] > best:
+                best, vec, blk = w[0], V[:, 0], red
+        grad = np.array([np.real(vec.conj() @ blk[key] @ vec) for key in self.KEYS])
+        return float(best), grad
+
+    def norm_grad(self, phis):
+        """N es lineal en y: devuelve el vector g con N(y) = g . y."""
+        g = np.zeros(8)
+        for e, kind in enumerate(self.kinds):
+            ca, sb = 2 * np.cos(phis[e]), 2 * np.sin(phis[e])
+            if kind == "b":
+                g[0] += ca; g[1] += sb; g[2] += 1
+            elif kind == "t":
+                g[3] += ca; g[4] += sb; g[5] += 1
+            else:
+                g[6] += ca; g[7] += 1
+        return g
+
+    def v_dual_sdp(self, phis, solver="CLARABEL", **kw):
+        """Dual reducido resuelto como SDP: min t con t I - W_blk(y) >= 0 en
+        cada bloque (k, q) y N(y) = 1. Es exacto aunque lambda_max sea
+        degenerado en el óptimo. Devuelve (v, y, estado)."""
+        import cvxpy as cp
+
+        g = self.norm_grad(phis)
+        y = cp.Variable(8)
+        t = cp.Variable()
+        cons = [g @ y == 1]
+        for red in self.blocks:
+            d = red[("C", "b")].shape[0]
+            W = sum(y[m] * red[key] for m, key in enumerate(self.KEYS))
+            cons.append(t * np.eye(d) - W >> 0)
+        prob = cp.Problem(cp.Minimize(t), cons)
+        prob.solve(solver=solver, **kw)
+        return float(t.value), np.asarray(y.value), prob.status
+
+    def v_dual_grad(self, phis, y0):
+        """min lambda_max(W)/N con BFGS (gradiente exacto) desde y0 y pulido
+        final con Nelder-Mead. Devuelve (v, y) con N(y) = 1."""
+        g = self.norm_grad(phis)
+
+        def fun(z):
+            N = g @ z
+            if N <= 1e-12:
+                return 1e3, -g * 1e3
+            lam, dl = self.lam_max_grad(z)
+            return lam / N, (dl * N - lam * g) / N ** 2
+
+        y0 = np.asarray(y0, float) / (g @ y0)
+        res = minimize(fun, y0, jac=True, method="BFGS", options=dict(gtol=1e-11, maxiter=2000))
+        x = res.x / (g @ res.x)
+        res2 = minimize(lambda z: fun(z)[0], x, method="Nelder-Mead",
+                        options=dict(xatol=1e-11, fatol=1e-14, maxiter=4000, adaptive=True))
+        if res2.fun < res.fun:
+            x, f = res2.x, res2.fun
+        else:
+            f = res.fun
+        return float(f), x / (g @ x)
+
     def norm(self, y, phis):
         coef = self.witness_terms(y)
         N = 0.0
@@ -227,3 +298,12 @@ class LadderDual:
                 else:
                     break
         return best
+
+
+def witness_fluxes(y, L):
+    """Flujo de plaqueta del testigo, chi_b - chi_t (los peldaños, sin
+    componente B, no aportan), y la holonomía de la pata inferior, L chi_b.
+    La fase de una arista es la de alpha + i beta."""
+    chi_b = np.arctan2(y[1], y[0])
+    chi_t = np.arctan2(y[4], y[3])
+    return float(np.angle(np.exp(1j * (chi_b - chi_t)))), float(np.angle(np.exp(1j * L * chi_b)))
