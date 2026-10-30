@@ -13,7 +13,8 @@ se estima extrapolando a cero, linealmente, la separación del bloque que entra
 o sale, con los dos puntos de malla del lado en que está fuera; se da también
 la pendiente media del flujo del testigo en cada régimen.
 
-Escribe data/ladder_regimes_L<L>.csv.
+Escribe data/ladder_regimes_L<L>.csv (con rango o paso no por defecto,
+data/ladder_regimes_L<L>_<f0>_<f1>_<paso>.csv).
 
 Uso: (ulimit -v 12000000; python scripts/ladder_regimes.py L [f0/pi f1/pi paso/pi])
      por defecto L = 4 en [0, 1] con paso 0,0025.
@@ -47,7 +48,9 @@ def main():
         wf, _ = ladder.witness_fluxes(y, L)
         top = frozenset(lab for lab, g in zip(labels, gaps) if g < TOL)
         data.append((f, v, wf, gaps, top, st))
-    write_csv(f"ladder_regimes_L{L}.csv", ["f", "v_max", "flujo_testigo"] + [f"gap_k{k}_q{q}" for k, q in labels],
+    default = (f0, f1, step) == (0.0, 1.0, 0.0025)
+    name = f"ladder_regimes_L{L}.csv" if default else f"ladder_regimes_L{L}_{f0:g}_{f1:g}_{step:g}.csv"
+    write_csv(name, ["f", "v_max", "flujo_testigo"] + [f"gap_k{k}_q{q}" for k, q in labels],
               [[f, v, wf] + gaps for f, v, wf, gaps, _, _ in data])
     bad = sum(st not in ("optimal", "optimal_inaccurate") for *_, st in data)
     chk.check(bad == 0, f"{len(data)} puntos resueltos ({bad} con estado de fallo del solver)")
