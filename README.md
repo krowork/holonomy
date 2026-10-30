@@ -73,6 +73,7 @@ figuras en `figures/`.
 | `figures.py` | Figuras 1 y 2 a partir de `data/` | 5.3, 6.2 | 10 s |
 | `ladder.py` | Exploración: escalera 2×3 abierta (primal completo, holonomías abelianas y no abelianas), cotas de estrella y de plaqueta, primal U(1) en grafos, primal U(1)+traslación y dual reducido de la escalera periódica (2×4, 2×5) frente al primal, barrido del dual hasta 2×6; escribe `data/ladder.csv` | problema abierto 5 | ~75 min |
 | `ladder_flux.py` | Exploración: barrido fino del flujo de plaqueta en la escalera periódica 2×4, 2×5 (dual-SDP) y 2×6 (Nelder-Mead), flujo del testigo y mínimo en el flujo; escribe `data/ladder_flux.csv`. No está en `run_all.sh`; conviene limitar la memoria (`ulimit -v 12000000`) | problema abierto 5 | ~2 h |
+| `ladder_jump.py` | Exploración: ventana de la escalera 2×5 (f ≈ 0,510π–0,531π) en la que el flujo del testigo se mueve deprisa entre dos regímenes de bloques degenerados; escribe `data/ladder_jump.csv` | problema abierto 5 | ~15 min |
 
 `baedge2.py` guarda cada n en `data/bethe_cache/`; el repositorio incluye esa
 caché, así que `python scripts/baedge2.py --report` reproduce la tabla 3 sin

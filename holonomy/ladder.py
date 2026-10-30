@@ -173,7 +173,9 @@ class LadderDual:
         self.n = 2 * L
         self.edges = ladder_edges(L, periodic=True)
         self.kinds = edge_kinds(L, periodic=True)
-        self.blocks = [red for _, _, red in symmetric_blocks(L)]
+        sb = symmetric_blocks(L)
+        self.labels = [(k, q) for k, q, _ in sb]
+        self.blocks = [red for _, _, red in sb]
 
     def witness_terms(self, y):
         """y = (alpha_b, beta_b, c_b, alpha_t, beta_t, c_t, alpha_r, c_r)."""
@@ -259,6 +261,25 @@ class LadderDual:
         else:
             f = res.fun
         return float(f), x / (g @ x)
+
+    def top_blocks(self, y, tol=1e-6):
+        """Bloques (k, q) cuyo autovalor máximo está a menos de tol de
+        lambda_max(W(y)), con sus valores: muestra la degeneración del óptimo."""
+        tops = []
+        for lab, red in zip(self.labels, self.blocks):
+            W = sum(c * red[key] for key, c in zip(self.KEYS, y))
+            tops.append((lab, np.linalg.eigvalsh(W)[-1]))
+        lam = max(w for _, w in tops)
+        return [(lab, w) for lab, w in tops if w > lam - tol]
+
+    def block_gaps(self, y, labels):
+        """lambda_max(W(y)) menos el autovalor máximo de cada bloque de labels."""
+        tops = {}
+        for lab, red in zip(self.labels, self.blocks):
+            W = sum(c * red[key] for key, c in zip(self.KEYS, y))
+            tops[lab] = np.linalg.eigvalsh(W)[-1]
+        lam = max(tops.values())
+        return [float(lam - tops[lab]) for lab in labels]
 
     def norm(self, y, phis):
         coef = self.witness_terms(y)
