@@ -98,6 +98,10 @@ def test_escalera_dual_por_generacion_de_columnas():
     vd, _, st, gap = Ds.v_dual_cg(ph, **opts)
     assert st == "optimal" and gap < 1e-8
     assert vd == pytest.approx(vs, abs=1e-8)
+    # Solo los bloques k <= L (los k > L tienen el mismo espectro): el mismo valor.
+    vh, _, st, gap = ladder.LadderDual(4, dense_max=4, half=True).v_dual_cg(ph, **opts)
+    assert st == "optimal" and gap < 1e-8
+    assert vh == pytest.approx(vs, abs=1e-8)
 
 
 def test_escalera_top_eig_lanczos():

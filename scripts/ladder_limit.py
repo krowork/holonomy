@@ -9,7 +9,8 @@ contorno) no debería contar en el límite.
 Para cada L, en f = pi y psi = 0, pi/4, pi/2, 3pi/4, pi, el dual reducido por
 generación de columnas (LadderDual.v_dual_cg) con bloques dispersos de
 dimensión > DENSE_MAX y Lanczos (eigsh): con L >= 8 los bloques densos no caben
-en memoria. Comprobaciones:
+en memoria. Solo los bloques k <= L (LadderDual half): los k > L tienen el
+mismo espectro; la columna bloques solo da los k <= L. Comprobaciones:
   1. en cada punto las cotas inferior y superior difieren menos de 1e-8;
   2. con L = 4..7, coincide con los mapas ya calculados (SDP completo en L = 4,
      5; generación de columnas densa en L = 6, 7) a <= 1e-8;
@@ -20,7 +21,7 @@ Escribe data/ladder_limit_L<L>.csv para cada L, al terminarlo (un fallo en un
 L no pierde los anteriores).
 
 Uso: (ulimit -v 12000000; python scripts/ladder_limit.py [L ...])   por defecto 4..10
-Cada punto se resuelve en frío en un proceso hijo nuevo (Pool con
+Cada punto se resuelve en frío (y da su pico de memoria) en un proceso hijo nuevo (Pool con
 maxtasksperchild=1): encadenados en un mismo proceso, la memoria llegó a ~10 GB
 en L = 10, frente a ~4 GB de un punto aislado.
 """
@@ -28,6 +29,7 @@ import _common  # noqa: F401  (fija OMP_NUM_THREADS antes de numpy)
 from _common import CLARABEL_OPTS, Checker
 
 import csv
+import resource
 import sys
 import time
 from multiprocessing import Pool
@@ -61,13 +63,14 @@ def point(args):
     """v en (f = pi, psi), en frío, con los bloques degenerados del testigo."""
     L, psi = args
     t0 = time.time()
-    D = ladder.LadderDual(L, dense_max=DENSE_MAX)
+    D = ladder.LadderDual(L, dense_max=DENSE_MAX, half=True)
     ph = ladder.abelian_phases(L, np.pi, periodic=True, psi=psi)
     v, y, st, gap = D.v_dual_cg(ph, **CLARABEL_OPTS)
     gaps = D.block_gaps(y, D.labels)
     top = " ".join(f"{k}:{q}" for (k, q), g in zip(D.labels, gaps) if g < GAP_TOL)
     dmax = max(r[("C", "b")].shape[0] for r in D.blocks)
-    return v, st, gap, top, time.time() - t0, len(D.blocks), dmax
+    mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1e6
+    return v, st, gap, top, time.time() - t0, len(D.blocks), dmax, mem
 
 
 def main():
@@ -77,11 +80,11 @@ def main():
     for L in Ls:
         rows, vs = [], []
         for psi in PSIS:
-            v, st, gap, top, dt, nb, dmax = pool.apply(point, ((L, psi),))
+            v, st, gap, top, dt, nb, dmax, mem = pool.apply(point, ((L, psi),))
             if psi == 0:
                 chk.info(f"2x{L}: {nb} bloques (máx. {dmax})")
             chk.check(st == "optimal" and gap < TOL, f"2x{L} psi/pi={psi / np.pi:.2f}: v = {v:.10f}, "
-                      f"cotas a {gap:.1e} ({st}, {dt:.0f} s)")
+                      f"cotas a {gap:.1e} ({st}, {dt:.0f} s, pico {mem:.1f} GB)")
             ref = from_map(L, psi)
             if ref is not None:
                 chk.check(abs(v - ref) < TOL, f"   = mapa {MAPS[L]}: {ref:.10f}, |dif| = {abs(v - ref):.1e}")

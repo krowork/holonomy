@@ -114,16 +114,17 @@ def momentum_isometries(L, basis):
     return out
 
 
-def symmetric_blocks(L, dense_max=None):
+def symmetric_blocks(L, dense_max=None, half=False, keys=None):
     """Bloques (k giros, momento q) de la escalera periódica 2xL, con los
     operadores sumados por tipo de arista: ("A"|"B"|"C", "b"|"t"|"r") y
     ("Z", "b"|"t") (Z total de cada pata), como matrices densas o, en los
-    bloques de dimensión mayor que dense_max, dispersas (CSR)."""
+    bloques de dimensión mayor que dense_max, dispersas (CSR). Con half, solo
+    los sectores k <= L; con keys, solo esas claves."""
     n = 2 * L
     edges = ladder_edges(L, periodic=True)
     kinds = edge_kinds(L, periodic=True)
     out = []
-    for k in range(n + 1):
+    for k in range(L + 1 if half else n + 1):
         basis, ops = u1_sector_operators(n, edges, k)
         summed = {}
         for kind in "btr":
@@ -132,6 +133,9 @@ def symmetric_blocks(L, dense_max=None):
                 summed[(name, kind)] = sum(ops[(name, e)] for e in es)
         summed[("Z", "b")] = sum(ops[("Z", i)] for i in range(L))
         summed[("Z", "t")] = sum(ops[("Z", i)] for i in range(L, n))
+        del ops
+        if keys is not None:
+            summed = {key: summed[key] for key in keys}
         for q, V in momentum_isometries(L, basis):
             Vh = V.conj().T
             dense = dense_max is None or V.shape[1] <= dense_max
@@ -178,14 +182,21 @@ class LadderDual:
     Con dense_max, los bloques de dimensión mayor se guardan dispersos y sus
     autovalores superiores se calculan por Lanczos (eigsh): es lo que permite
     L >= 8 (los bloques densos no caben en memoria). Solo lam_max, top_blocks,
-    block_gaps y v_dual_cg admiten bloques dispersos."""
+    block_gaps y v_dual_cg admiten bloques dispersos.
 
-    def __init__(self, L, dense_max=None):
+    Con half, solo los bloques k <= L y las claves de KEYS: el volteo global
+    prod X compuesto con la conjugación compleja deja invariantes A, B y C y
+    lleva el bloque (k, q) al (2L - k, -q), así que los dos tienen el mismo
+    espectro para todo y y los bloques k > L no cambian lambda_max ni el
+    dual. Ahorra ~40 % de memoria (lo que permite L = 11); labels y
+    top_blocks solo dan entonces los bloques k <= L."""
+
+    def __init__(self, L, dense_max=None, half=False):
         self.L = L
         self.n = 2 * L
         self.edges = ladder_edges(L, periodic=True)
         self.kinds = edge_kinds(L, periodic=True)
-        sb = symmetric_blocks(L, dense_max)
+        sb = symmetric_blocks(L, dense_max, half, self.KEYS if half else None)
         self.labels = [(k, q) for k, q, _ in sb]
         self.blocks = [red for _, _, red in sb]
 
@@ -210,10 +221,9 @@ class LadderDual:
         return w[o], V[:, o]
 
     def lam_max(self, y):
-        coef = self.witness_terms(y)
         best = -np.inf
         for red in self.blocks:
-            W = sum(c * red[key] for key, c in coef.items())
+            W = sum(c * red[key] for key, c in zip(self.KEYS, y))
             best = max(best, self.top_eig(W, 1)[0][-1])
         return float(best)
 
@@ -294,10 +304,11 @@ class LadderDual:
             y0 = np.array([np.cos(pb), np.sin(pb), 1.0, np.cos(pt), np.sin(pt), 1.0, 1.0, 1.0])
         y0 = np.asarray(y0, float) / (g @ y0)
 
-        def blocks_at(y):
-            return [sum(c * red[key] for key, c in zip(self.KEYS, y)) for red in self.blocks]
+        def block_at(red, y):
+            # Un W(y) cada vez: con L >= 10 la lista de todos no cabe en memoria.
+            return sum(c * red[key] for key, c in zip(self.KEYS, y))
 
-        U = [self.top_eig(W, r0)[1] for W in blocks_at(y0)]
+        U = [self.top_eig(block_at(red, y0), r0)[1] for red in self.blocks]
         best = (np.inf, y0)
         lower = -np.inf
         for _ in range(maxiter):
@@ -312,8 +323,7 @@ class LadderDual:
             if y.value is None:
                 return best[0], best[1], prob.status, best[0] - lower
             lower, yv = float(t.value), np.asarray(y.value)
-            Ws = blocks_at(yv)
-            eig = [self.top_eig(W, add + 1) for W in Ws]
+            eig = [self.top_eig(block_at(red, yv), add + 1) for red in self.blocks]
             upper = max(w[-1] for w, _ in eig)
             if upper < best[0]:
                 best = (upper, yv)
@@ -323,7 +333,7 @@ class LadderDual:
                 new = V[:, w > lower + tol / 2][:, -add:]
                 if new.shape[1]:
                     if U[b].shape[1] + new.shape[1] > rmax:
-                        _, Z = np.linalg.eigh(U[b].conj().T @ (Ws[b] @ U[b]))
+                        _, Z = np.linalg.eigh(U[b].conj().T @ (block_at(self.blocks[b], yv) @ U[b]))
                         U[b] = U[b] @ Z[:, -(rmax // 2):]
                     Q, s, _ = np.linalg.svd(np.hstack([U[b], new]), full_matrices=False)
                     U[b] = Q[:, s > 1e-10 * s[0]]
