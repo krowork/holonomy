@@ -42,7 +42,7 @@ figuras en `figures/`.
 | `xxz` | Diagonalización exacta del anillo XXZ con flujo, por sectores de magnetización |
 | `bethe` | Ecuaciones de Bethe con flujo en los tres regímenes (Δ > 0), con derivada implícita en el flujo |
 | `dual` | Objetivo dual (Prop. 4), fórmula de un parámetro, criterio de borde (Prop. 6), anchura de la ventana |
-| `ladder` | Escaleras de dos patas: aristas, flujos de plaqueta, dual reducido de la escalera periódica (SDP completo, y por generación de columnas con cotas certificadas para L ≥ 6) |
+| `ladder` | Escaleras de dos patas: aristas, flujos de plaqueta, dual reducido de la escalera periódica (SDP completo, y por generación de columnas con cotas certificadas para L ≥ 6, con bloques dispersos y Lanczos para L ≥ 8) |
 | `asymptotics` | Coeficiente de 1/n², rigidez finita D_n y anchura asintótica |
 | `report` | Salida OK/FALLO y lectura/escritura de datos |
 
@@ -78,6 +78,7 @@ figuras en `figures/`.
 | `ladder_unique.py` | Exploración: unicidad del testigo óptimo de la 2×4 (rango de cada coeficiente en el conjunto casi óptimo, ε = 10⁻⁴…10⁻⁶) | problema abierto 5 | 11 min |
 | `ladder_weights.py` | Exploración: rango y pesos por bloque del estado óptimo simétrico de la 2×4 en f = 0,70π–0,85π; escribe `data/ladder_weights_L4.csv` | problema abierto 5 | 2 min |
 | `ladder_psi.py` | Exploración: holonomía de las patas ψ en la escalera periódica; mapa v(f, ψ), cotas de estrella, plaqueta y patas como anillos, simetría ψ → −ψ y contraste con el primal (L = 4); `python scripts/ladder_psi.py 4 21` escribe `data/ladder_psi_L4.csv`; `python scripts/ladder_psi.py 5 11`, `data/ladder_psi_L5.csv`; `python scripts/ladder_psi.py 5 11 41 6` (41 valores de ψ, 6 procesos), `data/ladder_psi_L5_11x41.csv`; `python scripts/ladder_psi.py 6 21 41` (L ≥ 6 por generación de columnas), `data/ladder_psi_L6_21x41.csv`; `python scripts/ladder_psi.py 7 21 41`, `data/ladder_psi_L7_21x41.csv`; cada pasada escribe también el mínimo en ψ de cada fila, refinado por Brent (`data/ladder_psi_min_L<L>…csv`) | problema abierto 5 | 13 min (L = 4; pico de 9,8 GB por el contraste con el primal); 61 min (L = 5, malla 11×11; pico de 2,6 GB); 92 min (L = 5, 11×41 con 6 procesos; ~2,6 GB por proceso); 98 min (L = 6, 21×41; pico de 0,6 GB); 3 h 47 min (L = 7, 21×41; pico de 1,7 GB) |
+| `ladder_limit.py` | Exploración: límite L → ∞ en f = π; v para L = 4..10 y ψ = 0, π/4, π/2, 3π/4, π por generación de columnas con bloques dispersos (dimensión > 100) y Lanczos, cada punto en frío en un proceso hijo nuevo; contraste con los mapas de `ladder_psi.py` (L = 4..7) y simetría ψ → −ψ; escribe `data/ladder_limit_L<L>.csv` | problema abierto 5 | 80 min (L = 4..10; la 2×10, ~9 min y ~4 GB por punto) |
 
 `baedge2.py` guarda cada n en `data/bethe_cache/`; el repositorio incluye esa
 caché, así que `python scripts/baedge2.py --report` reproduce la tabla 3 sin

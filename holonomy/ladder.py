@@ -28,6 +28,7 @@ el primal se calculan por bloques de número de giros k y momento q.
 import numpy as np
 import scipy.sparse as sp
 from scipy.linalg import eigh
+from scipy.sparse.linalg import eigsh
 from scipy.optimize import minimize
 
 from .sdp import u1_sector_operators
@@ -113,10 +114,11 @@ def momentum_isometries(L, basis):
     return out
 
 
-def symmetric_blocks(L):
+def symmetric_blocks(L, dense_max=None):
     """Bloques (k giros, momento q) de la escalera periódica 2xL, con los
     operadores sumados por tipo de arista: ("A"|"B"|"C", "b"|"t"|"r") y
-    ("Z", "b"|"t") (Z total de cada pata), como matrices densas."""
+    ("Z", "b"|"t") (Z total de cada pata), como matrices densas o, en los
+    bloques de dimensión mayor que dense_max, dispersas (CSR)."""
     n = 2 * L
     edges = ladder_edges(L, periodic=True)
     kinds = edge_kinds(L, periodic=True)
@@ -132,7 +134,9 @@ def symmetric_blocks(L):
         summed[("Z", "t")] = sum(ops[("Z", i)] for i in range(L, n))
         for q, V in momentum_isometries(L, basis):
             Vh = V.conj().T
-            out.append((k, q, {key: (Vh @ (M @ V)).toarray() for key, M in summed.items()}))
+            dense = dense_max is None or V.shape[1] <= dense_max
+            out.append((k, q, {key: (Vh @ (M @ V)).toarray() if dense else (Vh @ (M @ V)).tocsr()
+                               for key, M in summed.items()}))
     return out
 
 
@@ -169,14 +173,19 @@ def primal_symmetric(L, phis, solver="CLARABEL", return_blocks=False, **kw):
 
 
 class LadderDual:
-    """lambda_max del testigo de la escalera periódica, por bloques (k, q)."""
+    """lambda_max del testigo de la escalera periódica, por bloques (k, q).
 
-    def __init__(self, L):
+    Con dense_max, los bloques de dimensión mayor se guardan dispersos y sus
+    autovalores superiores se calculan por Lanczos (eigsh): es lo que permite
+    L >= 8 (los bloques densos no caben en memoria). Solo lam_max, top_blocks,
+    block_gaps y v_dual_cg admiten bloques dispersos."""
+
+    def __init__(self, L, dense_max=None):
         self.L = L
         self.n = 2 * L
         self.edges = ladder_edges(L, periodic=True)
         self.kinds = edge_kinds(L, periodic=True)
-        sb = symmetric_blocks(L)
+        sb = symmetric_blocks(L, dense_max)
         self.labels = [(k, q) for k, q, _ in sb]
         self.blocks = [red for _, _, red in sb]
 
@@ -187,12 +196,25 @@ class LadderDual:
                 ("A", "t"): at, ("B", "t"): bt, ("C", "t"): ct,
                 ("A", "r"): ar, ("B", "r"): 0.0, ("C", "r"): cr}
 
+    @staticmethod
+    def top_eig(W, r):
+        """Los r autovalores mayores de W (ascendentes) y sus autovectores:
+        eigh si W es densa o pequeña, Lanczos si es dispersa."""
+        d = W.shape[0]
+        r = min(r, d)
+        if not sp.issparse(W) or d <= max(4 * r, 64):
+            w, V = np.linalg.eigh(W.toarray() if sp.issparse(W) else W)
+            return w[-r:], V[:, -r:]
+        w, V = eigsh(W, k=r, which="LA")
+        o = np.argsort(w)
+        return w[o], V[:, o]
+
     def lam_max(self, y):
         coef = self.witness_terms(y)
         best = -np.inf
         for red in self.blocks:
             W = sum(c * red[key] for key, c in coef.items())
-            best = max(best, np.linalg.eigvalsh(W)[-1])
+            best = max(best, self.top_eig(W, 1)[0][-1])
         return float(best)
 
     KEYS = (("A", "b"), ("B", "b"), ("C", "b"), ("A", "t"), ("B", "t"), ("C", "t"),
@@ -243,7 +265,7 @@ class LadderDual:
         return float(t.value), np.asarray(y.value), prob.status
 
     def v_dual_cg(self, phis, y0=None, tol=1e-8, r0=6, add=4, box=50.0, maxiter=200,
-                  solver="CLARABEL", **kw):
+                  rmax=40, solver="CLARABEL", **kw):
         """El SDP de v_dual_sdp por generación de columnas, para bloques en los
         que el SDP completo no cabe en memoria (L >= 6: Clarabel forma bloques
         densos de tamaño (n(n+1)/2)^2 por cono).
@@ -256,7 +278,10 @@ class LadderDual:
         autovectores de mayor autovalor por encima de t y se repite hasta que
         las cotas difieran menos de tol. Arranca en y0 (o en Heisenberg con
         la fase de los datos) con los r0 autovectores superiores de cada
-        bloque.
+        bloque. Si un subespacio supera rmax columnas, se poda a los rmax/2
+        vectores de Ritz de mayor autovalor de U^H W(y) U (la memoria de
+        Clarabel crece como la cuarta potencia del rango); la cota inferior
+        sigue siendo válida con cualquier subespacio.
 
         Devuelve (v, y, estado, diferencia de cotas): v es la cota superior;
         estado 'optimal' si la diferencia es < tol y el testigo no toca la
@@ -272,10 +297,7 @@ class LadderDual:
         def blocks_at(y):
             return [sum(c * red[key] for key, c in zip(self.KEYS, y)) for red in self.blocks]
 
-        U = []
-        for W in blocks_at(y0):
-            _, V = np.linalg.eigh(W)
-            U.append(V[:, -min(r0, W.shape[0]):])
+        U = [self.top_eig(W, r0)[1] for W in blocks_at(y0)]
         best = (np.inf, y0)
         lower = -np.inf
         for _ in range(maxiter):
@@ -283,7 +305,7 @@ class LadderDual:
             t = cp.Variable()
             cons = [g @ y == 1, cp.abs(y) <= box]
             for red, Ub in zip(self.blocks, U):
-                Wc = sum(y[m] * (Ub.conj().T @ red[key] @ Ub) for m, key in enumerate(self.KEYS))
+                Wc = sum(y[m] * (Ub.conj().T @ (red[key] @ Ub)) for m, key in enumerate(self.KEYS))
                 cons.append(t * np.eye(Ub.shape[1]) - Wc >> 0)
             prob = cp.Problem(cp.Minimize(t), cons)
             prob.solve(solver=solver, **kw)
@@ -291,7 +313,7 @@ class LadderDual:
                 return best[0], best[1], prob.status, best[0] - lower
             lower, yv = float(t.value), np.asarray(y.value)
             Ws = blocks_at(yv)
-            eig = [np.linalg.eigh(W) for W in Ws]
+            eig = [self.top_eig(W, add + 1) for W in Ws]
             upper = max(w[-1] for w, _ in eig)
             if upper < best[0]:
                 best = (upper, yv)
@@ -300,8 +322,12 @@ class LadderDual:
             for b, (w, V) in enumerate(eig):
                 new = V[:, w > lower + tol / 2][:, -add:]
                 if new.shape[1]:
+                    if U[b].shape[1] + new.shape[1] > rmax:
+                        _, Z = np.linalg.eigh(U[b].conj().T @ (Ws[b] @ U[b]))
+                        U[b] = U[b] @ Z[:, -(rmax // 2):]
                     Q, s, _ = np.linalg.svd(np.hstack([U[b], new]), full_matrices=False)
                     U[b] = Q[:, s > 1e-10 * s[0]]
+        self.last_ranks = [Ub.shape[1] for Ub in U]
         gap = best[0] - lower
         on_box = np.max(np.abs(best[1])) > 0.99 * box
         st = "optimal" if gap < tol and not on_box else ("en_caja" if on_box else "no_converge")
@@ -363,7 +389,7 @@ class LadderDual:
         tops = []
         for lab, red in zip(self.labels, self.blocks):
             W = sum(c * red[key] for key, c in zip(self.KEYS, y))
-            tops.append((lab, np.linalg.eigvalsh(W)[-1]))
+            tops.append((lab, self.top_eig(W, 1)[0][-1]))
         lam = max(w for _, w in tops)
         return [(lab, w) for lab, w in tops if w > lam - tol]
 
@@ -372,7 +398,7 @@ class LadderDual:
         tops = {}
         for lab, red in zip(self.labels, self.blocks):
             W = sum(c * red[key] for key, c in zip(self.KEYS, y))
-            tops[lab] = np.linalg.eigvalsh(W)[-1]
+            tops[lab] = self.top_eig(W, 1)[0][-1]
         lam = max(tops.values())
         return [float(lam - tops[lab]) for lab in labels]
 

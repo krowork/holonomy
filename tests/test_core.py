@@ -93,3 +93,20 @@ def test_escalera_dual_por_generacion_de_columnas():
     vc, _, st, gap = D.v_dual_cg(ph, **opts)
     assert st == "optimal" and gap < 1e-8
     assert vc == pytest.approx(vs, abs=1e-8)
+    # Con bloques dispersos y Lanczos (dense_max pequeño), el mismo valor.
+    Ds = ladder.LadderDual(4, dense_max=4)
+    vd, _, st, gap = Ds.v_dual_cg(ph, **opts)
+    assert st == "optimal" and gap < 1e-8
+    assert vd == pytest.approx(vs, abs=1e-8)
+
+
+def test_escalera_top_eig_lanczos():
+    # top_eig con una matriz dispersa grande (pasa por eigsh) = eigh densa.
+    import scipy.sparse as sp
+    from holonomy import ladder
+    A = sp.random(300, 300, density=0.02, random_state=1) + 1j * sp.random(300, 300, density=0.02, random_state=2)
+    W = (A + A.conj().T).tocsr()
+    w, V = ladder.LadderDual.top_eig(W, 5)
+    we, Ve = np.linalg.eigh(W.toarray())
+    assert w == pytest.approx(we[-5:], abs=1e-9)
+    assert np.allclose(W @ V, V * w, atol=1e-8)
