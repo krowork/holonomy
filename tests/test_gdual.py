@@ -118,3 +118,23 @@ def test_rango_infactible_lanza():
     edges, Rs = diamante_aleatorio(11)
     with pytest.raises(RuntimeError):
         GraphDual(4, edges).witness_spread(Rs, 0.0, 0.0, **OPTS)
+
+
+def test_top_eig_sin_convergencia_de_arpack(monkeypatch):
+    # En la cadena de 2 con flujos (0, pi) ARPACK no converge en una iteración de
+    # v_dual_cg (medido en scripts/diamond_chain2.py): top_eig pasa a eigh denso.
+    from scipy.sparse.linalg import ArpackNoConvergence
+
+    from holonomy import ladder
+
+    def falla(*a, **k):
+        raise ArpackNoConvergence("sin convergencia", np.zeros(0), np.zeros((0, 0)))
+
+    monkeypatch.setattr(ladder, "eigsh", falla)
+    edges, Rs = diamond.chain_edges(2), diamond.chain_rotations(2, [(Rz(0.3), Rx(1.1))] * 2)
+    D = GraphDual(7, edges)
+    W = D.witness(D.norm_vec(Rs))
+    w, V = D.top_eig(W, 5)
+    ref = np.linalg.eigvalsh(W.toarray())[-5:]
+    assert w == pytest.approx(ref, abs=1e-10)
+    assert np.allclose(W @ V, V * w, atol=1e-9)

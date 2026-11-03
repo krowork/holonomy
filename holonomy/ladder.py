@@ -28,7 +28,7 @@ el primal se calculan por bloques de número de giros k y momento q.
 import numpy as np
 import scipy.sparse as sp
 from scipy.linalg import eigh
-from scipy.sparse.linalg import eigsh
+from scipy.sparse.linalg import ArpackNoConvergence, eigsh
 from scipy.optimize import minimize
 
 from .sdp import u1_sector_operators
@@ -210,13 +210,19 @@ class LadderDual:
     @staticmethod
     def top_eig(W, r):
         """Los r autovalores mayores de W (ascendentes) y sus autovectores:
-        eigh si W es densa o pequeña, Lanczos si es dispersa."""
+        eigh si W es densa o pequeña, Lanczos si es dispersa. Si Lanczos no
+        converge (visto con n = 7 en la cadena de 2 diamantes, flujos (0, pi):
+        autovalores degenerados), eigh denso."""
         d = W.shape[0]
         r = min(r, d)
         if not sp.issparse(W) or d <= max(4 * r, 64):
             w, V = np.linalg.eigh(W.toarray() if sp.issparse(W) else W)
             return w[-r:], V[:, -r:]
-        w, V = eigsh(W, k=r, which="LA")
+        try:
+            w, V = eigsh(W, k=r, which="LA")
+        except ArpackNoConvergence:
+            w, V = np.linalg.eigh(W.toarray())
+            return w[-r:], V[:, -r:]
         o = np.argsort(w)
         return w[o], V[:, o]
 
