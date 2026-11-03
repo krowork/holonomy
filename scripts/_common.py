@@ -91,15 +91,18 @@ def edge_operators(n, i):
     return -(XX + YY), XY - YX, -ZZ
 
 
-def edge_mismatch(rho, n, v, Rs):
+def edge_mismatch(rho, n, v, Rs, edges=None):
     """Error máximo entre las 15 correlaciones de cada arista de rho y las de
-    rho_e(v) = (I + v sum T_ab s_a s_b)/4 con T = -R_e (marginales nulas)."""
+    rho_e(v) = (I + v sum T_ab s_a s_b)/4 con T = -R_e (marginales nulas).
+    Con edges=None, las aristas del anillo i -> i+1; si no, las aristas
+    orientadas dadas, en el orden de Rs."""
     from holonomy.paulis import edge_correlations
+    if edges is None:
+        edges = [(i, (i + 1) % n) for i in range(n)]
     err = 0.0
-    for i in range(n):
-        j = (i + 1) % n
+    for (i, j), R in zip(edges, Rs, strict=True):
         T, mi, mj = edge_correlations(rho, n, i, j)
-        err = max(err, np.max(np.abs(T + v * np.asarray(Rs[i]))),
+        err = max(err, np.max(np.abs(T + v * np.asarray(R))),
                   np.max(np.abs(mi)), np.max(np.abs(mj)))
     return err
 

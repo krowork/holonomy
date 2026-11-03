@@ -1,0 +1,15 @@
+punto,v,estado,err_optimo,err_explicito
+"(0,0,0)",0.333333333229,optimal_inaccurate,4.996e-15,5.551e-17
+"(pi,pi,pi/2)",0.333333333351,optimal_inaccurate,1.376e-12,5.551e-17
+"(2.7128,2.7217,1.1574)",0.333333334090,optimal_inaccurate,1.832e-12,8.327e-17
+"(3.0423,2.9397,1.4442)",0.333333334669,optimal_inaccurate,7.251e-13,5.551e-17
+"(3.0241,2.1134,2.8312)",0.333333333757,optimal_inaccurate,5.183e-13,5.551e-17
+"(2.5161,0.7617,1.3873)",0.333333333959,optimal_inaccurate,6.686e-10,5.551e-17
+"(1.2695,1.2339,0.0395)",0.333333423492,optimal_inaccurate,5.229e-14,5.551e-17
+"(1.3906,2.2531,2.4403)",0.333333333659,optimal_inaccurate,2.470e-10,5.551e-17
+aleatorias #0,0.333333336686,optimal_inaccurate,2.542e-12,1.110e-16
+aleatorias #1,0.333333339363,optimal_inaccurate,7.669e-13,1.110e-16
+aleatorias #2,0.333333354171,optimal_inaccurate,5.080e-09,8.327e-17
+aleatorias #3,0.333333344872,optimal_inaccurate,1.818e-13,1.110e-16
+aleatorias #4,0.333333337168,optimal_inaccurate,2.635e-09,5.551e-17
+aleatorias #5,0.333333337290,optimal_inaccurate,4.779e-11,1.110e-16
