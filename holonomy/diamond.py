@@ -28,6 +28,7 @@ Dual reducido de la cadena cerrada (DiamondDual): ver su docstring.
 import numpy as np
 
 from .paulis import Rz, Ry
+from . import periodic
 from .periodic import PeriodicDual
 
 KINDS = ("ju", "jw", "uw", "uj", "wj")
@@ -111,6 +112,15 @@ def translation_perm(k):
 
 def _z_groups(k):
     return {"j": range(0, 3 * k, 3), "u": range(1, 3 * k, 3), "w": range(2, 3 * k, 3)}
+
+
+def ring_primal(k, phis, solver="CLARABEL", **kw):
+    """Primal de la cadena cerrada reducido por U(1) y traslación de una
+    celda (periodic.primal_reduced): cota inferior de v_max, exacta con datos
+    uniformes en el gauge simétrico. Devuelve (v, estado). Cabe con k <= 3;
+    con k = 4 los bloques de dimensión 236 no caben en Clarabel."""
+    return periodic.primal_reduced(n_sites(k, True), chain_edges(k, True), edge_kinds(k, True),
+                                   translation_perm(k), k, _z_groups(k), phis, solver, **kw)
 
 
 class DiamondDual(PeriodicDual):

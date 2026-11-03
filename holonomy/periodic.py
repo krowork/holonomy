@@ -128,6 +128,72 @@ def symmetric_blocks(n, edges, kinds, perm, n_cells, z_groups, dense_max=None, h
     return out
 
 
+def _orbit(e, perm, n_cells):
+    i, j = e
+    out = set()
+    for _ in range(n_cells):
+        out.add((i, j))
+        i, j = perm[i], perm[j]
+    return out
+
+
+def primal_reduced(n, edges, kinds, perm, n_cells, z_groups, phis, solver="CLARABEL",
+                   **kw):
+    """Primal reducido por U(1) y traslación: max v con rho = suma directa de
+    bloques (k giros, q momento) de symmetric_blocks, tr rho = 1 y las
+    restricciones sumadas por tipo, sum_{e de tipo t} <A_e> = 2 m_t v cos phi_t,
+    <B_e> ... 2 m_t v sin phi_t, <C_e> ... m_t v (m_t aristas del tipo t), y
+    <Z> total de cada grupo = 0. Devuelve (v, estado).
+
+    Es una cota inferior de v_max: un rho diagonal por bloques (k, q) conmuta
+    con la traslación T, así que <O_e> = <O_{T e}>; si las aristas de cada
+    tipo forman una sola órbita de T (y los sitios de cada grupo Z también),
+    la restricción sumada equivale a la de cada arista (y la de Z a la de
+    cada sitio), luego rho es un estado factible del primal sin reducir y v
+    es alcanzable. Si los datos son invariantes (fase constante por tipo),
+    además es exacto: promediar un estado óptimo sobre U(1) y traslación da
+    otro estado óptimo de esta forma. Se exige ambas cosas (ValueError si un
+    tipo o un grupo no es una órbita o si la fase no es constante por tipo)."""
+    import cvxpy as cp
+
+    edges, kinds, perm = [tuple(e) for e in edges], list(kinds), list(perm)
+    for kd in dict.fromkeys(kinds):
+        es = [e for e, kk in zip(edges, kinds) if kk == kd]
+        if _orbit(es[0], perm, n_cells) != set(es):
+            raise ValueError(f"las aristas de tipo {kd} no son una sola órbita de la traslación")
+        ph = [phis[m] for m, kk in enumerate(kinds) if kk == kd]
+        if max(abs(np.exp(1j * p) - np.exp(1j * ph[0])) for p in ph) > 1e-12:
+            raise ValueError(f"la fase del tipo {kd} no es constante")
+    for grp, sites in z_groups.items():
+        orb, i = set(), list(sites)[0]
+        for _ in range(n_cells):
+            orb.add(i)
+            i = perm[i]
+        if orb != set(sites):
+            raise ValueError(f"el grupo Z {grp} no es una sola órbita de la traslación")
+    sb = symmetric_blocks(n, edges, kinds, perm, n_cells, z_groups)
+    v = cp.Variable()
+    cons, lin, tr = [], {}, 0
+    for _, _, red in sb:
+        d = next(iter(red.values())).shape[0]
+        X = cp.Variable((d, d), hermitian=True)
+        cons.append(X >> 0)
+        tr = tr + cp.real(cp.trace(X))
+        for key, M in red.items():
+            lin[key] = lin.get(key, 0) + cp.real(cp.sum(cp.multiply(M.T, X)))
+    cons.append(tr == 1)
+    for kd in dict.fromkeys(kinds):
+        m = kinds.index(kd)
+        cnt = kinds.count(kd)
+        cons += [lin[("A", kd)] == 2 * cnt * v * np.cos(phis[m]),
+                 lin[("B", kd)] == 2 * cnt * v * np.sin(phis[m]),
+                 lin[("C", kd)] == cnt * v]
+    cons += [lin[("Z", grp)] == 0 for grp in z_groups]
+    prob = cp.Problem(cp.Maximize(v), cons)
+    prob.solve(solver=solver, **kw)
+    return float(v.value), prob.status
+
+
 class PeriodicDual:
     """lambda_max del testigo W(y) = sum_m y_m O_{KEYS[m]} de un grafo
     periódico, por bloques (k, q) de symmetric_blocks.
@@ -274,7 +340,14 @@ class PeriodicDual:
         inferior pasa de la superior más allá del ruido del solver);
         'optimal' si -GAP_NEG <= diferencia < tol; 'no_converge' en otro
         caso. Si un SDP restringido no da solución, su estado de CVXPY
-        ('infeasible', ... o 'solver_error' si Clarabel lanza SolverError)."""
+        ('infeasible', ... o 'solver_error' si Clarabel lanza SolverError).
+
+        self.last_solver_status guarda el peor estado de CVXPY de todos los
+        SDP restringidos (como GraphDual.v_dual_cg): con 'optimal_inaccurate'
+        la cota inferior no está certificada (medido en la cadena cerrada de 2
+        diamantes: v 4e-8 por encima de v_max con estado 'optimal'), aunque
+        una cota inferior que pase de la superior más allá de GAP_NEG ya da
+        'cota_invalida'."""
         import cvxpy as cp
 
         g = self.norm_grad(phis)
@@ -290,6 +363,7 @@ class PeriodicDual:
         best = (np.inf, y0)
         lower = -np.inf
         yv = None
+        self.last_solver_status = None
         for _ in range(maxiter):
             y = cp.Variable(len(self.KEYS))
             t = cp.Variable()
@@ -302,6 +376,8 @@ class PeriodicDual:
                 prob.solve(solver=solver, **kw)
             except cp.error.SolverError:
                 pass
+            self.last_solver_status = self._worse(self.last_solver_status,
+                                                  prob.status or "solver_error")
             if y.value is None or t.value is None:
                 return best[0], best[1], prob.status or "solver_error", best[0] - lower
             lower, yv = float(t.value), np.asarray(y.value)
@@ -336,6 +412,16 @@ class PeriodicDual:
     # Diferencia de cotas negativa tolerada (ruido de Clarabel, ~1e-8): más
     # negativa, la cota inferior no es válida y el estado es "cota_invalida".
     GAP_NEG = 1e-7
+
+    _STATUS_RANK = {"optimal": 0, "optimal_inaccurate": 1}
+
+    @classmethod
+    def _worse(cls, a, b):
+        """El peor de dos estados de CVXPY (optimal < optimal_inaccurate <
+        cualquier otro; None es "ninguno todavía"), como GraphDual._worse."""
+        if a is None:
+            return b
+        return a if cls._STATUS_RANK.get(a, 2) >= cls._STATUS_RANK.get(b, 2) else b
 
     def witness_spread(self, phis, v_opt, eps, solver="CLARABEL", **kw):
         """Rango de cada coeficiente del testigo dentro del conjunto casi óptimo
