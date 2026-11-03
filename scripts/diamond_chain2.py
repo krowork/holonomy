@@ -6,7 +6,7 @@ centrales (1, 2) y (4, 5), 10 aristas orientadas.
 1. Mapa abeliano v(fA, fB) con holonomy.sdp.primal_u1_graph, los mismos
    flujos de triángulo en las dos celdas (gauge simétrico de
    holonomy.diamond.abelian_phases): malla 13x13 en [0, pi]^2 y la recta
-   fA = -fB (13 puntos; fA = fB es la diagonal de la malla).
+   fA = -fB (12 puntos con fA en (0, pi]; fA = fB es la diagonal de la malla).
    Comprobaciones: v <= 1/3 + 1e-8 en todos los puntos (cota del triángulo)
    y v = 1/3 a 1e-7 sin holonomía (fA = fB = 0).
 2. Simetrías v(fA, fB) = v(fB, fA) = v(-fA, -fB) a 1e-7 en 5 puntos al azar
@@ -47,8 +47,9 @@ Estimación: 4 x 5 x 20 = 400 evaluaciones, ~16 h, más ~25 min del mapa
 abeliano (unos 8 s por punto con primal_u1_graph).
 
 Escribe data/diamond_chain2_abel.csv (fA, fB, v, estado), data/diamond_chain2_rel.csv
-(theta_A, theta_B, gamma, v con Q = I, min_Q v, vector de rotación de Q,
-evaluaciones, fallos) y la caché data/diamond_chain2_evals.csv.
+(theta_A, theta_B, gamma, v con Q = I (nan si su estado no es 'optimal') y su
+estado, cota superior de min_Q v, vector de rotación de Q, evaluaciones,
+fallos, arranques en el tope) y la caché data/diamond_chain2_evals.csv.
 
 v_rel(tA, tB, g, starts=5, seed=0) se importa desde otros guiones (no
 ejecuta nada al importar).
@@ -65,6 +66,7 @@ from _common import CLARABEL_OPTS, Checker
 
 import csv
 import sys
+import warnings
 
 import numpy as np
 from scipy.optimize import minimize
@@ -91,6 +93,8 @@ _dual = None
 _warm = None
 # Evaluaciones de v_dual_cg con estado distinto de 'optimal' (no se usan como valor).
 fallos = []
+# Datos de la última llamada a v_rel (ver su docstring).
+info_v_rel = {"arranques_en_tope": 0}
 
 
 def v_abel(fA, fB):
@@ -106,13 +110,51 @@ def _key(tA, tB, g, rv):
     return tuple(round(float(x), 10) for x in (tA, tB, g, *rv))
 
 
+ESTADOS = ("optimal", "en_caja", "cota_invalida", "no_converge")
+
+
+def _parse_eval(row):
+    """(clave, (v, estado, gap)) de una fila de la caché, o None si la fila
+    no es válida (número de campos, flotantes, estado conocido)."""
+    if len(row) != len(EVAL_COLS) or row[7] not in ESTADOS:
+        return None
+    try:
+        x = [float(c) for c in row[:7]] + [float(row[8])]
+    except ValueError:
+        return None
+    return _key(*x[:3], x[3:6]), (x[6], row[7], x[7])
+
+
 def load():
+    """Carga la caché EVALS. Una última línea corrupta o truncada (corte a
+    medio escribir) se descarta con un aviso y se quita del fichero, para que
+    la siguiente fila no se pegue a ella; una línea corrupta en medio del
+    fichero, o una cabecera distinta de EVAL_COLS, lanza ValueError."""
     global _loaded
     _loaded = True
-    if EVALS.exists():
-        for r in csv.DictReader(open(EVALS)):
-            k = _key(r["theta_A"], r["theta_B"], r["gamma"], (r["rx"], r["ry"], r["rz"]))
-            _cache[k] = (float(r["v"]), r["estado"], float(r["gap"]))
+    if not EVALS.exists():
+        return
+    with open(EVALS, newline="") as fh:
+        lines = fh.read().splitlines(keepends=True)
+    if not lines:
+        return
+    if next(csv.reader(lines[:1])) != EVAL_COLS:
+        raise ValueError(f"{EVALS}: cabecera inesperada")
+    parsed = []
+    for i, line in enumerate(lines[1:], start=2):
+        row = next(csv.reader([line]), [])
+        if not row:
+            continue
+        ev = _parse_eval(row) if line.endswith("\n") else None
+        if ev is None:
+            if i == len(lines):
+                warnings.warn(f"{EVALS}: última línea {i} corrupta o truncada, se descarta: {line!r}")
+                with open(EVALS, "w", newline="") as fh:
+                    fh.writelines(lines[:-1])
+                break
+            raise ValueError(f"{EVALS}: línea {i} corrupta en medio del fichero: {line!r}")
+        parsed.append(ev)
+    _cache.update(parsed)
 
 
 def v_dual(tA, tB, g, rv):
@@ -160,19 +202,23 @@ def v_rel(tA, tB, g, starts=5, seed=0, maxfev=MAXFEV):
     evaluaciones de v_dual_cg (ver el docstring del módulo). Solo cuentan las
     evaluaciones con estado 'optimal'; las demás quedan en `fallos`.
     Devuelve (v mínimo, vector de rotación de Q); (inf, nan) si ninguna
-    evaluación fue 'optimal'."""
+    evaluación fue 'optimal'. Por el tope, v es una cota superior de min_Q v
+    (el v certificado de un Q concreto), no el mínimo convergido. Tras la
+    llamada, info_v_rel["arranques_en_tope"] (diccionario del módulo) dice
+    cuántos arranques acabaron en el tope."""
     rng = np.random.default_rng(seed)
     f = _objective(tA, tB, g)
     best = (f(np.zeros(3)), np.zeros(3))
-    v_rel.capped = 0
+    capped = 0
     for s in range(starts):
         x0 = np.zeros(3) if s == 0 else Rotation.random(random_state=rng.integers(2 ** 31)).as_rotvec()
         res = minimize(f, x0, method="Nelder-Mead",
                        options=dict(xatol=1e-3, fatol=1e-9, maxfev=maxfev,
                                     initial_simplex=x0 + np.vstack([np.zeros(3), 0.3 * np.eye(3)])))
-        v_rel.capped += res.nfev >= maxfev
+        capped += res.nfev >= maxfev
         if res.fun < best[0]:
             best = (float(res.fun), np.asarray(res.x))
+    info_v_rel["arranques_en_tope"] = int(capped)
     if not np.isfinite(best[0]):
         return np.inf, np.full(3, np.nan)
     return best
@@ -244,12 +290,16 @@ def main():
         vq, sq, _ = v_dual(*p, rv0)
         vmin_q, rv = v_rel(*p, starts=1 if rapido else 5, maxfev=4 if rapido else MAXFEV)
         nev = sum(1 for k in _cache if k[:3] == _key(*p, rv0)[:3])
+        capped = info_v_rel["arranques_en_tope"]
+        if sq != "optimal":
+            vq = np.nan  # no es un resultado (ya cuenta como FALLO en fallos)
         lab = f"({p[0] / pi:.4f}, {p[1] / pi:.4f}, {p[2] / pi:.4f}) pi"
-        chk.info(f"{lab}: v(Q = I) = {vq:.10f} [{sq}], min_Q v = {vmin_q:.10f}, dif = {vmin_q - vq:+.2e}, "
-                 f"Q = exp({np.array2string(rv, precision=4)}), {nev} evaluaciones, "
-                 f"{v_rel.capped} arranques en el tope")
-        rel.append([*p, f"{vq:.12f}", f"{vmin_q:.12f}", *rv, nev, len(fallos) - nf, v_rel.capped])
-    write_csv(f"diamond_chain2_rel{suf}.csv", ["theta_A", "theta_B", "gamma", "v_Q_I", "v_min_Q", "rx", "ry", "rz",
+        chk.info(f"{lab}: v(Q = I) = {vq:.10f} [{sq}], cota superior de min_Q v (Nelder-Mead con tope) = "
+                 f"{vmin_q:.10f}, dif = {vmin_q - vq:+.2e}, Q = exp({np.array2string(rv, precision=4)}), "
+                 f"{nev} evaluaciones, {capped} arranques en el tope")
+        rel.append([*p, f"{vq:.12f}", sq, f"{vmin_q:.12f}", *rv, nev, len(fallos) - nf, capped])
+    write_csv(f"diamond_chain2_rel{suf}.csv", ["theta_A", "theta_B", "gamma", "v_Q_I", "estado_Q_I",
+                                         "v_min_Q_cota_sup", "rx", "ry", "rz",
                                          "evaluaciones", "fallos", "arranques_en_tope"], rel)
     for k, st, gap in fallos:
         chk.check(False, f"v_dual_cg en (theta_A, theta_B, gamma, rv) = {k}: estado {st}, gap {gap:.1e}; "
