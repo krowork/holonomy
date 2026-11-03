@@ -250,7 +250,8 @@ def main():
     chk.check(abs(v0 - 1 / 3) < V_TOL, f"sin holonomía: v = {v0:.12f}, |v - 1/3| = {abs(v0 - 1 / 3):.1e}")
     nopt = sum(r[4] != "optimal" for r in rows)
     chk.info(f"primal U(1): {nopt} de {len(rows)} puntos con estado no 'optimal' (optimal_inaccurate de Clarabel)")
-    (amin, bmin), vmin = min(vals.items(), key=lambda t: t[1])
+    # v(0, π) = v(π, 0) por simetría: se redondea para que el empate no lo decida el ruido del solver
+    (amin, bmin), vmin = min(vals.items(), key=lambda t: (round(t[1], 8), t[0]))
     chk.info(f"mínimo de la malla: (fA, fB)/pi = ({amin / pi:.4f}, {bmin / pi:.4f}), v = {vmin:.10f}")
     for a in fs[1:]:
         chk.info(f"fA = {a / pi:.4f} pi: v(fA, fA) = {vals[(a, a)]:.10f}, v(fA, -fA) = {vals[(a, -a)]:.10f}")
