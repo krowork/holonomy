@@ -132,6 +132,7 @@ def test_primal_reducido_k2(fA, fB, psi):
     assert v == pytest.approx(vp, abs=1e-6)
 
 
+@pytest.mark.slow  # pico 5,4 GB de RSS; necesita ulimit -v >= 8 GB
 @pytest.mark.filterwarnings("ignore:Solution may be inaccurate")
 def test_primal_reducido_k3():
     # k = 3 sin flujo de triángulo, psi = pi: el primal reducido (cota
