@@ -168,3 +168,17 @@ def test_escalera_antiunitaria_theta():
         W1 = sum(c * D.blocks[m][key] for key, c in zip(D.KEYS, y))
         W2 = sum(c * D.blocks[m2][key] for key, c in zip(D.KEYS, y))
         assert np.linalg.eigvalsh(W1) == pytest.approx(np.linalg.eigvalsh(W2), abs=1e-12)
+
+
+def test_escalera_regresion_periodic():
+    # Valores calculados con ladder.py antes de extraer la maquinaria a
+    # holonomy/periodic.py (tarea 5): la extracción no cambia nada.
+    from holonomy import ladder
+    opts = dict(tol_gap_abs=1e-10, tol_gap_rel=1e-10, tol_feas=1e-10)
+    ph = ladder.abelian_phases(4, 0.5 * np.pi, periodic=True, psi=0.3 * np.pi)
+    v, _, _ = ladder.LadderDual(4).v_dual_sdp(ph, **opts)
+    assert v == pytest.approx(0.4348406811438309, abs=1e-10)
+    y = (0.3, -0.2, 0.5, 0.1, 0.4, -0.3, 0.7, 0.2)
+    assert ladder.LadderDual(5).lam_max(y) == pytest.approx(8.689812610957985, abs=1e-10)
+    assert ladder.LadderDual(5, dense_max=4, half=True).lam_max(y) == pytest.approx(
+        8.689812610957985, abs=1e-10)

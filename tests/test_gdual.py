@@ -125,12 +125,12 @@ def test_top_eig_sin_convergencia_de_arpack(monkeypatch):
     # v_dual_cg (medido en scripts/diamond_chain2.py): top_eig pasa a eigh denso.
     from scipy.sparse.linalg import ArpackNoConvergence
 
-    from holonomy import ladder
+    from holonomy import periodic
 
     def falla(*a, **k):
         raise ArpackNoConvergence("sin convergencia", np.zeros(0), np.zeros((0, 0)))
 
-    monkeypatch.setattr(ladder, "eigsh", falla)
+    monkeypatch.setattr(periodic, "eigsh", falla)
     edges, Rs = diamond.chain_edges(2), diamond.chain_rotations(2, [(Rz(0.3), Rx(1.1))] * 2)
     D = GraphDual(7, edges)
     W = D.witness(D.norm_vec(Rs))

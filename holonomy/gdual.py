@@ -29,7 +29,7 @@ v_dual_cg lo resuelve por generación de columnas, con conos PSD pequeños
 import numpy as np
 import scipy.sparse as sp
 
-from .ladder import LadderDual
+from .periodic import PeriodicDual
 
 _I2 = sp.identity(2, dtype=complex, format="csr")
 _PAULI = (sp.csr_matrix(np.array([[0, 1], [1, 0]], dtype=complex)),
@@ -51,7 +51,7 @@ class GraphDual:
     """Testigo W(y) = sum_e sum_ab y_{e,ab} sigma_a^i sigma_b^j en el grafo
     (n, edges); y es un vector de 9|E| componentes, y[9e + 3a + b]."""
 
-    top_eig = staticmethod(LadderDual.top_eig)
+    top_eig = staticmethod(PeriodicDual.top_eig)
 
     def __init__(self, n, edges):
         self.n = n
