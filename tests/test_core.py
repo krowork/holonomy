@@ -114,3 +114,57 @@ def test_escalera_top_eig_lanczos():
     we, Ve = np.linalg.eigh(W.toarray())
     assert w == pytest.approx(we[-5:], abs=1e-9)
     assert np.allclose(W @ V, V * w, atol=1e-8)
+
+
+def test_escalera_antiunitaria_theta():
+    # Proposición de bloques: Theta = P R_x(pi)^n T conmuta con W(y), conserva S^z y la
+    # traslación (antiunitaria con P T_r P^-1 = T_r^-1) y cumple Theta^2 = 1; T empareja
+    # (k, q) con (2L-k, -q). En la 2x4 completa (2^8 estados).
+    from functools import reduce
+    from holonomy import ladder
+    L, n = 4, 8
+    X = np.array([[0, 1], [1, 0]], complex)
+    Y = np.array([[0, -1j], [1j, 0]])
+    Z = np.diag([1.0, -1.0]).astype(complex)
+
+    def op(d):
+        return reduce(np.kron, [d.get(i, np.eye(2)) for i in range(n)])
+
+    def perm_matrix(perm):
+        P = np.zeros((2 ** n, 2 ** n))
+        for b in range(2 ** n):
+            bits = [(b >> (n - 1 - s)) & 1 for s in range(n)]
+            nb = [0] * n
+            for s in range(n):
+                nb[perm[s]] = bits[s]
+            P[int("".join(map(str, nb)), 2), b] = 1
+        return P
+
+    edges, kinds = ladder.ladder_edges(L, True), ladder.edge_kinds(L, True)
+    rng = np.random.default_rng(3)
+    ab, bb, cb, at, bt, ct, ar, cr = rng.normal(size=8)
+    co = {"b": (ab, bb, cb), "t": (at, bt, ct), "r": (ar, 0.0, cr)}
+    W = 0
+    for (i, j), kd in zip(edges, kinds):
+        a, b, c = co[kd]
+        W = W + a * (op({i: X, j: X}) + op({i: Y, j: Y})) + b * (op({i: X, j: Y}) - op({i: Y, j: X})) \
+            + c * op({i: Z, j: Z})
+    P = perm_matrix([(s // L) * L + (-(s % L)) % L for s in range(n)])
+    Tr = perm_matrix([(s // L) * L + ((s % L) + 1) % L for s in range(n)])
+    Ty = reduce(np.kron, [1j * Y] * n)
+    U = P @ reduce(np.kron, [1j * X] * n) @ Ty   # Theta = U K
+    Sz = sum(op({i: Z}) for i in range(n))
+    assert np.abs(Ty @ W.conj() @ Ty.conj().T - W).max() < 1e-12      # T conmuta con W(y)
+    assert np.abs(U @ W.conj() @ U.conj().T - W).max() < 1e-12        # Theta conmuta con W(y)
+    assert np.abs(U @ U.conj() - np.eye(2 ** n)).max() < 1e-12        # Theta^2 = 1
+    assert np.abs(U @ Sz.conj() @ U.conj().T - Sz).max() < 1e-12      # conserva S^z
+    assert np.abs(U @ Tr.conj() @ U.conj().T - Tr.T).max() < 1e-12    # P T_r P^-1 = T_r^-1
+    # Espectros de los bloques (k, q) y (2L-k, -q) iguales con el W(y) reducido.
+    D = ladder.LadderDual(L)
+    lab = {l: m for m, l in enumerate(D.labels)}
+    y = (ab, bb, cb, at, bt, ct, ar, cr)
+    for (k, q), m in lab.items():
+        m2 = lab[(n - k, (-q) % L)]
+        W1 = sum(c * D.blocks[m][key] for key, c in zip(D.KEYS, y))
+        W2 = sum(c * D.blocks[m2][key] for key, c in zip(D.KEYS, y))
+        assert np.linalg.eigvalsh(W1) == pytest.approx(np.linalg.eigvalsh(W2), abs=1e-12)

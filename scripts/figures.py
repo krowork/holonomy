@@ -3,10 +3,16 @@
     figures/fig_flujo.pdf       Phi*(Theta) para n impar (data/phistar.csv)
     figures/fig_asintotica.pdf  coeficiente de 1/n^2 y anchura de la ventana
                                 (data/edges_ed.csv y data/bethe_large.csv)
+    figures/fig_escalera_flujo.pdf   mínimo en psi de v(L, f, psi), L = 4..7
+                                     (data/ladder_psi_*.csv)
+    figures/fig_escalera_limite.pdf  v(L, pi, psi) mínimo en psi, L = 4..11
+                                     (data/ladder_limit_L*.csv)
 
 Colores: paleta categórica validada (orden fijo; azul, naranja, aguamarina,
 amarillo). Tipografía Computer Modern y coma decimal, como el texto.
 """
+import csv
+
 import matplotlib
 
 matplotlib.use("Agg")
@@ -15,7 +21,7 @@ import numpy as np  # noqa: E402
 from matplotlib.ticker import FuncFormatter  # noqa: E402
 
 from holonomy import asymptotics  # noqa: E402
-from holonomy.report import FIGURES, read_csv  # noqa: E402
+from holonomy.report import DATA, FIGURES, read_csv  # noqa: E402
 
 SERIES = ("#2a78d6", "#eb6834", "#1baf7a", "#eda100")
 MARKERS = ("o", "s", "^", "D")
@@ -111,10 +117,63 @@ def fig_asintotica():
     print(f"escrito {out}")
 
 
+def read_rows(name, cols):
+    """Columnas numéricas de un CSV con columnas de texto."""
+    return [{c: float(r[c]) for c in cols} for r in csv.DictReader(open(DATA / name))]
+
+
+def fig_escalera_flujo():
+    """Mínimo en psi de v(L, f, psi): malla 21x21 en L = 4 (mínimo de cada
+    fila) y mínimo refinado por Brent en L = 5, 6, 7."""
+    fig, ax = plt.subplots(figsize=(0.75 * TEXTWIDTH_IN, 2.6))
+    for k, L in enumerate((4, 5, 6, 7)):
+        if L == 4:
+            rows = read_rows("ladder_psi_L4.csv", ("f", "v_max"))
+            fs = sorted({r["f"] for r in rows})
+            pts = [(f / np.pi, min(r["v_max"] for r in rows if r["f"] == f)) for f in fs]
+        else:
+            M = {5: "11x41", 6: "21x41", 7: "21x41"}[L]
+            pts = [(r["f"] / np.pi, r["v_min"]) for r in read_csv(f"ladder_psi_min_L{L}_{M}.csv")]
+        x, y = map(np.array, zip(*pts))
+        ax.plot(x, y, color=SERIES[k], marker=MARKERS[k], markersize=3.5, label=f"$2\\times{L}$")
+        ax.annotate(f"${L}$", (x[-1], y[-1]), xytext=(6, 0), textcoords="offset points",
+                    ha="left", va="center", fontsize=8, color=INK)
+    ax.set_xlim(0, 1.06)
+    ax.set_xlabel(r"$f/\pi$")
+    ax.set_ylabel(r"$\min_\psi v(L,f,\psi)$")
+    ax.xaxis.set_major_formatter(FuncFormatter(comma))
+    ax.yaxis.set_major_formatter(FuncFormatter(comma))
+    ax.legend(frameon=False, loc="upper right")
+    out = FIGURES / "fig_escalera_flujo.pdf"
+    fig.savefig(out)
+    plt.close(fig)
+    print(f"escrito {out}")
+
+
+def fig_escalera_limite():
+    """v(L, pi, psi) mínimo en psi, L pares e impares, L = 4..11."""
+    fig, ax = plt.subplots(figsize=(0.6 * TEXTWIDTH_IN, 2.4))
+    for p, name in ((0, "$L$ par"), (1, "$L$ impar")):
+        Ls = [L for L in range(4, 12) if L % 2 == p]
+        vs = [min(r["v_max"] for r in read_rows(f"ladder_limit_L{L}.csv", ("v_max",))) for L in Ls]
+        ax.plot(Ls, vs, color=SERIES[p], marker=MARKERS[p], markersize=4, label=name)
+    ax.set_xticks(range(4, 12))
+    ax.set_xlabel(r"$L$")
+    ax.set_ylabel(r"$\min_\psi v(L,\pi,\psi)$")
+    ax.yaxis.set_major_formatter(FuncFormatter(comma))
+    ax.legend(frameon=False, loc="lower right")
+    out = FIGURES / "fig_escalera_limite.pdf"
+    fig.savefig(out)
+    plt.close(fig)
+    print(f"escrito {out}")
+
+
 def main():
     FIGURES.mkdir(exist_ok=True)
     fig_flujo()
     fig_asintotica()
+    fig_escalera_flujo()
+    fig_escalera_limite()
 
 
 if __name__ == "__main__":

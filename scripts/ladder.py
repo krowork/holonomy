@@ -6,7 +6,7 @@
      árbol: toda la holonomía en las aristas de la pata superior.
   2. Cotas que no dependen de la escalera: la estrella K_{1,3} de un sitio de
      grado 3 (un árbol no tiene holonomía) da v <= 5/9, y cada plaqueta es un
-     anillo de 4, v <= 2/(3 + sin(f_p/2)) (Teorema 1).
+     anillo de 4, v <= 2/(3 + sin(f_p/2)) (Teorema 3 de los anillos).
   3. El primal reducido por U(1) (holonomy.sdp.primal_u1_graph) reproduce el
      completo en los casos abelianos de 1 (<= 1e-6).
   4. Escalera abierta 2x4 con flujo uniforme (primal U(1)).
