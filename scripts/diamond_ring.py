@@ -41,8 +41,9 @@ data/diamond_ring_min_L<k>_<modo>.csv (mínimo en psi de cada fila).
 Uso: (ulimit -v 12000000; /usr/bin/time -f "%M KB %e s" python scripts/diamond_ring.py k nf npsi)
      por defecto k = 2, nf = npsi = 13.
 Medido (13 x 13, 2026-11-03, /usr/bin/time, OMP_NUM_THREADS = 2):
-  k = 2: 846 evaluaciones, 130 s, pico 144 MB;
-  k = 3: 5081 s (~85 min, ~6 s por evaluación), pico 673 MB;
+  k = 2: 846 evaluaciones, 175 s, pico 150 MB;
+  k = 3: 5917 s (~99 min, ~6 s por evaluación), pico 5,4 GB (el del primal
+         reducido en f = 0; el resto, ~0,7 GB);
   k = 4: en segundo plano (ver el informe de la tarea 6).
 """
 import _common  # noqa: F401  (fija OMP_NUM_THREADS antes de numpy)
