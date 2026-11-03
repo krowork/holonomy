@@ -192,13 +192,17 @@ class GraphDual:
         sus rangos en self.last_ranks.
 
         Devuelve (v, y, estado, diferencia de cotas): v es la cota superior;
-        estado 'optimal' si la diferencia es < tol y el testigo no toca la
-        caja; 'en_caja' si el testigo toca la caja o si el SDP restringido no
-        da solución (infactible o fallo del solver) con la caja puesta: un
-        fallo por la caja nunca parece un resultado; 'no_converge' en otro
-        caso. Clarabel resuelve los SDP restringidos con precisión ~1e-8
-        (estado optimal_inaccurate con tolerancias 1e-10), así que la
-        diferencia de cotas puede salir ligeramente negativa.
+        estado 'en_caja' si el y del último SDP restringido (el que da la
+        cota inferior) toca la caja, o si el SDP restringido no da solución
+        (infactible o fallo del solver) con la caja puesta: un fallo por la
+        caja nunca parece un resultado; 'cota_invalida' si la diferencia es
+        menor que -GAP_NEG (= -1e-7: la cota inferior pasa de la superior más
+        allá del ruido del solver); 'optimal' si -GAP_NEG <= diferencia < tol;
+        'no_converge' en otro caso. Clarabel resuelve los SDP restringidos
+        con precisión ~1e-8 (estado optimal_inaccurate con tolerancias
+        1e-10), así que la diferencia puede salir ligeramente negativa. El
+        peor estado de CVXPY visto en las iteraciones queda en
+        self.last_solver_status ('optimal', 'optimal_inaccurate', ...).
 
         Medido (/usr/bin/time, test_cadena2_abeliana: n = 7, cadena de 2 con
         flujos pi/2, 90 coeficientes): pico de 952 MB y 236 s, unas 70
@@ -212,7 +216,9 @@ class GraphDual:
         U = [self.top_eig(self.witness(y0), r0)[1]]
         best = (np.inf, y0)
         lower = -np.inf
+        yv = None
         failed = None
+        self.last_solver_status = None
         for _ in range(maxiter):
             y = cp.Variable(self.K)
             t = cp.Variable()
@@ -223,6 +229,7 @@ class GraphDual:
                 prob.solve(solver=solver, **kw)
             except cp.error.SolverError:
                 pass
+            self.last_solver_status = self._worse(self.last_solver_status, prob.status)
             if y.value is None or t.value is None:
                 failed = prob.status
                 break
@@ -245,9 +252,30 @@ class GraphDual:
         gap = best[0] - lower
         if failed is not None:
             return best[0], best[1], ("en_caja" if box is not None else "no_converge"), gap
-        on_box = box is not None and np.max(np.abs(best[1])) > 0.99 * box
-        st = "optimal" if gap < tol and not on_box else ("en_caja" if on_box else "no_converge")
+        # La caja se mira en el y del último SDP restringido, el que da `lower`.
+        on_box = box is not None and yv is not None and np.max(np.abs(yv)) > 0.99 * box
+        if on_box:
+            st = "en_caja"
+        elif gap < -self.GAP_NEG:
+            st = "cota_invalida"
+        elif gap < tol:
+            st = "optimal"
+        else:
+            st = "no_converge"
         return best[0], best[1], st, gap
+
+    # Diferencia de cotas negativa tolerada (ruido de Clarabel, ~1e-8): más
+    # negativa, la cota inferior no es válida y el estado es "cota_invalida".
+    GAP_NEG = 1e-7
+    _STATUS_RANK = {"optimal": 0, "optimal_inaccurate": 1}
+
+    @classmethod
+    def _worse(cls, a, b):
+        """El peor de dos estados de CVXPY (optimal < optimal_inaccurate <
+        cualquier otro; None es "ninguno todavía")."""
+        if a is None:
+            return b
+        return a if cls._STATUS_RANK.get(a, 2) >= cls._STATUS_RANK.get(b, 2) else b
 
     def witness_spread(self, Rs, v_opt, eps, U=None, solver="CLARABEL", **kw):
         """Rango de cada coeficiente del testigo dentro del conjunto casi
@@ -261,22 +289,29 @@ class GraphDual:
         de self.cuts (los mismos que en v_dual_cg): el conjunto factible es mayor que
         el verdadero, así que cada rango obtenido es una cota superior del
         verdadero. Un rango que tiende a 0 prueba unicidad; uno finito no
-        prueba lo contrario. Devuelve [(min, max)] en el orden de y (nan si
-        el SDP falla)."""
+        prueba lo contrario. Devuelve [(min, max)] en el orden de y. Si un
+        SDP es infactible, no acotado o falla, lanza RuntimeError; los que
+        acaban en optimal_inaccurate se marcan en self.last_spread_inaccurate
+        (lista de pares de booleanos (min, max) en el mismo orden)."""
         import cvxpy as cp
 
         g = self.norm_vec(Rs)
         y = cp.Variable(self.K)
         cons = [g @ y == 1] + self._cons(y, v_opt + eps, U, U is not None)[0]
-        out = []
+        out, inacc = [], []
         for m in range(self.K):
-            lo_hi = []
+            lo_hi, flags = [], []
             for sense in (cp.Minimize, cp.Maximize):
                 prob = cp.Problem(sense(y[m]), cons)
                 try:
                     prob.solve(solver=solver, **kw)
-                    lo_hi.append(float(y.value[m]) if y.value is not None else np.nan)
-                except cp.error.SolverError:
-                    lo_hi.append(np.nan)
+                except cp.error.SolverError as exc:
+                    raise RuntimeError(f"witness_spread: fallo del solver en y[{m}]") from exc
+                if prob.status not in self._STATUS_RANK or y.value is None:
+                    raise RuntimeError(f"witness_spread: estado {prob.status} en y[{m}]")
+                lo_hi.append(float(y.value[m]))
+                flags.append(prob.status == "optimal_inaccurate")
             out.append(tuple(lo_hi))
+            inacc.append(tuple(flags))
+        self.last_spread_inaccurate = inacc
         return out

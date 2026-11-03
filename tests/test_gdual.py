@@ -8,6 +8,10 @@ from holonomy.gdual import GraphDual
 from holonomy.ladder import ladder_edges
 from holonomy.paulis import Rx, Rz
 
+# Clarabel acaba en optimal_inaccurate con tolerancias 1e-10 (precisión real ~1e-8,
+# por debajo de las tolerancias de estos tests): se filtra ese aviso, y solo ese.
+pytestmark = pytest.mark.filterwarnings("ignore:Solution may be inaccurate:UserWarning")
+
 OPTS = dict(tol_gap_abs=1e-10, tol_gap_rel=1e-10, tol_feas=1e-10)
 
 
@@ -40,7 +44,7 @@ def test_diamante_un_tercio(seed):
     vc, _, st, gap = D.v_dual_cg(Rs, **OPTS)
     assert vs == pytest.approx(1 / 3, abs=1e-7)
     assert vc == pytest.approx(1 / 3, abs=1e-7)
-    assert st == "optimal" and gap < 1e-7
+    assert st == "optimal" and abs(gap) < 1e-7
 
 
 @pytest.mark.slow
@@ -51,11 +55,12 @@ def test_cg_igual_sdp_n6():
     vs, _, _ = D.v_dual_sdp(Rs, **OPTS)
     vc, _, st, gap = D.v_dual_cg(Rs, **OPTS)
     vp = sdp.primal(6, Rs, edges=edges, **OPTS)
-    assert st == "optimal" and gap < 1e-7
+    assert st == "optimal" and abs(gap) < 1e-7
     assert vc == pytest.approx(vs, abs=1e-7)
     assert vc == pytest.approx(vp, abs=1e-7)
 
 
+@pytest.mark.slow
 def test_cadena2_abeliana():
     # 7 qubits: contraste con el primal U(1) (el primal completo no cabe con datos
     # no abelianos; aquí sirve el abeliano).
@@ -64,7 +69,7 @@ def test_cadena2_abeliana():
     Rs = [Rz(p) for p in phis]
     vc, _, st, gap = GraphDual(7, edges).v_dual_cg(Rs, **OPTS)
     vp = sdp.primal_u1_graph(7, edges, phis, **OPTS)
-    assert st == "optimal" and gap < 1e-7
+    assert st == "optimal" and abs(gap) < 1e-7
     assert vc == pytest.approx(vp, abs=1e-7)
 
 
@@ -73,6 +78,22 @@ def test_caja_reportada():
     edges, Rs = diamante_aleatorio(11)
     _, _, st, _ = GraphDual(4, edges).v_dual_cg(Rs, box=1e-3, **OPTS)
     assert st == "en_caja"
+
+
+def test_caja_activa_reportada():
+    # Caja factible (N(y) = 1 cabe) pero activa en el óptimo: la cota inferior no
+    # es válida (aquí sale > 1/3) y el estado debe ser en_caja.
+    edges, Rs = diamante_aleatorio(11)
+    D = GraphDual(4, edges)
+    _, _, st, _ = D.v_dual_cg(Rs, box=0.1, **OPTS)
+    assert st == "en_caja"
+
+
+def test_estado_del_solver_registrado():
+    edges, Rs = diamante_aleatorio(11)
+    D = GraphDual(4, edges)
+    D.v_dual_cg(Rs, **OPTS)
+    assert D.last_solver_status in ("optimal", "optimal_inaccurate")
 
 
 def test_rango_comprimido_contiene_el_completo():
@@ -85,7 +106,15 @@ def test_rango_comprimido_contiene_el_completo():
     U = [D.last_U[0][:, :10]]
     full = D.witness_spread(Rs, v, 1e-2, **OPTS)
     comp = D.witness_spread(Rs, v, 1e-2, U=U, **OPTS)
+    assert len(D.last_spread_inaccurate) == len(comp)
     assert len(full) == len(comp) == 9 * len(edges)
     for (a, b), (c, d) in zip(full, comp):
         assert c <= a + 1e-6 and d >= b - 1e-6
     assert max((d - c) - (b - a) for (a, b), (c, d) in zip(full, comp)) > 1e-2
+
+
+def test_rango_infactible_lanza():
+    # Con v_opt + eps = 0, W <= 0 y tr W = 0 obligan a W = 0, incompatible con N = 1.
+    edges, Rs = diamante_aleatorio(11)
+    with pytest.raises(RuntimeError):
+        GraphDual(4, edges).witness_spread(Rs, 0.0, 0.0, **OPTS)
