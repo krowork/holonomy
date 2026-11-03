@@ -60,15 +60,30 @@ Paso 2 en P:
     finales; debe coincidir con el v de la caché a 1e-7;
   - perturbaciones P + d (sin reflejar, los datos son función suave de los
     6 parámetros) en los 6 ejes (eps = 0,1; 0,05; 0,025; ambos signos) y en
-    12 direcciones al azar (eps = 0,1; 0,05), como scripts/ladder_perp_min.py:
-    dv > 0 en todas, y ajuste de dv a forma cuadrática + lineales + cúbicos
+    12 direcciones al azar (eps = 0,1; 0,05), como scripts/ladder_perp_min.py,
+    más las 15 diagonales (e_i + e_j)/sqrt(2) con eps = 0,05 (sin ellas los
+    15 términos cruzados solo salen de 12 direcciones y el ajuste tiene rango
+    30 de 33); 75 en total: dv > 0 en todas, y ajuste de dv a forma cuadrática + lineales + cúbicos
     diagonales: forma cuadrática definida positiva (P no es crítico por
     simetría, así que los términos lineales y el punto estacionario del
     ajuste se dan como información: miden cuánto dejó el tope sin converger);
+    el ajuste solo cuenta si la matriz de diseño tiene rango completo (33),
+    si no es un FALLO;
   - witness_spread con eps = 1e-4, 1e-5, 1e-6 sobre los subespacios finales
-    (U = last_U): anchura máxima de los 90 coeficientes del testigo; único si
-    baja al reducir eps (cociente de 1e-4 a 1e-5 > 2,5; una cara daría ~1).
-    Con U el rango es una cota superior del verdadero.
+    (U = last_U): anchura máxima de los 90 coeficientes del testigo. Con U el
+    conjunto comprimido contiene al verdadero, así que cada anchura es una
+    cota superior de la verdadera: si las cotas bajan, las verdaderas también
+    (prueba de unicidad); si no bajan, no se concluye nada (inconcluso, no
+    "hay una cara"). Veredicto "testigo único" (OK) si los dos cocientes,
+    1e-4 -> 1e-5 y 1e-5 -> 1e-6, pasan de 2,5 (~3,16 si va como sqrt(eps),
+    10 si va como eps) y la anchura en 1e-6 es menor que ANCHO_REL = 0,1
+    veces el mayor |y_m| del testigo: el testigo queda fijado al 10 % de su
+    propia escala (los y_m del arranque de Heisenberg rotado son ~1/(3|E|) =
+    1/30; una cota absoluta fija dependería de esa normalización N(y) = 1).
+    Si no, "inconcluso (rango comprimido: solo cota superior)", como
+    información. Los SDP optimal_inaccurate de witness_spread se cuentan en
+    el resumen del Checker (status_note) y el veredicto lleva la marca
+    "inexacto" con su número; no se descartan.
 Comprobaciones también: v(0, 0, 0) = 1/3, S1 en un punto genérico, y cada
 evaluación no 'optimal' es un FALLO.
 
@@ -88,9 +103,9 @@ caliente); pico 842 MB. witness_spread (180 SDP) ~20 min por eps. Estimación
 de la corrida completa: cribado 62 x 8 llamadas, ~470 nuevas (las de
 (pi, pi, pi/2), (0, pi, 0) y (pi/2, pi/2, pi/2) salen de la caché de la
 tarea 4) x 87 s = ~11,5 h; etapa 2, 3 x (5 x 20 + 60) = 480 x 148 s =
-~20 h; paso 2, 61 x 148 s = ~2,5 h más ~1 h de witness_spread: ~35 h en
-total (~42 h si la máquina sigue cargada), pico ~1 GB.
---rapido medido: 1905 s (7 evaluaciones nuevas, 1 witness_spread) y 834 MB.
+~20 h; paso 2, 76 x 148 s = ~3,1 h más ~1 h de witness_spread: ~36 h en
+total (~43 h si la máquina sigue cargada), pico ~1 GB.
+--rapido medido: 1710 s (10 evaluaciones nuevas, 1 witness_spread) y 846 MB.
 
 Escribe data/diamond_chain2_min.csv (caso: cribado | minQ | conjunto |
 minimo; theta_A, theta_B, gamma, rx, ry, rz, v, tol, evaluaciones, en_tope),
@@ -100,9 +115,9 @@ la caché.
 
 Uso: (ulimit -v 8000000; /usr/bin/time -f "%M KB" python scripts/diamond_chain2_min.py [--rapido])
 --rapido (prueba de humo): malla (0, 0, 0) y (pi, pi, pi/2), tol 1e-4 y 1e-5,
-topes 4 / 2 / 3, un arranque en Q, 3 perturbaciones, witness_spread con
-eps = 1e-4; las comprobaciones de convergencia (dv > 0, unicidad) pasan a
-información. Ficheros con sufijo _rapido (caché aparte).
+topes 4 / 2 / 3, un arranque en Q, 4 perturbaciones, witness_spread con
+eps = 1e-4; las comprobaciones de convergencia (dv > 0, rango del ajuste,
+unicidad) pasan a información. Ficheros con sufijo _rapido (caché aparte).
 """
 import _common  # noqa: F401  (fija OMP_NUM_THREADS antes de numpy)
 from _common import CLARABEL_OPTS, Checker
@@ -131,17 +146,19 @@ EVAL_COLS = dc2.EVAL_COLS + ["tol", "origen"]
 TOL_T4 = 1e-8  # tol de v_dual_cg en la tarea 4 (la de omisión)
 R0_WARM = dc2.R0_WARM
 V_TOL = 1e-7
+ANCHO_REL = 0.1   # anchura del testigo en el menor eps, relativa a max |y_m|
+COCIENTE = 2.5    # bajada mínima de la anchura por cada factor 10 en eps
 GAP_NEG = GraphDual.GAP_NEG
 
 # Configuración de la corrida completa (main la cambia con --rapido).
 CFG = dict(TOL_CRIBA=1e-5, TOL_FINO=1e-8, MAXFEV_CRIBA=8, MAXFEV=20, MAXFEV_CONJ=60,
            MEJORES=3, ARRANQUES=5, EPS_PERT=(0.1, 0.05, 0.025), EPS_AZAR=(0.1, 0.05), N_AZAR=12,
-           EJES=6, EPS_TESTIGO=(1e-4, 1e-5, 1e-6))
+           EJES=6, PARES=15, EPS_PAR=0.05, EPS_TESTIGO=(1e-4, 1e-5, 1e-6))
 CFG_RAPIDO = dict(TOL_CRIBA=1e-4, TOL_FINO=1e-5, MAXFEV_CRIBA=4, MAXFEV=2, MAXFEV_CONJ=3,
                   MEJORES=1, ARRANQUES=1, EPS_PERT=(0.05,), EPS_AZAR=(0.05,), N_AZAR=1,
-                  EJES=1, EPS_TESTIGO=(1e-4,))
+                  EJES=1, PARES=1, EPS_PAR=0.05, EPS_TESTIGO=(1e-4,))
 
-_cache = {}      # clave -> (v, estado, gap, tol, origen)
+_cache = {}      # clave -> [(v, estado, gap, tol, origen), ...]
 _t4 = {}         # clave -> (v, estado, gap) de la caché de la tarea 4
 _dual = None
 _warm = None
@@ -165,12 +182,10 @@ def _parse(row):
 
 
 def _guardar(k, e):
-    """Entrada e para la clave k: en memoria (si su tol es menor que la que
-    hubiera) y añadida al fichero de caché."""
-    old = _cache.get(k)
-    if old is None or e[3] < old[3]:
-        _cache[k] = e
-    new = not EVALS.exists()
+    """Entrada e para la clave k: en memoria y añadida al fichero de caché
+    (con cabecera si el fichero no existe o está vacío)."""
+    _cache.setdefault(k, []).append(e)
+    new = not EVALS.exists() or EVALS.stat().st_size == 0
     with open(EVALS, "a", newline="") as fh:
         w = csv.writer(fh)
         if new:
@@ -179,7 +194,7 @@ def _guardar(k, e):
 
 
 def load():
-    """Carga la caché propia (por clave, la entrada de menor tol) y la de la
+    """Carga la caché propia (todas las entradas de cada clave) y la de la
     tarea 4 (solo lectura). Caché propia: una última línea corrupta o
     truncada se descarta con aviso y se quita del fichero; una corrupta en
     medio, o una cabecera distinta, lanza ValueError (como dc2.load). Caché de
@@ -205,9 +220,7 @@ def load():
                             fh.writelines(lines[:-1])
                         break
                     raise ValueError(f"{EVALS}: línea {i} corrupta en medio del fichero: {line!r}")
-                k, e = ev
-                if k not in _cache or e[3] < _cache[k][3]:
-                    _cache[k] = e
+                _cache.setdefault(ev[0], []).append(ev[1])
     if EVALS_T4.exists():
         with open(EVALS_T4, newline="") as fh:
             lines = fh.read().splitlines(keepends=True)
@@ -224,17 +237,29 @@ def rotations(x):
     return diamond.chain_rotations(K, diamond.relative_pairs(x[0], x[1], x[2], Q))
 
 
+def _pick(k, tol):
+    """La entrada de la caché para k que vale con tolerancia tol (tol propia
+    <= tol): la 'optimal' de menor tol si hay alguna (un FALLO a tol más
+    fina no tapa un valor válido), si no la no 'optimal' de menor tol;
+    None si ninguna vale."""
+    ok = [e for e in _cache.get(k, []) if e[3] <= tol]
+    if not ok:
+        return None
+    return min(ok, key=lambda e: (e[1] != "optimal", e[3]))
+
+
 def v_eval(x, tol):
     """v_dual_cg en x = (theta_A, theta_B, gamma, rx, ry, rz) con tolerancia
     tol, con caché (vale una evaluación de tol <= la pedida). Devuelve
     (v, estado, gap); solo 'optimal' es un resultado."""
     global _dual, _warm
     k = dc2._key(x[0], x[1], x[2], x[3:6])
-    e = _cache.get(k)
-    if e is not None and e[3] <= tol:
+    e = _pick(k, tol)
+    t4 = _t4.get(k) if TOL_T4 <= tol else None
+    if e is not None and (e[1] == "optimal" or t4 is None or t4[1] != "optimal"):
         cuenta["cache"] += 1
-    elif k in _t4 and TOL_T4 <= tol:
-        e = (*_t4[k], TOL_T4, "tarea4")
+    elif t4 is not None:
+        e = (*t4, TOL_T4, "tarea4")
         _guardar(k, e)
         cuenta["tarea4"] += 1
     else:
@@ -351,6 +376,24 @@ def quad_form(c):
     return H + np.triu(H, 1).T
 
 
+def verdict(epss, widths, ymax):
+    """(único, mensaje) de la unicidad del testigo con las anchuras máximas
+    `widths` (cotas superiores, por el U comprimido) en los eps `epss`
+    decrecientes: único si cada cociente entre eps consecutivos pasa de
+    COCIENTE y la última anchura es < ANCHO_REL * ymax (ver el docstring);
+    si no, inconcluso. Necesita al menos 3 eps."""
+    if len(widths) < 3 or not np.all(np.isfinite(widths)):
+        return False, (f"testigo: inconcluso (hacen falta 3 anchuras válidas, hay "
+                       f"{int(np.sum(np.isfinite(widths)))})")
+    rs = [widths[i] / widths[i + 1] for i in range(len(widths) - 1)]
+    tope = ANCHO_REL * ymax
+    txt = (", ".join(f"{epss[i]:.0e} -> {epss[i + 1]:.0e}: {r:.2f}" for i, r in enumerate(rs))
+           + f"; anchura en {epss[-1]:.0e} = {widths[-1]:.2e} (cota {ANCHO_REL} max|y| = {tope:.2e})")
+    if all(r > COCIENTE for r in rs) and widths[-1] < tope:
+        return True, f"testigo único: la anchura baja (cocientes > {COCIENTE}) {txt}"
+    return False, f"testigo: inconcluso (rango comprimido: solo cota superior), {txt}"
+
+
 def lab(x):
     s = f"({x[0] / pi:.4f}, {x[1] / pi:.4f}, {x[2] / pi:.4f}) pi"
     if len(x) > 3:
@@ -452,6 +495,9 @@ def main():
         u = rng.normal(size=6)
         u /= np.linalg.norm(u)
         dirs += [eps * u for eps in c["EPS_AZAR"]]
+    E = np.eye(6)
+    pares = [(i, j) for i in range(6) for j in range(i + 1, 6)][:c["PARES"]]
+    dirs += [c["EPS_PAR"] * (E[i] + E[j]) / np.sqrt(2) for i, j in pares]
     prow = []
     for d in dirs:
         v, st, _ = v_eval(P + d, c["TOL_FINO"])
@@ -460,15 +506,29 @@ def main():
         eps = np.linalg.norm(d)
         chk.info(f"d = {np.array2string(d, precision=4, sign='+')}: dv = {dv:+.3e}, dv/eps^2 = {dv / eps ** 2:+.5f}")
     dvs = np.array([r[6] for r in prow])
-    ok = np.all(np.isfinite(dvs)) and dvs.min() > 0
-    msg = f"{len(dvs)} perturbaciones: dv > 0 en todas (mínimo {np.nanmin(dvs):.2e})"
+    nbad = int(np.sum(~np.isfinite(dvs)))
+    ok = nbad == 0 and dvs.min() > 0
+    if nbad:
+        msg = (f"{len(dvs)} perturbaciones: {nbad} sin v 'optimal' (FALLO de v_dual_cg, abajo), "
+               f"no se puede decir dv > 0 en todas")
+    else:
+        msg = f"{len(dvs)} perturbaciones: dv > 0 en todas (mínimo {dvs.min():.2e})"
     if rapido:
         chk.info("--rapido, informativo: " + msg)
     else:
         chk.check(ok, msg)
     D = np.array([r[:6] for r in prow])
-    if len(dvs) >= 33 and np.all(np.isfinite(dvs)):
-        F = np.array([feats(d) for d in D])
+    F = np.array([feats(d) for d in D])
+    rank = np.linalg.matrix_rank(F)
+    if nbad:
+        chk.info(f"sin ajuste cuadrático: {nbad} perturbaciones sin v 'optimal'")
+    elif rank < F.shape[1]:
+        msg = f"ajuste cuadrático: matriz de diseño de rango {rank} de {F.shape[1]}, H no determinada"
+        if rapido:
+            chk.info("--rapido, informativo: " + msg)
+        else:
+            chk.check(False, msg)
+    else:
         coef, *_ = np.linalg.lstsq(F, dvs, rcond=None)
         H, gl = quad_form(coef), coef[21:27]
         ev = np.linalg.eigvalsh(H)
@@ -479,13 +539,11 @@ def main():
             chk.info(f"términos lineales {np.array2string(gl, precision=2)}; punto estacionario del ajuste "
                      f"P + {np.array2string(xs, precision=4)} (|.| = {np.linalg.norm(xs):.3f}), "
                      f"dv predicho {-0.25 * gl @ np.linalg.solve(H, gl):+.2e}")
-    else:
-        chk.info(f"{len(dvs)} perturbaciones: sin ajuste cuadrático (hacen falta 33)")
     write_csv(f"diamond_chain2_min_pert{suf}.csv",
               ["d_theta_A", "d_theta_B", "d_gamma", "d_rx", "d_ry", "d_rz", "dv"], prow)
 
     # Paso 2c: unicidad del testigo.
-    trow, widths = [], []
+    trow, widths, inac_tot, nsdp = [], [], 0, 0
     if stF == "optimal":
         for eps in c["EPS_TESTIGO"]:
             try:
@@ -495,20 +553,23 @@ def main():
                 widths.append(np.nan)
                 continue
             w = max(hi - lo for lo, hi in sp)
-            ninac = sum(a + b for a, b in _dual.last_spread_inaccurate)
+            ninac = int(sum(a + b for a, b in _dual.last_spread_inaccurate))
+            for _ in range(ninac):
+                chk.status_note("optimal_inaccurate")
+            inac_tot += ninac
+            nsdp += 2 * len(sp)
             widths.append(w)
             trow.append((eps, w, ninac))
             chk.info(f"testigo, eps = {eps:.0e}: anchura máxima {w:.3e} ({ninac} de {2 * len(sp)} SDP "
                      f"optimal_inaccurate)")
-        if len(widths) >= 2:
-            r = widths[0] / widths[1]
-            msg = (f"testigo único: la anchura baja {r:.2f} veces de eps = {c['EPS_TESTIGO'][0]:.0e} a "
-                   f"{c['EPS_TESTIGO'][1]:.0e} (> 2,5; ~3,16 si va como sqrt(eps), 1 si hay una cara)")
-            chk.check(np.isfinite(r) and r > 2.5, msg)
-            if len(widths) >= 3:
-                chk.info(f"de {c['EPS_TESTIGO'][1]:.0e} a {c['EPS_TESTIGO'][2]:.0e}: {widths[1] / widths[2]:.2f} veces")
+        ymax = float(np.max(np.abs(yF)))
+        unico, msg = verdict(c["EPS_TESTIGO"], widths, ymax)
+        if inac_tot:
+            msg += f" [inexacto: {inac_tot} de {nsdp} SDP optimal_inaccurate]"
+        if unico:
+            chk.check(True, msg)
         else:
-            chk.info("--rapido: un solo eps, sin cociente de anchuras")
+            chk.info(msg)
     else:
         chk.check(False, "sin testigo 'optimal' en P: no hay witness_spread")
     write_csv(f"diamond_chain2_min_testigo{suf}.csv", ["eps", "anchura_max", "sdp_inexactos"], trow)
