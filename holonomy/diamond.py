@@ -22,10 +22,13 @@ Datos no abelianos (solo cadena abierta): gauge de árbol. R = identidad en
 (j,u), (j,w), (u,j'); R(u,w) = H_A; R(w,j') = (H_B H_A)^T. Así la holonomía
 de A, R_ju R_uw R_wj, es H_A y la de B, R_uj' R_j'w R_wu, es H_B, ambas en el
 marco de j_m, y todos los marcos de unión coinciden por el árbol j -> u -> j'.
+
+Dual reducido de la cadena cerrada (DiamondDual): ver su docstring.
 """
 import numpy as np
 
 from .paulis import Rz, Ry
+from .periodic import PeriodicDual
 
 KINDS = ("ju", "jw", "uw", "uj", "wj")
 
@@ -99,3 +102,48 @@ def relative_pairs(tA, tB, g, Q):
     HB = Ry(g) @ Rz(tB) @ Ry(g).T
     Q = np.asarray(Q)
     return [(HA, HB), (Q @ HA @ Q.T, Q @ HB @ Q.T)]
+
+
+def translation_perm(k):
+    """Traslación de una celda en la cadena cerrada: i -> i + 3 (mód 3k)."""
+    return [(i + 3) % (3 * k) for i in range(3 * k)]
+
+
+def _z_groups(k):
+    return {"j": range(0, 3 * k, 3), "u": range(1, 3 * k, 3), "w": range(2, 3 * k, 3)}
+
+
+class DiamondDual(PeriodicDual):
+    """lambda_max del testigo de la cadena cerrada de k diamantes con datos
+    abelianos uniformes (los mismos fA, fB en todas las celdas), por bloques
+    (k giros, q momento) de periodic.PeriodicDual con la traslación de una
+    celda, i -> i + 3.
+
+    Reducciones (un testigo óptimo promediado sobre una simetría de los datos
+    es otro testigo óptimo, porque lambda_max es convexa y N lineal):
+      - U(1) alrededor de z: solo A, B, C por arista y Z por sitio;
+      - traslación de una celda: en el gauge simétrico de abelian_phases la
+        fase de cada arista depende solo de su tipo (s = psi/(2k) es la misma
+        en todas), así que los coeficientes se igualan por tipo: 15 claves
+        (A|B|C, tipo) y Z sumada por grupo j, u, w;
+      - inversión temporal Theta = (iY)^{(x)n} K (antiunitaria): manda
+        X -> -X, Y -> -Y, Z -> -Z en cada sitio, luego deja A_e, B_e y C_e
+        invariantes (productos de dos Paulis) y cambia el signo de Z_i; W y
+        Theta W Theta^-1 tienen el mismo espectro y la misma N, así que el
+        promedio anula los términos Z. Por eso KEYS no tiene claves Z (y half
+        vale).
+    La reflexión u <-> w no se usa: lleva (fA, fB, psi) a (-fA, -fB, psi), y
+    compuesta con la conjugación compleja (fases -> -fases) a (fA, fB, -psi);
+    solo es simetría de los datos con psi = 0 o pi, no en el mapa (f, psi)
+    (donde es la comprobación psi -> -psi del guion diamond_ring).
+
+    dense_max y half como en PeriodicDual (half: solo los bloques k <= n // 2,
+    válido porque KEYS no tiene claves Z)."""
+
+    KEYS = tuple((name, kd) for kd in KINDS for name in "ABC")
+
+    def __init__(self, k, dense_max=None, half=False):
+        self.k = k
+        n = n_sites(k, periodic=True)
+        super().__init__(n, chain_edges(k, periodic=True), edge_kinds(k, periodic=True),
+                         translation_perm(k), k, _z_groups(k), self.KEYS, dense_max, half)

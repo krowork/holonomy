@@ -71,3 +71,39 @@ def test_pares_relativos_mismos_invariantes():
 def test_periodica_k1_rechazada():
     with pytest.raises(ValueError):
         diamond.chain_edges(1, periodic=True)
+
+
+OPTS = dict(tol_gap_abs=1e-10, tol_gap_rel=1e-10, tol_feas=1e-10)
+
+
+# k = 3 es lenta y no cabe en 8 GB: primal_u1_graph pide a Clarabel un bloque
+# denso de 31878^2 reales (8,1 GB, sector de 4 giros, dimensión hermítica 126)
+# y aborta bajo ulimit -v 8000000 (medido el 2026-11-03).
+@pytest.mark.parametrize("k", [2, pytest.param(3, marks=pytest.mark.slow)])
+@pytest.mark.parametrize("fA,fB,psi", [(np.pi / 2, np.pi / 2, 0.0), (np.pi, -np.pi, 0.0),
+                                       (0.0, 0.0, np.pi)])
+def test_cadena_cerrada_dual_igual_primal(k, fA, fB, psi):
+    # Dual reducido (U(1), traslación, inversión temporal) = primal U(1) sin reducir.
+    ph = diamond.abelian_phases(k, fA, fB, periodic=True, psi=psi)
+    v, _, st = diamond.DiamondDual(k).v_dual_sdp(ph, **OPTS)
+    assert st in ("optimal", "optimal_inaccurate")  # el valor se contrasta abajo
+    vp = sdp.primal_u1_graph(diamond.n_sites(k, True), diamond.chain_edges(k, True), ph, **OPTS)
+    assert v == pytest.approx(vp, abs=1e-6)
+
+
+def test_cadena_cerrada_cg():
+    # v_dual_cg con bloques dispersos (Lanczos) y con solo los bloques k <= n // 2
+    # = SDP completo, en un punto genérico (fA != fB, psi != 0).
+    ph = diamond.abelian_phases(3, np.pi / 2, np.pi / 3, periodic=True, psi=0.3 * np.pi)
+    vs, _, st = diamond.DiamondDual(3).v_dual_sdp(ph, **OPTS)
+    assert st in ("optimal", "optimal_inaccurate")
+    for D in (diamond.DiamondDual(3, dense_max=4), diamond.DiamondDual(3, half=True)):
+        vc, _, st, gap = D.v_dual_cg(ph, **OPTS)
+        assert st == "optimal" and gap < 1e-8
+        assert vc == pytest.approx(vs, abs=1e-8)
+
+
+def test_diamond_dual_traslacion():
+    D = diamond.DiamondDual(3)
+    assert D.perm == [(i + 3) % 9 for i in range(9)]
+    assert len(D.KEYS) == 15 and all(name in "ABC" for name, _ in D.KEYS)
