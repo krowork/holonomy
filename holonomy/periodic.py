@@ -76,6 +76,23 @@ def momentum_isometries(n_cells, basis, perm):
     return out
 
 
+def check_translation(n, edges, kinds, perm, n_cells):
+    """ValueError si perm no es una permutación de los n sitios de orden
+    n_cells o si no lleva cada arista orientada a otra del mismo tipo con la
+    misma orientación (B_e cambia de signo al invertir la arista)."""
+    perm = list(perm)
+    if sorted(perm) != list(range(n)):
+        raise ValueError("perm no es una permutación de los sitios")
+    p, order = perm, 1
+    while p != list(range(n)):
+        p, order = [perm[i] for i in p], order + 1
+    if order != n_cells:
+        raise ValueError(f"perm tiene orden {order}, no n_cells = {n_cells}")
+    arcs = {(tuple(e), kd) for e, kd in zip(edges, kinds)}
+    if {((perm[i], perm[j]), kd) for (i, j), kd in arcs} != arcs:
+        raise ValueError("perm no lleva cada arista orientada a otra del mismo tipo")
+
+
 def symmetric_blocks(n, edges, kinds, perm, n_cells, z_groups, dense_max=None, half=False,
                      keys=None):
     """Bloques (k giros, momento q) del grafo periódico, con los operadores
@@ -83,7 +100,12 @@ def symmetric_blocks(n, edges, kinds, perm, n_cells, z_groups, dense_max=None, h
     primera aparición en kinds), y ("Z", grupo) (Z total de los sitios de
     z_groups[grupo]), como matrices densas o, en los bloques de dimensión
     mayor que dense_max, dispersas (CSR). Con half, solo los sectores
-    k <= n // 2; con keys, solo esas claves. Devuelve [(k, q, {clave: matriz})]."""
+    k <= n // 2: el volteo global prod X compuesto con la conjugación compleja
+    K deja invariantes A, B y C (en todo grafo y con toda perm, que es real) y
+    lleva el bloque (k, q) al (n - k, -q), pero cambia el signo de Z, así que
+    los bloques omitidos solo son redundantes para testigos sin claves Z. Con
+    keys, solo esas claves. Devuelve [(k, q, {clave: matriz})]."""
+    check_translation(n, edges, kinds, perm, n_cells)
     order = list(dict.fromkeys(kinds))
     out = []
     for k in range(n // 2 + 1 if half else n + 1):
@@ -114,11 +136,13 @@ class PeriodicDual:
     autovalores superiores se calculan por Lanczos (eigsh). Solo lam_max,
     top_blocks, block_gaps y v_dual_cg admiten bloques dispersos.
 
-    Con half, solo los bloques k <= n // 2 y las claves de KEYS: válido si una
-    simetría antiunitaria que conserve las claves lleva (k, q) a (n - k, -q)
-    (en la escalera, el volteo global prod X compuesto con la conjugación
-    compleja; lo comprueba cada subclase). labels y top_blocks solo dan
-    entonces los bloques k <= n // 2."""
+    Con half, solo los bloques k <= n // 2 y las claves de KEYS: el volteo
+    global prod X compuesto con la conjugación compleja K lleva el bloque
+    (k, q) al (n - k, -q) y deja invariantes A, B y C en todo grafo y con toda
+    perm, así que los dos bloques tienen el mismo espectro para todo y; pero
+    cambia el signo de Z, así que half con claves Z en KEYS daría lambda_max
+    mal y se rechaza (ValueError). labels y top_blocks solo dan entonces los
+    bloques k <= n // 2."""
 
     def __init__(self, n, edges, kinds, perm, n_cells, z_groups, keys, dense_max=None,
                  half=False):
@@ -128,6 +152,8 @@ class PeriodicDual:
         self.perm = list(perm)
         self.n_cells = n_cells
         self.KEYS = tuple(keys)
+        if half and any(name == "Z" for name, _ in self.KEYS):
+            raise ValueError("half no vale con claves Z: prod X K cambia su signo")
         sb = symmetric_blocks(n, self.edges, self.kinds, self.perm, n_cells, z_groups,
                               dense_max, half, self.KEYS if half else None)
         self.labels = [(k, q) for k, q, _ in sb]
@@ -247,7 +273,8 @@ class PeriodicDual:
         'cota_invalida' si la diferencia es menor que -GAP_NEG (la cota
         inferior pasa de la superior más allá del ruido del solver);
         'optimal' si -GAP_NEG <= diferencia < tol; 'no_converge' en otro
-        caso. Si un SDP restringido no da solución, su estado de CVXPY."""
+        caso. Si un SDP restringido no da solución, su estado de CVXPY
+        ('infeasible', ... o 'solver_error' si Clarabel lanza SolverError)."""
         import cvxpy as cp
 
         g = self.norm_grad(phis)
@@ -271,9 +298,12 @@ class PeriodicDual:
                 Wc = sum(y[m] * (Ub.conj().T @ (red[key] @ Ub)) for m, key in enumerate(self.KEYS))
                 cons.append(t * np.eye(Ub.shape[1]) - Wc >> 0)
             prob = cp.Problem(cp.Minimize(t), cons)
-            prob.solve(solver=solver, **kw)
-            if y.value is None:
-                return best[0], best[1], prob.status, best[0] - lower
+            try:
+                prob.solve(solver=solver, **kw)
+            except cp.error.SolverError:
+                pass
+            if y.value is None or t.value is None:
+                return best[0], best[1], prob.status or "solver_error", best[0] - lower
             lower, yv = float(t.value), np.asarray(y.value)
             eig = [self.top_eig(block_at(red, yv), add + 1) for red in self.blocks]
             upper = max(w[-1] for w, _ in eig)

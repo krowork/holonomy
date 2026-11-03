@@ -182,3 +182,32 @@ def test_escalera_regresion_periodic():
     assert ladder.LadderDual(5).lam_max(y) == pytest.approx(8.689812610957985, abs=1e-10)
     assert ladder.LadderDual(5, dense_max=4, half=True).lam_max(y) == pytest.approx(
         8.689812610957985, abs=1e-10)
+
+
+def test_escalera_cg_caja_activa():
+    # Con la caja activa (|y_m| <= 0.03; el óptimo tiene max |y_m| ~ 0.042 y con
+    # 0.02 la caja ya es infactible), v_dual_cg da 'en_caja', no 'optimal'.
+    from holonomy import ladder
+    ph = ladder.abelian_phases(4, 0.5 * np.pi, periodic=True, psi=0.3 * np.pi)
+    opts = dict(tol_gap_abs=1e-10, tol_gap_rel=1e-10, tol_feas=1e-10)
+    v, _, st, _ = ladder.LadderDual(4).v_dual_cg(ph, box=0.03, **opts)
+    assert st == "en_caja" and v > 0.4348406811438309 + 1e-4
+
+
+def test_periodic_validaciones():
+    # half con claves Z se rechaza (prod X K cambia el signo de Z), y también una
+    # traslación de orden distinto de n_cells o que no conserve las aristas.
+    from holonomy import ladder
+    from holonomy.periodic import PeriodicDual, check_translation
+    L = 3
+    args = (2 * L, ladder.ladder_edges(L, True), ladder.edge_kinds(L, True),
+            ladder.translation_perm(L), L, ladder._z_groups(L))
+    with pytest.raises(ValueError, match="half"):
+        PeriodicDual(*args, ladder.LadderDual.KEYS + (("Z", "b"),), half=True)
+    n, edges, kinds, perm, _, _ = args
+    check_translation(n, edges, kinds, perm, L)
+    with pytest.raises(ValueError, match="orden"):
+        check_translation(n, edges, kinds, perm, 2 * L)
+    with pytest.raises(ValueError, match="arista"):
+        check_translation(n, [(j, i) if kd == "r" else (i, j) for (i, j), kd in zip(edges, kinds)]
+                          [:-1] + [edges[-1]], kinds, perm, L)
