@@ -242,8 +242,12 @@ class PeriodicDual:
         cualquier subespacio.
 
         Devuelve (v, y, estado, diferencia de cotas): v es la cota superior;
-        estado 'optimal' si la diferencia es < tol y el testigo no toca la
-        caja."""
+        estado (como en GraphDual.v_dual_cg) 'en_caja' si el y del último SDP
+        restringido (el que da la cota inferior) toca la caja;
+        'cota_invalida' si la diferencia es menor que -GAP_NEG (la cota
+        inferior pasa de la superior más allá del ruido del solver);
+        'optimal' si -GAP_NEG <= diferencia < tol; 'no_converge' en otro
+        caso. Si un SDP restringido no da solución, su estado de CVXPY."""
         import cvxpy as cp
 
         g = self.norm_grad(phis)
@@ -258,6 +262,7 @@ class PeriodicDual:
         U = [self.top_eig(block_at(red, y0), r0)[1] for red in self.blocks]
         best = (np.inf, y0)
         lower = -np.inf
+        yv = None
         for _ in range(maxiter):
             y = cp.Variable(len(self.KEYS))
             t = cp.Variable()
@@ -286,9 +291,21 @@ class PeriodicDual:
                     U[b] = Q[:, s > 1e-10 * s[0]]
         self.last_ranks = [Ub.shape[1] for Ub in U]
         gap = best[0] - lower
-        on_box = np.max(np.abs(best[1])) > 0.99 * box
-        st = "optimal" if gap < tol and not on_box else ("en_caja" if on_box else "no_converge")
+        # La caja se mira en el y del último SDP restringido, el que da `lower`.
+        on_box = yv is not None and np.max(np.abs(yv)) > 0.99 * box
+        if on_box:
+            st = "en_caja"
+        elif gap < -self.GAP_NEG:
+            st = "cota_invalida"
+        elif gap < tol:
+            st = "optimal"
+        else:
+            st = "no_converge"
         return best[0], best[1], st, gap
+
+    # Diferencia de cotas negativa tolerada (ruido de Clarabel, ~1e-8): más
+    # negativa, la cota inferior no es válida y el estado es "cota_invalida".
+    GAP_NEG = 1e-7
 
     def witness_spread(self, phis, v_opt, eps, solver="CLARABEL", **kw):
         """Rango de cada coeficiente del testigo dentro del conjunto casi óptimo
