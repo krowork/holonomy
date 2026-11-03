@@ -42,6 +42,11 @@ def Rx(a):
     return np.array([[1.0, 0.0, 0.0], [0.0, c, -s], [0.0, s, c]])
 
 
+def Ry(a):
+    c, s = np.cos(a), np.sin(a)
+    return np.array([[c, 0.0, s], [0.0, 1.0, 0.0], [-s, 0.0, c]])
+
+
 def rotation_angle(R):
     """Ángulo de rotación en [0, pi] de R en SO(3): tr R = 1 + 2 cos(theta)."""
     return float(np.arccos(np.clip((np.trace(R) - 1) / 2, -1.0, 1.0)))
