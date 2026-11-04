@@ -15,14 +15,27 @@ elegidos por Alex (tarea 7):
   B: igual, f dado (provisionalmente pi/3), mínimo en psi en cada k, para
      k = 2, 3, 4, ...: malla de NPSI puntos en [0, pi] y Brent (acotado,
      xatol = 1e-5) entre los vecinos del menor, como diamond_ring; el mínimo
-     de la malla gana si Brent no lo mejora. Basta psi en [0, pi] porque
-     v(f, psi) = v(f, -psi) (ver diamond_ring).
+     de la malla gana si Brent no lo mejora en más de 1e-8 (así un mínimo en
+     el borde se da exactamente en 0 o pi y no a ~1e-4 por ruido de CG).
+     Basta psi en [0, pi]: v(f, psi) = v(f, -psi) (comprobado en
+     diamond_ring) y v tiene periodo 2 pi en psi, luego también
+     v(f, pi + x) = v(f, pi - x) (reflexión en pi); v queda determinado por
+     sus valores en [0, pi].
 
 Cada evaluación: DiamondDual(k, dense_max=100, half=True).v_dual_cg con
-r0 = 12 en frío (como diamond_ring), en un proceso hijo nuevo (Pool con
-maxtasksperchild=1, patrón de ladder_limit: encadenados en un mismo proceso la
-memoria crece), que da su pico de memoria (ru_maxrss). Solo el estado
-'optimal' es un resultado: cualquier otro es un FALLO y su v no se usa.
+r0 = 12 en frío (como diamond_ring) y tol = 1e-8, en un proceso hijo nuevo
+(multiprocessing.Process, uno por evaluación, como el Pool con
+maxtasksperchild=1 de ladder_limit: encadenados en un mismo proceso la
+memoria crece). El hijo da su pico de memoria residente (ru_maxrss) y virtual
+(VmPeak de /proc/self/status; el criterio de parada es ulimit -v, que limita
+la virtual). Solo el estado 'optimal' es un resultado: cualquier otro es un
+FALLO y su v no se escribe. Si el hijo muere sin dar resultado (p. ej. lo
+mata el OOM-killer) o lanza una excepción (p. ej. MemoryError bajo
+ulimit -v), ese k es un FALLO ("proceso hijo muerto" o "excepción en el
+hijo") y no se sube a más k. Un 'optimal_inaccurate' de CVXPY en algún SDP
+restringido (PeriodicDual.last_solver_status) no es un FALLO: el estado es el
+de v_dual_cg (cotas cerradas); se da como información "inexacto" y en la
+columna estado_solver.
 
 Comprobaciones, en cada k:
   1. estado 'optimal' y |diferencia de cotas| < 1e-7 (no 1e-8: en la tarea 6
@@ -38,13 +51,18 @@ Comprobaciones, en cada k:
 Reanudable: cada evaluación 'optimal' se guarda en
 data/diamond_limit_<etiqueta>_evals.csv al terminarla y no se repite al
 relanzar (Brent repite la misma secuencia y la lee de la caché); las fallidas
-no se guardan y se repiten. Al terminar cada k se reescribe
-data/diamond_limit_<etiqueta>.csv con una fila por k: k, modo, f, psi (el del
-mínimo en B), v, déficit, estado, dif_cotas, estado_solver (el peor de
-PeriodicDual.last_solver_status en las evaluaciones de ese k), pico de
-memoria (GB, el mayor de las evaluaciones), tiempo (s, suma de las
-evaluaciones, incluidas las de caché) y número de evaluaciones. Una etiqueta
-ya usada con otro punto se rechaza.
+no se guardan y se repiten. La clave de la caché incluye los ajustes
+(AJUSTES: r0, dense_max, tol de v_dual_cg y CLARABEL_OPTS): las filas con
+otros ajustes, o sin estado 'optimal', no se leen. Al terminar cada k se
+reescribe data/diamond_limit_<etiqueta>.csv con una fila por k: k, modo, f,
+psi_modo, psi (el del mínimo en B), v, déficit, estado, dif_cotas,
+estado_solver (el peor de PeriodicDual.last_solver_status en las
+evaluaciones de ese k), picos residente y virtual (GB, los mayores de las
+evaluaciones), tiempo (s, suma de las evaluaciones, incluidas las de caché),
+número de evaluaciones y ajustes. Si el estado no es 'optimal', psi, v,
+déficit y dif_cotas quedan vacíos, y al relanzar la fila se trata como
+ausente. Una etiqueta ya usada con otro punto o con otros ajustes se
+rechaza.
 
 Uso: (ulimit -v 16000000; /usr/bin/time -f "%M KB %e s" python scripts/diamond_limit.py \\
           etiqueta modo f psi|min k [k ...])
@@ -63,10 +81,11 @@ import _common  # noqa: F401  (fija OMP_NUM_THREADS antes de numpy)
 from _common import CLARABEL_OPTS, Checker
 
 import csv
+import multiprocessing as mp
 import resource
 import sys
 import time
-from multiprocessing import Pool
+import traceback
 
 import numpy as np
 from scipy.optimize import minimize_scalar
@@ -77,18 +96,27 @@ from holonomy.report import DATA, write_csv
 THIRD = 1 / 3
 DENSE_MAX = 100
 R0 = 12  # subespacio inicial de v_dual_cg, en frío (ver diamond_ring)
+TOL_CG = 1e-8  # tol de v_dual_cg (diferencia de cotas para 'optimal')
 TOL_GAP = 1e-7
 TOL_REF = 1e-7
 TOL_BOUND = 1e-7
+TOL_BRENT = 1e-8  # mejora mínima de Brent sobre el mínimo de la malla
 V_A3 = 0.3077932355  # k = 3, f = 0: diamond_ring y primal reducido (tarea 6)
 NPSI = 7  # malla en psi del punto "min": paso pi/6, contenida en la de 13 de diamond_ring
 REF_MAX_K = 4
 MODES = {"igual": 1.0, "opuesto": -1.0}  # fB = signo * fA
+# Lo que determina la solución, además del punto: parte de la clave de la caché.
+AJUSTES = ";".join([f"r0={R0}", f"dense_max={DENSE_MAX}", f"tol_cg={TOL_CG!r}"]
+                   + [f"{a}={b!r}" for a, b in sorted(CLARABEL_OPTS.items())])
 
 EVAL_HEADER = ["k", "modo", "f", "psi", "v_max", "estado", "dif_cotas", "estado_solver",
-               "pico_GB", "tiempo_s"]
-SUM_HEADER = ["k", "modo", "f", "psi_modo", "psi", "v_max", "deficit", "estado", "dif_cotas", "estado_solver",
-              "pico_GB", "tiempo_s", "evaluaciones"]
+               "pico_GB", "vmpeak_GB", "tiempo_s", "ajustes"]
+SUM_HEADER = ["k", "modo", "f", "psi_modo", "psi", "v_max", "deficit", "estado", "dif_cotas",
+              "estado_solver", "pico_GB", "vmpeak_GB", "tiempo_s", "evaluaciones", "ajustes"]
+
+
+class ChildFailure(Exception):
+    """El proceso hijo murió sin resultado o lanzó una excepción."""
 
 
 def angle(s):
@@ -100,38 +128,80 @@ def _key(k, mode, f, psi):
     return (int(k), mode, round(float(f), 12), round(float(psi), 12))
 
 
+def _vmpeak_gb():
+    """Pico de memoria virtual del proceso (VmPeak, en GB)."""
+    with open("/proc/self/status") as fh:
+        for line in fh:
+            if line.startswith("VmPeak:"):
+                return int(line.split()[1]) / 1e6
+    return float("nan")
+
+
 def point(args):
-    """Una evaluación en frío en un proceso hijo nuevo:
-    (v, estado, dif_cotas, estado_solver, pico_GB, tiempo_s)."""
+    """Una evaluación en frío:
+    (v, estado, dif_cotas, estado_solver, pico_GB, vmpeak_GB, tiempo_s)."""
     k, mode, f, psi = args
     t0 = time.time()
     D = diamond.DiamondDual(k, dense_max=DENSE_MAX, half=True)
     ph = diamond.abelian_phases(k, f, MODES[mode] * f, periodic=True, psi=psi)
-    v, _, st, gap = D.v_dual_cg(ph, r0=R0, **CLARABEL_OPTS)
+    v, _, st, gap = D.v_dual_cg(ph, tol=TOL_CG, r0=R0, **CLARABEL_OPTS)
     mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1e6
-    return float(v), st, float(gap), D.last_solver_status or "", mem, time.time() - t0
+    return (float(v), st, float(gap), D.last_solver_status or "", mem, _vmpeak_gb(),
+            time.time() - t0)
+
+
+def _child(conn, args):
+    try:
+        conn.send(("ok", point(args)))
+    except BaseException:
+        conn.send(("error", traceback.format_exc(limit=3)))
+    finally:
+        conn.close()
+
+
+def run_child(args):
+    """point(args) en un proceso hijo nuevo. ChildFailure si muere sin
+    resultado (OOM-killer, señal) o si lanza una excepción."""
+    recv, send = mp.Pipe(duplex=False)
+    p = mp.get_context("fork").Process(target=_child, args=(send, args))
+    p.start()
+    send.close()
+    try:
+        kind, payload = recv.recv()  # EOFError si el hijo muere sin enviar
+    except EOFError:
+        kind, payload = "dead", None
+    recv.close()
+    p.join()
+    if kind == "dead":
+        raise ChildFailure(f"proceso hijo muerto (exitcode {p.exitcode})")
+    if kind == "error":
+        raise ChildFailure("excepción en el hijo: " + payload.strip().splitlines()[-1])
+    return payload
 
 
 class Evaluator:
-    """Evaluaciones con caché en disco (solo las 'optimal')."""
+    """Evaluaciones con caché en disco (solo las 'optimal' con AJUSTES)."""
 
-    def __init__(self, tag, pool):
+    def __init__(self, tag):
         self.path = DATA / f"diamond_limit_{tag}_evals.csv"
-        self.pool = pool
         self.cache = {}
+        self.skipped = 0
         self.log = []  # evaluaciones del k en curso (de caché o nuevas)
         if self.path.exists():
             for r in csv.DictReader(open(self.path)):
+                if r["estado"] != "optimal" or r.get("ajustes") != AJUSTES:
+                    self.skipped += 1
+                    continue
                 self.cache[_key(r["k"], r["modo"], r["f"], r["psi"])] = (
                     float(r["v_max"]), r["estado"], float(r["dif_cotas"]), r["estado_solver"],
-                    float(r["pico_GB"]), float(r["tiempo_s"]))
+                    float(r["pico_GB"]), float(r["vmpeak_GB"]), float(r["tiempo_s"]))
 
     def __call__(self, k, mode, f, psi):
         key = _key(k, mode, f, psi)
         if key in self.cache:
             res = self.cache[key]
         else:
-            res = self.pool.apply(point, ((k, mode, f, psi),))
+            res = run_child((k, mode, f, psi))
             if res[1] == "optimal":
                 self.cache[key] = res
                 DATA.mkdir(exist_ok=True)
@@ -141,7 +211,7 @@ class Evaluator:
                     if new:
                         w.writerow(EVAL_HEADER)
                     w.writerow([k, mode, repr(float(f)), repr(float(psi))] + [
-                        repr(x) if isinstance(x, float) else x for x in res])
+                        repr(x) if isinstance(x, float) else x for x in res] + [AJUSTES])
         self.log.append((psi,) + res)
         return res
 
@@ -192,9 +262,18 @@ def minimum(ev, k, mode, f):
         return v
 
     res = minimize_scalar(g, bounds=(lo, hi), method="bounded", options=dict(xatol=1e-5))
-    # Brent no evalúa los extremos: el mínimo de la malla gana si es menor.
-    pm, vm = (float(res.x), float(res.fun)) if res.fun < vals[j] else (float(psis[j]), float(vals[j]))
+    # Brent acotado no evalúa los extremos lo, hi: un mínimo en el borde 0 o pi
+    # lo da el punto de la malla, que gana salvo que Brent lo mejore en más
+    # de TOL_BRENT (el ruido de CG es ~1e-9).
+    if res.fun < vals[j] - TOL_BRENT:
+        pm, vm = float(res.x), float(res.fun)
+    else:
+        pm, vm = float(psis[j]), float(vals[j])
     return pm, vm, "optimal" if not fails else "fallos:" + ",".join(fails)
+
+
+def _fmt(x):
+    return repr(float(x))
 
 
 def main():
@@ -202,6 +281,7 @@ def main():
         sys.exit("uso: diamond_limit.py etiqueta igual|opuesto f psi|min k [k ...]")
     tag, mode, f = sys.argv[1], sys.argv[2], angle(sys.argv[3])
     psi_fix = None if sys.argv[4] == "min" else angle(sys.argv[4])
+    psi_modo = "min" if psi_fix is None else "fijo"
     ks = [int(a) for a in sys.argv[5:]]
     if min(ks) < 2:
         sys.exit("la cadena cerrada exige k >= 2")
@@ -212,46 +292,67 @@ def main():
     rows = {}
     if (DATA / sum_name).exists():
         for r in csv.DictReader(open(DATA / sum_name)):
-            same = r["modo"] == mode and abs(float(r["f"]) - f) < 1e-12 and (
-                r["psi_modo"] == "min" if psi_fix is None
-                else r["psi_modo"] == "fijo" and abs(float(r["psi"]) - psi_fix) < 1e-12)
+            # psi fijo: se compara el f y el modo de psi; el psi de una fila
+            # fallida está vacío, así que el psi fijo se mira solo en las 'optimal'.
+            same = (r["modo"] == mode and abs(float(r["f"]) - f) < 1e-12
+                    and r["psi_modo"] == psi_modo and r.get("ajustes") == AJUSTES
+                    and (psi_fix is None or r["estado"] != "optimal"
+                         or abs(float(r["psi"]) - psi_fix) < 1e-12))
             if not same:
-                sys.exit(f"{sum_name} es de otro punto (fila k = {r['k']}); use otra etiqueta")
-            rows[int(r["k"])] = [r[h] for h in SUM_HEADER]
+                sys.exit(f"{sum_name} es de otro punto o de otros ajustes (fila k = {r['k']}); "
+                         "use otra etiqueta")
+            if r["estado"] == "optimal":  # las filas fallidas cuentan como ausentes
+                rows[int(r["k"])] = [r[h] for h in SUM_HEADER]
 
     chk = Checker(f"diamond_limit {tag}: {spec}")
-    pool = Pool(1, maxtasksperchild=1)
-    ev = Evaluator(tag, pool)
-    chk.info(f"{len(ev.cache)} evaluaciones en caché ({ev.path.name})")
+    ev = Evaluator(tag)
+    chk.info(f"{len(ev.cache)} evaluaciones en caché ({ev.path.name}); {ev.skipped} filas "
+             f"descartadas (no 'optimal' u otros ajustes); ajustes {AJUSTES}")
     for k in ks:
         print(f"== k = {k} ({3 * k} sitios)")
         ev.log = []
-        if psi_fix is None:
-            psi, v, st = minimum(ev, k, mode, f)
-            ok_gap = all(e[2] == "optimal" and abs(e[3]) < TOL_GAP for e in ev.log)
-            gap = max(abs(e[3]) for e in ev.log)
-            chk.check(st == "optimal" and ok_gap,
-                      f"k = {k}: mínimo en psi/pi = {psi / np.pi:.5f}, v = {v:.10f}, "
-                      f"déficit = {THIRD - v:.4e} [{st}; {len(ev.log)} evaluaciones, "
-                      f"máx |dif cotas| = {gap:.1e}]")
+        dead = None
+        try:
+            if psi_fix is None:
+                psi, v, st = minimum(ev, k, mode, f)
+                ok_gap = all(e[2] == "optimal" and abs(e[3]) < TOL_GAP for e in ev.log)
+                gap = max(abs(e[3]) for e in ev.log)
+                if st == "optimal" and not ok_gap:
+                    st = "dif_cotas"
+            else:
+                psi = psi_fix
+                v, st, gap = ev(k, mode, f, psi)[:3]
+                if st == "optimal" and not abs(gap) < TOL_GAP:
+                    st = "dif_cotas"
+        except ChildFailure as e:
+            dead = str(e)
+            st = dead
+        good = st == "optimal"
+        if good:
+            msg = (f"k = {k}: v = {v:.10f}, déficit = {THIRD - v:.4e}, "
+                   + (f"mínimo en psi/pi = {psi / np.pi:.5f}, " if psi_fix is None else "")
+                   + f"máx |dif cotas| = {abs(gap):.1e} [{len(ev.log)} evaluaciones]")
         else:
-            psi = psi_fix
-            v, st, gap = ev(k, mode, f, psi)[:3]
-            chk.check(st == "optimal" and abs(gap) < TOL_GAP,
-                      f"k = {k}: v = {v:.10f}, déficit = {THIRD - v:.4e}, cotas a {gap:.1e} [{st}]")
-        sst = "optimal"
+            msg = f"k = {k}: sin resultado, estado {st} [{len(ev.log)} evaluaciones]"
+        chk.check(good, msg)
+        sst = "optimal" if ev.log else ""
         for e in ev.log:
             sst = diamond.DiamondDual._worse(sst, e[4] or "optimal")
         if sst != "optimal":
             chk.info(f"   inexacto: algún SDP restringido acabó '{sst}'")
-        mem = max(e[5] for e in ev.log)
-        dt = sum(e[6] for e in ev.log)
         n_ev = len(ev.log)
-        chk.info(f"   pico {mem:.2f} GB, {dt:.0f} s ({dt / n_ev:.1f} s por evaluación)")
-        rows[k] = [k, mode, repr(f), "min" if psi_fix is None else "fijo", repr(float(psi)),
-                   repr(float(v)), repr(float(THIRD - v)), st, repr(float(gap)), sst, f"{mem:.3f}",
-                   f"{dt:.1f}", n_ev]
-        if st == "optimal":
+        mem = max((e[5] for e in ev.log), default=float("nan"))
+        vmp = max((e[6] for e in ev.log), default=float("nan"))
+        dt = sum(e[7] for e in ev.log)
+        chk.info(f"   pico residente {mem:.2f} GB, virtual {vmp:.2f} GB, {dt:.0f} s "
+                 f"({dt / max(n_ev, 1):.1f} s por evaluación)")
+        if good:
+            rows[k] = [k, mode, _fmt(f), psi_modo, _fmt(psi), _fmt(v), _fmt(THIRD - v), st,
+                       _fmt(gap), sst, f"{mem:.3f}", f"{vmp:.3f}", f"{dt:.1f}", n_ev, AJUSTES]
+        else:
+            rows[k] = [k, mode, _fmt(f), psi_modo, "", "", "", st, "", sst, f"{mem:.3f}",
+                       f"{vmp:.3f}", f"{dt:.1f}", n_ev, AJUSTES]
+        if good:
             chk.check(v <= THIRD + TOL_BOUND, f"   v <= 1/3 + {TOL_BOUND:.0e}: v - 1/3 = {v - THIRD:.1e}")
             if k <= REF_MAX_K:
                 ref, name = ref_value(k, mode, f, psi_fix)
@@ -263,12 +364,21 @@ def main():
                 chk.check(abs(v - V_A3) < TOL_REF,
                           f"   = {V_A3} (diamond_ring y primal reducido), |dif| = {abs(v - V_A3):.1e}")
                 for p in (np.pi / 3, np.pi):
-                    vp, sp, gp = ev(k, mode, f, p)[:3]
-                    chk.info(f"   planitud en psi: psi/pi = {p / np.pi:.3f}: v = {vp:.10f}, "
-                             f"|v - v(psi/pi = {psi / np.pi:.3f})| = {abs(vp - v):.1e} [{sp}, cotas a {gp:.1e}]")
+                    try:
+                        vp, sp, gp = ev(k, mode, f, p)[:3]
+                    except ChildFailure as e:
+                        chk.info(f"   planitud en psi/pi = {p / np.pi:.3f}: sin resultado ({e})")
+                        continue
+                    if sp == "optimal":
+                        chk.info(f"   planitud en psi: psi/pi = {p / np.pi:.3f}: v = {vp:.10f}, "
+                                 f"|v - v(psi/pi = {psi / np.pi:.3f})| = {abs(vp - v):.1e} "
+                                 f"[cotas a {gp:.1e}]")
+                    else:
+                        chk.info(f"   planitud en psi/pi = {p / np.pi:.3f}: sin resultado ({sp})")
         write_csv(sum_name, SUM_HEADER, [rows[q] for q in sorted(rows)])
-    pool.close()
-    pool.join()
+        if dead is not None:
+            chk.info(f"   no se sube a más k: {dead}")
+            break
     chk.finish()
 
 

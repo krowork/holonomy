@@ -1,5 +1,0 @@
-k,modo,f,psi_modo,psi,v_max,deficit,estado,dif_cotas,estado_solver,pico_GB,tiempo_s,evaluaciones
-2,igual,0.0,fijo,0.0,0.33333333333344056,-1.0724754417879012e-13,optimal,-3.7156833165852277e-11,optimal,0.109,0.2,1
-3,igual,0.0,fijo,0.0,0.3077932355415619,0.02554009779177141,optimal,-2.9048247141005845e-10,optimal_inaccurate,0.180,1.5,1
-4,igual,0.0,fijo,0.0,0.33333333333348664,-1.5332179970073412e-13,optimal,-6.449435430155859e-11,optimal_inaccurate,0.258,4.7,1
-5,igual,0.0,fijo,0.0,0.3180092752405974,0.015324058092735904,optimal,-2.377594232605418e-10,optimal_inaccurate,0.409,10.3,1
