@@ -1,0 +1,4 @@
+k,modo,f,psi_modo,psi,v_max,deficit,estado,dif_cotas,estado_solver,pico_GB,vmpeak_GB,tiempo_s,evaluaciones,ajustes
+3,igual,0.0,fijo,0.0,0.3077932355415619,0.02554009779177141,optimal,-2.9048247141005845e-10,optimal_inaccurate,0.181,1.299,1.6,1,r0=12;dense_max=100;tol_cg=1e-08;tol_feas=1e-10;tol_gap_abs=1e-10;tol_gap_rel=1e-10
+5,igual,0.0,fijo,0.0,0.318009274558873,0.015324058774460303,optimal,-3.134686954453514e-11,optimal_inaccurate,0.455,1.658,17.8,1,r0=12;dense_max=100;tol_cg=1e-08;tol_feas=1e-10;tol_gap_abs=1e-10;tol_gap_rel=1e-10
+7,igual,0.0,fijo,0.0,0.3223875771063462,0.010945756226987124,optimal,5.929257085313111e-12,optimal_inaccurate,2.866,4.061,45910.2,1,r0=12;dense_max=100;tol_cg=1e-08;tol_feas=1e-10;tol_gap_abs=1e-10;tol_gap_rel=1e-10

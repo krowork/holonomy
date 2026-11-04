@@ -1,0 +1,6 @@
+k,modo,f,psi,v_max,estado,dif_cotas,estado_solver,pico_GB,vmpeak_GB,tiempo_s,ajustes
+3,igual,0.0,0.0,0.3077932355415619,optimal,-2.9048247141005845e-10,optimal_inaccurate,0.180736,1.298812,1.617365837097168,r0=12;dense_max=100;tol_cg=1e-08;tol_feas=1e-10;tol_gap_abs=1e-10;tol_gap_rel=1e-10
+3,igual,0.0,1.0471975511965976,0.30779323578478524,optimal,-1.7027929066770753e-10,optimal_inaccurate,0.18196,1.299544,1.7336292266845703,r0=12;dense_max=100;tol_cg=1e-08;tol_feas=1e-10;tol_gap_abs=1e-10;tol_gap_rel=1e-10
+3,igual,0.0,3.141592653589793,0.3077932354294617,optimal,4.426181643424343e-12,optimal_inaccurate,0.161944,1.333892,0.713263988494873,r0=12;dense_max=100;tol_cg=1e-08;tol_feas=1e-10;tol_gap_abs=1e-10;tol_gap_rel=1e-10
+5,igual,0.0,0.0,0.318009274558873,optimal,-3.134686954453514e-11,optimal_inaccurate,0.45522,1.658492,17.77498149871826,r0=12;dense_max=100;tol_cg=1e-08;tol_feas=1e-10;tol_gap_abs=1e-10;tol_gap_rel=1e-10
+7,igual,0.0,0.0,0.3223875771063462,optimal,5.929257085313111e-12,optimal_inaccurate,2.865984,4.060808,45910.20028281212,r0=12;dense_max=100;tol_cg=1e-08;tol_feas=1e-10;tol_gap_abs=1e-10;tol_gap_rel=1e-10
