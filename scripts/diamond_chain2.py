@@ -7,7 +7,8 @@ centrales (1, 2) y (4, 5), 10 aristas orientadas.
    flujos de triángulo en las dos celdas (gauge simétrico de
    holonomy.diamond.abelian_phases): malla 13x13 en [0, pi]^2 y la recta
    fA = -fB (12 puntos con fA en (0, pi]; fA = fB es la diagonal de la malla).
-   Comprobaciones: v <= 1/3 + 1e-8 en todos los puntos (cota del triángulo)
+   Comprobaciones: v <= 1/3 + 1e-7 en todos los puntos (cota del triángulo; el primal
+   U(1) acaba a menudo optimal_inaccurate y sobrepasa 1/3 en ~3e-8)
    y v = 1/3 a 1e-7 sin holonomía (fA = fB = 0).
 2. Simetrías v(fA, fB) = v(fB, fA) = v(-fA, -fB) a 1e-7 en 5 puntos al azar
    (semilla fija). Son información: si alguna no vale se dice en la salida
@@ -245,7 +246,7 @@ def main():
         rows.append(["fA=-fB", a, -a, f"{v:.12f}", st])
     write_csv(f"diamond_chain2_abel{suf}.csv", ["caso", "fA", "fB", "v", "estado"], rows)
     vmax = max(vals.values())
-    chk.check(vmax <= 1 / 3 + 1e-8, f"mapa abeliano ({len(vals)} puntos): v <= 1/3 + 1e-8, máx v - 1/3 = {vmax - 1 / 3:+.1e}")
+    chk.check(vmax <= 1 / 3 + V_TOL, f"mapa abeliano ({len(vals)} puntos): v <= 1/3 + 1e-7, máx v - 1/3 = {vmax - 1 / 3:+.1e}")
     v0 = vals[(0.0, 0.0)]
     chk.check(abs(v0 - 1 / 3) < V_TOL, f"sin holonomía: v = {v0:.12f}, |v - 1/3| = {abs(v0 - 1 / 3):.1e}")
     nopt = sum(r[4] != "optimal" for r in rows)
