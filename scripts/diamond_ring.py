@@ -44,7 +44,9 @@ Medido (13 x 13, 2026-11-03, /usr/bin/time, OMP_NUM_THREADS = 2):
   k = 2: 846 evaluaciones, 175 s, pico 150 MB;
   k = 3: 5917 s (~99 min, ~6 s por evaluación), pico 5,4 GB (el del primal
          reducido en f = 0; el resto, ~0,7 GB);
-  k = 4: en segundo plano (ver el informe de la tarea 6).
+  k = 4: 147 711 s (~41 h, ~85 s por evaluación), pico 7,6 GB (con la
+         versión anterior del guion, que aún intentaba el primal reducido);
+         regenerar desde la caché, 24 s y 0,22 GB.
 """
 import _common  # noqa: F401  (fija OMP_NUM_THREADS antes de numpy)
 from _common import CLARABEL_OPTS, Checker
