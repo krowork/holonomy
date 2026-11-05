@@ -46,6 +46,8 @@ arranques, serían ~100 evaluaciones por arranque, unas 80 h. Por eso:
     en el CSV se dice cuántos arranques llegaron al tope.
 Estimación: 4 x 5 x 20 = 400 evaluaciones, ~16 h, más ~25 min del mapa
 abeliano (unos 8 s por punto con primal_u1_graph).
+Medido (2026-11-04): 77 680 s (21,6 h) con la caché vacía, pico residente
+0,94 GB; regenerar desde la caché (solo el mapa abeliano) 1 810 s, 0,91 GB.
 
 Escribe data/diamond_chain2_abel.csv (fA, fB, v, estado), data/diamond_chain2_rel.csv
 (theta_A, theta_B, gamma, v con Q = I (nan si su estado no es 'optimal') y su
