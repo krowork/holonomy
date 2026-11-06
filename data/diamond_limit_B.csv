@@ -1,0 +1,5 @@
+k,modo,f,psi_modo,psi,v_max,deficit,estado,dif_cotas,estado_solver,pico_GB,vmpeak_GB,tiempo_s,evaluaciones,ajustes
+2,igual,1.3089969389957472,min,0.6852535481463117,0.3233795831984634,0.009953750134869932,optimal,1.054154818991293e-09,optimal_inaccurate,0.111,1.361,5.1,25,r0=12;dense_max=100;tol_cg=1e-08;tol_feas=1e-10;tol_gap_abs=1e-10;tol_gap_rel=1e-10
+3,igual,1.3089969389957472,min,0.0,0.3252628265048748,0.008070506828458501,optimal,6.5074842736656535e-09,optimal_inaccurate,0.208,1.393,103.0,28,r0=12;dense_max=100;tol_cg=1e-08;tol_feas=1e-10;tol_gap_abs=1e-10;tol_gap_rel=1e-10
+4,igual,1.3089969389957472,min,3.141592653589793,0.32448390112255904,0.008849432210774277,optimal,4.5585432650874225e-09,optimal_inaccurate,1.473,2.662,1872.0,30,r0=12;dense_max=100;tol_cg=1e-08;tol_feas=1e-10;tol_gap_abs=1e-10;tol_gap_rel=1e-10
+5,igual,1.3089969389957472,min,0.0,0.32643698334481724,0.006896349988516071,optimal,9.58961537955716e-09,optimal_inaccurate,5.517,6.644,7556.1,30,r0=12;dense_max=100;tol_cg=1e-08;tol_feas=1e-10;tol_gap_abs=1e-10;tol_gap_rel=1e-10
