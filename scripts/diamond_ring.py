@@ -1,5 +1,7 @@
 """Cadena cerrada de k diamantes: mapas v(f, psi) (exploración).
 
+Artículo (~/fisica/holonomia_diamantes.tex): §7, La cadena cerrada (mapas de k = 2, 3, 4 y su tabla).
+
 Sitios y aristas de holonomy.diamond.chain_edges(k, periodic=True): 3k
 sitios, 5k aristas. Datos abelianos uniformes en el gauge simétrico
 (holonomy.diamond.abelian_phases): los mismos flujos de triángulo fA, fB en

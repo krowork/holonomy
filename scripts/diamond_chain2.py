@@ -1,5 +1,8 @@
 """Cadena abierta de 2 diamantes (7 qubits): mapas abelianos y orientación relativa (exploración).
 
+Artículo (~/fisica/holonomia_diamantes.tex): §6, La cadena abierta de dos diamantes (datos abelianos,
+figura del mapa y tabla de orientación relativa).
+
 Sitios y aristas de holonomy.diamond.chain_edges(2): uniones 0, 3, 6,
 centrales (1, 2) y (4, 5), 10 aristas orientadas.
 
@@ -37,7 +40,8 @@ arranques, serían ~100 evaluaciones por arranque, unas 80 h. Por eso:
     evaluación 'optimal' (y0) con un subespacio inicial de R0_WARM = 32
     autovectores (el rango final típico) en lugar de 6; ahorra ~10-15 %;
   - caché en disco reanudable, data/diamond_chain2_evals.csv (una fila por
-    evaluación, con estado y diferencia de cotas; no se repite al relanzar);
+    evaluación 'optimal', con estado y diferencia de cotas; no se repite al
+    relanzar; las no 'optimal' solo se recuerdan durante la corrida);
   - tope de MAXFEV = 20 evaluaciones por arranque (las 4 del símplex
     inicial cuentan dentro). Efecto del tope: el Nelder-Mead se corta antes
     de converger a xatol = 1e-3 / fatol = 1e-9, así que cada min_Q es una
@@ -112,7 +116,9 @@ def _key(tA, tB, g, rv):
     return tuple(round(float(x), 10) for x in (tA, tB, g, *rv))
 
 
-ESTADOS = ("optimal", "en_caja", "cota_invalida", "no_converge")
+# Estados de GraphDual.v_dual_cg: los suyos y los de CVXPY si un SDP restringido falla.
+ESTADOS = ("optimal", "en_caja", "cota_invalida", "no_converge", "solver_error", "infeasible",
+           "infeasible_inaccurate", "unbounded", "unbounded_inaccurate", "user_limit")
 
 
 def _parse_eval(row):
@@ -177,12 +183,16 @@ def v_dual(tA, tB, g, rv):
         if st == "optimal":
             _warm = y
         _cache[k] = (float(v), st, float(gap))
-        new = not EVALS.exists()
-        with open(EVALS, "a", newline="") as fh:
-            w = csv.writer(fh)
-            if new:
-                w.writerow(EVAL_COLS)
-            w.writerow([*k, *_cache[k]])
+        # Solo las 'optimal' van al disco (como diamond_ring y diamond_limit):
+        # un fallo pasajero se repite al relanzar en lugar de quedar como FALLO
+        # para siempre. En esta corrida se recuerda en memoria.
+        if st == "optimal":
+            new = not EVALS.exists()
+            with open(EVALS, "a", newline="") as fh:
+                w = csv.writer(fh)
+                if new:
+                    w.writerow(EVAL_COLS)
+                w.writerow([*k, *_cache[k]])
     v, st, gap = _cache[k]
     if st != "optimal" and k not in {f[0] for f in fallos}:
         fallos.append((k, st, gap))

@@ -1,5 +1,9 @@
 """Cadenas de diamantes K4-e: geometría, flujos de triángulo y gauge de árbol.
 
+Artículo (~/fisica/holonomia_diamantes.tex): §2, Marco (sitios, aristas, invariantes, gauge simétrico y de
+árbol); §4, Dual y simetrías (DiamondDual, Proposición del dual de la cadena
+cerrada; primal reducido); lo usan los guiones de §5 a §8.
+
 Sitios: la celda m (m = 0..k-1) tiene la unión j = 3m, los centrales u = 3m+1
 y w = 3m+2, y la unión siguiente j' = 3m+3 (que es 0 en la cadena cerrada
 para m = k-1). Hay 3k+1 sitios en la cadena abierta y 3k en la cerrada.

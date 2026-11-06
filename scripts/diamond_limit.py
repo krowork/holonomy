@@ -1,6 +1,8 @@
 """Cadena cerrada de k diamantes: límite k -> infinito del déficit 1/3 - v
 en un punto fijo (exploración).
 
+Artículo (~/fisica/holonomia_diamantes.tex): §8, El límite k -> infinito (puntos A y B, tabla y figura).
+
 El punto se da como (modo, f, psi), con psi un número o "min" (el mínimo en
 psi, el mayor déficit). Modos y datos como en diamond_ring: (fA, fB) =
 (f, f) en "igual" y (f, -f) en "opuesto", fases de

@@ -193,9 +193,13 @@ class GraphDual:
 
         Devuelve (v, y, estado, diferencia de cotas): v es la cota superior;
         estado 'en_caja' si el y del último SDP restringido (el que da la
-        cota inferior) toca la caja, o si el SDP restringido no da solución
-        (infactible o fallo del solver) con la caja puesta: un fallo por la
-        caja nunca parece un resultado; 'cota_invalida' si la diferencia es
+        cota inferior) toca la caja, o si un SDP restringido no da solución
+        por la caja: es infactible (sin caja siempre es factible: t no está
+        acotado) o falla justo después de un y que tocaba la caja; un fallo
+        por la caja nunca parece un resultado. Si un SDP restringido falla
+        por otra causa, el estado es el de CVXPY ('solver_error' si Clarabel
+        lanza SolverError, p. ej. por NumericalError; 'unbounded' sin caja),
+        como en PeriodicDual.v_dual_cg; 'cota_invalida' si la diferencia es
         menor que -GAP_NEG (= -1e-7: la cota inferior pasa de la superior más
         allá del ruido del solver); 'optimal' si -GAP_NEG <= diferencia < tol;
         'no_converge' en otro caso. Clarabel resuelve los SDP restringidos
@@ -231,7 +235,7 @@ class GraphDual:
                 pass
             self.last_solver_status = self._worse(self.last_solver_status, prob.status)
             if y.value is None or t.value is None:
-                failed = prob.status
+                failed = prob.status or "solver_error"
                 break
             lower, yv = float(t.value), np.asarray(y.value)
             W = self.witness(yv)
@@ -251,7 +255,11 @@ class GraphDual:
         self.last_ranks = [Ub.shape[1] for Ub in U]
         gap = best[0] - lower
         if failed is not None:
-            return best[0], best[1], ("en_caja" if box is not None else "no_converge"), gap
+            # Atribuible a la caja: infactible con ella, o fallo tras un y en la caja.
+            por_caja = box is not None and (
+                failed in ("infeasible", "infeasible_inaccurate")
+                or (yv is not None and np.max(np.abs(yv)) > 0.99 * box))
+            return best[0], best[1], ("en_caja" if por_caja else failed), gap
         # La caja se mira en el y del último SDP restringido, el que da `lower`.
         on_box = box is not None and yv is not None and np.max(np.abs(yv)) > 0.99 * box
         if on_box:

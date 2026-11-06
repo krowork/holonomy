@@ -382,6 +382,12 @@ class PeriodicDual:
                 return best[0], best[1], prob.status or "solver_error", best[0] - lower
             lower, yv = float(t.value), np.asarray(y.value)
             eig = [self.top_eig(block_at(red, yv), add + 1) for red in self.blocks]
+            # Cota superior lambda_max(W(y)) sin dividir por N(y): N(y) = 1 es
+            # una restricción del SDP y se cumple a la precisión del solver
+            # (medido en los y de diamond_ring: |N - 1| <= 2e-9, sesgo
+            # <= ~7e-10, por debajo de tol). GraphDual divide por g @ y; aquí
+            # no se cambia para no romper la correspondencia con los datos
+            # guardados (escaleras y cadena cerrada).
             upper = max(w[-1] for w, _ in eig)
             if upper < best[0]:
                 best = (upper, yv)

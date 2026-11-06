@@ -1,5 +1,7 @@
 """El diamante simple K4-e tiene v_max = 1/3 para toda holonomía.
 
+Artículo (~/fisica/holonomia_diamantes.tex): §5, El diamante simple (Teorema y comprobación numérica).
+
 Sitios j = 0, u = 1, w = 2, j' = 3; aristas orientadas (0,1), (0,2), (1,2),
 (1,3), (2,3) (holonomy.diamond.chain_edges(1)). Triángulos A = (0,1,2) y
 B = (1,3,2). Cota superior: cada triángulo es un anillo de 3, con v_max = 1/3

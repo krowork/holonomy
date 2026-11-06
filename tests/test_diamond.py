@@ -202,3 +202,19 @@ def test_punto_de_la_orbita_de_gauge(monkeypatch):
             y = m.orbit_point(g, p1, p2, thA=0.1, dthB=-0.2, dalpha=0.1)
             assert y[0] == 0.1 and y[1] == pytest.approx(np.pi - 0.2, abs=1e-15)
             assert m.axis_angle(y) == pytest.approx(np.pi / 2 + 0.1, abs=1e-12)
+
+
+@pytest.mark.parametrize("g", [0.0, 0.3 * np.pi, np.pi / 2, np.pi])
+def test_reflexion_g(monkeypatch, g):
+    # G de la simetría S1 (Lema de reflexión): rotación con G z = -n_B y
+    # G n_B = -z, también en gamma = 0 y pi, donde la base (z, n, z x n) es singular.
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1] / "scripts"))
+    m = importlib.import_module("diamond_chain2_min")
+    z = np.array([0.0, 0.0, 1.0])
+    n = np.array([np.sin(g), 0.0, np.cos(g)])
+    G = m.reflexion_g(g)
+    assert G @ G.T == pytest.approx(np.eye(3), abs=1e-12)
+    assert np.linalg.det(G) == pytest.approx(1.0, abs=1e-12)
+    assert G @ z == pytest.approx(-n, abs=1e-12)
+    assert G @ n == pytest.approx(-z, abs=1e-12)
+    assert np.all(np.isfinite(m.swap_q(g, np.array([0.5, 0.3, -0.2]))))

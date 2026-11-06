@@ -1,5 +1,8 @@
 """Cadena abierta de 2 diamantes (7 qubits): mínimo global de v y su testigo (exploración).
 
+Artículo (~/fisica/holonomia_diamantes.tex): §6.1, El mínimo (Lema de reflexión, búsqueda, x*, órbita de
+gauge, mínimo transverso y testigo).
+
 Datos: el par (H_A, H_B) de invariantes (theta_A, theta_B, gamma) en la
 celda 1 y el mismo par conjugado por Q en la celda 2
 (holonomy.diamond.relative_pairs, gauge de árbol de
@@ -95,8 +98,8 @@ direcciones transversas (theta_A, theta_B - pi, alpha - pi/2).
     1e-5 -> 1e-6 > 2,5 y anchura en 1e-6 < ANCHO_REL = 0,1 veces el mayor |y_m|;
     si no, inconcluso). Los optimal_inaccurate se cuentan en el resumen del
     Checker (status_note) y llevan la marca "inexacto".
-Comprobaciones también: v(0, 0, 0) = 1/3, S1 en un punto genérico, y cada
-evaluación no 'optimal' es un FALLO.
+Comprobaciones también: v(0, 0, 0) = 1/3 a V_TOL con tol TOL_FINO, S1 en un
+punto genérico, y cada evaluación no 'optimal' es un FALLO.
 
 Caché reanudable data/diamond_chain2_min_evals.csv (una fila por evaluación,
 con su tol; una evaluación vale para cualquier petición con tol mayor o
@@ -378,13 +381,26 @@ def grid():
     return pts
 
 
-def swap_q(g, rv):
-    """Q' = G^T Q^T G de la simetría S1: v(tA, tB, g, Q) = v(tB, tA, g, Q')."""
+def reflexion_g(g):
+    """G de la simetría S1: la rotación con G z = -n_B y G n_B = -z,
+    n_B = R_y(g) z. Para gamma en (0, pi) sale de las bases (z, n, z x n) y
+    (-n, -z, n x z). Con gamma = 0 o pi (n = +-z) esa base es singular: con
+    n = z, G es el giro de pi alrededor de un eje perpendicular a z (el Lema
+    de reflexión), aquí R_x(pi); con n = -z, G = I."""
     z = np.array([0.0, 0.0, 1.0])
     n = Ry(g) @ z
+    c = float(n @ z)
+    if abs(abs(c) - 1) < 1e-12:
+        return Rx(pi) if c > 0 else np.eye(3)
     F1 = np.column_stack([z, n, np.cross(z, n)])
     F2 = np.column_stack([-n, -z, np.cross(n, z)])
-    G = F2 @ np.linalg.inv(F1)
+    return F2 @ np.linalg.inv(F1)
+
+
+def swap_q(g, rv):
+    """Q' = G^T Q^T G de la simetría S1: v(tA, tB, g, Q) = v(tB, tA, g, Q'),
+    con G = reflexion_g(g) (vale también con gamma = 0 y pi)."""
+    G = reflexion_g(g)
     Q = Rotation.from_rotvec(rv).as_matrix()
     return Rotation.from_matrix(G.T @ Q.T @ G).as_rotvec()
 
@@ -465,9 +481,13 @@ def main():
     rows = []
 
     # Comprobaciones previas: v(0,0,0) = 1/3 y la simetría S1.
-    v0, st, gap = v_eval((0, 0, 0, 0, 0, 0), c["TOL_CRIBA"])
-    chk.check(st == "optimal" and abs(v0 - 1 / 3) < c["TOL_CRIBA"] + GAP_NEG,
-              f"sin holonomía: v = {v0:.10f}, |v - 1/3| = {abs(v0 - 1 / 3):.1e} [estado {st}, gap {gap:.1e}]")
+    # A la tol fina (la caché solo tenía este punto a TOL_CRIBA: una evaluación
+    # nueva al relanzar) y con V_TOL; en --rapido la tol fina es 1e-5.
+    v0, st, gap = v_eval((0, 0, 0, 0, 0, 0), c["TOL_FINO"])
+    tol0 = max(V_TOL, c["TOL_FINO"])
+    chk.check(st == "optimal" and abs(v0 - 1 / 3) < tol0,
+              f"sin holonomía: v = {v0:.10f}, |v - 1/3| = {abs(v0 - 1 / 3):.1e} (< {tol0:.0e}) "
+              f"[estado {st}, gap {gap:.1e}, tol {c['TOL_FINO']:.0e}]")
     ps, rvs = (0.6 * pi, 0.85 * pi, 0.3 * pi), np.array([0.5, 0.3, -0.2])
     rvs2 = swap_q(ps[2], rvs)
     va, sa, _ = v_eval((*ps, *rvs), c["TOL_FINO"])

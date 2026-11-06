@@ -218,3 +218,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Pruebas de humo de los guiones (--rapido): no son datos del artículo
+data/*_rapido.csv

@@ -206,7 +206,10 @@ def fig_diamante_limite():
     fig, axs = plt.subplots(1, 2, figsize=(TEXTWIDTH_IN, 2.4))
     series = (("A", r"A: $f=0$", 0), ("B", r"B: $f=5\pi/12$", 1))
     for lab, name, i in series:
-        rows = read_rows(f"diamond_limit_{lab}.csv", ("k", "deficit"))
+        # Solo las filas 'optimal' son resultados (diamond_limit escribe las
+        # demás con el déficit vacío).
+        rows = [{c: float(r[c]) for c in ("k", "deficit")}
+                for r in csv.DictReader(open(DATA / f"diamond_limit_{lab}.csv")) if r["estado"] == "optimal"]
         k = np.array([r["k"] for r in rows])
         d = np.array([r["deficit"] for r in rows])
         axs[0].plot(k, d, color=SERIES[i], marker=MARKERS[i], markersize=4, label=name)

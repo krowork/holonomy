@@ -166,3 +166,41 @@ def test_top_eig_sin_convergencia_de_arpack(monkeypatch):
     ref = np.linalg.eigvalsh(W.toarray())[-5:]
     assert w == pytest.approx(ref, abs=1e-10)
     assert np.allclose(W @ V, V * w, atol=1e-9)
+
+
+@pytest.mark.parametrize("falla_en", [1, 2])
+def test_fallo_del_solver_no_es_en_caja(monkeypatch, falla_en):
+    # Un SolverError (p. ej. NumericalError de Clarabel) con la caja puesta pero
+    # lejos de ella no es 'en_caja': el estado es 'solver_error'. En la primera
+    # llamada no hay y todavía; en la segunda, el y anterior está dentro de la caja.
+    import cvxpy as cp
+
+    edges, Rs = diamante_aleatorio(11)
+    D = GraphDual(4, edges)
+    real, n = cp.Problem.solve, [0]
+
+    def solve_falla(self, *a, **k):
+        n[0] += 1
+        if n[0] == falla_en:
+            raise cp.error.SolverError("forzado")
+        return real(self, *a, **k)
+
+    monkeypatch.setattr(cp.Problem, "solve", solve_falla)
+    _, _, st, _ = D.v_dual_cg(Rs, r0=2, add=1, **OPTS)
+    assert n[0] == falla_en
+    assert st == "solver_error"
+
+
+def test_orientacion_datos_no_abelianos():
+    # Convenio de orientación de GraphDual con rotaciones no simétricas (R != R^T)
+    # en el anillo de 4: el dual coincide con el primal de los mismos datos, y con
+    # las traspuestas sale otro valor (0,5522 frente a 0,5045).
+    edges = sdp.ring_edges(4)
+    Rs = [Rotation.random(random_state=20 + i).as_matrix() for i in range(4)]
+    D = GraphDual(4, edges)
+    vd, _, _ = D.v_dual_sdp(Rs, **OPTS)
+    vp = sdp.primal(4, Rs, edges=edges, **OPTS)
+    vt, _, _ = D.v_dual_sdp([R.T for R in Rs], **OPTS)
+    assert vd == pytest.approx(vp, abs=1e-7)
+    assert vd == pytest.approx(0.5522199, abs=1e-6)
+    assert abs(vt - vp) > 1e-2

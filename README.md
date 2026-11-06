@@ -24,8 +24,9 @@ SymPy 1.14.0; Matplotlib y una instalación de LaTeX para las figuras.)
 ## Uso
 
 ```bash
-.venv/bin/python -m pytest          # pruebas rápidas (~15 s)
-./run_all.sh --rapido               # comprobaciones de menos de ~2 min (incluye `diamond_single` y `diamond_ring` con k = 2)
+(ulimit -v 8000000; .venv/bin/pytest -q -m "not slow")   # pruebas rápidas (~1 min; 116 passed, 3 skipped)
+(ulimit -v 8000000; .venv/bin/pytest -q -m slow)        # pruebas lentas (más de 4 min: test_cadena2_abeliana sola, 236 s); test_primal_reducido_k3 llega a 5,4 GB de memoria residente y test_cg_igual_sdp_n6 a ~4 GB: no las lance sin ulimit
+./run_all.sh --rapido               # comprobaciones de menos de ~2 min (incluye `diamond_single`, `diamond_ring` con k = 2 y `diamond_numeros`)
 ./run_all.sh                        # todo (~1 h 30 min con la caché de Bethe; ladder.py son ~75 min)
 ```
 
@@ -91,6 +92,7 @@ figuras en `figures/`.
 | `diamond_chain2.py` | Exploración: cadena abierta de 2 diamantes (7 qubits); mapa abeliano v(fA, fB) (malla 13×13 y recta fA = −fB) con el primal U(1), simetrías y orientación relativa de las dos celdas con `v_dual_cg` (caché reanudable en `data/diamond_chain2_evals.csv`); escribe `data/diamond_chain2_abel.csv` y `data/diamond_chain2_rel.csv`. No está en `run_all.sh`; `(ulimit -v 8000000; /usr/bin/time -f "%M KB" .venv/bin/python scripts/diamond_chain2.py [--rapido])`; `--rapido` es una prueba de humo con ficheros `_rapido` | diamantes 6 | 21,6 h con la caché vacía (pico 0,94 GB); regenerar desde la caché, 30 min (0,91 GB); `--rapido`, 565 s (968 MB) |
 | `diamond_chain2_min.py` | Exploración: mínimo global de v en la cadena de 2 sobre (θ_A, θ_B, γ, Q), cribado en malla y Nelder–Mead desde los tres mejores; el mínimo exacto es x⋆ = (0, π, 0, R_x(π/2)) con v = 0,3255461236, órbita de gauge de dimensión 3, estrictez en las 3 direcciones transversas y anchura del testigo; reanudable (`data/diamond_chain2_min_evals.csv`); escribe `data/diamond_chain2_min*.csv`. No está en `run_all.sh`; `(ulimit -v 8000000; /usr/bin/time -f "%M KB" .venv/bin/python scripts/diamond_chain2_min.py [--rapido])` | diamantes 6.1 | 38 h (136 645 s, pico 1,99 GB) más 2,0 h del paso 2 en x⋆ (pico 0,85 GB); `--rapido`, 2569 s (839 MB) |
 | `diamond_ring.py` | Exploración: cadena cerrada de k diamantes, mapa v(f, ψ) en los modos «igual» (fA = fB) y «opuesto» (fA = −fB) con `DiamondDual` por generación de columnas, mínimo en ψ de cada fila (Brent) y contraste con el primal reducido para k ≤ 3; reanudable (`data/diamond_ring_L<k>_evals.csv`); escribe `data/diamond_ring_L<k>_<modo>.csv` y `data/diamond_ring_min_L<k>_<modo>.csv`. `run_all.sh` solo lanza k = 2 (malla 13×13); k = 3 y 4: `(ulimit -v 12000000; /usr/bin/time -f "%M KB %e s" .venv/bin/python scripts/diamond_ring.py 3 13 13)` | diamantes 7 | k = 2: 175 s, pico 150 MB; k = 3: 99 min, pico 5,4 GB; k = 4: 41 h, pico 7,6 GB (regenerar desde la caché, 24 s y 0,22 GB) |
+| `diamond_numeros.py` | Los números del artículo de diamantes que salen de los CSV de `data/` y ningún otro guion imprime (recuentos de puntos con v = 1/3, la caché del mínimo, curvaturas, ψ⋆, k(1/3 − v) del punto A, no monotonía del punto B), cada uno con el redondeo del texto; solo lee `data/`, sin SDP | diamantes 6, 6.1, 7, 8 | < 1 s |
 | `diamond_limit.py` | Exploración: límite k → ∞ del déficit 1/3 − v de la cadena cerrada en un punto fijo, un proceso hijo por evaluación; A (f = 0, ψ = 0, k = 3, 5, 7) y B (f = 5π/12, ψ minimizado, k = 2..5); reanudable (`data/diamond_limit_<etiqueta>_evals.csv`); escribe `data/diamond_limit_A.csv` y `data/diamond_limit_B.csv`. No está en `run_all.sh`; `(ulimit -v 16000000; /usr/bin/time -f "%M KB %e s" .venv/bin/python scripts/diamond_limit.py A igual 0 0 3 5 7)` y `... B igual 5*pi/12 min 2 3 4 5` | diamantes 8 | A: k = 3, 1,6 s; k = 5, 18 s; k = 7, 12,8 h (pico 2,9 GB); B: k = 2, 5 s; k = 3, 103 s; k = 4, 31 min (pico 1,5 GB); k = 5, 2 h 6 min (pico 5,5 GB) |
 
 `baedge2.py` guarda cada n en `data/bethe_cache/`; el repositorio incluye esa
@@ -118,3 +120,10 @@ inverso); no afecta a las energías.
   tienen Δ⋆ cerca de 1.
 - Clarabel termina a menudo en `optimal_inaccurate` con tolerancias de 1e-10;
   cada guion lo indica junto a los errores obtenidos.
+- `data/diamond_ring_L4_evals.csv` (la caché del mapa de k = 4) es del formato
+  anterior, sin la columna `estado_solver`: se calculó antes de que existiera.
+  `diamond_ring.py` la lee igual y deja vacío ese campo en
+  `data/diamond_ring_L4_igual.csv` y `_opuesto.csv` ("sin estado del solver,
+  de caché antigua"). Los valores siguen certificados por la diferencia de
+  cotas; solo falta saber si algún SDP restringido acabó en
+  `optimal_inaccurate`.
