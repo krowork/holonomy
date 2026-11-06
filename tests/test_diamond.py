@@ -1,4 +1,7 @@
 """Pruebas de la geometría de las cadenas de diamantes."""
+import importlib
+from pathlib import Path
+
 import numpy as np
 import pytest
 from scipy.spatial.transform import Rotation
@@ -182,3 +185,20 @@ def test_testigo_kronecker_k3():
     assert D.norm_grad(ph) @ y == pytest.approx(1.0, abs=1e-9)
     assert lam / N == pytest.approx(v, abs=1e-9)
     assert lam / N < 1 / 3 - 0.02
+
+
+def test_punto_de_la_orbita_de_gauge(monkeypatch):
+    # Con thA = dthB = dalpha = 0, orbit_point cae en la órbita de x*:
+    # theta_B = pi y alpha = arccos(n_B . Q n_B) = pi/2; dalpha desplaza alpha.
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1] / "scripts"))
+    m = importlib.import_module("diamond_chain2_min")
+    x = m.orbit_point(0.0, 0.0, 0.0)
+    assert x == pytest.approx(m.CFG["XSTAR"], abs=1e-12)
+    for g in m.CFG["ORBITA_G"]:
+        for p1, p2 in m.CFG["ORBITA_PHI"]:
+            x = m.orbit_point(g, p1, p2)
+            assert x[0] == 0.0 and x[1] == pytest.approx(np.pi, abs=1e-15) and x[2] == g
+            assert m.axis_angle(x) == pytest.approx(np.pi / 2, abs=1e-12)
+            y = m.orbit_point(g, p1, p2, thA=0.1, dthB=-0.2, dalpha=0.1)
+            assert y[0] == 0.1 and y[1] == pytest.approx(np.pi - 0.2, abs=1e-15)
+            assert m.axis_angle(y) == pytest.approx(np.pi / 2 + 0.1, abs=1e-12)

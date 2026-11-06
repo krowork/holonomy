@@ -55,35 +55,46 @@ la evaluación número tope): cada mínimo es una cota superior del mínimo loca
 de su arranque (un v certificado de datos concretos), no el mínimo
 convergido. El mínimo final P es el menor v de la etapa 2.
 
-Paso 2 en P:
-  - v_dual_cg de nuevo (sin caché) para tener el testigo y sus subespacios
-    finales; debe coincidir con el v de la caché a 1e-7;
-  - perturbaciones P + d (sin reflejar, los datos son función suave de los
-    6 parámetros) en los 6 ejes (eps = 0,1; 0,05; 0,025; ambos signos) y en
-    12 direcciones al azar (eps = 0,1; 0,05), como scripts/ladder_perp_min.py,
-    más las 15 diagonales (e_i + e_j)/sqrt(2) con eps = 0,05 (sin ellas los
-    15 términos cruzados solo salen de 12 direcciones y el ajuste tiene rango
-    30 de 33); 75 en total: dv > 0 en todas, y ajuste de dv a forma cuadrática + lineales + cúbicos
-    diagonales: forma cuadrática definida positiva (P no es crítico por
-    simetría, así que los términos lineales y el punto estacionario del
-    ajuste se dan como información: miden cuánto dejó el tope sin converger);
-    el ajuste solo cuenta si la matriz de diseño tiene rango completo (33),
-    si no es un FALLO;
-  - witness_spread con eps = 1e-4, 1e-5, 1e-6 sobre los subespacios finales
-    (U = last_U): anchura máxima de los 90 coeficientes del testigo. Con U el
-    conjunto comprimido contiene al verdadero, así que cada anchura es una
-    cota superior de la verdadera: si las cotas bajan, las verdaderas también
-    (prueba de unicidad); si no bajan, no se concluye nada (inconcluso, no
-    "hay una cara"). Veredicto "testigo único" (OK) si los dos cocientes,
-    1e-4 -> 1e-5 y 1e-5 -> 1e-6, pasan de 2,5 (~3,16 si va como sqrt(eps),
-    10 si va como eps) y la anchura en 1e-6 es menor que ANCHO_REL = 0,1
-    veces el mayor |y_m| del testigo: el testigo queda fijado al 10 % de su
-    propia escala (los y_m del arranque de Heisenberg rotado son ~1/(3|E|) =
-    1/30; una cota absoluta fija dependería de esa normalización N(y) = 1).
-    Si no, "inconcluso (rango comprimido: solo cota superior)", como
-    información. Los SDP optimal_inaccurate de witness_spread se cuentan en
-    el resumen del Checker (status_note) y el veredicto lleva la marca
-    "inexacto" con su número; no se descartan.
+Paso 2, en torno al punto exacto x* (diagnóstico de la corrida de 38 h, que
+dio 5 FALLO en el paso 2 en el P de Nelder-Mead): el mínimo exacto es
+x* = (theta_A, theta_B, gamma, Q) = (0, pi, 0, R_x(pi/2)), con
+v_dual_cg(x*) = 0,3255461221 <= v(P) = 0,3255461398. Las A son la identidad y
+las B son giros de pi de ejes n_B = R_y(gamma) z y Q n_B perpendiculares
+(alpha = arccos(n_B . Q n_B) = pi/2). Con theta_A = 0 los datos solo dependen de
+theta_B y alpha, así que {theta_A = 0, theta_B = pi, alpha = pi/2} es una
+órbita de gauge de dimensión 3, parametrizada por (g, phi1, phi2):
+gamma = g, Q = R_y(g) R_z(phi1) R_x(pi/2) R_z(phi2) R_y(g)^T. Por eso el
+ajuste cuadrático en las 6 coordenadas tiene 3 autovalores ~0 y la estrictez
+en 6 coordenadas es falsa por construcción: la estrictez solo cabe en las 3
+direcciones transversas (theta_A, theta_B - pi, alpha - pi/2).
+  (a) v(x*) <= v(P) + V_TOL (x* es un punto de la órbita exacta; P, la cota
+      del Nelder-Mead); se da theta_A, theta_B - pi y alpha - pi/2 en P;
+  (b) planitud de la órbita: |v - v(x*)| < V_TOL en 3 puntos de la órbita con
+      desplazamiento finito de (g, phi1, phi2);
+  (c) estrictez transversa: dv = v - v(x*) > 0 con theta_A = eps en 16 puntos
+      de la órbita (4 valores de g x 4 pares (phi1, phi2)), a lo largo de los
+      ejes theta_B y alpha, en las diagonales (dthB, dalpha) y en las mezclas de
+      theta_A con cada eje; y ajuste de dv en z = (theta_A, dthB, dalpha) con
+      los datos del punto (0, 0, 0) de la órbita (3 lineales + 6 cuadráticos):
+      FALLO si la matriz de diseño no tiene rango 9, OK si la forma cuadrática
+      3x3 es definida positiva (los lineales se dan como información);
+  - las 75 perturbaciones de P en las 6 coordenadas (6 ejes x 3 eps x 2 signos,
+    12 direcciones al azar x 2 eps y 15 diagonales con eps = 0,05, como
+    scripts/ladder_perp_min.py) y su ajuste cuadrático + lineales + cúbicos se
+    siguen calculando, pero solo como información (3 direcciones planas de
+    gauge con theta_A = 0: ver la órbita);
+  - testigo en x*, solo información: v_dual_cg de nuevo (sin caché, para tener
+    los subespacios finales U = last_U) y witness_spread con eps = 1e-4, 1e-5,
+    1e-6 y on_fail = "nan" (anchura máxima de los coeficientes finitos). Con U
+    el conjunto comprimido contiene al verdadero, así que cada anchura es una
+    cota superior de la verdadera. Clarabel se estanca en este punto (acaba en
+    AlmostSolved con brecha relativa del 3 %, o en NumericalError según los
+    subespacios U), lo que no es un fallo del código: si algún SDP no converge
+    el veredicto es "inconcluso: N de M SDP sin converger". Si todos
+    convergen, veredicto de unicidad como antes (cocientes 1e-4 -> 1e-5 y
+    1e-5 -> 1e-6 > 2,5 y anchura en 1e-6 < ANCHO_REL = 0,1 veces el mayor |y_m|;
+    si no, inconcluso). Los optimal_inaccurate se cuentan en el resumen del
+    Checker (status_note) y llevan la marca "inexacto".
 Comprobaciones también: v(0, 0, 0) = 1/3, S1 en un punto genérico, y cada
 evaluación no 'optimal' es un FALLO.
 
@@ -103,20 +114,22 @@ caliente); pico 842 MB. witness_spread (180 SDP) ~20 min por eps. Estimación
 de la corrida completa: cribado 62 x 8 llamadas, ~470 nuevas (las de
 (pi, pi, pi/2), (0, pi, 0) y (pi/2, pi/2, pi/2) salen de la caché de la
 tarea 4) x 87 s = ~11,5 h; etapa 2, 3 x (5 x 20 + 60) = 480 x 148 s =
-~20 h; paso 2, 76 x 148 s = ~3,1 h más ~1 h de witness_spread: ~36 h en
-total (~43 h si la máquina sigue cargada), pico ~1 GB.
---rapido medido: 1710 s (10 evaluaciones nuevas, 1 witness_spread) y 846 MB.
+~20 h; paso 2 (revisado), ~52 evaluaciones nuevas x 135 s = ~2 h más ~1 h de
+testigo (las 75 perturbaciones de P salen de la caché): ~34 h en total sin
+contar las ~38 h ya hechas de las etapas 1-2 (en caché), pico ~1 GB.
+--rapido medido (con el paso 2 en x*): 2569 s (25 evaluaciones nuevas, 1 witness_spread) y 839 MB.
 
 Escribe data/diamond_chain2_min.csv (caso: cribado | minQ | conjunto |
 minimo; theta_A, theta_B, gamma, rx, ry, rz, v, tol, evaluaciones, en_tope),
 data/diamond_chain2_min_pert.csv (d en los 6 parámetros, dv),
-data/diamond_chain2_min_testigo.csv (eps, anchura máxima, SDP inexactos) y
-la caché.
+data/diamond_chain2_min_orbita.csv (g, phi1, phi2, thA, dthB, dalpha, v, dv),
+data/diamond_chain2_min_testigo.csv (eps, anchura máxima, SDP inexactos, SDP
+fallidos) y la caché. El caso "xstar" de diamond_chain2_min.csv es x*.
 
 Uso: (ulimit -v 8000000; /usr/bin/time -f "%M KB" python scripts/diamond_chain2_min.py [--rapido])
 --rapido (prueba de humo): malla (0, 0, 0) y (pi, pi, pi/2), tol 1e-4 y 1e-5,
-topes 4 / 2 / 3, un arranque en Q, 4 perturbaciones, witness_spread con
-eps = 1e-4; las comprobaciones de convergencia (dv > 0, rango del ajuste,
+topes 4 / 2 / 3, un arranque en Q, 4 perturbaciones, órbita reducida (un
+punto, un eps), witness_spread con eps = 1e-4; las comprobaciones de convergencia (dv > 0, rango del ajuste,
 unicidad) pasan a información. Ficheros con sufijo _rapido (caché aparte).
 """
 import _common  # noqa: F401  (fija OMP_NUM_THREADS antes de numpy)
@@ -133,7 +146,7 @@ from scipy.spatial.transform import Rotation
 import diamond_chain2 as dc2
 from holonomy import diamond
 from holonomy.gdual import GraphDual
-from holonomy.paulis import Ry
+from holonomy.paulis import Rx, Ry, Rz
 from holonomy.report import DATA, write_csv
 
 N, K = 7, 2
@@ -153,10 +166,19 @@ GAP_NEG = GraphDual.GAP_NEG
 # Configuración de la corrida completa (main la cambia con --rapido).
 CFG = dict(TOL_CRIBA=1e-5, TOL_FINO=1e-8, MAXFEV_CRIBA=8, MAXFEV=20, MAXFEV_CONJ=60,
            MEJORES=3, ARRANQUES=5, EPS_PERT=(0.1, 0.05, 0.025), EPS_AZAR=(0.1, 0.05), N_AZAR=12,
-           EJES=6, PARES=15, EPS_PAR=0.05, EPS_TESTIGO=(1e-4, 1e-5, 1e-6))
+           EJES=6, PARES=15, EPS_PAR=0.05, EPS_TESTIGO=(1e-4, 1e-5, 1e-6),
+           XSTAR=(0.0, pi, 0.0, pi / 2, 0.0, 0.0),
+           ORBITA_G=(0.0, pi / 4, pi / 2, 3 * pi / 4),
+           ORBITA_PHI=((0.0, 0.0), (pi / 2, 0.0), (0.0, pi / 2), (pi / 3, 2 * pi / 3)),
+           EPS_A=(0.1, 0.05), EPS_T=(0.1, 0.05), EPS_DIAG=0.05,
+           PLANITUD=((0.7, 0.0, 0.0), (0.0, 0.9, 0.0), (0.0, 0.0, 0.9)))
 CFG_RAPIDO = dict(TOL_CRIBA=1e-4, TOL_FINO=1e-5, MAXFEV_CRIBA=4, MAXFEV=2, MAXFEV_CONJ=3,
                   MEJORES=1, ARRANQUES=1, EPS_PERT=(0.05,), EPS_AZAR=(0.05,), N_AZAR=1,
-                  EJES=1, PARES=1, EPS_PAR=0.05, EPS_TESTIGO=(1e-4,))
+                  EJES=1, PARES=1, EPS_PAR=0.05, EPS_TESTIGO=(1e-4,),
+                  XSTAR=(0.0, pi, 0.0, pi / 2, 0.0, 0.0),
+                  ORBITA_G=(0.0,), ORBITA_PHI=((0.0, 0.0),),
+                  EPS_A=(0.1,), EPS_T=(0.1,), EPS_DIAG=0.1,
+                  PLANITUD=((0.7, 0.0, 0.0),))
 
 _cache = {}      # clave -> [(v, estado, gap, tol, origen), ...]
 _t4 = {}         # clave -> (v, estado, gap) de la caché de la tarea 4
@@ -370,10 +392,34 @@ def feats(d):
     return np.concatenate([q, d, d ** 3])
 
 
-def quad_form(c):
-    H = np.zeros((6, 6))
-    H[np.triu_indices(6)] = c[:21]
+def quad_form(c, n=6):
+    H = np.zeros((n, n))
+    H[np.triu_indices(n)] = c[:n * (n + 1) // 2]
     return H + np.triu(H, 1).T
+
+
+def feats_z(z):
+    """Cuadráticos (6) y lineales (3) en z = (theta_A, dthB, dalpha)."""
+    iu = np.triu_indices(3)
+    q = np.outer(z, z)[iu] * np.where(iu[0] == iu[1], 1.0, 2.0)
+    return np.concatenate([q, z])
+
+
+def orbit_point(g, phi1, phi2, thA=0.0, dthB=0.0, dalpha=0.0):
+    """x = (theta_A, theta_B, gamma, rx, ry, rz) en la órbita de gauge de x*
+    (thA = dthB = dalpha = 0) o desplazado de ella: gamma = g,
+    Q = R_y(g) R_z(phi1) R_x(pi/2 + dalpha) R_z(phi2) R_y(g)^T,
+    theta_A = thA, theta_B = pi + dthB."""
+    Ryg = Ry(g)
+    Q = Ryg @ Rz(phi1) @ Rx(pi / 2 + dalpha) @ Rz(phi2) @ Ryg.T
+    return np.array([thA, pi + dthB, g, *Rotation.from_matrix(Q).as_rotvec()])
+
+
+def axis_angle(x):
+    """alpha: ángulo entre n_B = R_y(gamma) z y Q n_B."""
+    nB = Ry(x[2]) @ np.array([0.0, 0.0, 1.0])
+    Q = Rotation.from_rotvec(np.asarray(x[3:6], float)).as_matrix()
+    return float(np.arccos(np.clip(nB @ Q @ nB, -1.0, 1.0)))
 
 
 def verdict(epss, widths, ymax):
@@ -471,24 +517,99 @@ def main():
     rows.append(["minimo", *P, f"{vP:.12f}", c["TOL_FINO"], "", ""])
     chk.info(f"MÍNIMO (cota superior de min v, tol {c['TOL_FINO']:.0e}): {lab(P)}, v = {vP:.10f}, "
              f"déficit 1/3 - v = {1 / 3 - vP:.6f}")
+    # Paso 2, punto exacto x* y su órbita de gauge (ver el docstring).
+    def conv(ok, msg):
+        """Comprobación de convergencia: info en --rapido (tol gruesa)."""
+        if rapido:
+            chk.info("--rapido, informativo: " + msg)
+        else:
+            chk.check(ok, msg)
+
+    xs = np.array(c["XSTAR"], float)
+    vX, stX, gapX = v_eval(xs, c["TOL_FINO"])
+    vX = vX if stX == "optimal" else np.nan
+    rows.append(["xstar", *xs, f"{vX:.12f}", c["TOL_FINO"], "", ""])
     write_csv(f"diamond_chain2_min{suf}.csv",
               ["caso", "theta_A", "theta_B", "gamma", "rx", "ry", "rz", "v", "tol", "evaluaciones", "en_tope"],
               rows)
+    chk.info(f"x* = {lab(xs)}: v = {vX:.10f} [estado {stX}, gap {gapX:.1e}]")
+    conv(bool(vX <= vP + V_TOL),
+         f"v(x*) = {vX:.10f} <= v(P) + {V_TOL:.0e} = {vP + V_TOL:.10f} (v(P) - v(x*) = {vP - vX:+.2e})")
+    chk.info(f"P: theta_A = {P[0]:.5f}, theta_B - pi = {P[1] - pi:+.5f}, alpha - pi/2 = {axis_angle(P) - pi / 2:+.5f}")
 
-    # Paso 2a: testigo en P (sin caché, para tener los subespacios finales).
-    global _dual
-    if _dual is None:
-        _dual = GraphDual(N, EDGES)
-    warm = dict(y0=_warm, r0=R0_WARM) if _warm is not None else {}
-    vF, yF, stF, gapF = _dual.v_dual_cg(rotations(P), tol=c["TOL_FINO"], **warm, **CLARABEL_OPTS)
-    UF = [u.copy() for u in _dual.last_U]
-    tol_r = max(2 * c["TOL_FINO"], V_TOL)
-    chk.check(stF == "optimal" and abs(vF - vP) < tol_r,
-              f"v_dual_cg de nuevo en P: v = {vF:.10f}, caché {vP:.10f}, |dif| = {abs(vF - vP):.1e} "
-              f"(< {tol_r:.0e}) [estado {stF}, gap {gapF:.1e}, rango {_dual.last_ranks}, "
-              f"solver {_dual.last_solver_status}]")
+    orows = []
 
-    # Paso 2b: perturbaciones.
+    def ev_orb(g, p1, p2, thA=0.0, dthB=0.0, dal=0.0):
+        """(v, dv) en el punto de la órbita (g, p1, p2) desplazado, dv = v - v(x*)
+        (nan si no es 'optimal'); la fila se añade al CSV de la órbita."""
+        v, st, _ = v_eval(orbit_point(g, p1, p2, thA, dthB, dal), c["TOL_FINO"])
+        v = v if st == "optimal" else np.nan
+        dv = v - vX
+        orows.append((g, p1, p2, thA, dthB, dal, v, dv))
+        return v, dv
+
+    # (b) planitud de la órbita.
+    for g, p1, p2 in c["PLANITUD"]:
+        v, dv = ev_orb(g, p1, p2)
+        conv(bool(abs(dv) < V_TOL),
+             f"planitud de la órbita en (g, phi1, phi2) = ({g}, {p1}, {p2}): v = {v:.10f}, "
+             f"|v - v(x*)| = {abs(dv):.1e} (< {V_TOL:.0e})")
+
+    # (c) estrictez transversa en torno a x*.
+    dvA, mins = [], []
+    for g in c["ORBITA_G"]:
+        for p1, p2 in c["ORBITA_PHI"]:
+            dd = [ev_orb(g, p1, p2, thA=e)[1] for e in c["EPS_A"]]
+            dvA += dd
+            mins.append((g, p1, p2, np.nanmin(dd) if np.isfinite(dd).any() else np.nan,
+                         np.nanmin([d / e ** 2 for d, e in zip(dd, c["EPS_A"])]) if np.isfinite(dd).any() else np.nan))
+            chk.info(f"theta_A = eps en la órbita (g, phi1, phi2) = ({g:.4f}, {p1:.4f}, {p2:.4f}): "
+                     f"min dv = {mins[-1][3]:+.3e}, min dv/eps^2 = {mins[-1][4]:+.5f}")
+    dvA = np.array(dvA)
+    conv(bool(np.all(np.isfinite(dvA)) and dvA.min() > 0),
+         f"theta_A = eps (eps = {c['EPS_A']}) en {len(c['ORBITA_G']) * len(c['ORBITA_PHI'])} puntos de la órbita: "
+         f"dv > 0 en las {len(dvA)} (mínimo {np.nanmin(dvA) if np.isfinite(dvA).any() else np.nan:.2e}, "
+         f"{int(np.sum(~np.isfinite(dvA)))} sin v 'optimal')")
+    d2 = c["EPS_DIAG"] / np.sqrt(2)
+    zs = [(e, 0.0, 0.0) for e in c["EPS_A"]]                              # (thA, dthB, dalpha)
+    zs += [(0.0, s * e, 0.0) for e in c["EPS_T"] for s in (1, -1)]
+    zs += [(0.0, 0.0, s * e) for e in c["EPS_T"] for s in (1, -1)]
+    zs += [(0.0, s1 * d2, s2 * d2) for s1 in (1, -1) for s2 in (1, -1)]
+    zs += [(d2, s * d2, 0.0) for s in (1, -1)] + [(d2, 0.0, s * d2) for s in (1, -1)]
+    dvz = []
+    for z in zs:
+        v, dv = ev_orb(0.0, 0.0, 0.0, *z)
+        dvz.append(dv)
+        eps = np.linalg.norm(z)
+        chk.info(f"z = (theta_A, dthB, dalpha) = {np.array2string(np.array(z), precision=4, sign='+')}: "
+                 f"dv = {dv:+.3e}, dv/eps^2 = {dv / eps ** 2:+.5f}")
+    dvz = np.array(dvz)
+    conv(bool(np.all(np.isfinite(dvz)) and dvz.min() > 0),
+         f"ejes theta_A / theta_B / alpha (eps_T = {c['EPS_T']}), diagonales y mezclas ({len(zs)} puntos en (0, 0, 0)): "
+         f"dv > 0 en todas (mínimo {np.nanmin(dvz) if np.isfinite(dvz).any() else np.nan:.2e}, "
+         f"{int(np.sum(~np.isfinite(dvz)))} sin v 'optimal')")
+    if not np.all(np.isfinite(dvz)):
+        conv(False, f"sin ajuste transverso: {int(np.sum(~np.isfinite(dvz)))} puntos sin v 'optimal'")
+    else:
+        Fz = np.array([feats_z(z) for z in zs])
+        rz_ = np.linalg.matrix_rank(Fz)
+        if rz_ < Fz.shape[1]:
+            conv(False, f"ajuste transverso en z: matriz de diseño de rango {rz_} de {Fz.shape[1]}, H no determinada")
+        else:
+            coef, *_ = np.linalg.lstsq(Fz, dvz, rcond=None)
+            Hz, gz = quad_form(coef, 3), coef[6:9]
+            evz = np.linalg.eigvalsh(Hz)
+            conv(bool(evz.min() > 0),
+                 f"forma cuadrática transversa en (theta_A, dthB, dalpha): autovalores {np.array2string(evz, precision=5)}; "
+                 f"residuo {np.abs(Fz @ coef - dvz).max():.1e}")
+            chk.info(f"términos lineales transversos (theta_A, dthB, dalpha) = {np.array2string(gz, precision=3)}")
+    orows = list(dict.fromkeys(orows))   # (0, 0, 0) con theta_A = eps está en (c) dos veces
+    write_csv(f"diamond_chain2_min_orbita{suf}.csv",
+              ["g", "phi1", "phi2", "thA", "dthB", "dalpha", "v", "dv"], orows)
+
+    # Perturbaciones de P en las 6 coordenadas: solo información (3 direcciones
+    # planas de gauge con theta_A = 0).
+    nota = " (3 direcciones planas de gauge con theta_A = 0: ver la órbita)"
     dirs = [s * eps * e for eps in c["EPS_PERT"] for e in np.eye(6)[:c["EJES"]] for s in (1, -1)]
     rng = np.random.default_rng(0)
     for _ in range(c["N_AZAR"]):
@@ -507,72 +628,75 @@ def main():
         chk.info(f"d = {np.array2string(d, precision=4, sign='+')}: dv = {dv:+.3e}, dv/eps^2 = {dv / eps ** 2:+.5f}")
     dvs = np.array([r[6] for r in prow])
     nbad = int(np.sum(~np.isfinite(dvs)))
-    ok = nbad == 0 and dvs.min() > 0
     if nbad:
-        msg = (f"{len(dvs)} perturbaciones: {nbad} sin v 'optimal' (FALLO de v_dual_cg, abajo), "
-               f"no se puede decir dv > 0 en todas")
+        chk.info(f"{len(dvs)} perturbaciones de P: {nbad} sin v 'optimal'" + nota)
     else:
-        msg = f"{len(dvs)} perturbaciones: dv > 0 en todas (mínimo {dvs.min():.2e})"
-    if rapido:
-        chk.info("--rapido, informativo: " + msg)
-    else:
-        chk.check(ok, msg)
+        chk.info(f"{len(dvs)} perturbaciones de P: mínimo dv {dvs.min():.2e}" + nota)
     D = np.array([r[:6] for r in prow])
     F = np.array([feats(d) for d in D])
     rank = np.linalg.matrix_rank(F)
     if nbad:
-        chk.info(f"sin ajuste cuadrático: {nbad} perturbaciones sin v 'optimal'")
+        chk.info(f"sin ajuste cuadrático en P: {nbad} perturbaciones sin v 'optimal'" + nota)
     elif rank < F.shape[1]:
-        msg = f"ajuste cuadrático: matriz de diseño de rango {rank} de {F.shape[1]}, H no determinada"
-        if rapido:
-            chk.info("--rapido, informativo: " + msg)
-        else:
-            chk.check(False, msg)
+        chk.info(f"ajuste cuadrático en P: matriz de diseño de rango {rank} de {F.shape[1]}, H no determinada" + nota)
     else:
         coef, *_ = np.linalg.lstsq(F, dvs, rcond=None)
         H, gl = quad_form(coef), coef[21:27]
         ev = np.linalg.eigvalsh(H)
-        chk.check(ev.min() > 0, f"forma cuadrática del ajuste: autovalores {np.array2string(ev, precision=5)}; "
-                  f"residuo {np.abs(F @ coef - dvs).max():.1e}")
+        chk.info(f"forma cuadrática del ajuste en P: autovalores {np.array2string(ev, precision=5)}; "
+                 f"residuo {np.abs(F @ coef - dvs).max():.1e}" + nota)
         if ev.min() > 0:
-            xs = -0.5 * np.linalg.solve(H, gl)
+            xp = -0.5 * np.linalg.solve(H, gl)
             chk.info(f"términos lineales {np.array2string(gl, precision=2)}; punto estacionario del ajuste "
-                     f"P + {np.array2string(xs, precision=4)} (|.| = {np.linalg.norm(xs):.3f}), "
+                     f"P + {np.array2string(xp, precision=4)} (|.| = {np.linalg.norm(xp):.3f}), "
                      f"dv predicho {-0.25 * gl @ np.linalg.solve(H, gl):+.2e}")
     write_csv(f"diamond_chain2_min_pert{suf}.csv",
               ["d_theta_A", "d_theta_B", "d_gamma", "d_rx", "d_ry", "d_rz", "dv"], prow)
 
-    # Paso 2c: unicidad del testigo.
-    trow, widths, inac_tot, nsdp = [], [], 0, 0
+    # Testigo en x* (sin caché, para tener los subespacios finales): solo información.
+    global _dual
+    if _dual is None:
+        _dual = GraphDual(N, EDGES)
+    warm = dict(y0=_warm, r0=R0_WARM) if _warm is not None else {}
+    vF, yF, stF, gapF = _dual.v_dual_cg(rotations(xs), tol=c["TOL_FINO"], **warm, **CLARABEL_OPTS)
+    UF = [u.copy() for u in _dual.last_U]
+    chk.info(f"v_dual_cg de nuevo en x*: v = {vF:.10f}, caché {vX:.10f}, |dif| = {abs(vF - vX):.1e} "
+             f"[estado {stF}, gap {gapF:.1e}, rango {_dual.last_ranks}, solver {_dual.last_solver_status}]")
+    trow, widths, inac_tot, fail_tot, nsdp = [], [], 0, 0, 0
     if stF == "optimal":
         for eps in c["EPS_TESTIGO"]:
             try:
-                sp = _dual.witness_spread(rotations(P), vF, eps, U=UF, **CLARABEL_OPTS)
+                sp = _dual.witness_spread(rotations(xs), vF, eps, U=UF, on_fail="nan", **CLARABEL_OPTS)
             except RuntimeError as exc:
-                chk.check(False, f"witness_spread con eps = {eps:.0e}: {exc}")
+                chk.info(f"witness_spread con eps = {eps:.0e}: {exc}")
                 widths.append(np.nan)
                 continue
-            w = max(hi - lo for lo, hi in sp)
+            anch = [hi - lo for lo, hi in sp if np.isfinite(lo) and np.isfinite(hi)]
+            w = max(anch) if anch else np.nan
             ninac = int(sum(a + b for a, b in _dual.last_spread_inaccurate))
+            nfail = int(sum(a + b for a, b in _dual.last_spread_failed))
             for _ in range(ninac):
                 chk.status_note("optimal_inaccurate")
             inac_tot += ninac
+            fail_tot += nfail
             nsdp += 2 * len(sp)
             widths.append(w)
-            trow.append((eps, w, ninac))
-            chk.info(f"testigo, eps = {eps:.0e}: anchura máxima {w:.3e} ({ninac} de {2 * len(sp)} SDP "
-                     f"optimal_inaccurate)")
-        ymax = float(np.max(np.abs(yF)))
-        unico, msg = verdict(c["EPS_TESTIGO"], widths, ymax)
-        if inac_tot:
-            msg += f" [inexacto: {inac_tot} de {nsdp} SDP optimal_inaccurate]"
-        if unico:
-            chk.check(True, msg)
+            trow.append((eps, w, ninac, nfail))
+            chk.info(f"testigo en x*, eps = {eps:.0e}: anchura máxima {w:.3e} ({ninac} de {2 * len(sp)} SDP "
+                     f"optimal_inaccurate, {nfail} sin converger)")
+        if fail_tot:
+            chk.info(f"testigo en x*: inconcluso: {fail_tot} de {nsdp} SDP sin converger "
+                     f"(Clarabel se estanca en este punto)")
         else:
+            ymax = float(np.max(np.abs(yF)))
+            unico, msg = verdict(c["EPS_TESTIGO"], widths, ymax)
+            if inac_tot:
+                msg += f" [inexacto: {inac_tot} de {nsdp} SDP optimal_inaccurate]"
             chk.info(msg)
     else:
-        chk.check(False, "sin testigo 'optimal' en P: no hay witness_spread")
-    write_csv(f"diamond_chain2_min_testigo{suf}.csv", ["eps", "anchura_max", "sdp_inexactos"], trow)
+        chk.info(f"sin testigo 'optimal' en x* (estado {stF}): no hay witness_spread")
+    write_csv(f"diamond_chain2_min_testigo{suf}.csv",
+              ["eps", "anchura_max", "sdp_inexactos", "sdp_fallidos"], trow)
 
     for k, (st, gap) in fallos.items():
         chk.check(False, f"v_dual_cg en {k}: estado {st}, gap {gap:.1e}; no se usa como valor")

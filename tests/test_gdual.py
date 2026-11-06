@@ -120,6 +120,34 @@ def test_rango_infactible_lanza():
         GraphDual(4, edges).witness_spread(Rs, 0.0, 0.0, **OPTS)
 
 
+def test_rango_on_fail(monkeypatch):
+    # Un SDP que lanza SolverError: con "nan" ese extremo es nan y queda en
+    # last_spread_failed; con "raise" (por omisión) lanza RuntimeError.
+    import cvxpy as cp
+
+    edges, Rs = diamante_aleatorio(11)
+    D = GraphDual(4, edges)
+    v, _, _, _ = D.v_dual_cg(Rs, **OPTS)
+    U = [D.last_U[0][:, :10]]
+    real, n = cp.Problem.solve, [0]
+
+    def solve_falla_en_la_tercera(self, *a, **k):
+        n[0] += 1
+        if n[0] == 3:
+            raise cp.error.SolverError("forzado")
+        return real(self, *a, **k)
+
+    monkeypatch.setattr(cp.Problem, "solve", solve_falla_en_la_tercera)
+    sp = D.witness_spread(Rs, v, 1e-2, U=U, on_fail="nan", **OPTS)
+    assert len(sp) == len(D.last_spread_failed) == 9 * len(edges)
+    assert np.isnan(sp[1][0]) and np.isfinite(sp[1][1]) and np.isfinite(sp[0]).all()
+    assert D.last_spread_failed[1] == (True, False)
+    assert sum(a + b for a, b in D.last_spread_failed) == 1
+    n[0] = 2
+    with pytest.raises(RuntimeError):
+        D.witness_spread(Rs, v, 1e-2, U=U, **OPTS)
+
+
 def test_top_eig_sin_convergencia_de_arpack(monkeypatch):
     # En la cadena de 2 con flujos (0, pi) ARPACK no converge en una iteración de
     # v_dual_cg (medido en scripts/diamond_chain2.py): top_eig pasa a eigh denso.

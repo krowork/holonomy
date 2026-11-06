@@ -277,7 +277,7 @@ class GraphDual:
             return b
         return a if cls._STATUS_RANK.get(a, 2) >= cls._STATUS_RANK.get(b, 2) else b
 
-    def witness_spread(self, Rs, v_opt, eps, U=None, solver="CLARABEL", **kw):
+    def witness_spread(self, Rs, v_opt, eps, U=None, solver="CLARABEL", on_fail="raise", **kw):
         """Rango de cada coeficiente del testigo dentro del conjunto casi
         óptimo {y : N(y) = 1, lambda_max(W(y)) <= v_opt + eps}: mínimo y
         máximo de cada y_m (2 * 9|E| SDP). Si el testigo óptimo es único, el
@@ -289,29 +289,47 @@ class GraphDual:
         de self.cuts (los mismos que en v_dual_cg): el conjunto factible es mayor que
         el verdadero, así que cada rango obtenido es una cota superior del
         verdadero. Un rango que tiende a 0 prueba unicidad; uno finito no
-        prueba lo contrario. Devuelve [(min, max)] en el orden de y. Si un
-        SDP es infactible, no acotado o falla, lanza RuntimeError; los que
+        prueba lo contrario. Devuelve [(min, max)] en el orden de y. Con
+        on_fail="raise" (por omisión), si un SDP es infactible, no acotado o
+        falla, lanza RuntimeError; con on_fail="nan" no lanza: ese extremo
+        queda como nan (p. ej. Clarabel se estanca en algunos puntos). Los que
         acaban en optimal_inaccurate se marcan en self.last_spread_inaccurate
-        (lista de pares de booleanos (min, max) en el mismo orden)."""
+        y los fallidos en self.last_spread_failed (listas de pares de
+        booleanos (min, max) en el mismo orden; con "raise" todo False)."""
         import cvxpy as cp
 
         g = self.norm_vec(Rs)
         y = cp.Variable(self.K)
         cons = [g @ y == 1] + self._cons(y, v_opt + eps, U, U is not None)[0]
-        out, inacc = [], []
+        if on_fail not in ("raise", "nan"):
+            raise ValueError(f"on_fail debe ser 'raise' o 'nan', no {on_fail!r}")
+        out, inacc, failed = [], [], []
         for m in range(self.K):
-            lo_hi, flags = [], []
+            lo_hi, flags, bad = [], [], []
             for sense in (cp.Minimize, cp.Maximize):
                 prob = cp.Problem(sense(y[m]), cons)
                 try:
                     prob.solve(solver=solver, **kw)
                 except cp.error.SolverError as exc:
-                    raise RuntimeError(f"witness_spread: fallo del solver en y[{m}]") from exc
+                    if on_fail == "raise":
+                        raise RuntimeError(f"witness_spread: fallo del solver en y[{m}]") from exc
+                    lo_hi.append(np.nan)
+                    flags.append(False)
+                    bad.append(True)
+                    continue
                 if prob.status not in self._STATUS_RANK or y.value is None:
-                    raise RuntimeError(f"witness_spread: estado {prob.status} en y[{m}]")
+                    if on_fail == "raise":
+                        raise RuntimeError(f"witness_spread: estado {prob.status} en y[{m}]")
+                    lo_hi.append(np.nan)
+                    flags.append(False)
+                    bad.append(True)
+                    continue
                 lo_hi.append(float(y.value[m]))
                 flags.append(prob.status == "optimal_inaccurate")
+                bad.append(False)
             out.append(tuple(lo_hi))
             inacc.append(tuple(flags))
+            failed.append(tuple(bad))
         self.last_spread_inaccurate = inacc
+        self.last_spread_failed = failed
         return out
