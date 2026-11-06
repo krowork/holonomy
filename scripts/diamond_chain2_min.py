@@ -119,6 +119,8 @@ testigo (las 75 perturbaciones de P salen de la caché): ~34 h estimadas con
 la caché vacía (la corrida de 2026-11-04/06 midió 136 645 s = 38 h para todo
 salvo el paso 2 revisado, pico 1,99 GB); relanzar con esa caché solo calcula
 el paso 2 revisado, ~3 h.
+Medido (2026-11-06): relanzada con esa caché, 52 evaluaciones nuevas,
+7 320 s (2,0 h), pico 0,85 GB; 10/10 OK.
 --rapido medido (con el paso 2 en x*): 2569 s (25 evaluaciones nuevas, 1 witness_spread) y 839 MB.
 
 Escribe data/diamond_chain2_min.csv (caso: cribado | minQ | conjunto |
