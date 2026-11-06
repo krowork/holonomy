@@ -58,7 +58,7 @@ convergido. El mínimo final P es el menor v de la etapa 2.
 Paso 2, en torno al punto exacto x* (diagnóstico de la corrida de 38 h, que
 dio 5 FALLO en el paso 2 en el P de Nelder-Mead): el mínimo exacto es
 x* = (theta_A, theta_B, gamma, Q) = (0, pi, 0, R_x(pi/2)), con
-v_dual_cg(x*) = 0,3255461221 <= v(P) = 0,3255461398. Las A son la identidad y
+v_dual_cg(x*) = 0,3255461236 <= v(P) = 0,3255461398. Las A son la identidad y
 las B son giros de pi de ejes n_B = R_y(gamma) z y Q n_B perpendiculares
 (alpha = arccos(n_B . Q n_B) = pi/2). Con theta_A = 0 los datos solo dependen de
 theta_B y alpha, así que {theta_A = 0, theta_B = pi, alpha = pi/2} es una
