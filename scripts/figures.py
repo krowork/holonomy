@@ -7,6 +7,11 @@
                                      (data/ladder_psi_*.csv)
     figures/fig_escalera_limite.pdf  v(L, pi, psi) mínimo en psi, L = 4..11
                                      (data/ladder_limit_L*.csv)
+    figures/fig_diamante_mapa.pdf    mapa 1/3 - v(fA, fB) de la cadena abierta de
+                                     2 diamantes (data/diamond_chain2_abel.csv)
+    figures/fig_diamante_limite.pdf  déficit 1/3 - v de la cadena cerrada de k
+                                     diamantes frente a k, puntos A y B
+                                     (data/diamond_limit_A.csv, _B.csv)
 
 Colores: paleta categórica validada (orden fijo; azul, naranja, aguamarina,
 amarillo). Tipografía Computer Modern y coma decimal, como el texto.
@@ -168,12 +173,66 @@ def fig_escalera_limite():
     print(f"escrito {out}")
 
 
+def fig_diamante_mapa():
+    """Déficit 1/3 - v(fA, fB) de la cadena abierta de 2 diamantes (7 qubits),
+    malla 13x13 en [0, pi]^2 (primal U(1))."""
+    rows = [r for r in csv.DictReader(open(DATA / "diamond_chain2_abel.csv")) if r["caso"] == "malla"]
+    fs = sorted({float(r["fA"]) for r in rows})
+    Z = np.full((len(fs), len(fs)), np.nan)
+    for r in rows:
+        Z[fs.index(float(r["fB"])), fs.index(float(r["fA"]))] = 1 / 3 - float(r["v"])
+    fig, ax = plt.subplots(figsize=(0.7 * TEXTWIDTH_IN, 2.9))
+    h = np.pi / (len(fs) - 1) / 2
+    im = ax.imshow(Z, origin="lower", extent=(-h / np.pi, 1 + h / np.pi, -h / np.pi, 1 + h / np.pi),
+                   cmap="viridis_r", aspect="equal", interpolation="nearest")
+    ax.grid(False)
+    ax.set_xlabel(r"$f_A/\pi$")
+    ax.set_ylabel(r"$f_B/\pi$")
+    for axis in (ax.xaxis, ax.yaxis):
+        axis.set_major_formatter(FuncFormatter(comma))
+    cb = fig.colorbar(im, ax=ax, shrink=0.85, pad=0.03)
+    cb.set_label(r"$1/3 - v$")
+    cb.ax.yaxis.set_major_formatter(FuncFormatter(comma))
+    cb.outline.set_visible(False)
+    out = FIGURES / "fig_diamante_mapa.pdf"
+    fig.savefig(out)
+    plt.close(fig)
+    print(f"escrito {out}")
+
+
+def fig_diamante_limite():
+    """Déficit 1/3 - v de la cadena cerrada de k diamantes frente a k: A (f = 0,
+    k impar) y B (f = 5 pi/12, psi minimizado); a la derecha, k por el déficit."""
+    fig, axs = plt.subplots(1, 2, figsize=(TEXTWIDTH_IN, 2.4))
+    series = (("A", r"A: $f=0$", 0), ("B", r"B: $f=5\pi/12$", 1))
+    for lab, name, i in series:
+        rows = read_rows(f"diamond_limit_{lab}.csv", ("k", "deficit"))
+        k = np.array([r["k"] for r in rows])
+        d = np.array([r["deficit"] for r in rows])
+        axs[0].plot(k, d, color=SERIES[i], marker=MARKERS[i], markersize=4, label=name)
+        axs[1].plot(k, k * d, color=SERIES[i], marker=MARKERS[i], markersize=4, label=name)
+    for ax, yl in zip(axs, (r"$1/3 - v$", r"$k\,(1/3 - v)$")):
+        ax.set_xticks(range(2, 8))
+        ax.set_xlabel(r"$k$")
+        ax.set_ylabel(yl)
+        ax.set_ylim(bottom=0)
+        ax.yaxis.set_major_formatter(FuncFormatter(comma))
+    axs[0].legend(frameon=False, loc="upper right")
+    fig.tight_layout()
+    out = FIGURES / "fig_diamante_limite.pdf"
+    fig.savefig(out)
+    plt.close(fig)
+    print(f"escrito {out}")
+
+
 def main():
     FIGURES.mkdir(exist_ok=True)
     fig_flujo()
     fig_asintotica()
     fig_escalera_flujo()
     fig_escalera_limite()
+    fig_diamante_mapa()
+    fig_diamante_limite()
 
 
 if __name__ == "__main__":
