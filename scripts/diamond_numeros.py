@@ -17,7 +17,7 @@ guiones de diamantes); "déficit" es 1/3 - v.
     con fA, fB >= pi/2 y fA + fB >= 5 pi/4; déficit > 1e-7 en el resto.
 §6.1, mínimo (data/diamond_chain2_min_evals.csv, diamond_chain2_min.csv,
 diamond_chain2_min_orbita.csv):
-  - la caché tiene 1102 evaluaciones (filas) en 1100 puntos distintos, 473 de
+  - la caché tiene 1103 evaluaciones (filas) en 1100 puntos distintos, 473 de
     ellas del cribado a tol 1e-5, todas 'optimal';
   - la menor está en la órbita de x* (theta_A = 0, theta_B = pi,
     alpha = pi/2), con tol 1e-8, 9e-11 por debajo de v(x*) = 0,3255461236;
@@ -125,9 +125,9 @@ def minimo(chk, abel):
     claves = {tuple(r[c] for c in cols) for r in ev}
     criba = sum(1 for r in ev if float(r["tol"]) == 1e-5)
     noopt = sum(1 for r in ev if r["estado"] != "optimal")
-    chk.check(len(ev) == 1102 and len(claves) == 1100 and criba == 473 and noopt == 0,
+    chk.check(len(ev) == 1103 and len(claves) == 1100 and criba == 473 and noopt == 0,
               f"§6.1: la caché tiene {len(ev)} evaluaciones en {len(claves)} puntos, {criba} del cribado "
-              f"(tol 1e-5), {noopt} no 'optimal' (1102, 1100, 473, 0)")
+              f"(tol 1e-5), {noopt} no 'optimal' (1103, 1100, 473, 0)")
     best = min(ev, key=lambda r: float(r["v"]))
     x = np.array([float(best[c]) for c in cols])
     Q = Rotation.from_rotvec(x[3:]).as_matrix()
