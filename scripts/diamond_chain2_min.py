@@ -115,8 +115,10 @@ de la corrida completa: cribado 62 x 8 llamadas, ~470 nuevas (las de
 (pi, pi, pi/2), (0, pi, 0) y (pi/2, pi/2, pi/2) salen de la caché de la
 tarea 4) x 87 s = ~11,5 h; etapa 2, 3 x (5 x 20 + 60) = 480 x 148 s =
 ~20 h; paso 2 (revisado), ~52 evaluaciones nuevas x 135 s = ~2 h más ~1 h de
-testigo (las 75 perturbaciones de P salen de la caché): ~34 h en total sin
-contar las ~38 h ya hechas de las etapas 1-2 (en caché), pico ~1 GB.
+testigo (las 75 perturbaciones de P salen de la caché): ~34 h estimadas con
+la caché vacía (la corrida de 2026-11-04/06 midió 136 645 s = 38 h para todo
+salvo el paso 2 revisado, pico 1,99 GB); relanzar con esa caché solo calcula
+el paso 2 revisado, ~3 h.
 --rapido medido (con el paso 2 en x*): 2569 s (25 evaluaciones nuevas, 1 witness_spread) y 839 MB.
 
 Escribe data/diamond_chain2_min.csv (caso: cribado | minQ | conjunto |
