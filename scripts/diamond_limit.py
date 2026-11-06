@@ -12,7 +12,8 @@ elegidos por Alex (tarea 7):
      diamond_ring, confirmado por el primal reducido a 9e-9); con k = 2 y 4,
      v = 1/3. Por eso psi = 0 basta; con k = 3 se comprueba la planitud en dos
      psi más (información).
-  B: igual, f dado (provisionalmente pi/3), mínimo en psi en cada k, para
+  B: igual, f dado (en los datos, f = 5 pi/12, el del mayor déficit del mapa
+     k = 4; pi/3 fue el valor provisional), mínimo en psi en cada k, para
      k = 2, 3, 4, ...: malla de NPSI puntos en [0, pi] y Brent (acotado,
      xatol = 1e-5) entre los vecinos del menor, como diamond_ring; el mínimo
      de la malla gana si Brent no lo mejora en más de 1e-8 (así un mínimo en
@@ -67,7 +68,7 @@ rechaza.
 Uso: (ulimit -v 16000000; /usr/bin/time -f "%M KB %e s" python scripts/diamond_limit.py \\
           etiqueta modo f psi|min k [k ...])
      p. ej. ... diamond_limit.py A igual 0 0 3 5 7
-            ... diamond_limit.py B igual pi/3 min 2 3 4 5
+            ... diamond_limit.py B igual 5*pi/12 min 2 3 4 5
      f y psi admiten expresiones con pi (pi/3, 2*pi/3).
 Medido (2026-11-04, OMP_NUM_THREADS = 2, con otros dos cálculos en la
 máquina; pico = ru_maxrss del hijo, el de /usr/bin/time es solo el padre,
