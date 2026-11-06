@@ -61,8 +61,7 @@ Uso: (ulimit -v 8000000; /usr/bin/time -f "%M KB" python scripts/diamond_chain2.
 --rapido (prueba de humo): malla 3x3, solo el punto abeliano, 1 arranque con tope 4;
 escribe los mismos CSV con sufijo _rapido (caché aparte).
 --rapido medido: 565 s y 968 MB de pico (/usr/bin/time -f "%M KB").
-Ejecución completa: estimada en ~16 h (pico ~1 GB); tiempo y pico medidos
-pendientes de la ejecución completa.
+Ejecución completa: ver "Medido" arriba (21,6 h, pico 0,94 GB).
 """
 import _common  # noqa: F401  (fija OMP_NUM_THREADS antes de numpy)
 from _common import CLARABEL_OPTS, Checker

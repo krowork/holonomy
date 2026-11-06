@@ -76,6 +76,12 @@ máquina; pico = ru_maxrss del hijo, el de /usr/bin/time es solo el padre,
      k = 4: 4,7 s, 0,26 GB; k = 5: 10 s, 0,41 GB.
   B (28-30 evaluaciones por k): k = 2: 6 s, 0,11 GB; k = 3: 125 s, 0,22 GB;
      k = 4: 1811 s (62 s por evaluación), 1,41 GB.
+Corridas de los datos (2026-11-04/05, de data/diamond_limit_{A,B}.csv; pico
+residente / virtual):
+  A: k = 3: 1,6 s, 0,18 / 1,30 GB; k = 5: 18 s, 0,46 / 1,66 GB;
+     k = 7: 45 910 s (12,8 h), 2,87 / 4,06 GB (ulimit -v 10000000).
+  B (f = 5 pi/12): k = 2: 5 s, 0,11 / 1,36 GB; k = 3: 103 s, 0,21 / 1,39 GB;
+     k = 4: 1872 s, 1,47 / 2,66 GB; k = 5: 7556 s (2,1 h), 5,52 / 6,64 GB.
 """
 import _common  # noqa: F401  (fija OMP_NUM_THREADS antes de numpy)
 from _common import CLARABEL_OPTS, Checker
