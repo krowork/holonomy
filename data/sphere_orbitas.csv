@@ -1,0 +1,8 @@
+nombre,orden_grupo,orbita,n_aristas,estabilizador,b_nulo
+tetraedro,24,0,6,4,True
+octaedro,48,0,12,4,True
+cubo,48,0,12,4,True
+cuboctaedro,48,0,24,2,False
+icosaedro,120,0,30,4,True
+rombododecaedro,48,0,24,2,True
+dodecaedro,120,0,30,4,True
