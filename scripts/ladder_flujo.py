@@ -106,6 +106,13 @@ def main():
                      f"límite pares {ev:.4f}, impares {od:.4f}")
             rows.append((float(F) * np.pi, psi, lat, *(par[L] for L in range(5, 10)), p, ev, od))
     chk.check(damp, "la paridad se amortigua: máx. en L = 8, 9 < máx. en L = 5, 6 en cada (F, psi)")
+    for F in FS:
+        rs = [r for r in rows if r[0] == float(F) * np.pi]
+        rng = lambda i, fmt: f"{min(r[i] for r in rs):{fmt}}–{max(r[i] for r in rs):{fmt}}"
+        p9 = [abs(r[7]) for r in rs]
+        chk.info(f"resumen F/pi={F}: v(10) {min(V[F, 10]):.5f}–{max(V[F, 10]):.5f}, "
+                 f"|paridad L=9| {min(p9):.4f}–{max(p9):.4f}, p {rng(8, '.1f')}, "
+                 f"límite pares {rng(9, '.4f')}, impares {rng(10, '.4f')}")
 
     for L in (9, 10):
         dec = all(V[a, L][j] > V[b, L][j] for j in range(len(PSIS)) for a, b in zip(FS, FS[1:]))
