@@ -42,6 +42,16 @@ FUENTES = ["holonomia_werner.tex", "holonomia_escaleras.tex", "holonomia_diamant
 
 # Números escritos de nuevo en el artículo unificado, con su motivo.
 NUEVOS = {
+    # Teorema thm:igualdad (cadena cerrada de diamantes, f = 0); todos de la salida de
+    # scripts/diamond_igualdad.py, que los comprueba.
+    "0,526": "constante de Lipschitz 2 sqrt(2) a* del exceso del anillo girado, k = 3",
+    "0,495": "mínimo de la malla de 61 puntos menos la constante por media separación, k = 3",
+    "0,284": "exceso del anillo en psi = 0, k = 2",
+    "0,698": "exceso del anillo en psi = 0, k = 4",
+    "2e-31": "peso del sector sin singletes en el promedio, k = 2, 3, 4",
+    "2,0e-10": "error de marginales del estado girado, k = 3 (columna err_girado del CSV)",
+    "2,4e-15": "error de marginales del estado girado, k = 2 y 4 (columna err_girado del CSV)",
+    "2,2e-2": "error de marginales del estado sin girar, mínimo (columna err_sin_girar del CSV)",
 }
 
 # Citas y menciones de los artículos de origen, que el texto no debe tener.

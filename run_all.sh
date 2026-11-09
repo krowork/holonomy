@@ -6,7 +6,7 @@ cd "$(dirname "$0")"
 PY=${PY:-.venv/bin/python}
 export OMP_NUM_THREADS=${OMP_NUM_THREADS:-2}
 
-FAST=(verify_sym verify_step3 verify_unique tri witness_check xxz sec ba verify_holonomia diamond_single diamond_ring diamond_numeros diamond_punto_a rigidez_diamantes rigidez_qudit_limite rigidez_qudit_asint rigidez_numeros holonomia_numeros ladder_flujo)
+FAST=(verify_sym verify_step3 verify_unique tri witness_check xxz sec ba verify_holonomia diamond_single diamond_ring diamond_numeros diamond_punto_a rigidez_diamantes diamond_igualdad rigidez_qudit_limite rigidez_qudit_asint rigidez_numeros holonomia_numeros ladder_flujo)
 SLOW=(table62 edge phistar primalU1 rank cusp certify_h witness_n chk baedge2 ladder sphere_series sphere_casquetes sphere_solape sphere_ambiente sphere_cmi rigidez_anillos)
 
 scripts=("${FAST[@]}")
