@@ -19,14 +19,14 @@ U_e = diag(e^{i t_a/n})) solo importa módulo: (a) un desplazamiento común
 (fase global; incluye el centro Z_3), (b) 2π en cada componente, (c) las
 permutaciones de los colores (gauge constante) y (d) t ↦ −t (conjugación
 compleja K). (a) y (b) dejan la parte sin traza de t módulo 2π·Λ_w (red de
-pesos de su(3)); con (c), módulo el grupo afín de Weyl, el dominio es el
+pesos de su(3)); con (c), módulo el grupo afín de Weyl, el dominio es la
 alcoba, un triángulo equilátero de vértices 0, 2πω_1, 2πω_2 (los tres son el
 centro, es decir, holonomía trivial); el centro Z_3 lo gira 120° y K lo
-refleja, así que el dominio fundamental es un sexto del alcoba: el triángulo
+refleja, así que el dominio fundamental es un sexto de la alcoba: el triángulo
 de vértices
     0 (holonomía trivial),
-    C = (2π/3)(1, 0, −1) (centro del alcoba: el «reloj» {1, ω, ω²}),
-    M = (π, 0, −π) ≡ diag(1, 1, −1) (punto medio de un lado del alcoba).
+    C = (2π/3)(1, 0, −1) (centro de la alcoba: el «reloj» {1, ω, ω²}),
+    M = (π, 0, −π) ≡ diag(1, 1, −1) (punto medio de un lado de la alcoba).
 Las dos rectas recorren su borde:
   · recta «raiz», t = θ·(1, 0, −1) (dirección de la raíz α_1 + α_2): período
     2π, t(−θ) es la permutación 0 ↔ 2 de t(θ) y t(2π − θ) ≡ t(−θ), así que
@@ -81,14 +81,56 @@ p. ej. con θ → 0 en n = 3, queda sin resolver por debajo de ~1e-6). Se
 guardan los sectores, la degeneración (con multiplicidad), los momentos, la
 clase (liso, indet, doblete: dos momentos, triple: tres o más) y el gap. Ojo:
 en el óptimo del dual (convexo, no derivable) varios bloques empatan casi
-siempre; el criterio distingue si entre ellos hay momentos distintos. Los
-momentos dependen del gauge (uniforme en cada recta): en M la holonomía
-diag(1, 1, −1) deja una simetría U(2) que en la recta peso actúa con el mismo
-momento y en la raíz no (allí los colores 0 y 2 llevan fases ±π/n distintas por
-arista), de modo que en la raíz θ = π un multiplete de U(2) aparece con momentos
-distintos; en M se lee la clase en la recta peso. Las degeneraciones forzadas
-por g (pares (n0, n1, n2, k) ↔ (n2, n1, n0, −k) en la raíz, corrientes opuestas)
-sí son cruces: el giro del flujo las separa linealmente.
+siempre; el criterio distingue si entre ellos hay momentos distintos.
+
+Momentos y gauge; criterio invariante. Entre estados de un mismo sector de
+color, una diferencia de momento no depende del gauge; entre sectores de color
+distintos, sí: un gauge sitio a sitio (giro grande, fase e^{2πi j m_a/n} del
+color a en el sitio j) desplaza el momento en 2π Σ_a m_a n_a/n, distinto en
+cada sector. El criterio invariante es el desdoblamiento de corrientes: los
+autovalores de P·(dW/ds)·P, con P el proyector sobre el multiplete superior y
+s el flujo del testigo girado en una dirección de Cartan (z_ab ↦
+z_ab e^{i s (u_b − u_a)/n}); si no son todos iguales, λ_max tiene un salto de
+derivada en s (cruce, cúspide). Se calcula en la dirección de la recta (u) y
+en la transversal sin traza (w: (1, −2, 1)/√3 en la raíz, (1, −1, 0) en la
+recta peso) y se guardan los dos espectros (columnas corrientes_u,
+corrientes_w) y el mayor de los dos desdoblamientos (desdoblamiento). Los
+pares forzados por g en la raíz, (n0, n1, n2, k) ↔ (n2, n1, n0, −k), tienen
+corrientes iguales a lo largo de u y opuestas en w. En M (θ = π en la raíz,
+θ = π/√3 en la recta peso: la misma holonomía) los momentos del multiplete son
+distintos en los dos gauges, y el multiplete se desdobla linealmente a lo largo
+de cada recta: la clase en M depende de la dirección en que se sale de M, no
+del gauge. Comprobación: toda fila doblete o triple tiene desdoblamiento > 1e-3
+(mínimo medido 0,031), y las lisas tienen degeneración 1.
+
+Cúspide forzada (certificación). El óptimo que se clasifica es el
+simetrizado x̄, uno de los posibles: el conjunto óptimo es convexo y podría
+contener otros. Para excluir que alguno sea liso se usa que, si un óptimo x*
+tuviera el multiplete superior en un solo momento k, λ_max coincidiría cerca
+de x* con λ_max^(k) (máximo solo sobre los bloques de momento k, todos los
+sectores de color), x* sería mínimo local y por convexidad global de
+λ_max^(k), y v = mín λ_max^(k). Basta pues, para cada k = 0..n−1, un x
+explícito con λ_max^(k)(x)/N(x) < v: para los k fuera del multiplete de x̄ sirve
+x̄ (margen = gap); para los del multiplete, la cota superior de
+`v_dual_ring_cg(..., momentos=[k])` arrancado en x̄ (columnas cert_k, con el
+margen v − sup_k por k del multiplete, y cert_margen, el menor; planos de corte
+con tol 1e-9). Comprobación: margen > 1e-7 en toda fila doblete o triple de la
+malla y de la sonda, salvo dos excepciones que se dan como información:
+  · θ = 0 con n ≢ 0: el margen es 0 (a 1e-15). El multiplete de x̄ (el
+    testigo SU(3), óptimo exacto) es un multiplete de color en cada momento
+    ±k_0, y el de un solo momento ya fija v (el mínimo restringido a k_0 es v,
+    alcanzado en x̄): la prueba no decide si hay otro óptimo con un solo
+    momento; la cúspide de θ = 0 para n ≢ 0 es la de x̄, no está certificada
+    como forzada.
+  · filas de bisección (borde de la ventana): el margen es de segundo orden en
+    la distancia δ al borde (n = 9, recta peso: 1,5e-8, 1,0e-7, 5,2e-7 y
+    2,3e-6 con δ ≈ 3e-4, 9e-4, 2e-3 y 4e-3 rad; ~1e-16 en el propio borde), y
+    en las 4 filas más cercanas queda por debajo de 1e-7 (de 33 filas de
+    bisección en cúspide, 29 certificadas).
+Excluye todo óptimo liso (dentro de la familia invariante, que no pierde
+generalidad) donde se certifica; no excluye otro óptimo, también en cúspide,
+con un multiplete distinto del de x̄, ni dice nada de las filas «indet» (un solo
+momento con gap < GAP_LISO), que no se certifican.
 
 Ventana. Donde dos puntos vecinos de la malla tienen distinta clase
 (cúspide o liso), se biseca en θ (NBIS = 10 pasos, resolución L/12/2¹⁰) y se
@@ -126,13 +168,20 @@ Comprueba
      forma independiente, con Lanczos de arranque aleatorio sobre W en los 3^n
      estados (4 autovalores, 40 vectores): diferencia < 1e-8 (Review Focus 1).
   3. θ = 0: v = d/(d+1)(1/d − e_P(n)) (tarea 6, exacto) a 1e-8.
-  4. Primal reducido por el toro (`primal_ring_toro`), n = 3, 4, 5: todos los
-     θ de la recta raíz y θ_0, θ_3, θ_6, θ_9, θ_12 de la recta peso;
-     |dual − primal| < 1e-6. Con n > 5, v es «cota superior» (con la
+  4. Primal reducido por el toro (`primal_ring_toro`), n = 3, 4, 5: los 13 θ
+     de las dos rectas (78 puntos de malla; no en los de bisección);
+     |dual − primal| < 1e-6, con estado 'optimal' u 'optimal_inaccurate': se
+     acepta el segundo (Clarabel con tolerancias de 1e-10 lo da en casi todos)
+     porque la coincidencia con la cota superior del dual, que no depende del
+     primal, se exige igual a 1e-6. Con n > 5, v es «cota superior» (con la
      horquilla de los planos de corte como certificado numérico).
   5. Las dos rectas coinciden en θ = 0 y en M (raíz θ = π, peso θ = π/√3), a
      1e-7; rango (n = 4, 5, θ = θ_5): v(−θ), v(2π − θ) (raíz) y v(−θ),
-     v(2π/√3 − θ) (peso) iguales a v(θ) a 1e-7.
+     v(2π/√3 − θ) (peso) iguales a v(θ) a 1e-7, con `v_dual_ring_cg` en
+     estado 'optimal'.
+  5b. Cúspides: desdoblamiento de corrientes > 1e-3 en toda fila doblete o
+     triple, y certificación de cúspide forzada (margen > 1e-7) salvo las dos
+     excepciones de «Cúspide forzada» (θ = 0 con n ≢ 0; bisección).
   6. Ventana: bisección donde cambia la clase (ver arriba); tablas de v,
      flujo y clase por recta y n (información).
 
@@ -165,22 +214,28 @@ Resultados (2026-11-09; descriptivos, n = 3..9, más la sonda n = 10)
     (n = 7), L/2 (n = 8) (n = 4: 7L/12, y luego deriva); en la raíz, sobre la
     cresta 0–C (doblete ±k) con θ_W ≤ 0,035 L hasta θ = L/3 (n = 7) o L/4
     (n = 8). Después, cruces con k = 0 y θ_W hacia M. No hay ventana junto a M,
-    el punto liso de la energía.
+    el punto liso de la energía, en la malla (resolución L/12; una ventana más
+    estrecha entre dos puntos en cúspide no se vería).
   · v: el signo de v(C) − v(0) es − para n ≡ 0 y + para n ≢ 0 (n = 3..9).
 
 Uso: (ulimit -v 16000000; /usr/bin/time -f "%M KB %e s" \\
           .venv/bin/python scripts/rigidez_qudit_flujo.py [n ...] [--sonda])
      (sin n: 3..9). --analisis: solo lee el CSV y escribe las tablas.
-Medido (2026-11-09, OMP_NUM_THREADS = 2): en frío, 1774 s y 1,75 GB de pico
+Medido (2026-11-09, OMP_NUM_THREADS = 2; cifras de la primera versión, sin
+corrientes ni certificación ni el primal de la recta peso, que se añadieron
+después reanudando: 884 s más con --sonda para 24 primales, corrientes y una
+primera certificación, y 1101 s con --sonda para recertificar todo con tol 1e-9,
+pico 5,8–6,0 GB por la sonda): en frío, 1774 s y 1,75 GB de pico
 (n = 9: 23 s por punto de media; las bisecciones de n = 6, 9, ~10 puntos cada
-una); con el CSV escrito, 30 s y 0,94 GB (energía, rango y recomprobación de
-las filas); --sonda (n = 10, tres puntos, ~85 s cada uno) añade 250 s y sube el
-pico a 6,6 GB; --analisis, 1,7 s.
+una); con el CSV escrito, 31 s y 0,94 GB (energía, rango y recomprobación de
+las filas, también corrientes y certificación); --sonda (n = 10, tres puntos,
+~85 s cada uno) añade 250 s y sube el pico a 6,6 GB; --analisis, 1,7 s.
 """
 import _common  # noqa: F401  (fija OMP_NUM_THREADS antes de numpy)
 from _common import CLARABEL_OPTS, Checker
 
 import csv
+import io
 import resource
 import sys
 import time
@@ -206,7 +261,8 @@ TOL_PRIMAL = 1e-6
 TOL_CONTROL = 1e-8
 TOL_RECTAS = 1e-7
 NPRIMAL = 5
-PRIMAL_PESO = (0, 3, 6, 9, 12)
+TOL_CORRIENTE = 1e-3
+TOL_CERT = 1e-7
 NSONDA = 10
 SONDA = (("raiz", 12), ("peso", 12), ("raiz", 11))
 
@@ -215,6 +271,8 @@ RECTAS = {
     "peso": dict(u=np.array([1.0, 1.0, -2.0]) / np.sqrt(3), L=np.pi / np.sqrt(3),
                  perm=(1, 0, 2), conj=False),
 }
+# Dirección transversal sin traza (para las corrientes).
+W_PERP = {"raiz": np.array([1.0, -2.0, 1.0]) / np.sqrt(3), "peso": np.array([1.0, -1.0, 0.0])}
 CSV_NAME = "rigidez_qudit_flujo.csv"
 CSV_ENERGIA = "rigidez_qudit_flujo_energia.csv"
 NPAR = qudit.n_params(D)
@@ -222,7 +280,8 @@ HEADER = (["tipo", "recta", "d", "n", "i_theta", "theta", "theta_sobre_L",
            "v_sup", "v_inf", "horquilla", "estado", "v_sin_simetrizar", "dif_simetria",
            "dif_lanczos", "v_primal", "estado_primal", "dif_primal",
            "etiqueta_v", "Phi01", "Phi12", "Phi02", "tau", "theta_W", "abs_z01", "abs_z12", "abs_z02",
-           "multiplete", "degeneracion", "momentos", "clase", "cuspide", "gap"]
+           "multiplete", "degeneracion", "momentos", "clase", "cuspide", "gap",
+           "corrientes_u", "corrientes_w", "desdoblamiento", "cert_k", "cert_margen"]
           + [f"x{p}" for p in range(NPAR)] + ["segundos"])
 
 
@@ -294,7 +353,7 @@ def espectro_superior(n, x):
     ev = []
     for lab, O in zip(labels, ops):
         w = np.linalg.eigvalsh(np.tensordot(x, O, axes=1)) - c0
-        ev.extend((float(e), lab) for e in w[-8:])
+        ev.extend((float(e), lab) for e in w)
     ev.sort(key=lambda q: -q[0])
     lam = ev[0][0]
     multi = [lab for e, lab in ev if e > lam - TOL_DEG]
@@ -321,6 +380,58 @@ def fmt_multi(multi):
         s = "".join(str(c) for c in cols) + f":{k}"
         out.append(s)
     return "|".join(out)
+
+
+def dx_giro(n, x, u):
+    """dx/ds al girar el flujo del testigo s·u (z_ab ↦ z_ab e^{i s (u_b − u_a)/n})."""
+    dx = np.zeros_like(x)
+    for (a, b) in qudit._offpairs(D):
+        z = x[qudit.param_index(D, "Re", a, b)] + 1j * x[qudit.param_index(D, "Im", a, b)]
+        dz = 1j * (u[b] - u[a]) / n * z
+        dx[qudit.param_index(D, "Re", a, b)] = dz.real
+        dx[qudit.param_index(D, "Im", a, b)] = dz.imag
+    return dx
+
+
+def corrientes(n, x, u):
+    """Autovalores de P·(dW/ds)·P (P: multiplete superior a TOL_DEG), bloque a
+    bloque (dW/ds conserva color y momento)."""
+    labels, _, ops = qudit.sector_blocks(D, n)
+    c0 = n * (qudit._trace_coeffs(D) @ x) / D**2
+    dx = dx_giro(n, x, u)
+    esp = [np.linalg.eigh(np.tensordot(x, O, axes=1)) for O in ops]
+    lam = max(w[-1] for w, _ in esp) - c0
+    out = []
+    for (w, V), O in zip(esp, ops):
+        sel = (w - c0) > lam - TOL_DEG
+        if sel.any():
+            Vt = V[:, sel]
+            M = Vt.conj().T @ np.tensordot(dx, O, axes=1) @ Vt
+            out.extend(np.linalg.eigvalsh((M + M.conj().T) / 2))
+    return np.sort(np.array(out))
+
+
+def fmt_vec(v):
+    return "|".join(f"{c:+.5f}" for c in v)
+
+
+def certificar(n, t, x, v, multi):
+    """Cúspide forzada: para cada k, margen v − mín_x λ_max^(k)/N acotado por un x
+    explícito (x̄ para todo k; para los k del multiplete, además, la cota
+    superior de los planos de corte restringidos a ese momento, arrancados en
+    x̄). Devuelve (texto «k:margen» de los k del multiplete, menor margen)."""
+    labels, _, ops = qudit.sector_blocks(D, n)
+    c0 = n * (qudit._trace_coeffs(D) @ x) / D**2
+    mejor = {}
+    for lab, O in zip(labels, ops):
+        e = np.linalg.eigvalsh(np.tensordot(x, O, axes=1))[-1] - c0
+        mejor[lab[1]] = max(mejor.get(lab[1], -np.inf), e)
+    texto = []
+    for k in sorted({k for _, k in multi}):
+        sup, _, _, _ = qudit.v_dual_ring_cg(D, n, t, x0=x, momentos=[k])
+        mejor[k] = min(mejor[k], sup)
+        texto.append(f"{k}:{v - mejor[k]:.3e}")
+    return "|".join(texto), float(min(v - b for b in mejor.values()))
 
 
 @lru_cache(maxsize=None)
@@ -380,7 +491,54 @@ def evaluar(recta, n, theta, x0, primal, tipo="malla", i_theta=-1):
         momentos="|".join(str(k) for k in ks), clase=cl, cuspide=int(cl != "liso"), gap=gap,
         **{f"x{p}": float(xs[p]) for p in range(NPAR)}, segundos=time.time() - t0)
     row["etiqueta_v"] = etiqueta(row)
+    completar_extras(row, xs)
     return row
+
+
+def completar_extras(row, xs=None):
+    """Corrientes y certificación de una fila (si faltan). Devuelve True si cambia."""
+    cambia = False
+    n, recta = row["n"], row["recta"]
+    x = xde(row) if xs is None else xs
+    if not isinstance(row.get("corrientes_u"), str) or row["corrientes_u"] == "":
+        cu = corrientes(n, x, RECTAS[recta]["u"])
+        cw = corrientes(n, x, W_PERP[recta])
+        row["corrientes_u"], row["corrientes_w"] = fmt_vec(cu), fmt_vec(cw)
+        row["desdoblamiento"] = float(max(np.ptp(cu), np.ptp(cw)))
+        cambia = True
+    cert = row.get("cert_margen")
+    if row["clase"] in ("doblete", "triple") and not (isinstance(cert, float) and np.isfinite(cert)):
+        multi = [(None, int(m.split(":")[1])) for m in row["multiplete"].split("|")]
+        row["cert_k"], row["cert_margen"] = certificar(
+            n, holonomia(recta, row["theta"]), x, row["v_sup"], multi)
+        cambia = True
+    elif row["clase"] not in ("doblete", "triple") and row.get("cert_k") is None:
+        row["cert_k"], row["cert_margen"] = "", np.nan
+    return cambia
+
+
+def completar(ck, row):
+    """Rellena lo que falte en una fila guardada (primal en n ≤ NPRIMAL de la
+    malla, corrientes, certificación) y la añade de nuevo al CSV (la última fila
+    de cada clave es la que vale al leer)."""
+    cambia = False
+    if (row["tipo"] == "malla" and row["n"] <= NPRIMAL
+            and not (isinstance(row["v_primal"], float) and np.isfinite(row["v_primal"]))):
+        t0 = time.time()
+        vp, stp = qudit.primal_ring_toro(D, row["n"], holonomia(row["recta"], row["theta"]),
+                                         **CLARABEL_OPTS)
+        row["v_primal"], row["estado_primal"] = vp, stp
+        row["dif_primal"] = row["v_sup"] - vp
+        row["etiqueta_v"] = etiqueta(row)
+        row["segundos"] += time.time() - t0
+        cambia = True
+    t0 = time.time()
+    if completar_extras(row):
+        row["segundos"] += time.time() - t0
+        cambia = True
+    if cambia:
+        anadir(row)
+    return cambia
 
 
 # ---------------------------------------------------------------------------
@@ -388,7 +546,7 @@ def evaluar(recta, n, theta, x0, primal, tipo="malla", i_theta=-1):
 # ---------------------------------------------------------------------------
 
 _TEXTO = {"tipo", "recta", "estado", "estado_primal", "multiplete", "momentos", "clase",
-          "etiqueta_v"}
+          "etiqueta_v", "corrientes_u", "corrientes_w", "cert_k"}
 
 
 def etiqueta(r):
@@ -406,22 +564,42 @@ def etiqueta(r):
 def _num(k, s):
     if k in _TEXTO:
         return s
-    return float(s)
+    return float(s) if s != "" else np.nan
 
 
 def leer():
+    """Filas del CSV (la última de cada clave). Descarta una última línea
+    incompleta (corte a medio escribir) y, si la cabecera es de una versión
+    anterior, reescribe el fichero con la actual (columnas nuevas vacías) para
+    que las filas que se añadan queden alineadas."""
     path = DATA / CSV_NAME
     out = {}
     if path.exists():
-        with open(path) as fh:
-            for r in csv.DictReader(fh):
-                r = {k: _num(k, v) for k, v in r.items()}
-                for k in ("n", "d", "i_theta", "degeneracion", "cuspide"):
-                    r[k] = int(r[k])
-                r["etiqueta_v"] = etiqueta(r)
-                if abs(r["theta_W"] + RECTAS[r["recta"]]["L"]) < 1e-6:
-                    r["theta_W"] = RECTAS[r["recta"]]["L"]
-                out[clave(r["recta"], r["n"], r["theta"])] = r
+        texto = path.read_text()
+        if texto and not texto.endswith("\n"):
+            texto = texto[:texto.rfind("\n") + 1]
+            path.write_text(texto)
+            print("aviso: descartada una última línea incompleta del CSV", flush=True)
+        lector = csv.DictReader(io.StringIO(texto))
+        for r in lector:
+            if None in r or None in r.values():
+                print("aviso: fila mal formada descartada", flush=True)
+                continue
+            r = {h: r.get(h, "") for h in HEADER}
+            r = {k: _num(k, v) for k, v in r.items()}
+            for k in ("n", "d", "i_theta", "degeneracion", "cuspide"):
+                r[k] = int(r[k])
+            r["etiqueta_v"] = etiqueta(r)
+            if abs(r["theta_W"] + RECTAS[r["recta"]]["L"]) < 1e-6:
+                r["theta_W"] = RECTAS[r["recta"]]["L"]
+            out[clave(r["recta"], r["n"], r["theta"])] = r
+        if lector.fieldnames != HEADER:
+            with open(path, "w", newline="") as fh:
+                w = csv.writer(fh)
+                w.writerow(HEADER)
+                for r in out.values():
+                    w.writerow([r[h] for h in HEADER])
+            print("aviso: CSV reescrito con la cabecera actual", flush=True)
     return out
 
 
@@ -549,9 +727,25 @@ def comprobar_punto(ck, r):
              f"{r['v_sup'] - r['v_sin_simetrizar']:+.0e}, Lanczos {r['dif_lanczos']:+.0e}; "
              f"{r['clase']} ({r['multiplete']}), gap {r['gap']:.2e}")
     if isinstance(r["v_primal"], float) and np.isfinite(r["v_primal"]):
+        # 'optimal_inaccurate' se acepta: la coincidencia a TOL_PRIMAL con la cota
+        # superior del dual se exige igual.
         ck.check(abs(r["dif_primal"]) < TOL_PRIMAL and str(r["estado_primal"]).startswith("optimal"),
                  f"{nota}: primal {r['v_primal']:.10f}, dual − primal {r['dif_primal']:+.1e} "
                  f"[{r['estado_primal']}]")
+    if r["clase"] in ("doblete", "triple"):
+        texto = (f"{nota}: cúspide, desdoblamiento de corrientes {r['desdoblamiento']:.3f}; "
+                 f"margen de cúspide forzada {r['cert_margen']:.2e} (k:margen {r['cert_k']})")
+        if r["tipo"] == "borde" or (r["theta"] == 0.0 and r["n"] % 3 != 0):
+            # Excepciones documentadas (docstring, «Cúspide forzada»): junto al
+            # borde de la ventana el margen es de segundo orden en la distancia al
+            # borde; en θ = 0 con n ≢ 0 el multiplete de color de un solo momento ya
+            # fija v (mín. restringido = v): no certificable.
+            ck.check(r["desdoblamiento"] > TOL_CORRIENTE, texto)
+            if not r["cert_margen"] > TOL_CERT:
+                ck.info("  (sin certificar: " + ("borde de ventana" if r["tipo"] == "borde"
+                                                  else "θ = 0, n ≢ 0") + ")")
+        else:
+            ck.check(r["desdoblamiento"] > TOL_CORRIENTE and r["cert_margen"] > TOL_CERT, texto)
 
 
 def calcular(ck, ns, datos):
@@ -561,10 +755,11 @@ def calcular(ck, ns, datos):
             for i, th in enumerate(grid(recta)):
                 key = clave(recta, n, th)
                 if key not in datos:
-                    primal = n <= NPRIMAL and (recta == "raiz" or i in PRIMAL_PESO)
-                    datos[key] = evaluar(recta, n, th, x0, primal, "malla", i)
+                    datos[key] = evaluar(recta, n, th, x0, n <= NPRIMAL, "malla", i)
                     anadir(datos[key])
-                    comprobar_punto(ck, datos[key])
+                else:
+                    completar(ck, datos[key])
+                comprobar_punto(ck, datos[key])
                 x0 = xde(datos[key])
             # Bisección donde cambia la clase (cúspide frente a liso).
             g = grid(recta)
@@ -579,7 +774,9 @@ def calcular(ck, ns, datos):
                     if key not in datos:
                         datos[key] = evaluar(recta, n, th, xde(lo), False, "borde", -1)
                         anadir(datos[key])
-                        comprobar_punto(ck, datos[key])
+                    else:
+                        completar(ck, datos[key])
+                    comprobar_punto(ck, datos[key])
                     m = datos[key]
                     if m["cuspide"] == lo["cuspide"]:
                         lo = m
@@ -592,13 +789,14 @@ def comprobar_rango(ck):
     for n in (4, 5):
         for recta, L in (("raiz", 2 * np.pi), ("peso", 2 * np.pi / np.sqrt(3))):
             th = grid(recta)[5]
-            vs = []
+            vs, sts = [], []
             for t in (th, -th, L - th):
-                v, _ = qudit.v_dual_ring(D, n, holonomia(recta, t))
+                v, _, _, st = qudit.v_dual_ring_cg(D, n, holonomia(recta, t))
                 vs.append(v)
-            ck.check(max(vs) - min(vs) < TOL_RECTAS,
+                sts.append(st)
+            ck.check(max(vs) - min(vs) < TOL_RECTAS and all(st == "optimal" for st in sts),
                      f"rango, n = {n}, recta {recta}: v(θ), v(−θ), v({L / np.pi:.4f}π − θ) = "
-                     f"{', '.join(f'{v:.10f}' for v in vs)}")
+                     f"{', '.join(f'{v:.10f}' for v in vs)} [{', '.join(sts)}]")
 
 
 def analisis(ck, ns, datos):
@@ -618,8 +816,23 @@ def analisis(ck, ns, datos):
                      and abs(rM["v_sup"] - pM["v_sup"]) < TOL_RECTAS,
                      f"n = {n}: rectas en 0 ({r0['v_sup'] - p0['v_sup']:+.0e}) y en M "
                      f"(raíz π {rM['v_sup']:.10f}, peso π/√3 {pM['v_sup']:.10f})")
+    pr = [r for r in filas if isinstance(r["v_primal"], float) and np.isfinite(r["v_primal"])]
+    if pr:
+        dif = np.array([r["dif_primal"] for r in pr])
+        ck.info(f"primal: {len(pr)} puntos, |dual − primal| ≤ {np.max(np.abs(dif)):.1e}; "
+                f"primal por debajo del dual en {int(np.sum(dif > 0))} (máx. {np.max(dif):+.1e}); "
+                f"estados {sorted({r['estado_primal'] for r in pr})}")
+    cus = [r for r in filas if r["clase"] in ("doblete", "triple")
+           and isinstance(r["cert_margen"], float) and np.isfinite(r["cert_margen"])]
+    if cus:
+        nc = [r for r in cus if not r["cert_margen"] > TOL_CERT]
+        ck.info(f"cúspides: {len(cus)} filas doblete o triple; desdoblamiento mínimo "
+                f"{min(r['desdoblamiento'] for r in cus):.3f}; certificadas como forzadas "
+                f"{len(cus) - len(nc)}; sin certificar {len(nc)}: "
+                + ", ".join(f"{r['recta']} n={r['n']} θ={r['theta']:.5f} ({r['tipo']}, "
+                            f"{r['cert_margen']:.1e})" for r in nc))
     for recta in RECTAS:
-        ck.info(f"Recta {recta}: v(n, θ_i) (cota superior; n ≤ 5 = primal a 1e-6), "
+        ck.info(f"Recta {recta}: v(n, θ_i) (cota superior; n ≤ 5: primal a 1e-6 en los 13 θ), "
                 f"θ_i = i·L/12, L = {RECTAS[recta]['L'] / np.pi:.4f}π")
         ck.info("  n  " + " ".join(f"{i:>8d}" for i in range(NTH)))
         for n in ns:
@@ -669,6 +882,8 @@ def sonda(ck, datos):
         if key not in datos:
             datos[key] = evaluar(recta, NSONDA, th, None, False, "sonda", i)
             anadir(datos[key])
+        else:
+            completar(ck, datos[key])
         comprobar_punto(ck, datos[key])
         r = datos[key]
         ck.info(f"sonda n = {NSONDA}, {recta} θ_{i}: v ≤ {r['v_sup']:.10f}, θ_W/L = "
@@ -689,9 +904,6 @@ def main():
     if "--analisis" not in sys.argv:
         parte_energia(ck, ns)
         comprobar_rango(ck)
-        for r in datos.values():
-            if r["n"] in ns:
-                comprobar_punto(ck, r)
         calcular(ck, ns, datos)
         if "--sonda" in sys.argv:
             sonda(ck, datos)

@@ -657,7 +657,7 @@ def v_dual_ring_nm(d, n, thetas, x0=None, starts=8, seed=0, maxrestart=5):
 
 
 def v_dual_ring_cg(d, n, thetas, x0=None, tol=1e-9, r0=2, add=2, box=50.0, maxiter=300,
-                   solver=DEFAULT_SOLVER, **kw):
+                   solver=DEFAULT_SOLVER, momentos=None, **kw):
     """Mínimo de λ_max(W) en el corte N = 1, D_00 = 0, por planos de corte
     espectrales (generación de columnas, como `gdual.v_dual_cg`).
 
@@ -678,10 +678,19 @@ def v_dual_ring_cg(d, n, thetas, x0=None, tol=1e-9, r0=2, add=2, box=50.0, maxit
     Devuelve (sup, inf, x, estado): estado 'optimal' si sup − inf < tol,
     'en_caja' si el x de la cota inferior toca la caja, 'no_converge' si se
     agotan las iteraciones; 'cota_invalida' si inf > sup + 1e-7.
+
+    Con `momentos` (iterable de k), λ_max se toma solo sobre los bloques de esos
+    momentos (todos los sectores de color): sup e inf acotan entonces el mínimo
+    de esa λ_max restringida, que es ≤ v_max. Sirve para certificar que el
+    óptimo no puede ser liso con el multiplete superior en un solo momento
+    (scripts/rigidez_qudit_flujo.py).
     """
     cut = _Corte(d, n, thetas)
     m = cut.m
     labels, _, ops = sector_blocks(d, n)
+    if momentos is not None:
+        ks = set(int(k) for k in momentos)
+        ops = [O for lab, O in zip(labels, ops) if lab[1] in ks]
     c0v = n * _trace_coeffs(d) / d**2
     xs = None if x0 is None else cut.normalize(x0)
     if xs is None:
