@@ -144,3 +144,46 @@ def test_lam_max_aleatorio():
     lam = Dc.lam_max(Y_GEN)
     assert lam_max_aleatorio(Dh, Y_GEN, seed=1) == pytest.approx(lam, abs=1e-10)
     assert lam_max_aleatorio(Dh, Y_GEN, seed=2) == pytest.approx(lam, abs=1e-10)
+
+
+def test_witness_gap_lanczos(monkeypatch):
+    # L = 6 con half y dense_max = 4: los bloques grandes (hasta 160) pasan de
+    # verdad por eigsh (se cuentan las llamadas); gap y lambda_max aleatorio
+    # coinciden con los mismos bloques densos (eigvalsh).
+    from holonomy import ladder, rigidez
+    calls = []
+    real = rigidez.eigsh
+
+    def spy(*a, **kw):
+        calls.append(kw.get("v0") is not None)
+        return real(*a, **kw)
+
+    monkeypatch.setattr(rigidez, "eigsh", spy)
+    Dd = ladder.LadderDual(6, half=True)
+    Ds = ladder.LadderDual(6, dense_max=4, half=True)
+    assert max(rigidez._block_W(Ds, red, Y_GEN).shape[0] for red in Ds.blocks) > 64
+    g_ref, m_ref = rigidez.witness_gap(Dd, Y_GEN, detalle=True)
+    assert not calls  # densos: sin Lanczos
+    g, m = rigidez.witness_gap(Ds, Y_GEN, detalle=True)
+    assert calls and not any(calls)  # Lanczos con el arranque de ARPACK
+    assert g == pytest.approx(g_ref, abs=1e-9) and m == m_ref
+    n = len(calls)
+    lam = rigidez.lam_max_aleatorio(Ds, Y_GEN, seed=3)
+    assert len(calls) > n and all(calls[n:])  # Lanczos con arranque aleatorio
+    assert lam == pytest.approx(Dd.lam_max(Y_GEN), abs=1e-10)
+
+
+def test_witness_gap_duplica_r():
+    # Solo peldaños con alpha_r = c_r = -1: W = sum sigma.sigma de los
+    # peldaños, lambda_max = L (todos triplete) con multiplicidad 3^L y el
+    # siguiente nivel en L - 4 (un singlete): gap 4. Con L = 4 algún bloque
+    # tiene más de r = 4 copias del máximo, lo que obliga a doblar r.
+    from holonomy import ladder
+    from holonomy.rigidez import witness_gap
+    D = ladder.LadderDual(4)
+    y = np.array([0, 0, 0, 0, 0, 0, -1.0, -1.0])
+    g, mult = witness_gap(D, y, r=4, detalle=True)
+    assert D.lam_max(y) == pytest.approx(4.0, abs=1e-12)
+    assert g == pytest.approx(4.0, abs=1e-10)
+    assert sum(m for _, m in mult) == 3 ** 4
+    assert max(m for _, m in mult) > 4

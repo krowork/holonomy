@@ -44,8 +44,23 @@ R_0(pi/4) y R_0(pi/2); y por paridad de L los exponentes locales
 p_L = -ln(x_{L+2}/x_L)/ln((L+2)/L) y los ajustes a e^{-L/xi} y a L^{-p}
 (mínimos cuadrados en ln x, residuo cuadrático medio en ln x) de var,
 Kohn_var, |v(pi) - v(0)|, |R_0(pi)|, |R_0(pi/2)| y el gap del testigo de
-psi0 = 0. Es descriptivo: con 2 a 4 tamaños por paridad cada ajuste de dos
-parámetros deja como mucho 2 grados de libertad.
+psi0 = 0, más los modelos L^-1 e^{-L/xi} y L^-2 e^{-L/xi}. Es descriptivo:
+con 2 a 4 tamaños por paridad cada ajuste de dos parámetros deja como mucho 2
+grados de libertad.
+
+Parámetros del testigo de psi0 = 0: con A = -(XX + YY) y C = -ZZ, una arista
+con alpha = c = r es -4 r S.S. Se dan r_b, r_t, las anisotropías c/r de las
+patas y c_r/alpha_r de los peldaños, J_perp/J = alpha_r/r_pata (r_pata, media
+de las dos patas), L gap, L^2 gap y gap/J con J = 4 r_pata, y la
+extrapolación de Shanks de L gap y gap/J. Como N = 1 reparte el peso en 3L
+aristas, los acoplamientos van como 1/L: un testigo crítico tendría L^2 gap
+constante; uno con gap, L gap y gap/J tendiendo a una constante positiva. El
+testigo cambia con L (J_perp/J no es fijo): las series no son a hamiltoniano
+fijo.
+
+Con --analisis, y también tras calcular, se comprueba desde el CSV para cada
+(f, L): holgura de Kohn >= -1e-8 en todos los testigos y psi, y
+var <= Kohn_var + 1e-8.
 
 Escribe data/rigidez_escaleras.csv, una fila por (f, L, psi0): v, estado,
 diferencia de cotas, estado del solver, gap (tolerancias 1e-8 y 1e-6),
@@ -257,24 +272,53 @@ def local_exponents(Ls, xs):
     return [(L, -np.log(d[L + 2] / d[L]) / np.log((L + 2) / L)) for L in Ls if L + 2 in d]
 
 
+# Modelos de los ajustes, en ln x = ln a + b X(L) - m ln L con m fijo:
+# (nombre, X(L), m, parámetro a partir de la pendiente b).
+MODELOS = (("e^(-L/xi)", lambda L: L, 0, lambda b: ("xi", -1 / b)),
+           ("L^-p", np.log, 0, lambda b: ("p", -b)),
+           ("L^-1 e^(-L/xi)", lambda L: L, 1, lambda b: ("xi", -1 / b)),
+           ("L^-2 e^(-L/xi)", lambda L: L, 2, lambda b: ("xi", -1 / b)))
+
+
 def fits(Ls, xs):
-    """Ajustes en ln x: a e^{-L/xi} y a L^{-p}. Devuelve
-    ((xi, rms_exp), (p, rms_pot)), rms en ln x; None si hay menos de 3 puntos."""
+    """Ajustes por mínimos cuadrados en ln x de los MODELOS (dos parámetros
+    libres cada uno). Devuelve [(nombre, (parámetro, valor), rms en ln x)];
+    [] si hay menos de 3 puntos."""
     Ls, lx = np.asarray(Ls, float), np.log(np.asarray(xs, float))
     if Ls.size < 3:
-        return None
+        return []
     out = []
-    for X in (Ls, np.log(Ls)):
-        A = np.vstack([np.ones_like(X), X]).T
-        c, *_ = np.linalg.lstsq(A, lx, rcond=None)
-        rms = float(np.sqrt(np.mean((A @ c - lx) ** 2)))
-        out.append((c[1], rms))
-    (b_exp, r_exp), (b_pot, r_pot) = out
-    return (-1 / b_exp, r_exp), (-b_pot, r_pot)
+    for name, X, m, par in MODELOS:
+        A = np.vstack([np.ones_like(Ls), X(Ls)]).T
+        t = lx + m * np.log(Ls)
+        c, *_ = np.linalg.lstsq(A, t, rcond=None)
+        rms = float(np.sqrt(np.mean((A @ c - t) ** 2)))
+        out.append((name, par(c[1]), rms))
+    return out
 
 
-def analysis(rows):
-    """Tabla por (f, L) y exponentes locales y ajustes por paridad de L."""
+def shanks(x):
+    """Extrapolación de Shanks de tres términos x0, x1, x2 de una sucesión."""
+    x0, x1, x2 = x
+    den = (x2 - x1) - (x1 - x0)
+    return x2 - (x2 - x1) ** 2 / den if den != 0 else x2
+
+
+def witness_params(r):
+    """Parámetros del testigo y de una fila: radios de las patas, anisotropías
+    c/r, J_perp/J = alpha_r/r_pata (r_pata, media de las dos patas) y el gap en
+    unidades de J = 4 r_pata (con A = -(XX + YY) y C = -ZZ, alpha = c = r es
+    -r sum sigma.sigma = -4 r sum S.S en cada arista)."""
+    y = np.array([float(r[f"y{m}"]) for m in range(8)])
+    rb, rt = np.hypot(y[0], y[1]), np.hypot(y[3], y[4])
+    rl = (rb + rt) / 2
+    return dict(rb=rb, rt=rt, cb_rb=y[2] / rb, ct_rt=y[5] / rt, ar=y[6],
+                cr_ar=y[7] / y[6], jperp=y[6] / rl, gapJ=float(r["gap"]) / (4 * rl))
+
+
+def analysis(rows, chk):
+    """Tabla por (f, L), comprobaciones de Kohn desde el CSV, parámetros del
+    testigo y exponentes locales y ajustes por paridad de L."""
     print("== análisis (v de ladder_limit; R_a(Psi) = lambda_max(W_a[Psi]) - v(a), W_a el "
           "testigo óptimo de psi0 = a)")
     for fname, _ in FS:
@@ -283,6 +327,7 @@ def analysis(rows):
         print(f"-- f = {fname}")
         print("   L   var_psi    Kohn_var   cociente  v(pi)-v(0)  [-R_pi(-pi), R_0(pi)]     "
               "R_0(pi/4)   R_0(pi/2)   gap_0      mult_0")
+        wit = []
         for L in Ls:
             ref, _ = ref_csv(fname, L)
             if ref is None:
@@ -304,10 +349,24 @@ def analysis(rows):
             print(f"  {L:2d}  {var:.3e}  {K:.3e}  {var / K:7.4f}  {dv:+.3e}  "
                   f"[{-Rp:+.3e}, {R0[-1]:+.3e}]  {R0[1]:+.3e}  {R0[2]:+.3e}  {g0:.3e}  "
                   f"{r0['multiplete']}")
+            # Comprobaciones desde el CSV (también con --analisis y filas en caché).
+            sl = min(float(r[f"cota_{n}"]) - v for (fn, LL, _), r in rows.items()
+                     if fn == fname and LL == L for n, v in zip(PSI_NAMES, vs))
+            chk.check(sl >= -TOL_KOHN and var <= K + TOL_KOHN,
+                      f"   f = {fname}, L = {L}: holgura de Kohn mín. {sl:+.1e}, "
+                      f"var - Kohn_var = {var - K:+.2e}")
+            wp = witness_params(r0)
+            wit.append((L, wp, g0))
             for name, x in (("var_psi", var), ("Kohn_var", K), ("|v(pi)-v(0)|", abs(dv)),
                             ("|R_0(pi)|", abs(R0[-1])), ("|R_0(pi/2)|", abs(R0[2])),
-                            ("gap_0", g0)):
+                            ("gap_0", g0), ("L gap_0", L * g0), ("gap_0/J", wp["gapJ"])):
                 series.setdefault(name, []).append((L, x))
+        print("   testigo de psi0 = 0 (J = 4 r_pata):")
+        print("   L   r_b        r_t        c_b/r_b  c_t/r_t  c_r/a_r  Jperp/J  L gap    L^2 gap  gap/J")
+        for L, wp, g0 in wit:
+            print(f"  {L:2d}  {wp['rb']:.4e}  {wp['rt']:.4e}  {wp['cb_rb']:7.4f}  {wp['ct_rt']:7.4f}  "
+                  f"{wp['cr_ar']:7.4f}  {wp['jperp']:7.4f}  {L * g0:.4f}   {L * L * g0:.4f}   "
+                  f"{wp['gapJ']:.4f}")
         for name, pts in series.items():
             for par, lab in ((0, "pares"), (1, "impares")):
                 sel = [(L, x) for L, x in pts if L % 2 == par and x > 1e-12]
@@ -315,10 +374,10 @@ def analysis(rows):
                     continue
                 Lp, xp = zip(*sel)
                 pl = " ".join(f"{L}->{L + 2}: {p:.2f}" for L, p in local_exponents(Lp, xp))
-                ft = fits(Lp, xp)
-                fs = ("" if ft is None else
-                      f"; e^(-L/xi): xi = {ft[0][0]:.3f}, rms {ft[0][1]:.2e}; "
-                      f"L^-p: p = {ft[1][0]:.3f}, rms {ft[1][1]:.2e}")
+                fs = "".join(f"; {n}: {pn} = {pv:.3f}, rms {rms:.2e}"
+                             for n, (pn, pv), rms in fits(Lp, xp))
+                if name in ("L gap_0", "gap_0/J") and len(xp) >= 3:
+                    fs += f"; Shanks de los tres últimos: {shanks(xp[-3:]):.4f}"
                 print(f"   {name:13s} L {lab}: exponentes locales {pl}{fs}")
 
 
@@ -326,11 +385,11 @@ def main():
     args = sys.argv[1:]
     chk = Checker("rigidez_escaleras")
     if args[:1] == ["--analisis"]:
-        analysis(load_rows())
+        analysis(load_rows(), chk)
         chk.finish()
     Ls = [int(a) for a in args] or list(range(4, 9))
     rows = compute(Ls, chk)
-    analysis(rows)
+    analysis(rows, chk)
     chk.finish()
 
 
