@@ -33,7 +33,12 @@ import re
 import sys
 from pathlib import Path
 
-from rigidez_numeros import Cifras, anillos, cuerpo, diamantes, escaleras, numeros
+from math import comb
+
+import numpy as np
+
+from escalera_testigo_fijo import ajustes, locales
+from rigidez_numeros import Cifras, anillos, cuerpo, diamantes, escaleras, f, leer, numeros
 
 FISICA = Path.home() / "fisica"
 TEX = FISICA / "holonomia.tex"
@@ -52,11 +57,57 @@ NUEVOS = {
     "2,0e-10": "error de marginales del estado girado, k = 3 (columna err_girado del CSV)",
     "2,4e-15": "error de marginales del estado girado, k = 2 y 4 (columna err_girado del CSV)",
     "2,2e-2": "error de marginales del estado sin girar, mínimo (columna err_sin_girar del CSV)",
+    # Escaleras, testigo fijo: dato de la bibliografía.
+    "3,19": "longitud de correlación de espín de la escalera isótropa, White, Noack y Scalapino",
 }
 
 # Citas y menciones de los artículos de origen, que el texto no debe tener.
 ORIGEN = re.compile(r"\\cite(\[[^]]*\])?\{[^}]*\b(anillos|escaleras|diamantes|esfera|rigidez)\b"
                     r"|trabajos anteriores|esta serie")
+
+
+def testigo_fijo(ck, num):
+    """Párrafos «Familias exactas» y «Testigo fijo» de las escaleras (escalera_testigo_fijo.py)."""
+    fam = {(int(r["L"]), round(f(r, "psi"), 6)): r for r in leer("escalera_familia.csv")}
+    fij = {(int(r["L"]), f(r, "x"), round(f(r, "Psi"), 6)): r for r in leer("escalera_testigo_fijo.csv")}
+    pi6 = round(np.pi, 6)
+    num("4e7", comb(28, 14), "escaleras: dimensión del sector S^z = 0 en L = 14")
+    num("1,1e-11", max(f(r, "res") for r in list(fam.values()) + list(fij.values())),
+        "escaleras: residuo máximo de Lanczos", "<=")
+    dif = 0.0
+    for L in (4, 6, 8, 10):
+        cg = {round(f(r, "psi"), 6): f(r, "v_max") for r in leer(f"ladder_limit_F0_L{L}.csv")}
+        for p in (0.0, pi6):
+            dif = max(dif, abs(f(fam[(L, p)], "v") - cg[p]))
+    num("2,5e-9", dif, "escaleras: familia frente a generación de columnas, L <= 10", "<=")
+    for L, tv, tx in ((12, "0,5106739", "0,785"), (14, "0,5103064", "0,778")):
+        num(tv, f(fam[(L, 0.0)], "v"), f"escaleras: v(L, 0, 0), L = {L}")
+        num(tx, f(fam[(L, 0.0)], "x"), f"escaleras: x óptimo, L = {L}")
+    Ls = [4, 6, 8, 10, 12, 14]
+    dv = [f(fam[(L, 0.0)], "v") - f(fam[(L, pi6)], "v") for L in Ls]
+    num("1,11e-3", dv[4], "escaleras: v(0) - v(pi), L = 12")
+    num("5,47e-4", dv[5], "escaleras: v(0) - v(pi), L = 14")
+    for t, p in zip(("3,54", "3,64", "3,90", "4,23", "4,62"), locales(Ls, dv)):
+        num(t, p, "escaleras: exponente local de v(0) - v(pi)")
+    for x, txts in ((1.0, ("0,280", "0,107", "4,73e-2", "2,21e-2", "1,06e-2", "5,19e-3")), (0.8, None)):
+        dE = [f(fij[(L, x, pi6)], "E0") - f(fij[(L, x, 0.0)], "E0") for L in Ls]
+        loc = locales(Ls, dE)
+        aj = {n: (par, rms) for n, par, rms in ajustes(Ls, dE)}
+        if txts:
+            for t, d in zip(txts, dE):
+                num(t, d, "escaleras: dE del testigo fijo x = 1")
+            for t, p in zip(("2,38", "2,84", "3,41", "4,02", "4,64"), loc):
+                num(t, p, "escaleras: exponente local de dE, x = 1")
+            num("0,17", aj["L^-p"][1], "escaleras: residuo de L^-p, x = 1")
+            num("0,074", aj["e^{-L/xi}"][1], "escaleras: residuo de e^{-L/xi}, x = 1")
+            num("0,0083", aj["L^-1 e^{-L/xi}"][1], "escaleras: residuo de L^-1 e^{-L/xi}, x = 1")
+            num("3,67", aj["L^-1 e^{-L/xi}"][0], "escaleras: xi, x = 1")
+        else:
+            num("2,08", loc[0], "escaleras: primer exponente local de dE, x = 0,8")
+            num("3,65", loc[-1], "escaleras: último exponente local de dE, x = 0,8")
+            num("0,011", aj["L^-1 e^{-L/xi}"][1], "escaleras: residuo de L^-1 e^{-L/xi}, x = 0,8")
+            num("4,97", aj["L^-1 e^{-L/xi}"][0], "escaleras: xi, x = 0,8")
+            num("0,117", aj["L^-p"][1], "escaleras: residuo de L^-p, x = 0,8")
 
 
 def main():
@@ -70,6 +121,7 @@ def main():
     anillos(ck, num)
     escaleras(ck, num)
     diamantes(ck, num)
+    testigo_fijo(ck, num)
     if s is None:
         ck.finish()
 
