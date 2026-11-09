@@ -23,10 +23,12 @@ Proposición. Si W es óptimo para phi y phi' = phi + delta, entonces
 N_phi'(W[delta]) = N_phi(W) = 1 y
     v(phi') - v(phi) <= lambda_max(W[delta]) - lambda_max(W),
 y, simétricamente, v(phi) - v(phi') <= lambda_max(W'[-delta]) -
-lambda_max(W') con W' óptimo para phi'. lambda_max(W[delta]) solo depende
-de las holonomías de delta: si delta difiere en un gauge de un giro DeltaPsi
-concentrado en una arista e0, es W con un flujo DeltaPsi insertado por los
-ciclos que pasan por e0, y es 2 pi-periódico en DeltaPsi.
+lambda_max(W') con W' óptimo para phi'. Con W invariante bajo la rotación
+global alrededor de z, que siempre puede elegirse así por promedio (paso (c)),
+lambda_max(W[delta]) solo depende de las holonomías de delta: si delta
+difiere en un gauge de un giro DeltaPsi concentrado en una arista e0, es W
+con un flujo DeltaPsi insertado por los ciclos que pasan por e0, y es
+2 pi-periódico en DeltaPsi.
 
 Demostración.
 (a) Normalización. Las rotaciones alrededor de z conmutan (datos abelianos),
@@ -54,12 +56,19 @@ Phi0 + Theta1 - Theta0 con el mismo denominador Delta0 + 2 cos((Phi0 -
 Theta0)/n), y
     v(n, Theta1) <= 4 eps_n(Delta0, Phi0 + Theta1 - Theta0)
                     / (Delta0 + 2 cos((Phi0 - Theta0)/n)).
-A segundo orden en el giro, v(Theta0 + d) - v(Theta0) <= -(2/den0)
-(D_W / n^2) d^2 + o(d^2), con D_W = -n^2 d^2 eps_n/d Phi^2 la rigidez del
-testigo óptimo. A diferencia de la cota de holonomía pequeña de
-\\cite{escaleras} (Proposición 14), que usa |eps(Phi) - eps(Phi')| <= 1/n y es
-de orden 1/n, esta usa la respuesta del propio testigo al giro, de orden
-D_W/n^2.
+Si Phi0 no está en la cúspide (eps derivable en Phi0), la estacionariedad en
+Phi da 4 eps'(Phi0)/den0 = v'(Theta0), y a segundo orden en el giro
+    v(Theta0 + d) - v(Theta0) - v'(Theta0) d <= -(2/den0)(D_W/n^2) d^2 + o(d^2),
+con D_W = -n^2 d^2 eps_n/dPhi^2 (Delta0, Phi0) la rigidez del testigo óptimo.
+En el punto liso Theta0 = Phi_s el término lineal se anula (Phi0 = Phi_s).
+
+Comparación con cotas anteriores. La cota de holonomía pequeña de
+\\cite{escaleras} (Proposición 14) acota la norma de lo que cambia en cada
+arista, 2 r_e |e^{i phi_e} - 1| <= 2 r_e phi_max, y suma con el lema de pesos:
+es de orden phi_max = O(1/n). La desigualdad |eps(Phi) - eps(Phi')| <= 1/n,
+que da una cota del mismo orden en el anillo, es el Lema 5(i) de
+\\cite{anillos}. La cota de aquí usa la respuesta del propio testigo óptimo
+al giro, de orden D_W/n^2.
 
 Convención de signos: `dual.v_free` devuelve el flujo óptimo en [0, pi], que
 para Theta en [0, pi] es un minimizador genuino del objetivo de la
@@ -75,9 +84,19 @@ from holonomy import dual, xxz
 def twist_response(eps, n, Delta, Phi, Psi):
     """eps_n(Delta, Phi + Psi) - eps_n(Delta, Phi): respuesta del testigo de
     anisotropía Delta y flujo Phi a un giro de holonomía Psi."""
-    if Psi == 0:
-        return 0.0
     return eps(n, Delta, Phi + Psi) - eps(n, Delta, Phi)
+
+
+def kohn_bound_from_witness(eps, n, Theta0, Phi0, Delta0, Theta1):
+    """Cota en Theta1 del testigo de flujo Phi0 y anisotropía Delta0,
+    admisible en Theta0, tras insertarle el giro Theta1 - Theta0:
+    4 eps_n(Delta0, Phi0 + Theta1 - Theta0)/(Delta0 + 2 cos((Phi0 - Theta0)/n)).
+    Si Delta0 es infinito (testigo de Ising, sin parte XY), el giro no lo
+    cambia y la cota es `dual.ising_limit(n)`."""
+    if not np.isfinite(Delta0):
+        return dual.ising_limit(n)
+    den = Delta0 + 2 * np.cos((Phi0 - Theta0) / n)
+    return 4 * eps(n, Delta0, Phi0 + Theta1 - Theta0) / den
 
 
 def ring_kohn_bound(n, Theta0, Theta1, eps=xxz.eps_full, grid=33):
@@ -94,9 +113,4 @@ def ring_kohn_bound(n, Theta0, Theta1, eps=xxz.eps_full, grid=33):
             raise ValueError(f"Theta = {T} fuera de [0, pi]")
     v1 = dual.v_free(eps, n, Theta1, grid=grid)[0]
     _, Phi0, Delta0 = dual.v_free(eps, n, Theta0, grid=grid)
-    if not np.isfinite(Delta0):
-        # Testigo de Ising (límite Delta -> infinito): sin parte XY, el giro no
-        # lo cambia.
-        return v1, dual.ising_limit(n)
-    den = Delta0 + 2 * np.cos((Phi0 - Theta0) / n)
-    return v1, 4 * eps(n, Delta0, Phi0 + Theta1 - Theta0) / den
+    return v1, kohn_bound_from_witness(eps, n, Theta0, Phi0, Delta0, Theta1)

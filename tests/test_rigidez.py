@@ -19,11 +19,18 @@ def test_kohn_cota_anillo(n, T0, T1):
     assert v <= cota + 1e-9
 
 
+def test_kohn_regresion_n6():
+    # data/rigidez_anillos.csv: v(6, pi) y la cota del testigo óptimo de Theta = 0.
+    v, cota = ring_kohn_bound(6, 0.0, np.pi)
+    assert v == pytest.approx(0.56168526375, abs=1e-7)
+    assert cota == pytest.approx(0.5692220, abs=1e-7)
+
+
 def test_giro_2pi_es_gauge():
     # Un flujo total de 2 pi es un gauge: la respuesta al giro es nula.
     assert abs(twist_response(xxz.eps_full, 6, 0.8, 0.3, 2 * np.pi)) < 1e-10
-    # Giro nulo = identidad.
-    assert twist_response(xxz.eps_full, 6, 0.8, 0.3, 0.0) == 0.0
+    # Giro nulo = identidad (evalúa eps dos veces).
+    assert abs(twist_response(xxz.eps_full, 6, 0.8, 0.3, 0.0)) < 1e-14
 
 
 def test_fundamental_ferro():
