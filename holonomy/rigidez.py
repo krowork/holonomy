@@ -75,8 +75,27 @@ para Theta en [0, pi] es un minimizador genuino del objetivo de la
 Proposición 4 (la reflexión Phi -> -Phi y la traslación Phi -> 2 pi - Phi
 nunca mejoran el denominador en ese rango), así que no hace falta cambiar
 Phi0 de signo.
+
+Escalera periódica (ladder.LadderDual)
+--------------------------------------
+Es el caso escalera de la construcción anterior. En ladder.abelian_phases el
+twist psi se reparte sumando psi/L a cada arista de las dos patas (peldaños
+intactos), y el testigo de LadderDual tiene en cada pata la fase
+chi = arg(alpha + i beta), con N = sum_e (2 r_e cos(chi_e - phi_e) + c_e).
+El giro delta_e = Psi/L en las patas es, pues, rotar (alpha_b, beta_b) y
+(alpha_t, beta_t) un ángulo +Psi/L (`ladder_twist_y`): conserva N entre los
+datos de psi y los de psi + Psi (con el mismo signo; lo comprueba
+test_ladder_giro_normalizacion) y deja los flujos de plaqueta del testigo; las
+holonomías de las dos patas suben Psi. Con y óptimo en psi0,
+    v(psi0 + Psi) <= lambda_max(W[Psi]),
+y la respuesta R(Psi) = lambda_max(W[Psi]) - lambda_max(W) acota
+v(psi0 + Psi) - v(psi0). El testigo de LadderDual solo tiene términos A, B y
+C, invariantes bajo la rotación global alrededor de z, así que R es
+2 pi-periódica en Psi (paso (c)).
 """
 import numpy as np
+import scipy.sparse as sp
+from scipy.sparse.linalg import eigsh
 
 from holonomy import dual, xxz
 
@@ -114,3 +133,83 @@ def ring_kohn_bound(n, Theta0, Theta1, eps=xxz.eps_full, grid=33):
     v1 = dual.v_free(eps, n, Theta1, grid=grid)[0]
     _, Phi0, Delta0 = dual.v_free(eps, n, Theta0, grid=grid)
     return v1, kohn_bound_from_witness(eps, n, Theta0, Phi0, Delta0, Theta1)
+
+
+def ladder_twist_y(y, L, Psi):
+    """Testigo de la escalera periódica (y en el orden de LadderDual.KEYS)
+    girado Psi: (alpha_b, beta_b) y (alpha_t, beta_t) rotan un ángulo Psi/L
+    (la fase chi de cada arista de pata sube Psi/L, como la de los datos en
+    abelian_phases con psi -> psi + Psi); c_b, c_t y los peldaños no cambian."""
+    y = np.array(y, dtype=float)
+    a = Psi / L
+    c, s = np.cos(a), np.sin(a)
+    for i in (0, 3):  # (alpha_b, beta_b) y (alpha_t, beta_t)
+        al, be = y[i], y[i + 1]
+        y[i], y[i + 1] = c * al - s * be, s * al + c * be
+    return y
+
+
+def _block_W(dual, red, y):
+    return sum(c * red[key] for key, c in zip(dual.KEYS, y))
+
+
+def _top_eigs(W, r, rng=None, ncv=None):
+    """Los r autovalores mayores de W (ascendentes): eigvalsh si es densa o
+    pequeña; si no, Lanczos (eigsh) con arranque aleatorio de rng (o el de
+    ARPACK si rng es None) y ncv vectores."""
+    d = W.shape[0]
+    r = min(r, d)
+    if not sp.issparse(W) or d <= max(4 * r, 64):
+        w = np.linalg.eigvalsh(W.toarray() if sp.issparse(W) else W)
+        return w[-r:]
+    v0 = None
+    if rng is not None:
+        v0 = rng.standard_normal(d)
+        if np.iscomplexobj(W.data):
+            v0 = v0 + 1j * rng.standard_normal(d)
+    w = eigsh(W, k=r, which="LA", v0=v0, ncv=None if ncv is None else min(ncv, d - 1),
+              tol=0, maxiter=100 * d, return_eigenvectors=False)
+    return np.sort(w)
+
+
+def witness_gap(dual, y, tol=1e-8, r=4, detalle=False):
+    """lambda_max(W(y)) menos el primer autovalor distinto (a más de tol) de
+    todos los bloques de `dual` (los r mayores de cada uno; si en un bloque
+    los r están en el multiplete superior, se piden más).
+
+    Con detalle, devuelve (gap, multiplete), con multiplete la lista de
+    ((k, q), multiplicidad) de los bloques que tienen autovalores a menos de
+    tol de lambda_max. Con half=True los bloques (k, q) y (2L - k, -q) tienen
+    el mismo espectro y solo están los k <= L: el multiplete los cuenta una
+    vez (y los (L, q) y (L, -q) dos), así que la multiplicidad es la de los
+    bloques calculados, no la de todo el espacio; el gap no cambia."""
+    tops = []
+    for red in dual.blocks:
+        W = _block_W(dual, red, y)
+        d = W.shape[0]
+        rr = min(r, d)
+        while True:
+            w = _top_eigs(W, rr)
+            if rr >= d or w[0] < w[-1] - tol:
+                break
+            rr = min(2 * rr, d)
+        tops.append(w)
+    lam = max(w[-1] for w in tops)
+    below = [w[w < lam - tol] for w in tops]
+    nxt = max((b[-1] for b in below if b.size), default=-np.inf)
+    gap = float(lam - nxt)
+    if not detalle:
+        return gap
+    mult = [(lab, int(np.sum(w >= lam - tol))) for lab, w in zip(dual.labels, tops)]
+    return gap, [(lab, m) for lab, m in mult if m]
+
+
+def lam_max_aleatorio(dual, y, seed=0, r=4, ncv=40):
+    """lambda_max(W(y)) reevaluado con Lanczos arrancado en un vector
+    aleatorio (semilla seed) y ncv vectores de Lanczos, pidiendo los r mayores
+    de cada bloque disperso (los densos, con eigvalsh): contraste de las
+    cotas superiores finales (Review Focus 1 del plan; un arranque fijo puede
+    quedarse en un sector de simetría y subestimar lambda_max)."""
+    rng = np.random.default_rng(seed)
+    return float(max(_top_eigs(_block_W(dual, red, y), r, rng, ncv)[-1]
+                     for red in dual.blocks))
