@@ -37,8 +37,8 @@ arista no importa, y ρ̄ es factible en v = w. ∎
 
 Observaciones. (i) El testigo óptimo es −Σ P, el de Heisenberg en d = 2
 (P = (1 + σ⃗·σ⃗)/2, y la fórmula es v = (4q − 1)/3 con q = (1 − e_P)/2, la de
-\\cite{anillos}, sección 3). (ii) Con n = d, el estado totalmente antisimétrico
-da P = −1 en cada arista: e_P = −1 y v_max(d, 0) = 1.
+\\cite{anillos}, sección 3). (ii) Con n ≤ d, el estado totalmente antisimétrico
+de los n qudits da P = −1 en todos los pares: e_P = −1 y v_max(n, 0) = 1.
 
 Corolario (límite). v_max(n, 0) → v_∞(d) = d/(d+1)(1/d − e_∞(d)) =
 [2(ψ(1) − ψ(1/d)) − (d − 1)]/(d + 1), con e_∞(d) = 1 − (2/d)[ψ(1) − ψ(1/d)]
@@ -57,20 +57,23 @@ ajuste del guion es descriptivo.
 
 Comprueba:
   1. d = 2: v(n, 0) con la columna Θ = 0 de tab:valores (n = 3..8) y
-     v_∞(2) = (4 ln 2 − 1)/3; n = d da v = 1 (d = 2..6);
+     v_∞(2) = (4 ln 2 − 1)/3; 3 ≤ n ≤ d da v = 1 (d = 3..6);
   2. la fórmula frente a la cota del testigo SU(d) por bloques de color y
      momento (`lam_max_sectors`; d = 3, n = 3..6; d = 4, n = 3..5);
   3. la fórmula frente al primal reducido por el toro (`primal_ring_toro`):
      d = 3, n = 3, 4, 5; d = 4, n = 3, 4 (los dos con v = 1). Con
-     --primal-d4n5 añade d = 4, n = 5 (98 s y 13,9 GB de pico: no por defecto);
+     --primal-d4n5 añade d = 4, n = 5 (el guion entero pasa a 117 s y 13,9 GB de
+     pico: no por defecto);
   4. e_P(n) por sectores de color (d = 2, n ≤ 16; d = 3, n ≤ 12; d = 4,
-     n ≤ 9): mínimo sobre todos los sectores, igual al del sector más
+     n ≤ 12): mínimo sobre todos los sectores, igual al del sector más
      equilibrado; Lanczos (sectores de más de 2000 estados) reevaluado con
      otra semilla aleatoria y con 6 autovalores y 80 vectores, con residuo
      ‖Hx − λx‖; denso frente a Lanczos en los sectores de 2000 a 5000;
   5. v_∞(d) para d = 2..6 (forma con digamma = forma con e_∞);
-  6. ajuste descriptivo, n ≡ 0 (mod d): n²(e_P − e_∞) frente a −π²(d−1)/(3d)
-     (desviación decreciente y < 5 % en el mayor n), y ajuste de dos puntos
+  6. ajuste descriptivo, n ≡ 0 (mod d) y n > d (n ≤ d es el caso trivial
+     v = 1): n²(e_P − e_∞) frente a −π²(d−1)/(3d) (desviación decreciente y
+     < 5 % en el mayor n; d = 2: n = 4..16; d = 3: n = 6, 9, 12; d = 4: solo
+     dos puntos no triviales, n = 8 y 12, porque n = 16 no cabe), y ajuste de dos puntos
      e_∞ + A/n² con los dos mayores n frente a Sutherland (la extrapolación
      queda al menos 5 veces más cerca de e_∞ que e_P del mayor n).
 
@@ -80,8 +83,8 @@ una minimización del dual): con diagonalización exacta, no hay que
 etiquetarlos «cota superior».
 
 Uso: python scripts/rigidez_qudit_limite.py [--primal-d4n5]
-(19 s y 0,83 GB de pico sin la opción, medidos con /usr/bin/time -f "%M KB %e s";
-el pico es el primal de d = 3, n = 5)
+(68 s y 1,23 GB de pico sin la opción, medidos con /usr/bin/time -f "%M KB %e s";
+la mitad del tiempo es d = 4, n = 12, con el sector (3,3,3,3) de 369 600 estados)
 """
 import _common  # noqa: F401  (fija OMP_NUM_THREADS antes de numpy)
 from _common import CLARABEL_OPTS, TABLE, TABLE_TOL, Checker
@@ -98,7 +101,7 @@ from holonomy.report import write_csv
 TOL = 1e-10
 LANCZOS_TOL = 1e-9
 PRIMAL_TOL = 5e-6  # Clarabel 'optimal_inaccurate' en v = 1 (óptimo puro, SDP degenerado)
-TAMANOS = {2: 16, 3: 12, 4: 9}
+TAMANOS = {2: 16, 3: 12, 4: 12}
 DENSE_MAX = 2000
 
 
@@ -149,14 +152,16 @@ def main():
     ck.check(abs(vinf[2] - (4 * np.log(2) - 1) / 3) < 1e-14,
              f"v_∞(2) = {vinf[2]:.12f} = (4 ln 2 − 1)/3 = {(4 * np.log(2) - 1) / 3:.12f}")
 
-    # --- 1. Regresión d = 2 y n = d ---------------------------------------------
+    # --- 1. Regresión d = 2 y n ≤ d ---------------------------------------------
     for n in range(3, 9):
         v = v_formula(2, qudit.uls_ground_energy(2, n) / n)
         ck.check(abs(v - TABLE[n][0]) <= TABLE_TOL,
                  f"d = 2, n = {n}: v(n, 0) = {v:.6f} (tab:valores {TABLE[n][0]:.4f})")
-    for d in range(2, 7):
-        v = v_formula(d, qudit.uls_ground_energy(d, d) / d)
-        ck.check(abs(v - 1) < TOL, f"n = d = {d}: v = {v:.12f} (antisimétrico, v = 1)")
+    for d in range(3, 7):
+        for n in range(3, d + 1):
+            v = v_formula(d, qudit.uls_ground_energy(d, n) / n)
+            ck.check(abs(v - 1) < TOL,
+                     f"d = {d}, n = {n} ≤ d: v = {v:.12f} (antisimétrico, v = 1)")
 
     # --- 2. Testigo SU(d) por bloques de color y momento ------------------------
     for d, ns in ((3, range(3, 7)), (4, range(3, 6))):
@@ -221,13 +226,15 @@ def main():
     ck.info("Ajuste (descriptivo), n ≡ 0 (mod d): n²(e_P − e_∞) → −π u c/6 = −π²(d−1)/(3d)")
     for d, nmax in TAMANOS.items():
         einf = qudit.uls_e_inf(d)
-        ns = [n for n in range(3, nmax + 1) if n % d == 0]
+        # Sin n ≤ d (v = 1, el antisimétrico: no es tamaño finito del crítico).
+        ns = [n for n in range(d + 1, nmax + 1) if n % d == 0]
         devs = [n * n * (ep[(d, n)] - einf) for n in ns]
         rel = [abs(x / a_cft(d) - 1) for x in devs]
+        nota = "" if len(ns) >= 3 else f" [solo {len(ns)} puntos no triviales]"
         ck.check(all(np.diff(rel) < 0) and rel[-1] < 0.05,
                  f"d = {d}: n = {ns}, n²(e_P − e_∞) = {[round(x, 4) for x in devs]} "
                  f"frente a {a_cft(d):.4f}; desviación relativa "
-                 f"{[f'{r:.1%}' for r in rel]}")
+                 f"{[f'{r:.1%}' for r in rel]}{nota}")
         n1, n2 = ns[-2], ns[-1]
         e1, e2 = ep[(d, n1)], ep[(d, n2)]
         efit = (n2**2 * e2 - n1**2 * e1) / (n2**2 - n1**2)
@@ -243,7 +250,7 @@ def main():
     for d in range(2, 7):
         einf = qudit.uls_e_inf(d)
         rows.append([d, float("inf"), np.nan, einf, vinf[d], np.nan, np.nan, a_cft(d),
-                     einf, vinf[d], 1])
+                     einf, vinf[d], np.nan])
     write_csv("rigidez_qudit_limite.csv",
               ["d", "n", "E0", "e_P", "v_n0", "v_primal", "n2_dev", "a_cft", "e_inf",
                "v_inf", "min_en_equilibrado"], rows)

@@ -449,10 +449,10 @@ def test_uls_d2_tabla(n):
     assert v == pytest.approx(TABLE[n][0], abs=TABLE_TOL)
 
 
-@pytest.mark.parametrize("d", [2, 3, 4, 5])
-def test_uls_n_igual_d(d):
-    # n = d: el estado totalmente antisimétrico da P = −1 en cada arista.
-    assert qudit.uls_ground_energy(d, d) == pytest.approx(-d, abs=1e-10)
+@pytest.mark.parametrize("d,n", [(2, 2), (3, 3), (4, 3), (4, 4), (5, 3), (5, 4), (5, 5)])
+def test_uls_n_menor_o_igual_d(d, n):
+    # n ≤ d: el estado totalmente antisimétrico da P = −1 en todos los pares.
+    assert qudit.uls_ground_energy(d, n) == pytest.approx(-n, abs=1e-10)
 
 
 def test_uls_lanczos_aleatorio():
