@@ -308,3 +308,103 @@ def test_testigo_su_d():
     eP = np.linalg.eigvalsh(SP)[0] / n
     bound = np.linalg.eigvalsh(W)[-1] / qudit.ring_norm(d, n, x, np.zeros(d))
     assert bound == pytest.approx(d / (d + 1) * (1 / d - eP), abs=1e-12)
+
+
+# --- Ronda 1 de revisión ----------------------------------------------------
+
+def _embebe(d, n, bloques):
+    """ρ de d^n × d^n a partir de bloques (números de color, códigos, ρ_b)."""
+    R = np.zeros((d**n, d**n), dtype=complex)
+    for _, states, M in bloques:
+        R[np.ix_(states, states)] = M
+    return R
+
+
+def _marginal(d, n, R, i, j):
+    vec = qudit._marginal_map(d, n, i, j) @ R.reshape(-1, order="F")
+    return vec.reshape((d * d, d * d), order="F")
+
+
+def test_toro_restricciones_son_el_marginal():
+    # Las expresiones de las restricciones de primal_ring_toro, evaluadas en un ρ
+    # aleatorio diagonal por bloques, son las entradas del marginal calculado con
+    # _marginal_map (en particular ⟨ab|marg|ba⟩, no su conjugado).
+    rng = np.random.default_rng(13)
+    d, n = 3, 3
+    bloques = []
+    for counts, states in qudit.color_sectors(d, n):
+        m = len(states)
+        A = rng.normal(size=(m, m)) + 1j * rng.normal(size=(m, m))
+        bloques.append((counts, states, A @ A.conj().T))
+    R = _embebe(d, n, bloques)
+    val = {}
+    for (_, _, M), ops in zip(bloques, qudit._toro_ops(d, n)):
+        for key, S in ops.items():
+            val[key] = val.get(key, 0) + np.sum(S * M)
+    assert val["tr"] == pytest.approx(np.trace(R), abs=1e-12)
+    n_x = 0
+    for i in range(n):
+        j = (i + 1) % n
+        mg = _marginal(d, n, R, i, j)
+        site = (qudit._site_map(d, n, i) @ R.reshape(-1, order="F")).reshape((d, d), order="F")
+        for a in range(d - 1):
+            assert val[("s", i, a)] == pytest.approx(site[a, a], abs=1e-12)
+            for b in range(d - 1):
+                assert val[("p", i, a, b)] == pytest.approx(mg[a * d + b, a * d + b], abs=1e-12)
+        for a in range(d):
+            for b in range(a + 1, d):
+                ent = mg[a * d + b, b * d + a]
+                assert abs(ent.imag) > 1e-3  # el test distingue la entrada de su conjugada
+                assert val[("x", i, a, b)] == pytest.approx(ent, abs=1e-12)
+                n_x += 1
+    assert n_x == n * 3
+
+
+def test_toro_estado_tiene_los_marginales():
+    # Datos sin la simetría θ ↦ −θ (hol1): el estado devuelto tiene en cada arista
+    # el marginal ρ_e(v) de θ, no el de −θ; con el de −θ fallaría por ~1e-2.
+    d, n = 3, 3
+    th = HOL3[0]
+    v, st, bloques, diag = qudit.primal_ring_toro(d, n, th, return_state=True, **CLARABEL_OPTS)
+    assert st in OK
+    assert diag["lam_min"] > -1e-6 and diag["residuo"] < 1e-6
+    R = _embebe(d, n, bloques)
+    U = np.diag(np.exp(1j * th / n))
+    for i in range(n):
+        mg = _marginal(d, n, R, i, (i + 1) % n)
+        assert np.allclose(mg, qudit.edge_state(d, v, U), atol=1e-6)
+        assert not np.allclose(mg, qudit.edge_state(d, v, U.conj()), atol=1e-3)
+    # El primal completo con return_state: mismo v y mismos marginales.
+    v2, st2, R2, diag2 = qudit.primal_ring(d, n, _uniforme(d, n, th), return_state=True,
+                                           **CLARABEL_OPTS)
+    assert v2 == pytest.approx(v, abs=1e-7)
+    assert diag2["lam_min"] > -1e-6 and diag2["residuo"] < 1e-6
+    for i in range(n):
+        assert np.allclose(_marginal(d, n, R2, i, (i + 1) % n), qudit.edge_state(d, v2, U), atol=1e-6)
+
+
+def test_holonomia_rama_pi():
+    # Autofase a 1e-12 de π: np.angle la da cerca de +π o de −π; las autofases
+    # no son canónicas, pero e^{iθ_a} sí, y las dos ramas dan el mismo v.
+    rng = np.random.default_rng(17)
+    d, n = 3, 4
+    lam = np.array([np.pi - 1e-12, 0.4, -(np.pi - 1e-12) - 0.4])
+    V = _su(d, rng)
+    H = V @ np.diag(np.exp(1j * lam)) @ V.conj().T
+    Us = [_su(d, rng) for _ in range(n - 1)]
+    P = np.eye(d, dtype=complex)
+    for U in Us:
+        P = U @ P
+    Us.append(H @ P.conj().T)  # producto U_{n−1} ⋯ U_0 = H
+    th = qudit.ring_holonomy(Us)
+    on_circle = lambda t: np.sort_complex(np.round(np.exp(1j * np.asarray(t)), 9))
+    assert np.allclose(on_circle(th), on_circle(lam), atol=1e-9)
+    # Ramas distintas de la autofase cercana a π: datos gauge-equivalentes.
+    t1 = np.array([np.pi - 1e-9, 0.4, -np.pi + 1e-9 - 0.4])
+    t2 = t1 - np.array([2 * np.pi, 0, 0])
+    v1, _ = qudit.v_dual_ring(d, n, t1)
+    v2, _ = qudit.v_dual_ring(d, n, t2)
+    assert v2 == pytest.approx(v1, abs=1e-8)
+    p1, _ = qudit.primal_ring_toro(d, n, t1, **CLARABEL_OPTS)
+    p2, _ = qudit.primal_ring_toro(d, n, t2, **CLARABEL_OPTS)
+    assert p2 == pytest.approx(p1, abs=1e-7)

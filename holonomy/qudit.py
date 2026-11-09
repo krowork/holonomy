@@ -137,8 +137,14 @@ def edge_state(d, v, U):
 def ring_holonomy(Us):
     """Autofases ordenadas de H = U_{n−1} ⋯ U_1 U_0 (Us[i] es la arista i → i+1).
 
-    Son invariantes bajo el gauge (H ↦ V_0 H V_0†); el problema solo depende de
-    ellas módulo un desplazamiento común y módulo θ ↦ −θ.
+    Son invariantes bajo el gauge (H ↦ V_0 H V_0†), pero no están en forma
+    canónica: el problema solo depende de ellas módulo un desplazamiento común
+    (fase global; en SU(d), el centro 2πk/d), módulo θ ↦ −θ y módulo 2π en cada
+    una, y np.angle las da en (−π, π], con el corte de rama en ±π (una autofase
+    cerca de π puede salir como −π + ε según el redondeo). Compárense como
+    puntos e^{iθ_a} del círculo, no como números. Para el gauge uniforme da
+    igual: diag(e^{iθ_a/n}) tiene producto diag(e^{iθ_a}) con cualquier rama, y
+    dos ramas dan datos gauge-equivalentes (test `test_holonomia_rama_pi`).
     """
     H = np.eye(np.asarray(Us[0]).shape[0], dtype=complex)
     for U in Us:
@@ -215,11 +221,22 @@ def _vecT(M):
     return np.asarray(M).T.reshape(-1, order="F")
 
 
-def primal_ring(d, n, Us, solver=DEFAULT_SOLVER, **kw):
+def _diagnostico(prob, mats):
+    """λ_min de las matrices del estado y residuo máximo de las igualdades."""
+    res = max((float(np.max(np.abs(c.violation()))) for c in prob.constraints
+               if isinstance(c, cp.constraints.Equality)), default=0.0)
+    lam = min(float(np.linalg.eigvalsh((M + M.conj().T) / 2)[0]) for M in mats)
+    return {"lam_min": lam, "residuo": res}
+
+
+def primal_ring(d, n, Us, solver=DEFAULT_SOLVER, return_state=False, **kw):
     """v_max del anillo con datos Us (Us[i] en la arista i → i+1), SDP completo.
 
     Devuelve (v, estado del solver). La matriz es de d^n × d^n: d = 2 hasta
     n = 6, d = 3 hasta n = 4 (n = 5 no cabe; véase `primal_ring_toro`).
+    Con return_state, (v, estado, ρ, diagnóstico), con diagnóstico =
+    {'lam_min': λ_min(ρ), 'residuo': máximo |residuo| de las restricciones}:
+    Clarabel suele terminar en 'optimal_inaccurate' con λ_min ~ −1e-8.
     """
     D = d**n
     G = gell_mann(d)
@@ -251,6 +268,9 @@ def primal_ring(d, n, Us, solver=DEFAULT_SOLVER, **kw):
     cons = [rho >> 0, cp.real(A @ cp.vec(rho, order="F")) == np.array(b0) + v * np.array(b1)]
     prob = cp.Problem(cp.Maximize(v), cons)
     prob.solve(solver=solver, **kw)
+    if return_state:
+        R = np.asarray(rho.value)
+        return float(v.value), prob.status, R, _diagnostico(prob, [R])
     return float(v.value), prob.status
 
 
@@ -266,78 +286,112 @@ def color_sectors(d, n):
     return [(c, np.array(v)) for c, v in sorted(out.items(), reverse=True)]
 
 
-def primal_ring_toro(d, n, thetas, solver=DEFAULT_SOLVER, **kw):
-    """v_max en el gauge uniforme con ρ diagonal por bloques de números de color.
+@lru_cache(maxsize=None)
+def _toro_ops(d, n):
+    """Restricciones de `primal_ring_toro` como operadores por bloque.
 
-    Exacto (promedio sobre el toro diagonal, que deja invariantes los datos).
-    En cada arista el marginal solo tiene las entradas ⟨ab|·|ab⟩ y ⟨ab|·|ba⟩; se
-    imponen sin redundancia: tr ρ = 1, P_i(a) = 1/d (a < d−1) en cada sitio,
-    P_e(a, b) para a, b < d−1 y las entradas ⟨ab|·|ba⟩, a < b, en cada arista.
+    Devuelve una lista, por sector (en el orden de `color_sectors`), de
+    diccionarios {clave: S} con S denso (dim × dim) tal que el valor de la
+    clave es Σ_sectores Σ_ij S_ij ρ_ij = Σ tr(S^T ρ_b). Claves:
+      'tr';  ('s', i, a): P_i(a), a < d−1;
+      ('p', i, a, b): ⟨ab|marg_{i,i+1}|ab⟩, a, b < d−1;
+      ('x', i, a, b): ⟨ab|marg_{i,i+1}|ba⟩, a < b (compleja).
     """
-    U = uniform_gauge(d, n, thetas)[0]
-    r0 = edge_state(d, 0.0, U)
-    r1 = edge_state(d, 1.0, U)
-    v = cp.Variable()
-    blocks, cons = [], []
-    lin = {}
-
-    def add(key, expr):
-        lin[key] = lin.get(key, 0) + expr
-
+    out = []
     for counts, states in color_sectors(d, n):
         dim = len(states)
         idx = {int(s): m for m, s in enumerate(states)}
         dig = _digits(d, n, states)
-        if dim == 1:
-            rb = cp.Variable((1, 1), symmetric=True)
-            cons.append(rb >> 0)
-        else:
-            rb = cp.Variable((dim, dim), hermitian=True)
-            cons.append(rb >> 0)
-        blocks.append(rb)
-        diag = cp.real(cp.diag(rb))
-        add("tr", cp.sum(diag))
+        ops = {"tr": np.eye(dim)}
         for i in range(n):
             for a in range(d - 1):
                 w = (dig[:, i] == a).astype(float)
                 if w.any():
-                    add(("s", i, a), w @ diag)
+                    ops[("s", i, a)] = np.diag(w)
         for i in range(n):
             j = (i + 1) % n
             for a in range(d - 1):
                 for b in range(d - 1):
                     w = ((dig[:, i] == a) & (dig[:, j] == b)).astype(float)
                     if w.any():
-                        add(("p", i, a, b), w @ diag)
+                        ops[("p", i, a, b)] = np.diag(w)
             for a in range(d):
                 for b in range(a + 1, d):
-                    # ⟨ab|marg|ba⟩ = Σ ρ[t, t'], t con (a, b) en (i, j), t' con (b, a).
+                    # ⟨ab|marg|ba⟩ = Σ_resto ρ[t, t'], t con (a, b) en (i, j) y
+                    # t' con (b, a): S[t, t'] = 1 (fila t, columna t').
                     sel = np.nonzero((dig[:, i] == a) & (dig[:, j] == b))[0]
                     if len(sel) == 0:
                         continue
-                    rr, cc = [], []
+                    S = np.zeros((dim, dim))
                     for m in sel:
                         s = int(states[m])
                         t = s + (b - a) * d ** (n - 1 - i) + (a - b) * d ** (n - 1 - j)
-                        rr.append(m)
-                        cc.append(idx[t])
-                    S = sp.csr_matrix((np.ones(len(rr)), (cc, rr)), shape=(dim, dim))
-                    add(("x", i, a, b), cp.sum(cp.multiply(S.toarray(), rb)))
-    cons.append(lin["tr"] == 1)
+                        S[m, idx[t]] = 1.0
+                    ops[("x", i, a, b)] = S
+        out.append(ops)
+    return out
+
+
+def _toro_targets(d, n, thetas):
+    """Valores de las claves de `_toro_ops` en los datos: {clave: (b0, b1)}, con
+    valor b0 + v b1 (de ρ_e(v) en el gauge uniforme)."""
+    U = uniform_gauge(d, n, thetas)[0]
+    r0 = edge_state(d, 0.0, U)
+    r1 = edge_state(d, 1.0, U)
+    t = {"tr": (1.0, 0.0)}
     for i in range(n):
         for a in range(d - 1):
-            cons.append(lin[("s", i, a)] == 1 / d)
-        j = (i + 1) % n
+            t[("s", i, a)] = (1 / d, 0.0)
         for a in range(d - 1):
             for b in range(d - 1):
                 k = a * d + b
-                cons.append(lin[("p", i, a, b)] == r0[k, k].real + v * (r1[k, k] - r0[k, k]).real)
+                t[("p", i, a, b)] = (r0[k, k].real, (r1[k, k] - r0[k, k]).real)
         for a in range(d):
             for b in range(a + 1, d):
                 p, q = a * d + b, b * d + a
-                cons.append(lin[("x", i, a, b)] == v * r1[p, q])
+                t[("x", i, a, b)] = (r0[p, q], r1[p, q] - r0[p, q])
+    return t
+
+
+def primal_ring_toro(d, n, thetas, solver=DEFAULT_SOLVER, return_state=False, **kw):
+    """v_max en el gauge uniforme con ρ diagonal por bloques de números de color.
+
+    Exacto (promedio sobre el toro diagonal, que deja invariantes los datos).
+    En cada arista el marginal solo tiene las entradas ⟨ab|·|ab⟩ y ⟨ab|·|ba⟩; se
+    imponen sin redundancia (`_toro_ops`): tr ρ = 1, P_i(a) = 1/d (a < d−1) en
+    cada sitio, P_e(a, b) para a, b < d−1 y las entradas ⟨ab|·|ba⟩, a < b, en
+    cada arista.
+
+    Devuelve (v, estado). Con return_state, (v, estado, bloques, diagnóstico):
+    bloques es una lista de (números de color, códigos de los estados, ρ_b),
+    y diagnóstico {'lam_min', 'residuo'} como en `primal_ring`.
+    """
+    targets = _toro_targets(d, n, thetas)
+    v = cp.Variable()
+    blocks, cons = [], []
+    lin = {}
+    for (counts, states), ops in zip(color_sectors(d, n), _toro_ops(d, n)):
+        dim = len(states)
+        if dim == 1:
+            rb = cp.Variable((1, 1), symmetric=True)
+        else:
+            rb = cp.Variable((dim, dim), hermitian=True)
+        cons.append(rb >> 0)
+        blocks.append(rb)
+        for key, S in ops.items():
+            if key == "tr" or key[0] in ("s", "p"):
+                expr = cp.real(cp.sum(cp.multiply(np.diag(S), cp.diag(rb))))
+            else:
+                expr = cp.sum(cp.multiply(S, rb))
+            lin[key] = lin.get(key, 0) + expr
+    for key, (b0, b1) in targets.items():
+        cons.append(lin[key] == b0 + v * b1)
     prob = cp.Problem(cp.Maximize(v), cons)
     prob.solve(solver=solver, **kw)
+    if return_state:
+        mats = [np.asarray(rb.value, dtype=complex) for rb in blocks]
+        out = [(c, st, M) for (c, st), M in zip(color_sectors(d, n), mats)]
+        return float(v.value), prob.status, out, _diagnostico(prob, mats)
     return float(v.value), prob.status
 
 
