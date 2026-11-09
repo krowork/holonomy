@@ -233,3 +233,65 @@ def test_punto_a_espin_central_conservado(monkeypatch):
     eps = {mm: m.eps_open(mm) for mm in range(3)}
     sec = m.sector_min(k, a / k, (1 - 4 * a) / k, eps, m.eps_ring(k))
     assert np.linalg.eigvalsh(H)[0] == pytest.approx(sec, abs=1e-10)
+
+
+def _rigidez(monkeypatch):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1] / "scripts"))
+    return importlib.import_module("rigidez_diamantes")
+
+
+def test_giro_nulo_es_diamond_H(monkeypatch):
+    # psi = 0 es la identidad: el testigo girado reproduce diamond_H (con a2 != a también).
+    m = _rigidez(monkeypatch)
+    k, a, a2 = 3, 0.04, 0.07
+    b = 1 / k - 2 * a - 2 * a2
+    Ht = m.diamond_H_twisted(k, a, b, 0.0, a2=a2)
+    H0 = m.diamond_H(k, a, b, a2)
+    assert abs(Ht - H0).max() < 1e-12
+
+
+def test_giro_fases_y_orientacion(monkeypatch):
+    # Las fases del testigo son las de los datos (gauge simétrico, f = 0): cada camino
+    # (por u y por w) gira psi en total; la arista central no gira; y invertir una arista
+    # (i,j) -> (j,i) cambiando theta -> -theta deja el término igual.
+    m = _rigidez(monkeypatch)
+    k, psi = 3, 1.1
+    phis = diamond.abelian_phases(k, 0, 0, periodic=True, psi=psi)
+    fA, fB, hol = diamond.triangle_fluxes(k, phis, periodic=True)
+    assert hol == pytest.approx((psi, psi), abs=1e-12)
+    assert fA == pytest.approx([0] * k, abs=1e-12) and fB == pytest.approx([0] * k, abs=1e-12)
+    assert phis[2::5] == [0.0] * k
+    assert m.diamond_phases(k, psi) == pytest.approx(phis, abs=1e-15)
+    # inversión de todas las aristas con la fase cambiada de signo
+    edges = diamond.chain_edges(k, periodic=True)
+    J = [0.3, 0.3, 0.5, 0.3, 0.3] * k
+    H = m.twisted_heisenberg([0.5] * (3 * k), edges, J, phis)
+    Hrev = m.twisted_heisenberg([0.5] * (3 * k), [(j, i) for i, j in edges], J, [-x for x in phis])
+    assert abs(H - Hrev).max() < 1e-12
+    assert abs(H - H.getH()).max() < 1e-12
+
+
+@pytest.mark.parametrize("n", [1, 2])
+def test_giro_2pi_es_gauge(monkeypatch, n):
+    # Un giro total 2 pi n por cada camino es un gauge: mismo espectro completo.
+    m = _rigidez(monkeypatch)
+    k, a = 3, 0.15
+    H0 = m.diamond_H(k, a / k, (1 - 4 * a) / k).toarray()
+    Hn = m.diamond_H_twisted(k, a / k, (1 - 4 * a) / k, 2 * np.pi * n).toarray()
+    assert not np.allclose(Hn, H0, atol=1e-3)  # la matriz sí cambia: es un gauge, no la identidad
+    assert np.linalg.eigvalsh(Hn) == pytest.approx(np.linalg.eigvalsh(H0), abs=1e-10)
+
+
+def test_punto_a_giro(monkeypatch):
+    # El giro conserva cada (s_u + s_w)^2 y lambda_min del testigo del punto A no cambia.
+    m = _rigidez(monkeypatch)
+    k = 3
+    e = m.eps_open(2)
+    a = 1 / (2 - e)
+    lam0 = np.linalg.eigvalsh(m.diamond_H(k, a / k, (1 - 4 * a) / k).toarray())[0]
+    for psi in (np.pi / 3, np.pi):
+        H = m.diamond_H_twisted(k, a / k, (1 - 4 * a) / k, psi).toarray()
+        for c in range(k):
+            T2 = m.heisenberg([0.5] * (3 * k), [(3 * c + 1, 3 * c + 2)]).toarray()
+            assert np.abs(H @ T2 - T2 @ H).max() < 1e-12
+        assert np.linalg.eigvalsh(H)[0] == pytest.approx(lam0, abs=1e-10)
