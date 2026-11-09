@@ -218,3 +218,18 @@ def test_reflexion_g(monkeypatch, g):
     assert G @ z == pytest.approx(-n, abs=1e-12)
     assert G @ n == pytest.approx(-z, abs=1e-12)
     assert np.all(np.isfinite(m.swap_q(g, np.array([0.5, 0.3, -0.2]))))
+
+
+def test_punto_a_espin_central_conservado(monkeypatch):
+    # Proposición del punto A: el testigo simétrico conmuta con (s_u + s_w)^2 de
+    # cada celda, y su fundamental es el mínimo sobre sectores de fragmentos.
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1] / "scripts"))
+    m = importlib.import_module("diamond_punto_a")
+    k, a = 3, 0.17
+    H = m.diamond_H(k, a / k, (1 - 4 * a) / k).toarray()
+    for c in range(k):
+        T2 = m.heisenberg([0.5] * (3 * k), [(3 * c + 1, 3 * c + 2)]).toarray()
+        assert np.abs(H @ T2 - T2 @ H).max() < 1e-12
+    eps = {mm: m.eps_open(mm) for mm in range(3)}
+    sec = m.sector_min(k, a / k, (1 - 4 * a) / k, eps, m.eps_ring(k))
+    assert np.linalg.eigvalsh(H)[0] == pytest.approx(sec, abs=1e-10)
