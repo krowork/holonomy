@@ -75,3 +75,23 @@ def test_campo_m_n7():
     assert sorted(act) == [(2, 2, 3), (2, 3, 2), (3, 2, 2)]
     assert vi - v > 0.02
     assert v >= 0.7548928 - 1e-7
+
+
+def test_lanczos_frente_a_denso():
+    """Rama Lanczos de `energia_sector` (dense_max = 0) frente a la densa."""
+    s = np.array([0.4, -0.9, 0.5])
+    for c in [(2, 2, 2), (3, 2, 1)]:
+        e_l = qa.energia_sector(3, 6, c, s, dense_max=0)
+        e_d = qa.energia_sector(3, 6, c, s, dense_max=10 ** 6)
+        assert e_l == pytest.approx(e_d, abs=1e-10)
+
+
+def test_borde_ventana_iso_d2():
+    """Calibración d = 2, n = 6 (Δ = 1): ψ_iso/π = 0,060650 (data/rigidez_qudit_asint.csv);
+    n = 5 sin ventana."""
+    tpi = np.array([PI / 2, -PI / 2])
+    Ec, dE, R = qa.pendiente_lateral(2, 6, np.zeros(2), tpi)
+    y = qa.borde_ventana_iso(2, 6, tpi / R, R, Ec, dE)
+    assert y * np.sqrt(2) / PI == pytest.approx(0.060650, abs=2e-6)
+    Ec, dE, R = qa.pendiente_lateral(2, 5, tpi, np.zeros(2))
+    assert qa.borde_ventana_iso(2, 5, -tpi / R, R, Ec, dE) == 0.0

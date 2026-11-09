@@ -21,8 +21,11 @@ simetría de Weyl) y A = d ε_d/(d² − 1), ε_d = 1/d − e_∞(d):
     (raíz) y κ_3/√3 = 0,0822 (peso).
   · d = 3, n ≢ 0: el campo de color iguala los tres sectores de carga mínima:
     −π²/9 en C y −π²/18 en M (sin campo sería −π²/6); n ≡ 1 y n ≡ 2 iguales a
-    este orden. No hay ventana de un solo nivel para ningún n (Proposición
-    exacta, docstring de la nota y comprobación 6); el flujo del testigo queda
+    este orden. Exacto (Proposición 2 de la nota, comprobación 6): con n ≢ 0
+    el nivel superior de todo óptimo de la familia invariante ocupa ≥ 2
+    sectores de color. Resultado (no se sigue de la Proposición; en d = 2 con
+    n impar hay dos sectores y el punto es liso): para d ≥ 3 esos sectores
+    tienen corrientes distintas y no hay ventana lisa. El flujo del testigo queda
     anclado en 0 hasta θ = (2/3)(1 − κ_3) L, se desliza hasta M en
     θ = (2/3 + κ_3/3) L (recta peso); en la raíz, anclado en 0 hasta
     (1 − κ_3)/3·L, meseta en s = L/3 para θ/L ∈ [1/3, 1/3 + (1 − κ_3)/3] y
@@ -49,7 +52,9 @@ Comprueba
   3. Campo: n ≡ 0 ⇒ el campo no mejora en C ni en M (1e-9, sector (q, q, q));
      n ≢ 0 ⇒ no mejora en C y sí en M (> 1e-4); v_tarea7 ≤ v_campo + 1e-7 (n ≤ 9
      y la sonda n = 10 en M).
-  4. Coeficientes n²[v(n, 0) − v_campo(n, t)] (cota inferior rigurosa del de
+  4. Coeficientes n²[v(n, 0) − v_campo(n, t)] (cota inferior del de v_max,
+     rigurosa salvo por la precisión de Lanczos; en n = 12, residuo < 1e-8 y
+     otra semilla) del de
      v_max) en C y M: monótonos hacia el límite por clase, sin cruzarlo.
   5. Rigidez local en el punto liso: n ≡ 0, raíz = peso (isotropía de Weyl,
      1e-6 relativo); n ≢ 0 (en M), anisótropa, dada como información.
@@ -392,7 +397,7 @@ def anillo(ck, ns, t7, filas7, k3):
             res[n][p]["v7"] = v7
             fila("coef", "iso", ci, n=n, r=r, punto=p, teoria=lim[(r, p)], tarea7=c7)
             fila("coef", "campo", cc, n=n, r=r, punto=p, teoria=lim[(r, p)], tarea7=c7,
-                 nota="cota inferior rigurosa de n^2[v(0)-v_max]")
+                 nota="cota inferior de n^2[v(0)-v_max] salvo precision de Lanczos")
             fila("coef", "v_campo", vc, n=n, r=r, punto=p, tarea7=v7)
             fila("energia", "n(Emin-E0)", n * (Emin - e0), n=n, r=r, punto=p)
             fila("energia", "n(G-E0)", n * (G - e0), n=n, r=r, punto=p,
@@ -457,6 +462,12 @@ def anillo(ck, ns, t7, filas7, k3):
                 psi_inf = 2 * k3 / 3 if recta == "raiz" else k3 / np.sqrt(3)
                 res[n][("vent", recta)] = (psi, (v7a + v7b) / 2, psi_inf)
                 fila("rigidez", "B_amplitud", Bamp, n=n, r=r, punto=nom, recta=recta, teoria=1 / 3)
+                # Desglose B_amp = B + CR², B_pend = B + 2CR² (revisión de la tarea 8).
+                Bfit, CR2 = 2 * Bamp - Bpen, Bpen - Bamp
+                fila("rigidez", "B_ajuste_amp_pend", Bfit, n=n, r=r, punto=nom, recta=recta,
+                     teoria=Bl[recta], nota=f"C*R^2={CR2:.5f}; n*C*R^2={n * CR2:.4f}; teoria=B_local")
+                ck.info(f"n = {n}, {nom}: B_amp = B + CR², B_pend = B + 2CR² ⇒ B = {Bfit:.4f} "
+                        f"(B_local {Bl[recta]:.4f}), CR² = {CR2:+.4f}, n·CR² = {n * CR2:+.3f}")
                 fila("rigidez", "B_pendiente", Bpen, n=n, r=r, punto=nom, recta=recta, teoria=1 / 3)
                 fila("ventana", "iso_theta_sobre_pi", psi, n=n, r=r, recta=recta, teoria=psi_inf,
                      tarea7=(v7a + v7b) / 2 if n <= 9 else "")
@@ -500,10 +511,15 @@ def anillo(ck, ns, t7, filas7, k3):
     # Review Focus 1: reevaluación en el n mayor.
     nm = max(ns)
     for p, t in (("C", C), ("M", M_RAIZ)):
-        E2 = qa.energias_torcidas(3, nm, t, seed=1, k=6, ncv=60)
-        dm = max(abs(E2[c] - res[nm][p]["E"][c]) for c in E2)
-        ck.check(dm < 1e-9, f"n = {nm}, {p}: todos los sectores reevaluados con otra semilla, "
-                            f"k = 6, ncv = 60 (dif máx {dm:.1e})")
+        dm = rmax = 0.0
+        for c in qudit._compositions(nm, 3):
+            e2, vec = qa.energia_sector(3, nm, c, t, seed=1, k=6, ncv=60, vector=True)
+            H = qa.uls_torcido(3, nm, c, t)
+            rmax = max(rmax, float(np.linalg.norm(H @ vec - e2 * vec) / np.linalg.norm(vec)))
+            dm = max(dm, abs(e2 - res[nm][p]["E"][c]))
+        ck.check(dm < 1e-9 and rmax < 1e-8,
+                 f"n = {nm}, {p}: todos los sectores reevaluados con otra semilla, k = 6, ncv = 60 "
+                 f"(dif máx {dm:.1e}; residuo ‖Hv − Ev‖ máx {rmax:.1e})")
     return res, coefs
 
 

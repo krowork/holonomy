@@ -20,7 +20,10 @@ de teoría de campos, al nivel de \cite{anillos} sección 6.2: no es un teorema.
    términos de un sitio h·n_a (D_ab = h_a + h_b). No cambian la normalización N, pero desplazan cada
    sector de color en 2h·Q. Para n ≢ 0 todos los sectores tienen carga Q ≠ 0 y el dual los equilibra.
    - Eso cambia el coeficiente a orden dominante: en M pasa de −π²/6 a **−π²/18**.
-   - Impide toda ventana de un solo nivel (Proposición 2, exacta).
+   - Obliga a que el nivel superior de todo óptimo ocupe al menos dos sectores de color (Proposición 2,
+     exacta). Que eso sea además una cúspide, y que por tanto no haya ventana lisa, es un **Resultado** de
+     teoría de campos para d ≥ 3, no una consecuencia de la Proposición: en d = 2 con n impar hay dos
+     sectores y el punto es liso (§2).
    - Explica el «exceso de amplitud» y la «rigidez anisótropa» que la tarea 7 atribuía a la anisotropía.
 3. **Coeficientes límite, lím n²[v(n,0) − v(n,t)]** (Resultado):
 
@@ -38,8 +41,9 @@ de teoría de campos, al nivel de \cite{anillos} sección 6.2: no es un teorema.
    - d = 2: κ_2 = 1 − 3/(8(ln 2 − ¼)) = 0,15378.
    - d = 3: κ_3 = 0,14245, es decir, θ/π = 2κ_3/3 = **0,0950** en la recta raíz y κ_3/√3 = **0,0822** en la
      recta peso.
-   - Con n ≢ 0 **no hay ventana de un solo nivel para ningún n**. En el límite, el flujo del testigo se
-     desancla en un intervalo, pero siempre en un cruce de tres sectores de color.
+   - Con n ≢ 0, **Resultado** (teoría de campos, d ≥ 3): no hay ventana lisa; el testigo queda siempre en
+     un cruce de sectores con corrientes distintas. En el límite, su flujo se desancla en un intervalo,
+     pero en un cruce de tres sectores de color. Lo exacto es solo la Proposición 2 (≥ 2 sectores).
 5. **Prueba d = 2 superada:** ±π²/6 con las dos paridades y ψ_∞/π = 1 − 3/(8(ln 2 − ¼)), con y sin
    campo (en d = 2 el campo no actúa).
 
@@ -74,10 +78,12 @@ La última igualdad es la dualidad de la programación lineal. ∎
 En s = t, N = n(d+1)/d. Con h = 0 queda la cota «isótropa». En d = 2 la familia es el testigo de
 Heisenberg (Δ = 1) con flujo. Comprobado contra `qudit.ring_witness`/`ring_norm` a 1e-10.
 
-## 2. Proposición exacta: sin ventana de un nivel para n ≢ 0
+## 2. Proposición exacta: el nivel superior ocupa varios sectores si n ≢ 0
 
 **Proposición 2 (exacta, todo n y toda holonomía).** Sea x* un óptimo de la familia invariante de
-`qudit.py` (que da v_max). Entonces 0 está en la envolvente convexa de las cargas Q_N de los sectores de
+`qudit.py` (invariante bajo el toro diagonal y la traslación; restringirse a ella no pierde generalidad,
+porque el promedio de cualquier óptimo sobre ese grupo compacto es otro óptimo invariante, y solo para
+ellos tienen sentido los sectores de color). Esta familia da v_max. Entonces 0 está en la envolvente convexa de las cargas Q_N de los sectores de
 color que contienen el nivel superior de W(x*). En particular, si n ≢ 0 (mód d), el nivel superior ocupa
 al menos dos sectores de color distintos.
 
@@ -91,8 +97,13 @@ al menos dos sectores de color distintos.
 4. Como N no cambia, v baja, lo que contradice la optimalidad de x*.
 5. Si n ≢ 0 (mód d), ningún sector tiene Q = 0, porque los números de color no pueden ser iguales. ∎
 
-**Comprobación:** los 107 óptimos de la tarea 7 con n ≢ 0 la cumplen (sección 7 del guion). Por eso la
-tarea 7 no encontró ninguna fila «liso» con n ≢ 0.
+**Comprobación:** los 107 óptimos de la tarea 7 con n ≢ 0 la cumplen (sección 7 del guion).
+
+**Lo que la Proposición no dice.** «Al menos dos sectores» **no** implica que el testigo esté en una
+cúspide ni que no haya ventana. En la tarea 7 y en \cite{anillos}, «liso» significa un solo momento, o
+que las corrientes P·dW/ds·P no se desdoblan; dos sectores degenerados con la misma corriente son lisos.
+El contraejemplo es d = 2 con n impar (párrafo siguiente). Que la tarea 7 no encontrara filas «liso» con
+n ≢ 0 es **coherente** con la Proposición, no una consecuencia de ella.
 
 **Comparación con los qubits.** En d = 2 y n impar, la condición se cumple sola: la simetría
 R_x(π)∘reflexión hace degenerados los sectores S^z = ±½, y por eso el punto liso de los qubits sigue
@@ -100,7 +111,17 @@ siendo liso.
 
 **Por qué en d = 3 no ocurre lo mismo.** Con holonomía t ≠ 0, el estabilizador de t en el grupo de Weyl
 no actúa transitivamente sobre la órbita de cargas {q_a}. La degeneración tiene que forzarla el campo.
-Ese cruce es una cúspide en el flujo: los sectores tienen corrientes distintas.
+
+**Resultado (teoría de campos, no demostrado):** para d ≥ 3 y n ≢ 0 ese cruce es una cúspide en el flujo,
+porque los sectores degenerados tienen corrientes distintas: sus redes de puntos lisos πq_a + 2πΛ_w
+difieren con la carga (en d = 2 las dos cargas ±q comparten red y las corrientes coinciden). Por tanto
+no hay ventana lisa con n ≢ 0.
+
+**Apoyo numérico** (no prueba):
+- las cúspides certificadas como forzadas en la tarea 7 (200 de 212 filas; sin certificar θ = 0 con
+  n ≢ 0 y 4 filas de bisección);
+- el desdoblamiento de corrientes > 1e-3 en todas sus filas doblete o triple;
+- los 107 óptimos con n ≢ 0 que cumplen la Proposición.
 
 ## 3. Entrada de teoría de campos
 
@@ -108,15 +129,24 @@ Ese cruce es una cúspide en el flujo: los sectores tienen corrientes distintas.
 - velocidad v = 2π/d y c = d − 1 (Messio–Mila 2012; Affleck 1988);
 - e_∞(d) = 1 − (2/d)[ψ(1) − ψ(1/d)] (Sutherland 1975).
 
-**Modos cero** (bosones en el retículo de pesos; torres conformes de SU(d)_1, Affleck 1986, 1988;
-Di Francesco–Mathieu–Sénéchal 1997, cap. 15). Un estado de baja energía tiene:
+**Modos cero** (bosones en el retículo de pesos; marco de SU(d)_1 de Affleck 1986, 1988 y
+Di Francesco–Mathieu–Sénéchal 1997, cap. 15). **La ecuación (1) no está contrastada con el original de
+Affleck**: es mi formulación del espectro estándar de SU(d)_1, no una cita textual. Un estado de baja
+energía tiene:
 - momentos de Cartan (p_L, p_R), con p_L ∈ Λ_w;
 - carga Q = p_L + p_R en la clase de n fundamentales, es decir, Q ≡ ω_r (mód Λ_r) con r = n mód d.
 
 Un flujo de Cartan s en el enlace de cierre desplaza p_L → p_L + s/2π y p_R → p_R − s/2π. Con
 λ = −p_L ∈ Λ_w:
 $$E_{Q,\lambda}(s)=n\,e_\infty-\frac{\pi^2(d-1)}{3dn}+\frac1{dn}\Big[\pi^2|Q|^2+|s-\pi Q-2\pi\lambda|^2\Big]+o(1/n).\tag{1}$$
-(El primer corchete es (2πv/n)(|p_L|² + |p_R|²)/2.)
+(El corchete es 2π²(|p_L|² + |p_R|²) con p_L = −λ y p_R = Q + λ, es decir, (2πv/n)(h + h̄) con
+h = |p_L|²/2 y h̄ = |p_R|²/2.)
+
+**Contrastes de (1) que sí se pueden hacer** (de coherencia, no sustituyen la lectura del original):
+- con Q = ω_r y λ = 0 da el primario (0, ω_r), de peso h̄ = |ω_r|²/2 = r(d − r)/(2d): para r = 1,
+  (d − 1)/(2d), el peso conforme de la fundamental de SU(d)_1 (¼ en d = 2, ⅓ en d = 3);
+- en d = 2 con n impar reproduce las torres (½, 0) ⊕ (0, ½), con E − n e_∞ = −π²/(6n) + π²/(2n) = π²/(3n);
+- numéricamente, n(E_0 − n e_∞) por clase (tabla de abajo).
 
 **Consecuencias de (1):**
 - **Rigidez.** B = ρ_d = v/2π = 1/d, isótropa: la única forma cuadrática invariante por Weyl en la
@@ -214,8 +244,8 @@ G_r(s) = mín_{μ equilibrada} Σ_Q μ_Q[π²|Q|² + dist(s, πQ + 2πΛ_w)²].
   - coeficiente en C: **−π²/9**; en C las tres cargas ya están a la misma distancia y el campo no actúa;
   - coeficiente en M: **−π²/18**; sin campo sería −π²/6;
   - n ≡ 1 y n ≡ 2 son idénticos a este orden.
-- **Sin ventana.** El óptimo deja siempre al menos 3 cargas activas: es la Proposición 2, comprobada
-  aquí en 50 puntos.
+- **Sin ventana lisa** (Resultado). A orden dominante el óptimo deja siempre al menos 3 cargas activas
+  (comprobado en 50 puntos), con corrientes distintas; la parte exacta es la Proposición 2.
 - **Desanclaje** (el flujo s* deja un punto fijo):
   - recta peso: anclado en 0 hasta θ/L = 2(1 − κ_3)/3 = **0,5717**; se desliza linealmente hasta M,
     adonde llega en θ/L = 2/3 + κ_3/3 = **0,7142** (anchura κ_3 L); después, anclado en M. El
@@ -241,7 +271,9 @@ Todo se comprueba numéricamente con `H_cero` (1e-7 y anclaje a ±0,1 % del bord
 ### 6.1 Coeficientes
 
 n²[v(n,0) − v(n,t)], con v(n,0) exacto. «Campo» es la cota superior de la familia del Lema 1 en s = t, que
-da una **cota inferior rigurosa** del coeficiente de v_max. «Iso» es la misma familia con h = 0. «T7» es el
+da una **cota inferior** del coeficiente de v_max, rigurosa salvo por la precisión de los autovalores de
+Lanczos (todos los sectores; en n = 12, residuo ‖Hv − Ev‖ < 1e-8 en C y M y reevaluación con otra semilla;
+en n ≤ 11 solo arranque aleatorio con k = 4 y 40 vectores, y denso hasta 300 estados). «Iso» es la misma familia con h = 0. «T7» es el
 óptimo de la tarea 7 (horquilla 1e-7; con n ≤ 5, primal).
 
 | n | r | C campo | C iso | C T7 | M campo | M iso | M T7 |
@@ -313,9 +345,32 @@ da una **cota inferior rigurosa** del coeficiente de v_max. «Iso» es la misma 
 | 12 | — | — | 0,0682 | 0,0441 | — | — |
 | ∞ | 0,0950 | 0,0822 | | | 1 | 2/√3 = 1,155 |
 
-- **Forma de la ventana** (cociente raíz/peso). Es puramente geométrica (vértice frente a arista del
-  hexágono) y la tarea 7 la sigue: 1 % en n = 6 y 5 % en n = 9. Las dos rectas están a la misma
-  fracción del límite.
+- **Forma de la ventana** (cociente raíz/peso). El límite 2/√3 = 1,155 es un **Resultado** (geometría
+  del hexágono: vértice frente a arista). Los datos finitos no lo verifican:
+  - el cociente de la tarea 7 es 1,146 (n = 6) y 1,209 (n = 9): con dos puntos, el segundo se aleja del
+    límite; es compatible con él, pero no converge visiblemente;
+  - la familia isótropa, que con n ≡ 0 es el objeto que la teoría de orden dominante describe
+    literalmente (el campo no actúa), da cocientes 1,98, 1,66 y 1,55 (n = 6, 9, 12), lejos de 1,155;
+  - su ventana se aplana lejos del límite: 0,0649, 0,0674, 0,0682 en la raíz (incrementos 0,0025 y
+    0,0008; **72 %** del límite 0,0950 en n = 12) y 0,0328, 0,0405, 0,0441 en la recta peso (**54 %**
+    de 0,0822).
+- **Explicación posible (no demostrada) del aplanamiento.** La ventana isótropa la fija la pendiente en
+  la cúspide: (2/3)(1 − B_pend/A) reproduce la de la raíz (0,0662, 0,0678, 0,0683), y para llegar a 0,0950
+  B_pend tendría que bajar a ⅓. La pendiente en C está casi plana (0,3501, 0,3492, 0,3489). Ajustando
+  B_amp = B + CR² y B_pend = B + 2CR² (desglose del revisor):
+
+  | n | B_local en 0 | B (ajuste, C) | CR² (C) | n·CR² (C) | B (ajuste, M) | CR² (M) |
+  |---|---|---|---|---|---|---|
+  | 6 | 0,4033 | 0,4099 | −0,0299 | −0,180 | 0,4043 | −0,0162 |
+  | 9 | 0,3834 | 0,3886 | −0,0197 | −0,177 | 0,3844 | −0,0103 |
+  | 12 | 0,3750 | 0,3794 | −0,0153 | −0,183 | 0,3759 | −0,0078 |
+
+  B del ajuste sigue a B_local (+0,3–1,6 %), y el término anarmónico CR² va como ~1/n (n·CR² ≈ −0,18 en
+  C). B_pend = B + 2CR² es, por tanto, una cancelación entre la bajada lenta (~1/ln n) de B y un término
+  ~1/n que se apaga. Esto no contradice el límite, pero hace previsible que la ventana isótropa no se
+  acerque a 0,095 de forma monótona hasta que el término 1/n se apague.
+- **Conclusión:** la forma y la anchura límite son compatibles con los datos, pero los datos con n ≤ 12
+  no las deciden.
 - **Escala.** La tarea 7 está muy por debajo del límite (21 % y 36 %), como en los qubits (12 % en
   n = 6, 33 % en n = 12, 74 % en n = 2048). κ es una diferencia pequeña, 1 − B/A con B/A = 0,857, y un
   exceso del 5–10 % en B_n la reduce mucho.
@@ -346,8 +401,9 @@ da una **cota inferior rigurosa** del coeficiente de v_max. «Iso» es la misma 
 | 7 | C | 0,076 | 0,014 |
 | 7 | M | 0,049 | 0 |
 
-**Con n ≡ 0, la anisotropía de dos sitios** (T7 − iso, sin τ) vale 0,358 → 0,161 (C) y 0,653 → 0,290
-(M) de n = 6 a n = 9. El cociente es 0,45 y 0,44 = (6/9)², así que la ganancia en v escala como n⁻⁴,
+**Con n ≡ 0, la anisotropía de dos sitios** (T7 − iso) vale 0,358 → 0,161 (C) y 0,653 → 0,290 (M) de
+n = 6 a n = 9. En n = 6 τ no aporta nada (tabla); en n = 9 el SDP τ = 0 no se ha calculado y se
+**supone** que τ tampoco aporta en C y M. El cociente es 0,45 y 0,44 = (6/9)², así que la ganancia en v escala como n⁻⁴,
 como pide la hipótesis de estacionariedad. Con n ≢ 0, T7 − campo en M vale 0,417 (4), 0,049 (7) y
 0,023 (10).
 
@@ -385,7 +441,9 @@ de dos sitios sino un término de un sitio:
 - τ en concreto: 0 en M y en C con n ≡ 0; con n ≢ 0 en C, n²Δv ≤ 0,09 (n ≤ 7).
 
 **3. Qué domina al tamaño de la tarea 7** (n = 9, C): de los 0,40 de exceso sobre 2π²/9,
-- 0,23 son tamaño finito de la parte isótropa, que decae como ~1/ln n y domina cada vez más;
+- 0,23 son tamaño finito de la parte isótropa, compatible con ~1/ln n: (exceso de la familia)·ln n vale
+  0,55, 0,51 y 0,50 en C y 0,48, 0,44 y 0,43 en M (n = 6, 9, 12), sin ajustar ningún modelo; si es así,
+  domina cada vez más;
 - 0,16 son anisotropía de dos sitios (∝ n⁻²).
 
 ## 8. Lo que no cuadra o no queda decidido
@@ -393,15 +451,22 @@ de dos sitios sino un término de un sitio:
 1. **Convergencia lenta.** Con n ≤ 12 ningún límite queda fijado numéricamente.
    - n ≡ 0: 9–10 % por encima en n = 12.
    - Medias de pares con n ≢ 0: 14 % (C) y 19 % (M) por encima.
-   - Todas las sucesiones son monótonas y compatibles, pero no se ha ajustado ningún modelo: la amplitud
-     logarítmica de SU(3) (a_N = 1/N en la nota de literatura) no está verificada.
+   - Todas las sucesiones son monótonas. Con n ≡ 0, (exceso)·ln n es casi constante (C: 0,55, 0,51,
+     0,50; M: 0,48, 0,44, 0,43), compatible con correcciones 1/ln n, pero no se ha ajustado ningún modelo
+     ni verificado la amplitud logarítmica de SU(3) (a_N = 1/N en la nota de literatura).
 2. **Alternancia n ≡ 1 / n ≡ 2.** A orden dominante son iguales. A tamaño finito difieren en O(1/n)
    relativo y con signo opuesto en: el coeficiente, n(E_0 − n e_∞), la rigidez en M y los puntos de
    anclaje. La atribuyo a correcciones impares en la carga (un invariante cúbico d_abc Q^aQ^bQ^c de los
    operadores irrelevantes), sin calcularlas.
-3. **Ventana finita.** La teoría da el límite y la forma (cociente 2/√3, verificado a 1–5 %), pero no la
-   escala finita: la tarea 7 está al 21–36 % del límite. Ni la familia isótropa ni su calibración en
-   d = 2 predicen el borde a estos n, porque la anisotropía de dos sitios cuenta a O(1) en el borde.
+3. **Ventana finita.** La teoría da el límite y la forma (cociente 2/√3) como Resultado; los datos con
+   n ≤ 12 no los deciden.
+   - El cociente raíz/peso de la tarea 7 se aleja del límite (1,146 → 1,209 frente a 1,155).
+   - La ventana de la familia isótropa se aplana al 72 % (raíz) y al 54 % (peso) del límite en n = 12,
+     con cocientes 1,98 → 1,55. La explicación posible es la cancelación entre B_local (~1/ln n) y un
+     término anarmónico ~1/n en la pendiente de la cúspide (§6.3), no demostrada.
+   - La escala finita no la predice nada de lo calculado: la tarea 7 está al 21–36 % del límite, y ni la
+     familia isótropa ni su calibración en d = 2 dan el borde a estos n, porque la anisotropía de dos
+     sitios cuenta a O(1) en el borde.
 4. **Deslizamiento con n ≢ 0.**
    - El orden dominante predice un desanclaje continuo (recta peso: 0,572 → 0,714 L).
    - La familia con campo, en la malla de s, salta de 0 a M sin pasos intermedios.
