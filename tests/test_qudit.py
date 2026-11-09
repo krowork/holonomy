@@ -212,6 +212,33 @@ def test_cortes_horquilla():
     assert qudit.ring_norm(3, 4, x, HOL3[0]) == pytest.approx(1.0, abs=1e-12)
 
 
+def test_cortes_momentos():
+    # λ_max restringida a los bloques de un momento k: es ≤ v_max, coincide con
+    # el cálculo denso del testigo devuelto y, con todos los k, no cambia nada.
+    d, n, th = 3, 4, HOL3[0]
+    v, _, x, st = qudit.v_dual_ring_cg(d, n, th)
+    assert st == "optimal"
+    # Todos los momentos = sin restringir (retrocompatibilidad).
+    s_all, _, _, st_all = qudit.v_dual_ring_cg(d, n, th, momentos=range(n))
+    assert st_all == "optimal"
+    assert s_all == pytest.approx(v, abs=1e-9)
+    labels, _, ops = qudit.sector_blocks(d, n)
+    for k in range(n):
+        sk, ik, xk, stk = qudit.v_dual_ring_cg(d, n, th, momentos=[k])
+        assert stk == "optimal"
+        assert sk <= v + 1e-8            # el mínimo restringido no supera a v_max
+        assert ik <= sk + 1e-7
+        c0 = n * (qudit._trace_coeffs(d) @ xk) / d**2
+        lam = max(np.linalg.eigvalsh(np.tensordot(xk, O, axes=1))[-1]
+                  for lab, O in zip(labels, ops) if lab[1] == k)
+        assert sk == pytest.approx((lam - c0) / qudit.ring_norm(d, n, xk, th), abs=1e-12)
+    # Un momento inexistente o una lista vacía no pasan en silencio.
+    with pytest.raises(ValueError):
+        qudit.v_dual_ring_cg(d, n, th, momentos=[n + 3])
+    with pytest.raises(ValueError):
+        qudit.v_dual_ring_cg(d, n, th, momentos=[])
+
+
 def test_nelder_mead_d2():
     # Nelder–Mead (sin certificado) da una cota superior; en d = 2, n = 4 llega
     # al valor exacto.

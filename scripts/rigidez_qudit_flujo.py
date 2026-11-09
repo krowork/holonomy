@@ -124,9 +124,10 @@ malla y de la sonda, salvo dos excepciones que se dan como información:
     como forzada.
   · filas de bisección (borde de la ventana): el margen es de segundo orden en
     la distancia δ al borde (n = 9, recta peso: 1,5e-8, 1,0e-7, 5,2e-7 y
-    2,3e-6 con δ ≈ 3e-4, 9e-4, 2e-3 y 4e-3 rad; ~1e-16 en el propio borde), y
-    en las 4 filas más cercanas queda por debajo de 1e-7 (de 33 filas de
-    bisección en cúspide, 29 certificadas).
+    2,3e-6 con δ ≈ 3e-4, 9e-4, 2e-3 y 4e-3 rad; ~1e-16 en el propio borde):
+    4 de las 33 filas de bisección en cúspide quedan con margen < 1e-7
+    (n = 6, peso: 1; n = 9: 2 en la recta peso y 1 en la raíz); las otras 29
+    se certifican.
 Excluye todo óptimo liso (dentro de la familia invariante, que no pierde
 generalidad) donde se certifica; no excluye otro óptimo, también en cúspide,
 con un multiplete distinto del de x̄, ni dice nada de las filas «indet» (un solo

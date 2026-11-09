@@ -683,14 +683,22 @@ def v_dual_ring_cg(d, n, thetas, x0=None, tol=1e-9, r0=2, add=2, box=50.0, maxit
     momentos (todos los sectores de color): sup e inf acotan entonces el mínimo
     de esa λ_max restringida, que es ≤ v_max. Sirve para certificar que el
     óptimo no puede ser liso con el multiplete superior en un solo momento
-    (scripts/rigidez_qudit_flujo.py).
+    (scripts/rigidez_qudit_flujo.py). ValueError si `momentos` está vacío o
+    tiene algún k fuera de 0..n−1.
     """
     cut = _Corte(d, n, thetas)
     m = cut.m
     labels, _, ops = sector_blocks(d, n)
     if momentos is not None:
         ks = set(int(k) for k in momentos)
+        if not ks:
+            raise ValueError("v_dual_ring_cg: 'momentos' vacío (se esperaba algún k en 0..n−1)")
+        fuera = sorted(k for k in ks if not 0 <= k < n)
+        if fuera:
+            raise ValueError(f"v_dual_ring_cg: momentos fuera de 0..{n - 1}: {fuera}")
         ops = [O for lab, O in zip(labels, ops) if lab[1] in ks]
+        if not ops:
+            raise ValueError(f"v_dual_ring_cg: ningún bloque con momentos {sorted(ks)}")
     c0v = n * _trace_coeffs(d) / d**2
     xs = None if x0 is None else cut.normalize(x0)
     if xs is None:
