@@ -24,8 +24,8 @@ SymPy 1.14.0; Matplotlib y una instalación de LaTeX para las figuras.)
 ## Uso
 
 ```bash
-(ulimit -v 8000000; .venv/bin/pytest -q -m "not slow")   # pruebas rápidas (~2 min; 289 passed, 3 skipped)
-(ulimit -v 8000000; .venv/bin/pytest -q -m slow)        # pruebas lentas (más de 4 min: test_cadena2_abeliana sola, 236 s); test_primal_reducido_k3 llega a 5,4 GB de memoria residente y test_cg_igual_sdp_n6 a ~4 GB: no las lance sin ulimit
+(ulimit -v 8000000; .venv/bin/pytest -q -m "not slow")   # pruebas rápidas (~3 min; 312 passed, 3 skipped)
+(ulimit -v 8000000; .venv/bin/pytest -q -m slow)        # pruebas lentas (más de 4 min: test_cadena2_abeliana sola, 236 s); test_primal_reducido_k3 llega a 5,4 GB de memoria residente y test_cg_igual_sdp_n6 a ~4 GB: no las lance sin ulimit; test_primal_toro_d3_n4 (primal completo de qutrits, 81 s y 9,1 GB) se salta si ulimit -v < 14000000
 ./run_all.sh --rapido               # comprobaciones de menos de ~2 min (incluye `diamond_single`, `diamond_ring` con k = 2, `diamond_numeros`, `diamond_punto_a` y `rigidez_diamantes`)
 ./run_all.sh                        # todo (~1 h 30 min con la caché de Bethe; ladder.py son ~75 min)
 ```
@@ -50,6 +50,7 @@ figuras en `figures/`.
 | `sphere` | Poliedros esféricos con datos abelianos: geometría desde coordenadas, flujo de cara como ángulo sólido, fases y gauge L1 óptimo, índice cromático exacto y fraccionario, grupo de isometrías con órbitas de aristas y regla de signos de b, dual reducido de una órbita con cotas certificadas, testigo por órbitas con planos de corte (`OrbitDual`) para subgrafos o sin simetría, y gauge SO(3) ambiente (rotaciones de arco; las fases dan flujo −f_p, y +f_p con R_x(π)) |
 | `asymptotics` | Coeficiente de 1/n², rigidez finita D_n y anchura asintótica |
 | `rigidez` | Cota tipo Kohn del giro de holonomía (grafo cualquiera, datos abelianos; demostración en el docstring): `ring_kohn_bound` (testigo óptimo de Θ0 girado a Θ1 en el anillo) y `twist_response`; en la escalera periódica, `ladder_twist_y` (giro Ψ/L de las patas del testigo de `LadderDual`), `witness_gap` (gap y multiplete superior del testigo en todos los bloques) y `lam_max_aleatorio` (λ_max con Lanczos de arranque aleatorio) |
+| `qudit` | Pegado de estados de Werner de qudits SU(d) en anillos, ρ(v) = (1 − v)I/d² + v P_A/binom(d, 2) con datos (1 ⊗ U_e)ρ(v)(1 ⊗ U_e)†: holonomía (autofases del producto), SDP primal completo (`primal_ring`; d = 3 hasta n = 4) y reducido por el toro diagonal (`primal_ring_toro`; d = 3, n = 5), familia de testigos invariante bajo el toro y la traslación (D_ab simétrico por reflexión∘conjugación y z_ab de intercambio; `ring_witness`, `ring_norm`), λ_max por bloques de números de color y momento sobre todos los sectores (`lam_max_sectors`), y dual `v_dual_ring` por planos de corte con horquilla (`v_dual_ring_cg`) o Nelder–Mead (`v_dual_ring_nm`, sin certificado); en d = 2 reproduce los qubits |
 | `report` | Salida OK/FALLO y lectura/escritura de datos |
 
 ## Guiones y secciones del artículo
