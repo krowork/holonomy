@@ -44,7 +44,9 @@ tr(ρ W) = Σ_e tr(ρ_e(v) Y) − c0, y como ρ_e(v) es afín en v,
 
 sin término independiente (c0 = n tr(Y ρ_e(0)) porque ρ_e(0) = I/d²). Por tanto
 v ≤ λ_max(W)/N si N > 0. Con Y = −P girado por los datos y θ = 0 se recupera la
-cota d/(d+1)(1/d − e_P), e_P = E_0(Σ_i P_{i,i+1})/n (`test_testigo_su_d`).
+cota d/(d+1)(1/d − e_P), e_P = E_0(Σ_i P_{i,i+1})/n (`test_testigo_su_d`),
+que es v_max(n, 0) (Proposición en scripts/rigidez_qudit_limite.py; e_P por
+`uls_ground_energy`).
 La dualidad es fuerte (ρ = I/d^n es estrictamente factible en v = 0, Slater).
 
 Simetrías. En el gauge uniforme los datos son invariantes bajo V^{⊗n} con V
@@ -754,3 +756,108 @@ def v_dual_ring(d, n, thetas, x0=None, starts=8, seed=0, metodo="cortes", tol=1e
         import warnings
         warnings.warn(f"v_dual_ring: generación de columnas '{st}', sup - inf = {sup - inf:.2e}")
     return sup, x
+
+
+# ---------------------------------------------------------------------------
+# Sin holonomía: anillo SU(d) de intercambio (Uimin–Lai–Sutherland)
+# ---------------------------------------------------------------------------
+#
+# Con holonomía trivial (θ = 0, U_e = I tras el gauge),
+#     v_max(n, 0) = d/(d+1) (1/d − e_P(n)),   e_P(n) = E_0(Σ_i P_{i,i+1})/n
+# (Proposición; demostración en scripts/rigidez_qudit_limite.py). Σ P conserva
+# los números de color y conmuta con las permutaciones de los colores, así que
+# su espectro en el sector (n_0, …, n_{d−1}) solo depende de los números
+# ordenados. Como cada irrep de SU(d) en (C^d)^{⊗n} tiene un peso en el sector
+# más equilibrado, el mínimo sin campo está siempre también ahí; aun así se
+# toma el mínimo sobre todos los sectores (el campo de color lo desplaza).
+
+def _multiset_perms(counts):
+    """Configuraciones de colores con los números dados, en orden lexicográfico
+    (= orden creciente del código s = Σ c_i d^{n−1−i}); array (dim, n)."""
+    counts = list(counts)
+    n = sum(counts)
+    out, cur = [], []
+
+    def rec():
+        if len(cur) == n:
+            out.append(tuple(cur))
+            return
+        for a in range(len(counts)):
+            if counts[a]:
+                counts[a] -= 1
+                cur.append(a)
+                rec()
+                cur.pop()
+                counts[a] += 1
+
+    rec()
+    return np.array(out, dtype=np.int64).reshape(-1, n)
+
+
+def _compositions(n, d):
+    """Vectores (n_0, …, n_{d−1}) de enteros ≥ 0 con suma n."""
+    if d == 1:
+        return [(n,)]
+    return [(a,) + r for a in range(n, -1, -1) for r in _compositions(n - a, d - 1)]
+
+
+def uls_sector_matrix(d, n, counts):
+    """Σ_i P_{i,i+1} (anillo de n sitios) en el sector de números de color
+    `counts`, dispersa y real, en la base de `_multiset_perms(counts)`."""
+    st = _multiset_perms(counts)
+    dim = len(st)
+    w = d ** np.arange(n - 1, -1, -1, dtype=np.int64)
+    codes = st @ w
+    rows, cols = [], []
+    for i in range(n):
+        j = (i + 1) % n
+        t = st.copy()
+        t[:, [i, j]] = t[:, [j, i]]
+        rows.append(np.searchsorted(codes, t @ w))
+        cols.append(np.arange(dim))
+    rows, cols = np.concatenate(rows), np.concatenate(cols)
+    return sp.csr_matrix((np.ones(len(rows)), (rows, cols)), shape=(dim, dim))
+
+
+def _lowest_eig(H, dense_max, rng, k=4, ncv=40):
+    """Menor autovalor: denso si dim ≤ dense_max; si no, Lanczos (eigsh) con
+    arranque aleatorio y k autovalores pedidos (Review Focus 1)."""
+    dim = H.shape[0]
+    if dim <= max(dense_max, 2 * ncv):
+        return float(np.linalg.eigvalsh(H.toarray())[0])
+    from scipy.sparse.linalg import eigsh
+    w = eigsh(H, k=k, which="SA", v0=rng.standard_normal(dim), ncv=ncv, tol=0,
+              return_eigenvectors=False)
+    return float(np.min(w))
+
+
+def uls_sector_energies(d, n, dense_max=2000, seed=0):
+    """{números de color: menor autovalor de Σ_i P_{i,i+1} en ese sector}, para
+    todos los sectores (se diagonaliza uno por cada vector ordenado)."""
+    rng = np.random.default_rng(seed)
+    cache = {}
+    out = {}
+    for c in _compositions(n, d):
+        key = tuple(sorted(c, reverse=True))
+        if key not in cache:
+            cache[key] = _lowest_eig(uls_sector_matrix(d, n, key), dense_max, rng)
+        out[c] = cache[key]
+    return out
+
+
+def uls_ground_energy(d, n, field=None, dense_max=2000, seed=0, return_sector=False):
+    """E_0 de Σ_i P_{i,i+1} + Σ_i h_{c_i} (campo de color h = `field`, por
+    defecto nulo) en el anillo de n qudits: mínimo sobre todos los sectores de
+    números de color. Con return_sector, (E_0, sector del mínimo)."""
+    E = uls_sector_energies(d, n, dense_max=dense_max, seed=seed)
+    h = np.zeros(d) if field is None else np.asarray(field, dtype=float)
+    vals = {c: e + float(h @ np.array(c)) for c, e in E.items()}
+    c = min(vals, key=vals.get)
+    return (vals[c], c) if return_sector else vals[c]
+
+
+def uls_e_inf(d):
+    """e_∞(d) = 1 − (2/d)[ψ(1) − ψ(1/d)], energía por sitio de Σ P en el límite
+    termodinámico (Sutherland 1975; Messio–Mila 2012, ec. 4)."""
+    from scipy.special import digamma
+    return float(1 - 2 / d * (digamma(1.0) - digamma(1.0 / d)))

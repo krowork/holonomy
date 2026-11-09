@@ -408,3 +408,87 @@ def test_holonomia_rama_pi():
     p1, _ = qudit.primal_ring_toro(d, n, t1, **CLARABEL_OPTS)
     p2, _ = qudit.primal_ring_toro(d, n, t2, **CLARABEL_OPTS)
     assert p2 == pytest.approx(p1, abs=1e-7)
+
+
+# --- Qudits sin holonomía: energía del anillo SU(d) (rigidez, tarea 6) ------
+
+def _suma_intercambios(d, n):
+    """Σ_i P_{i,i+1} denso en el espacio completo de d^n estados."""
+    SP = np.zeros((d**n, d**n))
+    for s in range(d**n):
+        c = list(np.unravel_index(s, (d,) * n))
+        for i in range(n):
+            j = (i + 1) % n
+            t = c.copy()
+            t[i], t[j] = t[j], t[i]
+            SP[np.ravel_multi_index(t, (d,) * n), s] += 1
+    return SP
+
+
+@pytest.mark.parametrize("d,n", [(2, 4), (2, 5), (3, 3), (3, 4), (3, 5), (4, 4)])
+def test_uls_frente_a_denso(d, n):
+    # E_0(Σ P) por sectores de color = diagonalización del espacio completo.
+    E0 = np.linalg.eigvalsh(_suma_intercambios(d, n))[0]
+    assert qudit.uls_ground_energy(d, n) == pytest.approx(E0, abs=1e-10)
+
+
+@pytest.mark.parametrize("d,n", [(3, 3), (3, 4), (3, 5), (3, 6), (4, 4), (4, 5)])
+def test_uls_frente_a_testigo_su_d(d, n):
+    # La cota del testigo SU(d) (λ_max por bloques de color y momento) es
+    # d/(d+1)(1/d − e_P(n)).
+    x = qudit.su_d_witness(d, np.zeros(d))
+    cota = qudit.lam_max_sectors(d, n, x)[0] / qudit.ring_norm(d, n, x, np.zeros(d))
+    eP = qudit.uls_ground_energy(d, n) / n
+    assert cota == pytest.approx(d / (d + 1) * (1 / d - eP), abs=1e-10)
+
+
+@pytest.mark.parametrize("n", [3, 4, 5, 6, 7, 8])
+def test_uls_d2_tabla(n):
+    # d = 2: v(n, 0) = 2/3 (1/2 − e_P) reproduce la columna Θ = 0 de tab:valores.
+    v = 2 / 3 * (1 / 2 - qudit.uls_ground_energy(2, n) / n)
+    assert v == pytest.approx(TABLE[n][0], abs=TABLE_TOL)
+
+
+@pytest.mark.parametrize("d", [2, 3, 4, 5])
+def test_uls_n_igual_d(d):
+    # n = d: el estado totalmente antisimétrico da P = −1 en cada arista.
+    assert qudit.uls_ground_energy(d, d) == pytest.approx(-d, abs=1e-10)
+
+
+def test_uls_lanczos_aleatorio():
+    # Sector grande (d = 3, n = 9: el central tiene 1680 estados) con Lanczos de
+    # arranque aleatorio frente a la diagonalización densa del mismo sector.
+    E_l = qudit.uls_ground_energy(3, 9, dense_max=100, seed=1)
+    E_d = qudit.uls_ground_energy(3, 9, dense_max=10**5)
+    assert E_l == pytest.approx(E_d, abs=1e-9)
+
+
+def test_uls_sectores_y_campo():
+    # Sin campo, el mínimo está (también) en el sector más equilibrado; con un
+    # campo −h Σ_i |0⟩⟨0|_i grande, en el sector polarizado (n, 0, …, 0), que el
+    # mínimo sobre todos los sectores debe encontrar (Review Focus 2).
+    d, n = 3, 6
+    E = qudit.uls_sector_energies(d, n)
+    assert len(E) == 28  # composiciones de 6 en 3 partes
+    E0, counts = qudit.uls_ground_energy(d, n, return_sector=True)
+    assert E[(2, 2, 2)] == pytest.approx(E0, abs=1e-12)
+    h = np.array([-10.0, 0.0, 0.0])
+    Eh, ch = qudit.uls_ground_energy(d, n, field=h, return_sector=True)
+    assert ch == (6, 0, 0)
+    assert Eh == pytest.approx(n - 10 * n, abs=1e-10)  # Σ P = n en el polarizado
+    # El campo frente a la diagonalización densa del espacio completo.
+    diag = np.array([sum(h[c] for c in np.unravel_index(s, (d,) * n))
+                     for s in range(d**n)])
+    Ed = np.linalg.eigvalsh(_suma_intercambios(d, n) + np.diag(diag))[0]
+    assert Eh == pytest.approx(Ed, abs=1e-10)
+
+
+def test_uls_e_inf():
+    # Sutherland: e_∞(2) = 1 − 2 ln 2; la serie −1 + 2 Σ_{k≥2} (−1)^k ζ(k)/d^k.
+    from scipy.special import zeta
+    assert qudit.uls_e_inf(2) == pytest.approx(1 - 2 * np.log(2), abs=1e-14)
+    for d in (3, 4, 5):
+        serie = -1 + 2 * sum((-1) ** k * zeta(k) / d**k for k in range(2, 200))
+        assert qudit.uls_e_inf(d) == pytest.approx(serie, abs=1e-12)
+    assert qudit.uls_e_inf(3) == pytest.approx(-0.703212, abs=1e-6)
+    assert qudit.uls_e_inf(4) == pytest.approx(-0.825119, abs=1e-6)
