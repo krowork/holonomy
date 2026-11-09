@@ -1,0 +1,451 @@
+seccion,d,n,r,punto,recta,magnitud,valor,teoria,tarea7,nota
+teoria,2,,,,,eps,0.8862943611198908,,,
+teoria,2,,,,,A,0.5908629074132605,,,
+teoria,2,,,,,B,0.5,,,
+teoria,2,,,,,kappa,0.15378001609721847,,,
+teoria,2,,,,,v_inf,0.5908629074132605,,,
+teoria,3,,,,,eps,1.0365454100795157,,,
+teoria,3,,,,,A,0.3887045287798184,,,
+teoria,3,,,,,B,0.3333333333333333,,,
+teoria,3,,,,,kappa,0.14245060540020127,,,
+teoria,3,,,,,v_inf,0.7774090575596369,,,
+teoria,4,,,,,eps,1.0751189342373664,,,
+teoria,4,,,,,A,0.2866983824632977,,,
+teoria,4,,,,,B,0.25,,,
+teoria,4,,,,,kappa,0.12800345139022795,,,
+teoria,4,,,,,v_inf,0.8600951473898931,,,
+teoria,2,,0,Theta=pi,,coef,1.6449340668497785,1.6449340668482264,,
+teoria,2,,1,Theta=pi,,coef,-1.6449340667965093,-1.6449340668482264,,
+teoria,2,,0,,Theta,ventana_theta_sobre_pi,0.15378001609721847,0.15378001609721825,,
+teoria,3,,0,C,,coef,2.1932454224647806,2.193245422464302,,
+teoria,3,,0,M,,coef,1.6449340668468049,1.6449340668482264,,
+teoria,3,,1,C,,coef,-1.0966227112290026,-1.096622711232151,,
+teoria,3,,1,M,,coef,-0.5483113556126165,-0.5483113556160755,,
+teoria,3,,1,M,,coef_sin_campo,-1.6449340668470434,-1.6449340668482264,,
+teoria,3,,1,C,,coef_sin_campo,-1.0966227112290918,-1.096622711232151,,
+teoria,3,,0,C,,coef_sin_campo,2.1932454224648,2.193245422464302,,
+teoria,3,,0,M,,coef_sin_campo,1.6449340668467887,1.6449340668482264,,
+teoria,3,,0,,raiz,ventana_theta_sobre_pi,0.09496707026680085,0.09496707026680085,,
+teoria,3,,0,,peso,ventana_theta_sobre_pi,0.08224389537403136,0.08224389537403136,,
+teoria,3,,1,,peso,anclado_en_0_hasta_theta_sobre_L,0.5716995963998658,0.5716995963998658,,
+teoria,3,,1,,peso,anclado_en_M_desde_theta_sobre_L,0.714150201800067,0.714150201800067,,
+teoria,3,,1,,raiz,anclado_en_0_hasta_theta_sobre_L,0.2858497981999329,0.2858497981999329,,
+teoria,3,,1,,raiz,meseta_L/3_hasta_theta_sobre_L,0.6191831315332662,0.6191831315332662,,
+teoria,3,,1,,raiz,s_estrella_sobre_L,1.8143908951037725e-17,,,theta_sobre_L=0.0000
+teoria,3,,0,,raiz,s_estrella_sobre_L,-1.8778436338087404e-21,,,theta_sobre_L=0.0000
+teoria,3,,1,,raiz,s_estrella_sobre_L,-1.4104952526181278e-13,,,theta_sobre_L=0.0417
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.2924991628420057,,,theta_sobre_L=0.0417
+teoria,3,,1,,raiz,s_estrella_sobre_L,-1.3226232287308528e-13,,,theta_sobre_L=0.0833
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.5849981051919795,,,theta_sobre_L=0.0833
+teoria,3,,1,,raiz,s_estrella_sobre_L,2.00315485593167e-13,,,theta_sobre_L=0.1250
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666666344,,,theta_sobre_L=0.1250
+teoria,3,,1,,raiz,s_estrella_sobre_L,1.0108281608290173e-11,,,theta_sobre_L=0.1667
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666666495,,,theta_sobre_L=0.1667
+teoria,3,,1,,raiz,s_estrella_sobre_L,-2.7851793915011347e-13,,,theta_sobre_L=0.2083
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666666159,,,theta_sobre_L=0.2083
+teoria,3,,1,,raiz,s_estrella_sobre_L,2.767325598897251e-14,,,theta_sobre_L=0.2500
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666640505,,,theta_sobre_L=0.2500
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.04083432595949195,,,theta_sobre_L=0.2917
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666641886,,,theta_sobre_L=0.2917
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.3333326907130903,,,theta_sobre_L=0.3333
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666666125,,,theta_sobre_L=0.3333
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.33333333333323045,,,theta_sobre_L=0.3750
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666667196,,,theta_sobre_L=0.3750
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.33333333333594956,,,theta_sobre_L=0.4167
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666665351,,,theta_sobre_L=0.4167
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.33333333333967524,,,theta_sobre_L=0.4583
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666666037,,,theta_sobre_L=0.4583
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.3333333333333343,,,theta_sobre_L=0.5000
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666666597,,,theta_sobre_L=0.5000
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.3333333333341428,,,theta_sobre_L=0.5417
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666666634,,,theta_sobre_L=0.5417
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.33333333333394477,,,theta_sobre_L=0.5833
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666667183,,,theta_sobre_L=0.5833
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.37416744675291896,,,theta_sobre_L=0.6250
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666667174,,,theta_sobre_L=0.6250
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.666666663086698,,,theta_sobre_L=0.6667
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666667788,,,theta_sobre_L=0.6667
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.9591676126912931,,,theta_sobre_L=0.7083
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666668327,,,theta_sobre_L=0.7083
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.9999999999987739,,,theta_sobre_L=0.7500
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666668571,,,theta_sobre_L=0.7500
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.9999999999999429,,,theta_sobre_L=0.7917
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666681182,,,theta_sobre_L=0.7917
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.9999999999995496,,,theta_sobre_L=0.8333
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666668508,,,theta_sobre_L=0.8333
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.999999999999711,,,theta_sobre_L=0.8750
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666671782,,,theta_sobre_L=0.8750
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.9999999999998537,,,theta_sobre_L=0.9167
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.6666666666671746,,,theta_sobre_L=0.9167
+teoria,3,,1,,raiz,s_estrella_sobre_L,0.999999999999985,,,theta_sobre_L=0.9583
+teoria,3,,0,,raiz,s_estrella_sobre_L,0.7075009924062999,,,theta_sobre_L=0.9583
+teoria,3,,1,,raiz,s_estrella_sobre_L,1.0000000000000577,,,theta_sobre_L=1.0000
+teoria,3,,0,,raiz,s_estrella_sobre_L,1.0000000090823944,,,theta_sobre_L=1.0000
+teoria,3,,1,,peso,s_estrella_sobre_L,3.738120429695808e-17,,,theta_sobre_L=0.0000
+teoria,3,,0,,peso,s_estrella_sobre_L,3.152332753155174e-21,,,theta_sobre_L=0.0000
+teoria,3,,1,,peso,s_estrella_sobre_L,-1.254644627023853e-13,,,theta_sobre_L=0.0417
+teoria,3,,0,,peso,s_estrella_sobre_L,0.2924990524370859,,,theta_sobre_L=0.0417
+teoria,3,,1,,peso,s_estrella_sobre_L,-1.9493501833033007e-13,,,theta_sobre_L=0.0833
+teoria,3,,0,,peso,s_estrella_sobre_L,0.5849982310527417,,,theta_sobre_L=0.0833
+teoria,3,,1,,peso,s_estrella_sobre_L,-1.8231769690904043e-13,,,theta_sobre_L=0.1250
+teoria,3,,0,,peso,s_estrella_sobre_L,0.8774971919213161,,,theta_sobre_L=0.1250
+teoria,3,,1,,peso,s_estrella_sobre_L,-9.08032429400446e-15,,,theta_sobre_L=0.1667
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999989112,,,theta_sobre_L=0.1667
+teoria,3,,1,,peso,s_estrella_sobre_L,8.661097481945861e-13,,,theta_sobre_L=0.2083
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999999605,,,theta_sobre_L=0.2083
+teoria,3,,1,,peso,s_estrella_sobre_L,1.901862397414123e-12,,,theta_sobre_L=0.2500
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999997066,,,theta_sobre_L=0.2500
+teoria,3,,1,,peso,s_estrella_sobre_L,2.950012801783259e-12,,,theta_sobre_L=0.2917
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999999083,,,theta_sobre_L=0.2917
+teoria,3,,1,,peso,s_estrella_sobre_L,1.973932521007143e-11,,,theta_sobre_L=0.3333
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999998639,,,theta_sobre_L=0.3333
+teoria,3,,1,,peso,s_estrella_sobre_L,1.244271779994508e-11,,,theta_sobre_L=0.3750
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999998835,,,theta_sobre_L=0.3750
+teoria,3,,1,,peso,s_estrella_sobre_L,9.571327759708181e-14,,,theta_sobre_L=0.4167
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999998808,,,theta_sobre_L=0.4167
+teoria,3,,1,,peso,s_estrella_sobre_L,8.792684033191467e-12,,,theta_sobre_L=0.4583
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999980785,,,theta_sobre_L=0.4583
+teoria,3,,1,,peso,s_estrella_sobre_L,2.0433062715675854e-13,,,theta_sobre_L=0.5000
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999999554,,,theta_sobre_L=0.5000
+teoria,3,,1,,peso,s_estrella_sobre_L,1.8385420094392798e-12,,,theta_sobre_L=0.5417
+teoria,3,,0,,peso,s_estrella_sobre_L,1.000000000000232,,,theta_sobre_L=0.5417
+teoria,3,,1,,peso,s_estrella_sobre_L,0.0816686217467598,,,theta_sobre_L=0.5833
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999985363,,,theta_sobre_L=0.5833
+teoria,3,,1,,peso,s_estrella_sobre_L,0.37416761209307575,,,theta_sobre_L=0.6250
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999992834,,,theta_sobre_L=0.6250
+teoria,3,,1,,peso,s_estrella_sobre_L,0.6666666618380037,,,theta_sobre_L=0.6667
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999998328,,,theta_sobre_L=0.6667
+teoria,3,,1,,peso,s_estrella_sobre_L,0.9591657319920007,,,theta_sobre_L=0.7083
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999999932,,,theta_sobre_L=0.7083
+teoria,3,,1,,peso,s_estrella_sobre_L,0.9999999999989541,,,theta_sobre_L=0.7500
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999999939,,,theta_sobre_L=0.7500
+teoria,3,,1,,peso,s_estrella_sobre_L,0.9999999999995575,,,theta_sobre_L=0.7917
+teoria,3,,0,,peso,s_estrella_sobre_L,1.0000000000002216,,,theta_sobre_L=0.7917
+teoria,3,,1,,peso,s_estrella_sobre_L,0.9999999999974858,,,theta_sobre_L=0.8333
+teoria,3,,0,,peso,s_estrella_sobre_L,1.000000000000207,,,theta_sobre_L=0.8333
+teoria,3,,1,,peso,s_estrella_sobre_L,0.9999999999983021,,,theta_sobre_L=0.8750
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999999682,,,theta_sobre_L=0.8750
+teoria,3,,1,,peso,s_estrella_sobre_L,0.9999999999999928,,,theta_sobre_L=0.9167
+teoria,3,,0,,peso,s_estrella_sobre_L,1.0000000000000302,,,theta_sobre_L=0.9167
+teoria,3,,1,,peso,s_estrella_sobre_L,0.9999999999999769,,,theta_sobre_L=0.9583
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999998902,,,theta_sobre_L=0.9583
+teoria,3,,1,,peso,s_estrella_sobre_L,1.0000000000000417,,,theta_sobre_L=1.0000
+teoria,3,,0,,peso,s_estrella_sobre_L,0.9999999999999933,,,theta_sobre_L=1.0000
+energia,3,3,0,0,,n(E0-n*einf),-2.671091309284358,-2.193245422464302,,modos cero: -pi^2(d-1)/(3d) + (pi^2/d)·2|omega_r|^2
+coef,3,3,0,C,,iso,2.8528856829700233,2.193245422464302,3.7424636420029684,
+coef,3,3,0,C,,campo,2.8528856829700233,2.193245422464302,3.7424636420029684,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,3,0,C,,v_campo,0.6830127018922196,,0.5841707064441146,
+energia,3,3,0,C,,n(Emin-E0),3.8038475772933658,,,
+energia,3,3,0,C,,n(G-E0),3.8038475772933658,,,activos=111
+coef,3,3,0,M,,iso,2.2499999999999982,1.6449340668482264,3.5999999995923404,
+coef,3,3,0,M,,campo,2.2499999999999982,1.6449340668482264,3.5999999995923404,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,3,0,M,,v_campo,0.7500000000000002,,0.6000000000452955,
+energia,3,3,0,M,,n(Emin-E0),2.9999999999999973,,,
+energia,3,3,0,M,,n(G-E0),2.9999999999999973,,,activos=111
+rigidez,3,3,0,0,raiz,B_local,0.5000000000293658,0.3333333333333333,,
+rigidez,3,3,0,0,peso,B_local,0.4999999999977245,0.3333333333333333,,
+rigidez,3,3,0,C,raiz,B_amplitud,0.43358663129220326,0.3333333333333333,,
+rigidez,3,3,0,C,raiz,B_pendiente,0.35809914413394506,0.3333333333333333,,
+ventana,3,3,0,,raiz,iso_theta_sobre_pi,0.045548412569948946,0.09496707026680085,4.0690104166666664e-05,
+rigidez,3,3,0,M,peso,B_amplitud,0.4559453263905196,0.3333333333333333,,
+rigidez,3,3,0,M,peso,B_pendiente,0.41349682264709087,0.3333333333333333,,
+ventana,3,3,0,,peso,iso_theta_sobre_pi,0.0,0.08224389537403136,2.3492442593978914e-05,
+energia,3,4,1,0,,n(E0-n*einf),3.251393227938907,2.193245422464302,,modos cero: -pi^2(d-1)/(3d) + (pi^2/d)·2|omega_r|^2
+coef,3,4,1,C,,iso,-2.018471103002833,-1.096622711232151,-1.7245698550861537,
+coef,3,4,1,C,,campo,-2.018471103002833,-1.096622711232151,-1.7245698550861537,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,4,1,C,,v_campo,0.7511544439376777,,0.7327856159428853,
+energia,3,4,1,C,,n(Emin-E0),-2.69129480400378,,,
+energia,3,4,1,C,,n(G-E0),-2.69129480400378,,,activos=211;121;112
+coef,3,4,1,M,,iso,-2.485281374238557,-0.5483113556160755,-1.2397428982425076,
+coef,3,4,1,M,,campo,-1.656854249492369,-0.5483113556160755,-1.2397428982425076,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,4,1,M,,v_campo,0.7285533905932737,,0.7024839311401574,
+energia,3,4,1,M,,n(Emin-E0),-3.313708498984745,,,
+energia,3,4,1,M,,n(G-E0),-2.2091389993231587,,,activos=202;121;112
+rigidez,3,4,1,M,raiz,B_local,0.29289321883433733,0.3333333333333333,,
+rigidez,3,4,1,M,peso,B_local,0.5303300858524226,0.3333333333333333,,
+rigidez,3,4,1,0,raiz,B_amplitud,0.5036233010442133,0.3333333333333333,,"desde el punto liso mas cercano, sin campo"
+rigidez,3,4,1,C,raiz,B_amplitud,0.2837866153080257,0.3333333333333333,,"desde el punto liso mas cercano, sin campo"
+energia,3,5,2,0,,n(E0-n*einf),1.3999620311556016,2.193245422464302,,modos cero: -pi^2(d-1)/(3d) + (pi^2/d)·2|omega_r|^2
+coef,3,5,2,C,,iso,-0.5602969026521382,-1.096622711232151,-0.4658885434164428,
+coef,3,5,2,C,,campo,-0.5602969026521382,-1.096622711232151,-0.4658885434164428,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,5,2,C,,v_campo,0.7578220727310544,,0.7540457383616266,
+energia,3,5,2,C,,n(Emin-E0),-0.7470625368695183,,,
+energia,3,5,2,C,,n(G-E0),-0.7470625368695183,,,activos=221;212;122
+coef,3,5,2,M,,iso,-1.3855623673657391,-0.5483113556160755,0.061541709402579414,
+coef,3,5,2,M,,campo,0.043447534111032415,-0.5483113556160755,0.061541709402579414,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,5,2,M,,v_campo,0.7336722952605276,,0.7329485282488657,
+energia,3,5,2,M,,n(Emin-E0),-1.8474164898209877,,,
+energia,3,5,2,M,,n(G-E0),0.05793004548137137,,,activos=221;212;122
+rigidez,3,5,2,M,raiz,B_local,0.5110412579191018,0.3333333333333333,,
+rigidez,3,5,2,M,peso,B_local,0.2912176029957562,0.3333333333333333,,
+rigidez,3,5,2,0,raiz,B_amplitud,0.280773638143553,0.3333333333333333,,"desde el punto liso mas cercano, sin campo"
+rigidez,3,5,2,C,raiz,B_amplitud,0.5017012422235566,0.3333333333333333,,"desde el punto liso mas cercano, sin campo"
+energia,3,6,0,0,,n(E0-n*einf),-2.317672889921374,-2.193245422464302,,modos cero: -pi^2(d-1)/(3d) + (pi^2/d)·2|omega_r|^2
+coef,3,6,0,C,,iso,2.5004113965935346,2.193245422464302,2.858408066278602,
+coef,3,6,0,C,,campo,2.5004113965935346,2.193245422464302,2.858408066278602,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,6,0,C,,v_campo,0.7562380373054005,,0.7462936853697042,
+energia,3,6,0,C,,n(Emin-E0),3.333881862124713,,,
+energia,3,6,0,C,,n(G-E0),3.333881862124713,,,activos=222
+coef,3,6,0,M,,iso,1.9151252148230338,1.6449340668482264,2.5682963510217713,
+coef,3,6,0,M,,campo,1.9151252148230338,1.6449340668482264,2.5682963510217713,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,6,0,M,,v_campo,0.7724959867990255,,0.7543523441268384,
+energia,3,6,0,M,,n(Emin-E0),2.5535002864307224,,,
+energia,3,6,0,M,,n(G-E0),2.5535002864307224,,,activos=222
+rigidez,3,6,0,0,raiz,B_local,0.4033123773827807,0.3333333333333333,,
+rigidez,3,6,0,0,peso,B_local,0.4033123774593861,0.3333333333333333,,
+rigidez,3,6,0,C,raiz,B_amplitud,0.38001696344347186,0.3333333333333333,,
+rigidez,3,6,0,C,raiz,B_pendiente,0.35009173316420283,0.3333333333333333,,
+ventana,3,6,0,,raiz,iso_theta_sobre_pi,0.06491553727486377,0.09496707026680085,0.0198974609375,
+rigidez,3,6,0,M,peso,B_amplitud,0.388085507178313,0.3333333333333333,,
+rigidez,3,6,0,M,peso,B_pendiente,0.3718881066195588,0.3333333333333333,,
+ventana,3,6,0,,peso,iso_theta_sobre_pi,0.03280843029744661,0.08224389537403136,0.017360915076950416,
+energia,3,7,1,0,,n(E0-n*einf),2.870655559450954,2.193245422464302,,modos cero: -pi^2(d-1)/(3d) + (pi^2/d)·2|omega_r|^2
+coef,3,7,1,C,,iso,-1.7081926234099796,-1.096622711232151,-1.6178630539163197,
+coef,3,7,1,C,,campo,-1.7081926234099796,-1.096622711232151,-1.6178630539163197,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,7,1,C,,v_campo,0.7683315260049789,,0.7664880654030675,
+energia,3,7,1,C,,n(Emin-E0),-2.2775901645466394,,,
+energia,3,7,1,C,,n(G-E0),-2.2775901645466394,,,activos=322;232;223
+coef,3,7,1,M,,iso,-2.222728244171068,-0.5483113556160755,-1.049695876744852,
+coef,3,7,1,M,,campo,-1.0984298092150746,-0.5483113556160755,-1.049695876744852,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,7,1,M,,v_campo,0.7558873869397768,,0.754892816889364,
+energia,3,7,1,M,,n(Emin-E0),-2.963637658894748,,,
+energia,3,7,1,M,,n(G-E0),-1.4645730789534266,,,activos=322;232;223
+rigidez,3,7,1,M,raiz,B_local,0.3170441287793831,0.3333333333333333,,
+rigidez,3,7,1,M,peso,B_local,0.46031015981236784,0.3333333333333333,,
+rigidez,3,7,1,0,raiz,B_amplitud,0.45041891322933414,0.3333333333333333,,"desde el punto liso mas cercano, sin campo"
+rigidez,3,7,1,C,raiz,B_amplitud,0.31280014872994677,0.3333333333333333,,"desde el punto liso mas cercano, sin campo"
+energia,3,8,2,0,,n(E0-n*einf),1.7548093995476748,2.193245422464302,,modos cero: -pi^2(d-1)/(3d) + (pi^2/d)·2|omega_r|^2
+coef,3,8,2,C,,iso,-0.8348817204981813,-1.096622711232151,-0.8002038392217372,
+coef,3,8,2,C,,campo,-0.8348817204981742,-1.096622711232151,-0.8002038392217372,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,8,2,C,,v_campo,0.7698899117914715,,0.7693480698965272,
+energia,3,8,2,C,,n(Emin-E0),-1.1131756273309108,,,
+energia,3,8,2,C,,n(G-E0),-1.1131756273308895,,,activos=332;323;233
+coef,3,8,2,M,,iso,-1.5618125672492909,-0.5483113556160755,-0.22628125495381113,
+coef,3,8,2,M,,campo,-0.2305311240742114,-0.5483113556160755,-0.22628125495381113,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,8,2,M,,v_campo,0.7604469337223471,,0.7603805295173408,
+energia,3,8,2,M,,n(Emin-E0),-2.0824167563323854,,,
+energia,3,8,2,M,,n(G-E0),-0.3073748320989509,,,activos=332;323;233
+rigidez,3,8,2,M,raiz,B_local,0.446378522160155,0.3333333333333333,,
+rigidez,3,8,2,M,peso,B_local,0.3227284055373758,0.3333333333333333,,
+rigidez,3,8,2,0,raiz,B_amplitud,0.3164893958823525,0.3333333333333333,,"desde el punto liso mas cercano, sin campo"
+rigidez,3,8,2,C,raiz,B_amplitud,0.4419209629136934,0.3333333333333333,,"desde el punto liso mas cercano, sin campo"
+energia,3,9,0,0,,n(E0-n*einf),-2.2547436153371967,-2.193245422464302,,modos cero: -pi^2(d-1)/(3d) + (pi^2/d)·2|omega_r|^2
+coef,3,9,0,C,,iso,2.427153839751794,2.193245422464302,2.5877593028240624,
+coef,3,9,0,C,,campo,2.427153839751794,2.193245422464302,2.5877593028240624,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,9,0,C,,v_campo,0.7683214510380454,,0.766338667543326,
+energia,3,9,0,C,,n(Emin-E0),3.2362051196690826,,,
+energia,3,9,0,C,,n(G-E0),3.2362051196690826,,,activos=333
+coef,3,9,0,M,,iso,1.8459324684605167,1.6449340668482264,2.1358377614682853,
+coef,3,9,0,M,,campo,1.8459324684605167,1.6449340668482264,2.1358377614682853,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,9,0,M,,v_campo,0.7754970235231229,,0.771917945831669,
+energia,3,9,0,M,,n(Emin-E0),2.461243291280705,,,
+energia,3,9,0,M,,n(G-E0),2.461243291280705,,,activos=333
+rigidez,3,9,0,0,raiz,B_local,0.3834036464878121,0.3333333333333333,,
+rigidez,3,9,0,0,peso,B_local,0.38340364643119074,0.3333333333333333,,
+rigidez,3,9,0,C,raiz,B_amplitud,0.3688831498885481,0.3333333333333333,,
+rigidez,3,9,0,C,raiz,B_pendiente,0.3491665153912473,0.3333333333333333,,
+ventana,3,9,0,,raiz,iso_theta_sobre_pi,0.06739138459938596,0.09496707026680085,0.03462727864583333,
+rigidez,3,9,0,M,peso,B_amplitud,0.3740641252565225,0.3333333333333333,,
+rigidez,3,9,0,M,peso,B_pendiente,0.36375096668093687,0.3333333333333333,,
+ventana,3,9,0,,peso,iso_theta_sobre_pi,0.04049539045161128,0.08224389537403136,0.0286372875220603,
+energia,3,10,1,0,,n(E0-n*einf),2.693575335889502,2.193245422464302,,modos cero: -pi^2(d-1)/(3d) + (pi^2/d)·2|omega_r|^2
+coef,3,10,1,C,,iso,-1.5637768297948162,-1.096622711232151,nan,
+coef,3,10,1,C,,campo,-1.5637768297948162,-1.096622711232151,nan,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,10,1,C,,v_campo,0.7728450108384137,,nan,
+energia,3,10,1,C,,n(Emin-E0),-2.085035773059767,,,
+energia,3,10,1,C,,n(G-E0),-2.085035773059767,,,activos=433;343;334
+coef,3,10,1,M,,iso,-2.098910758918704,-0.5483113556160755,-0.9357580906098062,
+coef,3,10,1,M,,campo,-0.9587165151590193,-0.5483113556160755,-0.9357580906098062,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,10,1,M,,v_campo,0.7667944076920558,,0.7665648234465636,
+energia,3,10,1,M,,n(Emin-E0),-2.798547678558263,,,
+energia,3,10,1,M,,n(G-E0),-1.2782886868787013,,,activos=433;343;334
+coef,3,10,1,M,,tarea7_sonda,-0.9357580566881074,,,
+rigidez,3,10,1,M,raiz,B_local,0.32813258874682855,0.3333333333333333,,
+rigidez,3,10,1,M,peso,B_local,0.4310735118565982,0.3333333333333333,,
+rigidez,3,10,1,0,raiz,B_amplitud,0.42532824490655974,0.3333333333333333,,"desde el punto liso mas cercano, sin campo"
+rigidez,3,10,1,C,raiz,B_amplitud,0.3253224186360337,0.3333333333333333,,"desde el punto liso mas cercano, sin campo"
+energia,3,11,2,0,,n(E0-n*einf),1.8976818085851725,2.193245422464302,,modos cero: -pi^2(d-1)/(3d) + (pi^2/d)·2|omega_r|^2
+coef,3,11,2,C,,iso,-0.9428923228334922,-1.096622711232151,nan,
+coef,3,11,2,C,,campo,-0.9428923228334385,-1.096622711232151,nan,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,11,2,C,,v_campo,0.7734390655463688,,nan,
+energia,3,11,2,C,,n(Emin-E0),-1.2571897637779896,,,
+energia,3,11,2,C,,n(G-E0),-1.2571897637779212,,,activos=443;434;344
+coef,3,11,2,M,,iso,-1.629107539307786,-0.5483113556160755,nan,
+coef,3,11,2,M,,campo,-0.3412571160255342,-0.5483113556160755,nan,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,11,2,M,,v_campo,0.7684668737545679,,nan,
+energia,3,11,2,M,,n(Emin-E0),-2.1721433857436985,,,
+energia,3,11,2,M,,n(G-E0),-0.4550094880340456,,,activos=443;434;344
+rigidez,3,11,2,M,raiz,B_local,0.4201315187890575,0.3333333333333333,,
+rigidez,3,11,2,M,peso,B_local,0.33442179088090845,0.3333333333333333,,
+rigidez,3,11,2,0,raiz,B_amplitud,0.3301262083266399,0.3333333333333333,,"desde el punto liso mas cercano, sin campo"
+rigidez,3,11,2,C,raiz,B_amplitud,0.41716882779934356,0.3333333333333333,,"desde el punto liso mas cercano, sin campo"
+energia,3,12,0,0,,n(E0-n*einf),-2.2317826042903093,-2.193245422464302,,modos cero: -pi^2(d-1)/(3d) + (pi^2/d)·2|omega_r|^2
+coef,3,12,0,C,,iso,2.395919204838636,2.193245422464302,nan,
+coef,3,12,0,C,,campo,2.395919204838636,2.193245422464302,nan,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,12,0,C,,v_campo,0.7723945974789361,,nan,
+energia,3,12,0,C,,n(Emin-E0),3.194558939784848,,,
+energia,3,12,0,C,,n(G-E0),3.194558939784848,,,activos=444
+coef,3,12,0,M,,iso,1.8165108550300726,1.6449340668482264,nan,
+coef,3,12,0,M,,campo,1.8165108550300726,1.6449340668482264,nan,cota inferior rigurosa de n^2[v(0)-v_max]
+coef,3,12,0,M,,v_campo,0.7764182665748289,,nan,
+energia,3,12,0,M,,n(Emin-E0),2.422014473373409,,,
+energia,3,12,0,M,,n(G-E0),2.422014473373409,,,activos=444
+rigidez,3,12,0,0,raiz,B_local,0.37502071511763546,0.3333333333333333,,
+rigidez,3,12,0,0,peso,B_local,0.37502071551287486,0.3333333333333333,,
+rigidez,3,12,0,C,raiz,B_amplitud,0.36413605461848914,0.3333333333333333,,
+rigidez,3,12,0,C,raiz,B_pendiente,0.3488564001419729,0.3333333333333333,,
+ventana,3,12,0,,raiz,iso_theta_sobre_pi,0.06816592428979647,0.09496707026680085,,
+rigidez,3,12,0,M,peso,B_amplitud,0.3681020598616103,0.3333333333333333,,
+rigidez,3,12,0,M,peso,B_pendiente,0.360292774207571,0.3333333333333333,,
+ventana,3,12,0,,peso,iso_theta_sobre_pi,0.044130632333455586,0.08224389537403136,,
+coef,3,4-5,,C,,media_r1_r2,-1.2893840028274854,-1.096622711232151,,
+coef,3,4-5,,M,,media_r1_r2,-0.8067033576906684,-0.5483113556160755,,
+coef,3,7-8,,C,,media_r1_r2,-1.271537171954077,-1.096622711232151,,
+coef,3,7-8,,M,,media_r1_r2,-0.664480466644643,-0.5483113556160755,,
+coef,3,10-11,,C,,media_r1_r2,-1.2533345763141273,-1.096622711232151,,
+coef,3,10-11,,M,,media_r1_r2,-0.6499868155922768,-0.5483113556160755,,
+ventana,3,6,0,,raiz,fraccion_tarea7,0.20951958275221083,,,
+ventana,3,6,0,,peso,fraccion_tarea7,0.21109062256834873,,,
+ventana,3,6,0,,,cociente_raiz_peso_tarea7,1.1461066913412463,1.1547005383792517,,
+ventana,3,9,0,,raiz,fraccion_tarea7,0.364624059145463,,,
+ventana,3,9,0,,peso,fraccion_tarea7,0.3481995519767485,,,
+ventana,3,9,0,,,cociente_raiz_peso_tarea7,1.2091675449065744,1.1547005383792517,,
+d2,2,4,0,,,ventana_iso_Theta_sobre_pi,0.045963443568846754,0.15378001609721847,,tarea7 = tab:ventana de anillos (Delta optimizado)
+d2,2,4,0,,,B_pendiente,0.56941027790853,0.5,,
+d2,2,5,1,,,ventana_iso_Theta_sobre_pi,0.0,0.15378001609721847,,tarea7 = tab:ventana de anillos (Delta optimizado)
+d2,2,5,1,,,B_pendiente,0.5760162730388925,0.5,,
+d2,2,6,0,,,ventana_iso_Theta_sobre_pi,0.06064950011783287,0.15378001609721847,0.018587,tarea7 = tab:ventana de anillos (Delta optimizado)
+d2,2,6,0,,,B_pendiente,0.5574521484114019,0.5,,
+d2,2,7,1,,,ventana_iso_Theta_sobre_pi,0.0,0.15378001609721847,0.017261,tarea7 = tab:ventana de anillos (Delta optimizado)
+d2,2,7,1,,,B_pendiente,0.5766904351076725,0.5,,
+d2,2,8,0,,,ventana_iso_Theta_sobre_pi,0.06750917166970498,0.15378001609721847,0.032868,tarea7 = tab:ventana de anillos (Delta optimizado)
+d2,2,8,0,,,B_pendiente,0.5523674528626624,0.5,,
+d2,2,9,1,,,ventana_iso_Theta_sobre_pi,6.489979140043087e-05,0.15378001609721847,0.026632,tarea7 = tab:ventana de anillos (Delta optimizado)
+d2,2,9,1,,,B_pendiente,0.5742586476886898,0.5,,
+d2,2,10,0,,,ventana_iso_Theta_sobre_pi,0.07169531730529391,0.15378001609721847,0.043237,tarea7 = tab:ventana de anillos (Delta optimizado)
+d2,2,10,0,,,B_pendiente,0.5494157915327598,0.5,,
+d2,2,11,1,,,ventana_iso_Theta_sobre_pi,0.014050423626408475,0.15378001609721847,0.033113,tarea7 = tab:ventana de anillos (Delta optimizado)
+d2,2,11,1,,,B_pendiente,0.5715386825016684,0.5,,
+d2,2,12,0,,,ventana_iso_Theta_sobre_pi,0.07463953748342562,0.15378001609721847,0.050947,tarea7 = tab:ventana de anillos (Delta optimizado)
+d2,2,12,0,,,B_pendiente,0.547411017642748,0.5,,
+d2,2,13,1,,,ventana_iso_Theta_sobre_pi,0.023623869086297076,0.15378001609721847,0.038055,tarea7 = tab:ventana de anillos (Delta optimizado)
+d2,2,13,1,,,B_pendiente,0.5690479054539002,0.5,,
+d2,2,14,0,,,ventana_iso_Theta_sobre_pi,0.0768878678306834,0.15378001609721847,0.056863,tarea7 = tab:ventana de anillos (Delta optimizado)
+d2,2,14,0,,,B_pendiente,0.5459191260502351,0.5,,
+d2,2,15,1,,,ventana_iso_Theta_sobre_pi,0.03066966164439714,0.15378001609721847,0.042025,tarea7 = tab:ventana de anillos (Delta optimizado)
+d2,2,15,1,,,B_pendiente,0.5668603791696246,0.5,,
+d2,2,16,0,,,ventana_iso_Theta_sobre_pi,0.07869640050405922,0.15378001609721847,0.061534,tarea7 = tab:ventana de anillos (Delta optimizado)
+d2,2,16,0,,,B_pendiente,0.5447423128357374,0.5,,
+tau0,3,4,1,C,,v_tau0,0.7341250859214156,,0.7327856159428853,v_campo=0.751154444; n2(v_tau0-v7)=2.143e-02; n2(v_campo-v_tau0)=2.725e-01
+tau0,3,4,1,M,,v_tau0,0.7024839352338716,,0.7024839311401574,v_campo=0.728553391; n2(v_tau0-v7)=6.550e-08; n2(v_campo-v_tau0)=4.171e-01
+tau0,3,5,2,C,,v_tau0,0.7576477276443417,,0.7540457383616266,v_campo=0.757822073; n2(v_tau0-v7)=9.005e-02; n2(v_campo-v_tau0)=4.359e-03
+tau0,3,5,2,M,,v_tau0,0.7329485299851609,,0.7329485282488657,v_campo=0.733672295; n2(v_tau0-v7)=4.341e-08; n2(v_campo-v_tau0)=1.809e-02
+tau0,3,6,0,C,,v_tau0,0.746293685379129,,0.7462936853697042,v_campo=0.756238037; n2(v_tau0-v7)=3.393e-10; n2(v_campo-v_tau0)=3.580e-01
+tau0,3,6,0,M,,v_tau0,0.7543523489166606,,0.7543523441268384,v_campo=0.772495987; n2(v_tau0-v7)=1.724e-07; n2(v_campo-v_tau0)=6.532e-01
+tau0,3,7,1,C,,v_tau0,0.7667801570770534,,0.7664880654030675,v_campo=0.768331526; n2(v_tau0-v7)=1.431e-02; n2(v_campo-v_tau0)=7.602e-02
+tau0,3,7,1,M,,v_tau0,0.7548928178792245,,0.754892816889364,v_campo=0.755887387; n2(v_tau0-v7)=4.850e-08; n2(v_campo-v_tau0)=4.873e-02
+barrido,3,4,1,,raiz,s_estrella_sobre_L,0.0,,0.0,i_theta=0; v_familia=0.625000000; v_tarea7=0.625000000
+barrido,3,4,1,,raiz,s_estrella_sobre_L,0.0,,0.00011522879284008589,i_theta=1; v_familia=0.627012285; v_tarea7=0.627012283
+barrido,3,4,1,,raiz,s_estrella_sobre_L,0.0,,0.0010471673337554826,i_theta=2; v_familia=0.633101235; v_tarea7=0.633101087
+barrido,3,4,1,,raiz,s_estrella_sobre_L,0.0,,0.0035078466708893894,i_theta=3; v_familia=0.643426100; v_tarea7=0.643424390
+barrido,3,4,1,,raiz,s_estrella_sobre_L,0.0,,0.008200877110932554,i_theta=4; v_familia=0.658262488; v_tarea7=0.658252646
+barrido,3,4,1,,raiz,s_estrella_sobre_L,0.0,,0.02927087458107494,i_theta=5; v_familia=0.678018762; v_tarea7=0.677050392
+barrido,3,4,1,,raiz,s_estrella_sobre_L,0.0,,0.05173183825005077,i_theta=6; v_familia=0.703261419; v_tarea7=0.697818438
+barrido,3,4,1,,raiz,s_estrella_sobre_L,0.125,,0.09651010187221698,i_theta=7; v_familia=0.730100083; v_tarea7=0.717386831
+barrido,3,4,1,,raiz,s_estrella_sobre_L,0.9166666666666666,,0.5301884511913587,i_theta=8; v_familia=0.750940265; v_tarea7=0.732785616
+barrido,3,4,1,,raiz,s_estrella_sobre_L,0.9166666666666666,,0.9436909350491385,i_theta=9; v_familia=0.738890152; v_tarea7=0.721689474
+barrido,3,4,1,,raiz,s_estrella_sobre_L,0.9166666666666666,,0.9983561598338067,i_theta=10; v_familia=0.731783761; v_tarea7=0.711328022
+barrido,3,4,1,,raiz,s_estrella_sobre_L,0.9583333333333333,,-0.9954606570172414,i_theta=11; v_familia=0.728468009; v_tarea7=0.704720388
+barrido,3,4,1,,raiz,s_estrella_sobre_L,0.9583333333333333,,-0.9999967017258801,i_theta=12; v_familia=0.728468009; v_tarea7=0.702483931
+barrido,3,4,1,,peso,s_estrella_sobre_L,0.0,,0.0,i_theta=0; v_familia=0.625000000; v_tarea7=0.625000000
+barrido,3,4,1,,peso,s_estrella_sobre_L,0.0,,0.0,i_theta=1; v_familia=0.625669804; v_tarea7=0.625669804
+barrido,3,4,1,,peso,s_estrella_sobre_L,0.0,,0.0,i_theta=2; v_familia=0.627684966; v_tarea7=0.627684966
+barrido,3,4,1,,peso,s_estrella_sobre_L,0.0,,0.0,i_theta=3; v_familia=0.631062848; v_tarea7=0.631062848
+barrido,3,4,1,,peso,s_estrella_sobre_L,0.0,,0.0,i_theta=4; v_familia=0.635832738; v_tarea7=0.635832738
+barrido,3,4,1,,peso,s_estrella_sobre_L,0.0,,0.0,i_theta=5; v_familia=0.642036394; v_tarea7=0.642036394
+barrido,3,4,1,,peso,s_estrella_sobre_L,0.0,,0.0,i_theta=6; v_familia=0.649728831; v_tarea7=0.649728831
+barrido,3,4,1,,peso,s_estrella_sobre_L,0.0,,0.0,i_theta=7; v_familia=0.658979368; v_tarea7=0.658979368
+barrido,3,4,1,,peso,s_estrella_sobre_L,0.0,,0.014197729449513448,i_theta=8; v_familia=0.669872981; v_tarea7=0.669654566
+barrido,3,4,1,,peso,s_estrella_sobre_L,0.0,,0.03451486309038181,i_theta=9; v_familia=0.682512007; v_tarea7=0.681186256
+barrido,3,4,1,,peso,s_estrella_sobre_L,0.0,,0.19198682849750284,i_theta=10; v_familia=0.697018246; v_tarea7=0.692486892
+barrido,3,4,1,,peso,s_estrella_sobre_L,0.0,,0.5229532877549357,i_theta=11; v_familia=0.713535561; v_tarea7=0.699887022
+barrido,3,4,1,,peso,s_estrella_sobre_L,1.0,,1.0,i_theta=12; v_familia=0.728553391; v_tarea7=0.702483931
+barrido,3,5,2,,raiz,s_estrella_sobre_L,0.0,,0.0,i_theta=0; v_familia=0.735410197; v_tarea7=0.735410197
+barrido,3,5,2,,raiz,s_estrella_sobre_L,0.0,,0.0015055894323244936,i_theta=1; v_familia=0.736924399; v_tarea7=0.736917326
+barrido,3,5,2,,raiz,s_estrella_sobre_L,0.0,,0.013831775828050319,i_theta=2; v_familia=0.741492027; v_tarea7=0.741367681
+barrido,3,5,2,,raiz,s_estrella_sobre_L,0.375,,0.34828208055081533,i_theta=3; v_familia=0.748501653; v_tarea7=0.747695545
+barrido,3,5,2,,raiz,s_estrella_sobre_L,0.375,,0.45827069112869967,i_theta=4; v_familia=0.745427253; v_tarea7=0.744074479
+barrido,3,5,2,,raiz,s_estrella_sobre_L,0.41666666666666663,,0.5127339958931518,i_theta=5; v_familia=0.744617638; v_tarea7=0.742274824
+barrido,3,5,2,,raiz,s_estrella_sobre_L,0.41666666666666663,,0.5513747759353744,i_theta=6; v_familia=0.746150798; v_tarea7=0.743212701
+barrido,3,5,2,,raiz,s_estrella_sobre_L,0.41666666666666663,,0.5862639867748113,i_theta=7; v_familia=0.750775614; v_tarea7=0.747227047
+barrido,3,5,2,,raiz,s_estrella_sobre_L,0.6666666666666666,,0.8581366068371625,i_theta=8; v_familia=0.757822073; v_tarea7=0.754045738
+barrido,3,5,2,,raiz,s_estrella_sobre_L,1.0,,-0.8976280432663004,i_theta=9; v_familia=0.747418594; v_tarea7=0.744994871
+barrido,3,5,2,,raiz,s_estrella_sobre_L,1.0,,-0.9307729546482855,i_theta=10; v_familia=0.739739753; v_tarea7=0.738294766
+barrido,3,5,2,,raiz,s_estrella_sobre_L,1.0,,-0.9651439953061933,i_theta=11; v_familia=0.735182919; v_tarea7=0.734283832
+barrido,3,5,2,,raiz,s_estrella_sobre_L,1.0,,-0.9999993926422839,i_theta=12; v_familia=0.733672295; v_tarea7=0.732948528
+barrido,3,5,2,,peso,s_estrella_sobre_L,0.0,,0.0,i_theta=0; v_familia=0.735410197; v_tarea7=0.735410197
+barrido,3,5,2,,peso,s_estrella_sobre_L,0.0,,8.240096253944173e-11,i_theta=1; v_familia=0.735914469; v_tarea7=0.735913705
+barrido,3,5,2,,peso,s_estrella_sobre_L,0.0,,1.080663425230222e-09,i_theta=2; v_familia=0.737430056; v_tarea7=0.737417826
+barrido,3,5,2,,peso,s_estrella_sobre_L,0.0,,6.961555679391593e-11,i_theta=3; v_familia=0.739965297; v_tarea7=0.739903340
+barrido,3,5,2,,peso,s_estrella_sobre_L,0.0,,5.762471015101404e-10,i_theta=4; v_familia=0.743534200; v_tarea7=0.743338204
+barrido,3,5,2,,peso,s_estrella_sobre_L,0.0,,2.0999960025008046e-09,i_theta=5; v_familia=0.748156606; v_tarea7=0.747677553
+barrido,3,5,2,,peso,s_estrella_sobre_L,1.0,,0.9407915411498242,i_theta=6; v_familia=0.752076928; v_tarea7=0.751254621
+barrido,3,5,2,,peso,s_estrella_sobre_L,1.0,,0.9999999965410046,i_theta=7; v_familia=0.746388582; v_tarea7=0.745791251
+barrido,3,5,2,,peso,s_estrella_sobre_L,1.0,,0.9999999998638446,i_theta=8; v_familia=0.741777100; v_tarea7=0.741231776
+barrido,3,5,2,,peso,s_estrella_sobre_L,1.0,,0.9999999998378912,i_theta=9; v_familia=0.738216631; v_tarea7=0.737635607
+barrido,3,5,2,,peso,s_estrella_sobre_L,1.0,,0.9999999996741176,i_theta=10; v_familia=0.735687381; v_tarea7=0.735040437
+barrido,3,5,2,,peso,s_estrella_sobre_L,1.0,,0.9999999998673115,i_theta=11; v_familia=0.734175376; v_tarea7=0.733472815
+barrido,3,5,2,,peso,s_estrella_sobre_L,1.0,,0.9999999999380386,i_theta=12; v_familia=0.733672295; v_tarea7=0.732948528
+barrido,3,7,1,,raiz,s_estrella_sobre_L,0.0,,0.0,i_theta=0; v_familia=0.733470452; v_tarea7=0.733470452
+barrido,3,7,1,,raiz,s_estrella_sobre_L,0.0,,0.0005080330972597699,i_theta=1; v_familia=0.734240449; v_tarea7=0.734238544
+barrido,3,7,1,,raiz,s_estrella_sobre_L,0.0,,0.004085607962345567,i_theta=2; v_familia=0.736556916; v_tarea7=0.736525856
+barrido,3,7,1,,raiz,s_estrella_sobre_L,0.0,,0.014264437817602955,i_theta=3; v_familia=0.740439406; v_tarea7=0.740277051
+barrido,3,7,1,,raiz,s_estrella_sobre_L,0.0,,0.03539976244554019,i_theta=4; v_familia=0.745920905; v_tarea7=0.745383889
+barrido,3,7,1,,raiz,s_estrella_sobre_L,0.20833333333333331,,0.17136248916650157,i_theta=5; v_familia=0.752197637; v_tarea7=0.751103698
+barrido,3,7,1,,raiz,s_estrella_sobre_L,0.25,,0.2000138167628542,i_theta=6; v_familia=0.756700229; v_tarea7=0.755779942
+barrido,3,7,1,,raiz,s_estrella_sobre_L,0.25,,0.1914537775724225,i_theta=7; v_familia=0.762302108; v_tarea7=0.761223897
+barrido,3,7,1,,raiz,s_estrella_sobre_L,0.6666666666666666,,0.591351480130011,i_theta=8; v_familia=0.768331526; v_tarea7=0.766488065
+barrido,3,7,1,,raiz,s_estrella_sobre_L,1.0,,0.9492814892539072,i_theta=9; v_familia=0.763069332; v_tarea7=0.761941009
+barrido,3,7,1,,raiz,s_estrella_sobre_L,1.0,,0.9756557102691276,i_theta=10; v_familia=0.759068182; v_tarea7=0.758076189
+barrido,3,7,1,,raiz,s_estrella_sobre_L,1.0,,0.9904290849561724,i_theta=11; v_familia=0.756680917; v_tarea7=0.755695604
+barrido,3,7,1,,raiz,s_estrella_sobre_L,1.0,,0.9999961460652019,i_theta=12; v_familia=0.755887387; v_tarea7=0.754892817
+barrido,3,7,1,,peso,s_estrella_sobre_L,0.0,,0.0,i_theta=0; v_familia=0.733470452; v_tarea7=0.733470452
+barrido,3,7,1,,peso,s_estrella_sobre_L,0.0,,-2.673913524404255e-11,i_theta=1; v_familia=0.733726998; v_tarea7=0.733726788
+barrido,3,7,1,,peso,s_estrella_sobre_L,0.0,,-8.7812146237505e-11,i_theta=2; v_familia=0.734497354; v_tarea7=0.734493990
+barrido,3,7,1,,peso,s_estrella_sobre_L,0.0,,6.823576149410413e-11,i_theta=3; v_familia=0.735783679; v_tarea7=0.735766655
+barrido,3,7,1,,peso,s_estrella_sobre_L,0.0,,5.5979175973616324e-11,i_theta=4; v_familia=0.737589585; v_tarea7=0.737535814
+barrido,3,7,1,,peso,s_estrella_sobre_L,0.0,,1.6977037556528703e-10,i_theta=5; v_familia=0.739920161; v_tarea7=0.739788978
+barrido,3,7,1,,peso,s_estrella_sobre_L,0.0,,1.7929352171353214e-10,i_theta=6; v_familia=0.742782000; v_tarea7=0.742510216
+barrido,3,7,1,,peso,s_estrella_sobre_L,0.0,,8.047158152647164e-10,i_theta=7; v_familia=0.746183241; v_tarea7=0.745680228
+barrido,3,7,1,,peso,s_estrella_sobre_L,0.0,,6.89344940181252e-11,i_theta=8; v_familia=0.750133618; v_tarea7=0.749276451
+barrido,3,7,1,,peso,s_estrella_sobre_L,0.0,,5.348263844984764e-10,i_theta=9; v_familia=0.754644521; v_tarea7=0.753273151
+barrido,3,7,1,,peso,s_estrella_sobre_L,1.0,,0.9313425652226658,i_theta=10; v_familia=0.756945674; v_tarea7=0.755823325
+barrido,3,7,1,,peso,s_estrella_sobre_L,1.0,,1.0,i_theta=11; v_familia=0.756151774; v_tarea7=0.755129190
+barrido,3,7,1,,peso,s_estrella_sobre_L,1.0,,0.999999999890538,i_theta=12; v_familia=0.755887387; v_tarea7=0.754892817
+barrido,3,8,2,,raiz,s_estrella_sobre_L,0.0,,0.0,i_theta=0; v_familia=0.756844885; v_tarea7=0.756844885
+barrido,3,8,2,,raiz,s_estrella_sobre_L,0.0,,0.0005386832336907695,i_theta=1; v_familia=0.757453101; v_tarea7=0.757451929
+barrido,3,8,2,,raiz,s_estrella_sobre_L,0.0,,0.004609545016832918,i_theta=2; v_familia=0.759281665; v_tarea7=0.759262329
+barrido,3,8,2,,raiz,s_estrella_sobre_L,0.0,,0.016746494699142356,i_theta=3; v_familia=0.762342377; v_tarea7=0.762239094
+barrido,3,8,2,,raiz,s_estrella_sobre_L,0.375,,0.3834735795322767,i_theta=4; v_familia=0.763082112; v_tarea7=0.762973795
+barrido,3,8,2,,raiz,s_estrella_sobre_L,0.375,,0.417264344686286,i_theta=5; v_familia=0.763082112; v_tarea7=0.762952673
+barrido,3,8,2,,raiz,s_estrella_sobre_L,0.375,,0.4421916229245969,i_theta=6; v_familia=0.764309309; v_tarea7=0.764018074
+barrido,3,8,2,,raiz,s_estrella_sobre_L,0.375,,0.4631227272801055,i_theta=7; v_familia=0.766771610; v_tarea7=0.766260127
+barrido,3,8,2,,raiz,s_estrella_sobre_L,0.6666666666666666,,0.7635119645974394,i_theta=8; v_familia=0.769889912; v_tarea7=0.769348070
+barrido,3,8,2,,raiz,s_estrella_sobre_L,1.0,,-0.934362054781373,i_theta=9; v_familia=0.765970590; v_tarea7=0.765681714
+barrido,3,8,2,,raiz,s_estrella_sobre_L,1.0,,-0.9544720423074855,i_theta=10; v_familia=0.762895311; v_tarea7=0.762739520
+barrido,3,8,2,,raiz,s_estrella_sobre_L,1.0,,-0.9767323183303158,i_theta=11; v_familia=0.761058045; v_tarea7=0.760970671
+barrido,3,8,2,,raiz,s_estrella_sobre_L,1.0,,-0.999999665286383,i_theta=12; v_familia=0.760446934; v_tarea7=0.760380530
+barrido,3,8,2,,peso,s_estrella_sobre_L,0.0,,0.0,i_theta=0; v_familia=0.756844885; v_tarea7=0.756844885
+barrido,3,8,2,,peso,s_estrella_sobre_L,0.0,,-1.4405184497902964e-10,i_theta=1; v_familia=0.757047551; v_tarea7=0.757047422
+barrido,3,8,2,,peso,s_estrella_sobre_L,0.0,,2.602513605755045e-11,i_theta=2; v_familia=0.757655985; v_tarea7=0.757653921
+barrido,3,8,2,,peso,s_estrella_sobre_L,0.0,,-3.5727524131844287e-11,i_theta=3; v_familia=0.758671490; v_tarea7=0.758661049
+barrido,3,8,2,,peso,s_estrella_sobre_L,0.0,,4.712691482618122e-11,i_theta=4; v_familia=0.760096249; v_tarea7=0.760063272
+barrido,3,8,2,,peso,s_estrella_sobre_L,0.0,,2.4840315827611663e-10,i_theta=5; v_familia=0.761933330; v_tarea7=0.761852896
+barrido,3,8,2,,peso,s_estrella_sobre_L,0.0,,5.204310526521868e-10,i_theta=6; v_familia=0.764186702; v_tarea7=0.764020106
+barrido,3,8,2,,peso,s_estrella_sobre_L,1.0,,0.8901778321501691,i_theta=7; v_familia=0.765559596; v_tarea7=0.765328660
+barrido,3,8,2,,peso,s_estrella_sobre_L,1.0,,1.0,i_theta=8; v_familia=0.763713772; v_tarea7=0.763574633
+barrido,3,8,2,,peso,s_estrella_sobre_L,1.0,,1.0,i_theta=9; v_familia=0.762282232; v_tarea7=0.762182324
+barrido,3,8,2,,peso,s_estrella_sobre_L,1.0,,1.0,i_theta=10; v_familia=0.761261894; v_tarea7=0.761182953
+barrido,3,8,2,,peso,s_estrella_sobre_L,1.0,,0.9999999999725879,i_theta=11; v_familia=0.760650565; v_tarea7=0.760581380
+barrido,3,8,2,,peso,s_estrella_sobre_L,1.0,,1.0,i_theta=12; v_familia=0.760446934; v_tarea7=0.760380530
+proposicion,3,,,,,filas_que_cumplen,107,,107,
