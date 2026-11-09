@@ -5,8 +5,9 @@ Enunciado (grafo cualquiera, datos abelianos)
 Sea G un grafo con aristas orientadas e = (i, j) y datos R_e = R_z(phi_e).
 La marginal de la arista es rho_e(v) = I/4 + v tau_e(phi), con
 tau_e(phi) = (1 x U(phi_e)) tau (1 x U(phi_e))^+, tau la parte sin traza
-del estado de Werner y U(a) la rotación de ángulo a alrededor de z (en el
-qubit de llegada j). Un testigo es W = sum_e W_e, con W_e sin traza sobre los
+del estado de Werner y U(a) = exp(i a Z/2) la rotación alrededor de z en el
+qubit de llegada j (con este signo, R_e = R(U(phi_e)^+) = R_z(phi_e), como en
+`paulis.werner_state`). Un testigo es W = sum_e W_e, con W_e sin traza sobre los
 dos qubits de e, y su normalización es N_phi(W) = sum_e tr(W_e tau_e(phi)).
 Si rho tiene esas marginales, tr(rho W) = v N_phi(W) <= lambda_max(W), de
 modo que v(phi) <= lambda_max(W) para todo W con N_phi(W) = 1 (dualidad
@@ -23,12 +24,13 @@ Proposición. Si W es óptimo para phi y phi' = phi + delta, entonces
 N_phi'(W[delta]) = N_phi(W) = 1 y
     v(phi') - v(phi) <= lambda_max(W[delta]) - lambda_max(W),
 y, simétricamente, v(phi) - v(phi') <= lambda_max(W'[-delta]) -
-lambda_max(W') con W' óptimo para phi'. Con W invariante bajo la rotación
+lambda_max(W') con W' óptimo para phi'. Si W es invariante bajo la rotación
 global alrededor de z, que siempre puede elegirse así por promedio (paso (c)),
-lambda_max(W[delta]) solo depende de las holonomías de delta: si delta
-difiere en un gauge de un giro DeltaPsi concentrado en una arista e0, es W
-con un flujo DeltaPsi insertado por los ciclos que pasan por e0, y es
-2 pi-periódico en DeltaPsi.
+y W[delta] se forma con los términos promediados sobre esa rotación (que
+también suman W; paso (c)), lambda_max(W[delta]) solo depende de las
+holonomías de delta en los ciclos del grafo: delta difiere en un gauge de un
+giro DeltaPsi_c en cada arista e_c fuera de un árbol generador (uno por ciclo
+independiente), y es 2 pi-periódico en cada DeltaPsi_c.
 
 Demostración.
 (a) Normalización. Las rotaciones alrededor de z conmutan (datos abelianos),
@@ -38,16 +40,30 @@ Demostración.
     v(phi') <= lambda_max(W[delta]); y v(phi) = lambda_max(W) por ser W
     óptimo. Restando se obtiene la desigualdad. La simétrica es la misma
     con los papeles de phi y phi' intercambiados.
-(c) Invariancia gauge. Los datos y tau son invariantes bajo la rotación
-    global alrededor de z, así que promediando cada W_e sobre ese grupo se
-    obtiene otro testigo óptimo con la misma normalización; se puede suponer
-    que cada W_e conmuta con Z_i + Z_j. Si delta_e = g_j - g_i + DeltaPsi
-    [e = e0], con V = prod_k U_k(g_k) se tiene
-    V W_e V^+ = (1 x U(g_j - g_i)) (U(g_i) x U(g_i)) W_e (...)^+
-              = (1 x U(g_j - g_i)) W_e (...)^+,
-    de modo que W[delta] = V W[DeltaPsi 1_e0] V^+ y ambos tienen el mismo
-    espectro. Como U(2 pi) = -1, la conjugación por U(DeltaPsi + 2 pi) es la
-    misma que por U(DeltaPsi): un giro de 2 pi es un gauge.  QED
+(c) Invariancia gauge. La rotación global alrededor de z actúa sobre los
+    qubits de e como la conjugación por exp(i alpha (Z_i + Z_j)/2). Con datos
+    abelianos cada rho_e, y con él tau_e, es invariante: R_z(phi_e) conmuta
+    con R_z(alpha) (comprobado numéricamente: [rho_e, Z_i + Z_j] = 0 con
+    `paulis.werner_state(v, R_z(phi))`). El promedio de W sobre la rotación
+    conserva N y no sube lambda_max (convexidad): es otro óptimo, y se puede
+    suponer W invariante. Pero W[delta] depende de la descomposición
+    W = sum_e W_e, no solo de W (dos términos no invariantes que se cancelan
+    en la suma dejan de cancelarse al girarlos), y hace falta un paso más: se
+    sustituye cada W_e por su promedio Wb_e sobre la rotación. La suma no
+    cambia, sum_e Wb_e = W, porque W es invariante; N tampoco, porque
+    tr(Wb_e tau_e) = tr(W_e tau_e) por la invariancia de tau_e. Cada Wb_e
+    conmuta con Z_i + Z_j. Fijado un árbol generador, sean e_c las aristas
+    fuera de él (una por ciclo independiente); todo delta se escribe
+    delta_e = g_j - g_i + sum_c DeltaPsi_c [e = e_c], con DeltaPsi_c la
+    holonomía de delta en el ciclo fundamental de e_c. Con
+    V = prod_k U_k(g_k),
+    V Wb_e V^+ = (1 x U(g_j - g_i)) (U(g_i) x U(g_i)) Wb_e (...)^+
+               = (1 x U(g_j - g_i)) Wb_e (...)^+,
+    de modo que W[delta] = V W[sum_c DeltaPsi_c 1_e_c] V^+ y ambos tienen el
+    mismo espectro. Como U(2 pi) = -1, la conjugación por U(DeltaPsi_c + 2 pi) es la
+    misma que por U(DeltaPsi_c): un giro de 2 pi es un gauge.  QED
+En el anillo (XXZ) y en los diamantes (Heisenberg) cada término del testigo
+ya conmuta con Z_i + Z_j y el promedio no cambia nada.
 
 Para el anillo de n sitios en el gauge uniforme, phi_e = Theta/n y el giro
 Theta0 -> Theta1 es delta_e = (Theta1 - Theta0)/n: el testigo óptimo de
@@ -90,7 +106,7 @@ holonomías de las dos patas suben Psi. Con y óptimo en psi0,
     v(psi0 + Psi) <= lambda_max(W[Psi]),
 y la respuesta R(Psi) = lambda_max(W[Psi]) - lambda_max(W) acota
 v(psi0 + Psi) - v(psi0). El testigo de LadderDual solo tiene términos A, B y
-C, invariantes bajo la rotación global alrededor de z, así que R es
+C, cada uno invariante bajo la rotación global alrededor de z, así que R es
 2 pi-periódica en Psi (paso (c)).
 """
 import numpy as np

@@ -1,6 +1,6 @@
 """Asintótica de qudits con holonomía: coeficiente de 1/n² y ventana por clase n mód d.
 
-Artículo: sexto trabajo (rigidez), sección de qudits, asintótica; generaliza
+Artículo: quinto trabajo (rigidez), sección de qudits, asintótica; generaliza
 holonomia_werner.tex (\\cite{anillos}), secciones 6.2 (coeficiente ±π²/6 y
 rigidez de espín) y 6.3 (anchura límite de la ventana). Derivación completa,
 referencias y tablas: docs/superpowers/notes/2026-11-09-rigidez-asintotica.md.

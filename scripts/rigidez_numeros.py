@@ -25,8 +25,12 @@ CSV y se avisa.
 
 Datos:
   §4 anillos: data/rigidez_anillos.csv, data/edges_ed.csv (anchura de la
-     ventana de los qubits, tabla 1 de anillos);
-  §5 escaleras: data/rigidez_escaleras.csv y data/ladder_limit_L<L>.csv,
+     ventana de los qubits y v en 0 y pi, tabla 1 de anillos) y
+     data/table62.csv (tabla 2 de anillos), referencias independientes de v0
+     y v1;
+  §5 escaleras: data/rigidez_escaleras.csv (también la columna multiplete:
+     nivel superior único con f = 0, degenerado en momento con f = pi) y
+     data/ladder_limit_L<L>.csv,
      ladder_limit_F0_L<L>.csv (las mismas definiciones de variación, cota,
      exponentes locales, ajustes y Shanks que rigidez_escaleras.py, importadas
      de allí);
@@ -69,6 +73,8 @@ MEDIDAS = [
     ("1774 s; 1,75 GB", "1774 s en frío sin corrientes ni certificación, pico 1,75 GB"),
     ("110 s; 1,20 GB", "110 s, pico 1,20 GB"),
     ("tarda 31 s", "con el CSV escrito, 31 s"),
+    ("884 s + 1101 s con pico de 6,0 GB", "costó 884 s + 1101 s (pico 6,0 GB)"),
+    ("(6,6 GB", "pico 6,6 GB"),
 ]
 
 
@@ -205,6 +211,32 @@ def anillos(ck, num):
     num("8,00", f(pi_rows[6], "n2_cota_lema5"), "§4: 4n/den0 (Lema 5(i) de anillos), n = 6")
     num("26,67", f(r20, "n2_cota_lema5"), "§4: 4n/den0 (Lema 5(i) de anillos), n = 20")
     num("1,8543", f(r20, "n2_caida"), "§4: caída n^2[v(0) - v(pi)], n = 20")
+    num("2,2015", f(pi_rows[6], "n2_caida"), "§4: caída n^2[v(0) - v(pi)], n = 6")
+    # Isotropía por paridad: Delta0 = 1 con n par, != 1 con n impar.
+    dpar = max(abs(f(r, "Delta0") - 1) for n, r in pi_rows.items() if n % 2 == 0)
+    dimp = min(abs(f(r, "Delta0") - 1) for n, r in pi_rows.items() if n % 2 == 1)
+    ck.check(dpar < 1e-6 and dimp > 0.05,
+             f"§4: Delta0 = 1 con n par (a {dpar:.1e}) y anisótropo con n impar (|Delta0 - 1| >= {dimp:.3f})")
+    # v0 y v1 frente a las tablas 1 (edges_ed: v0, vpi, n <= 20) y 2 (table62:
+    # Theta = 0, pi/2, pi, n <= 16) de anillos: referencia independiente de la
+    # minimización en la rejilla de 7 flujos («a 10^{-14}» en §4).
+    t62 = {int(r["n"]): r for r in leer("table62.csv")}
+    eed = {int(r["n"]): r for r in leer("edges_ed.csv")}
+    c62 = {0: "v_0", 1: "v_pi/2", 2: "v_pi"}
+    ced = {0: "v0", 2: "vpi"}
+    d62 = ded = 0.0
+    n62 = ned = 0
+    for r in rows:
+        n = int(r["n"])
+        for T, v in ((f(r, "Theta0"), f(r, "v0")), (f(r, "Theta1"), f(r, "v1"))):
+            q = round(2 * T / pi)
+            if n in t62:
+                d62, n62 = max(d62, abs(f(t62[n], c62[q]) - v)), n62 + 1
+            if q in ced and n in eed:
+                ded, ned = max(ded, abs(f(eed[n], ced[q]) - v)), ned + 1
+    ck.check(d62 <= 1e-14 and ded <= 1e-14 and n62 == 44 and ned == 45,
+             f"§4: v0 y v1 frente a la tabla 2 de anillos (table62, {n62} valores, n <= 16) a {d62:.1e} y "
+             f"a la tabla 1 (edges_ed, {ned} valores, n <= 20) a {ded:.1e} (<= 1e-14)")
 
 
 
@@ -235,6 +267,42 @@ def escaleras(ck, num):
     num("1,7e-9", dref, "§5: máx |v del testigo - v de ladder_limit|")
     num("7,2e-15", max(abs(f(r, "dif_aleatorio")) for r in rows), "§5: Lanczos aleatorio, máx |dif|")
     num("9,1e-14", max(f(r, "dif_norma") for r in rows), "§5: normalización del giro, máx |N - 1|")
+
+    # Nivel superior del testigo (columna multiplete, etiquetas k:q x mult con
+    # k espines arriba y momento 2 pi q / L): único en f = 0; degenerado en
+    # momento en f = pi (0 y pi con L par, salvo L = 4, psi0 = pi; dos
+    # dobletes +-q con L impar), siempre en S^z = 0 (k = L).
+    def mult(r):
+        L = int(r["L"])
+        out = []
+        for tok in r["multiplete"].split():
+            kq, m = tok.split("x")
+            k, q = map(int, kq.split(":"))
+            out.append((k - L, q % L, int(m)))
+        return sorted(out)
+
+    f0 = [r for r in rows if r["f"] == "0"]
+    ck.check(len(f0) == 14 and all(mult(r) == [(0, 0, 1)] for r in f0),
+             f"§5: f = 0: nivel superior único (S^z = 0, momento 0) en los {len(f0)} testigos (14)")
+    fpp = [r for r in rows if r["f"] == "pi" and int(r["L"]) % 2 == 0]
+    dob = [r for r in fpp if mult(r) == [(0, 0, 1), (0, int(r["L"]) // 2, 1)]]
+    exc = [r for r in fpp if r not in dob]
+    ck.check(len(fpp) == 8 and len(dob) == 7 and len(exc) == 1 and int(exc[0]["L"]) == 4
+             and abs(f(exc[0], "psi0") - pi) < 1e-9 and mult(exc[0]) == [(0, 2, 1)],
+             f"§5: f = pi, L par: nivel superior en momentos 0 y pi en {len(dob)} de {len(fpp)} testigos; "
+             "el de L = 4, psi0 = pi solo en pi (7 de 8)")
+    fpi = [r for r in rows if r["f"] == "pi" and int(r["L"]) % 2 == 1]
+
+    def dos_dobletes(r):
+        L, mm = int(r["L"]), mult(r)
+        qs = sorted(q for _, q, _ in mm)
+        return (len(mm) == 4 and all(sz == 0 and m == 1 for sz, _, m in mm)
+                and all((L - q) % L in qs for q in qs) and 0 not in qs)
+    esperado = {5: [1, 2, 3, 4], 7: [1, 3, 4, 6], 9: [1, 3, 6, 8]}
+    ck.check(len(fpi) == 9 and all(dos_dobletes(r) for r in fpi)
+             and all(sorted(q for _, q, _ in mult(r)) == esperado[int(r["L"])] for r in fpi),
+             f"§5: f = pi, L impar: nivel superior en cuatro momentos, dos dobletes +-q "
+             f"(+-1, +-2 de 5; +-1, +-3 de 7 y de 9), en los {len(fpi)} testigos (9)")
 
     ser = {}
     for fn in ("pi", "0"):
@@ -390,6 +458,10 @@ def flujo(ck, num):
     pr = [abs(f(r, "v_primal") - f(r, "v_sup")) for r in rows if r["v_primal"] not in ("", "nan")]
     ck.check(len(pr) == 78, f"§7.3: primal en {len(pr)} puntos de malla (78)")
     num("1,9e-7", max(pr), "§7.3, §8: máx |dual - primal|, n <= 5")
+    ina = [r for r in rows if r["v_primal"] not in ("", "nan") and r["estado_primal"] == "optimal_inaccurate"]
+    ck.check(len(ina) == 77, f"§7.3, §8: {len(ina)} de los {len(pr)} primales optimal_inaccurate (77 de 78)")
+    ck.check(all(r["estado"] == "optimal" for r in rows),
+             f"§7.3, §8: planos de corte con estado optimal (no en_caja) en las {len(rows)} filas: caja inactiva")
     cus = [r for r in rows if r["clase"] in ("doblete", "triple")]
     num("0,030", min(f(r, "desdoblamiento") for r in cus), "§7.3: desdoblamiento de corrientes, mayor que", ">=")
     cert = [r for r in cus if r["cert_margen"] not in ("", "nan") and f(r, "cert_margen") > 1e-7]

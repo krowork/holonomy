@@ -329,8 +329,9 @@ def analysis(rows, chk):
               "R_0(pi/4)   R_0(pi/2)   gap_0      mult_0")
         wit = []
         for L in Ls:
-            ref, _ = ref_csv(fname, L)
+            ref, name = ref_csv(fname, L)
             if ref is None:
+                chk.info(f"AVISO: f = {fname}, L = {L}: falta data/{name}; se salta en el análisis")
                 continue
             vs = np.array([ref[round(p, 9)] for p in PSIS])
             jmin, jmax = int(np.argmin(vs)), int(np.argmax(vs))
@@ -338,6 +339,10 @@ def analysis(rows, chk):
             rp = rows.get((fname, L, round(np.pi, 9)))
             rm = rows.get((fname, L, round(float(PSIS[jmin]), 9)))
             if r0 is None or rp is None or rm is None:
+                falta = [nm for nm, r in (("psi0 = 0", r0), ("psi0 = pi", rp),
+                                          (f"psi0 = {PSIS[jmin]:.4f} (mínimo)", rm)) if r is None]
+                chk.info(f"AVISO: f = {fname}, L = {L}: faltan los testigos de {', '.join(falta)} "
+                         "en data/rigidez_escaleras.csv; se salta en el análisis")
                 continue
             var = vs[jmax] - vs[jmin]
             # Testigo del mínimo girado hasta el máximo: var <= K.

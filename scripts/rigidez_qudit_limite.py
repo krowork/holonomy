@@ -1,6 +1,6 @@
 """Qudits sin holonomía: v_max(n, 0) en forma cerrada y su límite n → ∞.
 
-Artículo: sexto trabajo (rigidez), sección de qudits (Proposición «qudits sin
+Artículo: quinto trabajo (rigidez), sección de qudits (Proposición «qudits sin
 holonomía» y su corolario); generaliza \\cite{anillos}, sección 3 (Θ = 0:
 v_max = (4q − 1)/3 con el fundamental de Heisenberg) y el límite del Teorema 10.
 Marco y notación: holonomy/qudit.py.
@@ -62,8 +62,8 @@ Comprueba:
      momento (`lam_max_sectors`; d = 3, n = 3..6; d = 4, n = 3..5);
   3. la fórmula frente al primal reducido por el toro (`primal_ring_toro`):
      d = 3, n = 3, 4, 5; d = 4, n = 3, 4 (los dos con v = 1). Con
-     --primal-d4n5 añade d = 4, n = 5 (el guion entero pasa a 117 s y 13,9 GB de
-     pico: no por defecto);
+     --primal-d4n5 añade d = 4, n = 5 (el guion entero pasa a 171 s y 13,9 GB de
+     pico, medidos con /usr/bin/time bajo ulimit -v 16000000: no por defecto);
   4. e_P(n) por sectores de color (d = 2, n ≤ 16; d = 3, n ≤ 12; d = 4,
      n ≤ 12): mínimo sobre todos los sectores, igual al del sector más
      equilibrado; Lanczos (sectores de más de 2000 estados) reevaluado con

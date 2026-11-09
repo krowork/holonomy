@@ -105,8 +105,11 @@ def test_ladder_kohn_L4():
 
 def test_witness_gap_bloques():
     # El gap es lambda_max menos el primer autovalor distinto de todos los
-    # bloques: igual con bloques densos completos (todos los k) que con
-    # dispersos (Lanczos) y solo k <= L; y coincide con el espectro completo.
+    # bloques: igual con bloques densos completos (todos los k) que con la
+    # mitad de los bloques (half=True, solo k <= L, dense_max=4); y coincide
+    # con el espectro completo. Con L = 4 todos los bloques tienen como mucho
+    # 20 estados y _top_eigs los diagonaliza densos (d <= 64): el camino de
+    # Lanczos no se ejercita aquí.
     from holonomy import ladder
     from holonomy.rigidez import witness_gap
     Dc = ladder.LadderDual(4)
@@ -136,7 +139,10 @@ def test_witness_gap_degenerado():
 
 
 def test_lam_max_aleatorio():
-    # Lanczos con arranque aleatorio y más vectores = lam_max (y eigh denso).
+    # lam_max_aleatorio = lam_max (eigh denso), con bloques completos y con
+    # half=True. Con L = 5 los bloques tienen como mucho 52 estados y
+    # _top_eigs los diagonaliza densos (d <= 64): se comprueba la interfaz
+    # (semilla, bloques dispersos de half), no el camino de Lanczos.
     from holonomy import ladder
     from holonomy.rigidez import lam_max_aleatorio
     Dc = ladder.LadderDual(5)

@@ -1,6 +1,6 @@
 """Qudits con holonomía (d = 3): cúspide y ventana del flujo del testigo óptimo.
 
-Artículo: sexto trabajo (rigidez), sección de qudits; generaliza
+Artículo: quinto trabajo (rigidez), sección de qudits; generaliza
 holonomia_werner.tex (\\cite{anillos}), secciones 5.3 a 5.5 (flujo óptimo,
 cúspide y ventana de desanclaje). Marco, notación y familia de testigos:
 holonomy/qudit.py.

@@ -43,7 +43,8 @@ Demostración (cadena de implicaciones; lo que comprueba este guion).
          suma de sus k cadenas abiertas de cuatro espines 1 (que no ven el
          giro) da eps(psi) >= (k/4) eps_4 para todo psi, de modo que el
          argumento de la Proposición (exceso X > 3c) sigue valiendo; con k = 3
-         se comprueba directamente para cada psi.
+         se comprueba directamente en una malla de 7 puntos de psi en [0, pi]
+         (numérico en la malla, no una demostración para todo psi).
      Por tanto lambda_min(H_psi(a*, b*)) = -k + 3c = lambda_min(H_0(a*, b*))
      (en la normalización de diamond_H, dividido por k).
  (4) De (1) y (3): v(psi) <= -lambda_min(H_0(a*))/(3k) = v(0) = 1/3 - c/k.
@@ -53,9 +54,10 @@ Comprueba (k = 3 y 5, psi en una malla de 7 puntos de [0, pi]):
      holonomía psi por cada vuelta, frente a las columnas fA, fB, vuelta_u,
      vuelta_w de data/diamond_ring_L3_igual.csv;
   2. [H_psi, T_m^2] = 0 para cada celda m;
-  3. lambda_min(H_psi(a*)) = lambda_min(H_0(a*)) = (-k + 3c)/k, y cota
-     v(psi) <= 1/3 - c/k, con eigsh de arranque aleatorio (los sectores no
-     se fijan por un arranque en caliente);
+  3. lambda_min(H_psi(a*)) = lambda_min(H_0(a*)) = (-k + 3c)/k, con eigsh de
+     arranque aleatorio (los sectores no se fijan por un arranque en
+     caliente); la cota v(psi) <= -lambda_min/3 = 1/3 - c/k es esa igualdad
+     dividida por -3 y no se comprueba aparte (columna v_cota del CSV);
   4. fragmentación con giro: lambda_min del hamiltoniano completo = mínimo
      sobre sectores con eps_m de la cadena abierta y el fundamental del anillo
      girado; el anillo girado cumple el exceso X > 3c, y para k = 5
@@ -177,14 +179,18 @@ def main():
 
     # 1. fases frente a los datos
     with open(DATA / "diamond_ring_L3_igual.csv") as fh:
-        data = [r for r in csv.DictReader(fh) if float(r["f"]) == 0.0]
+        todas = list(csv.DictReader(fh))
+    data = [r for r in todas if float(r["f"]) == 0.0]
+    # Una fila de f = 0 por cada psi de la malla del mapa (la de todas las f).
+    psis_mapa = sorted({float(r["psi"]) for r in todas})
+    n_psi = len(psis_mapa)
     err = 0.0
     for r in data:
         psi = float(r["psi"])
         fA, fB, hol = triangle_fluxes(3, diamond_phases(3, psi), periodic=True)
         err = max(err, max(abs(np.array(fA) - float(r["fA"]))), max(abs(np.array(fB) - float(r["fB"]))),
                   abs(hol[0] - float(r["vuelta_u"])), abs(hol[1] - float(r["vuelta_w"])))
-    chk.check(len(data) == 13 and err < 1e-12,
+    chk.check(sorted(float(r["psi"]) for r in data) == psis_mapa and err < 1e-12,
               f"fases del testigo = fases de los datos (f = 0): fA = fB = 0, holonomía psi por u y por w "
               f"({len(data)} filas, desvío {err:.1e})")
 
@@ -205,7 +211,7 @@ def main():
             ring_ref.setdefault(k, []).append(er)
             sec = sector_min(k, a_s / k, b_s / k, eps, er)
             X_ring = 4 * a_s * er + 2 * k - 4 * a_s * k
-            v_cota = -lam / 3
+            v_cota = -lam / 3  # paso (4); v_cota = 1/3 - c/k se sigue del check de lam
             chk.check(herm < 1e-12 and comm < 1e-10,
                       f"k = {k}, psi = {psi:.4f}: H hermítico ({herm:.0e}) y [H, T_m^2] = 0 ({comm:.1e})")
             chk.check(abs(lam - lam_ref) < 1e-9 and abs(lam - lam_alt) < 1e-9,
@@ -216,8 +222,6 @@ def main():
             ok_ring = X_ring > 3 * c + 0.1 and (k == 3 or er >= k / 4 * e4 - TOL)
             chk.check(ok_ring, f"k = {k}, psi = {psi:.4f}: anillo girado con exceso X > 3c"
                                + (f" y eps(psi) >= (k/4) eps_4 = {k / 4 * e4:.6f}" if k == 5 else ""))
-            chk.check(v_cota <= 1 / 3 - c / k + 1e-9,
-                      f"k = {k}, psi = {psi:.4f}: v(psi) <= {v_cota:.12f} <= 1/3 - c/k = {1 / 3 - c / k:.12f}")
             rows.append([k, f"{psi:.15f}", f"{lam:.15f}", f"{v_cota:.15f}", f"{1 / 3 - c / k:.15f}",
                          f"{er:.15f}", f"{X_ring:.15f}", f"{comm:.2e}"])
         er = np.array(ring_ref[k])
@@ -238,7 +242,8 @@ def main():
     chk.check(abs(v0 - (1 / 3 - c / 3)) < DATA_TOL,
               f"datos k = 3, f = 0, psi = 0: v = {v0:.12f} = 1/3 - c/3 = {1 / 3 - c / 3:.12f}")
     chk.check(np.all(vs <= v0 + DATA_TOL) and np.all(vs <= 1 / 3 - c / 3 + DATA_TOL),
-              f"datos: v(psi) <= v(0) + {DATA_TOL:.0e} en las 13 filas; máx v(psi) - v(0) = {np.max(vs - v0):.1e}")
+              f"datos: v(psi) <= v(0) + {DATA_TOL:.0e} en las {len(vs)} filas (una por psi del mapa, "
+              f"{n_psi}); máx v(psi) - v(0) = {np.max(vs - v0):.1e}")
     chk.info(f"datos: planitud, max |v(psi) - v(0)| = {np.max(abs(vs - v0)):.1e} (cotas del dual por "
              f"generación de columnas, de tolerancia {DATA_TOL:.0e})")
 
@@ -260,7 +265,7 @@ def main():
     k = 4
     for psi in (0.0, np.pi / 2, np.pi):
         lam = lam_min_aleatorio(diamond_H_twisted(k, a_s / k, b_s / k, psi), seed=5)
-        chk.info(f"k = 4, psi = {psi:.4f}: lambda_min(H_psi(a*)) = {lam:.12f} (el techo da v = 1/3 igualmente)")
+        chk.info(f"k = 4, psi = {psi:.4f}: lambda_min(H_psi(a*)) = {lam:.12f} (el techo da v <= 1/3; datos planos a 1e-8)")
 
     write_csv("rigidez_diamantes.csv",
               ["k", "psi", "lambda_min", "v_cota", "v_cota_psi0", "eps_anillo", "X_anillo", "conmutador"], rows)
