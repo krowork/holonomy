@@ -20,7 +20,7 @@ de teoría de campos, al nivel de \cite{anillos} sección 6.2: no es un teorema.
    términos de un sitio h·n_a (D_ab = h_a + h_b). No cambian la normalización N, pero desplazan cada
    sector de color en 2h·Q. Para n ≢ 0 todos los sectores tienen carga Q ≠ 0 y el dual los equilibra.
    - Eso cambia el coeficiente a orden dominante: en M pasa de −π²/6 a **−π²/18**.
-   - Obliga a que el nivel superior de todo óptimo ocupe al menos dos sectores de color (Proposición 2,
+   - Obliga a que el nivel superior de todo óptimo de la familia invariante ocupe al menos dos sectores de color (Proposición 2,
      exacta). Que eso sea además una cúspide, y que por tanto no haya ventana lisa, es un **Resultado** de
      teoría de campos para d ≥ 3, no una consecuencia de la Proposición: en d = 2 con n impar hay dos
      sectores y el punto es liso (§2).
@@ -81,9 +81,10 @@ Heisenberg (Δ = 1) con flujo. Comprobado contra `qudit.ring_witness`/`ring_norm
 ## 2. Proposición exacta: el nivel superior ocupa varios sectores si n ≢ 0
 
 **Proposición 2 (exacta, todo n y toda holonomía).** Sea x* un óptimo de la familia invariante de
-`qudit.py` (invariante bajo el toro diagonal y la traslación; restringirse a ella no pierde generalidad,
-porque el promedio de cualquier óptimo sobre ese grupo compacto es otro óptimo invariante, y solo para
-ellos tienen sentido los sectores de color). Esta familia da v_max. Entonces 0 está en la envolvente convexa de las cargas Q_N de los sectores de
+`qudit.py` (invariante bajo el toro diagonal, la traslación y r∘K; restringirse a ella no pierde generalidad:
+los datos y N son invariantes y λ_max es convexa (Lema 6 de escaleras), así que el promedio de
+cualquier óptimo sobre ese grupo es otro óptimo invariante; demostración completa en el docstring de
+`holonomy/qudit.py`, l. 37-73. Solo para ellos tienen sentido los sectores de color). Esta familia da v_max. Entonces 0 está en la envolvente convexa de las cargas Q_N de los sectores de
 color que contienen el nivel superior de W(x*). En particular, si n ≢ 0 (mód d), el nivel superior ocupa
 al menos dos sectores de color distintos.
 
