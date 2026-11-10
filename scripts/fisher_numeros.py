@@ -46,6 +46,18 @@ OTROS = {
     "0,3": "eps y v",
     "0,1": "v",
     "0,2": "v",
+    "0,005": "Theta/pi de la tabla del anillo",
+    "0,015": "Theta/pi de la tabla del anillo",
+    "0,0195": "Theta/pi de la tabla del anillo",
+    "0,05": "Theta/pi de la tabla del anillo",
+    "0,25": "Theta/pi de la tabla del anillo",
+    "0,5": "Theta/pi de la tabla del anillo",
+    "0,75": "Theta/pi de la tabla del anillo",
+    "0,01": "Theta/pi de la tabla del anillo",
+    "0,018587": "anchura de la ventana, n = 6, tabla 1 del primer artículo (edge.py la comprueba)",
+    "2e-5": "error del contraste de la fórmula de los pesos con el SDP en el primer artículo (observación tras el Teorema 19)",
+    "1e-5": "1 - v/vmax del límite de S_G (anillo_entropia.py)",
+    "3e-3": "distancia al borde, en pi (CERCA de anillo_entropia.py)",
 }
 
 
@@ -185,6 +197,37 @@ def main():
     c("5,17e-5", res["vmax_h_menos_vmax0"], "vmax(+-1e-2) - vmax(0)")
     c("5,17", res["chiF_reoptimizado_richardson"], "5,17 en el cociente de la raíz")
     c("0,0152", res["chiF_girado_sdp"], "0,0152 en el cociente de la raíz")
+
+    # §5, anillo de 6 (anillo_entropia.py)
+    an = {round(float(r["Theta_pi"]), 7): r for r in leer("anillo_entropia.csv")}
+    filas = sorted(an.values(), key=lambda r: float(r["Theta_pi"]))
+    borde = next(float(r["Theta_pi"]) for r in filas if int(r["en_cuspide"])) - 1e-4
+    c("0,0185865", borde, "anillo 6: borde de la ventana (primer punto de la cúspide menos 1e-4)")
+    chk.check(all(int(r["dim_autoespacio"]) == 1 and float(r["S"]) < 1e-12 for r in filas if float(r["Theta_pi"]) < borde)
+              and all(int(r["dim_autoespacio"]) == 2 and int(r["rango"]) == 4 for r in filas if float(r["Theta_pi"]) > borde),
+              "anillo 6: simple y S = 0 dentro; doblete con rango 4/4 fuera")
+    c("1,6e-8", max(float(r["residuo"]) for r in filas), "anillo 6: residuo máximo del primal")
+    tabla = {0.0195: ("5,772e-4", "0,004882"), 0.05: ("0,019635", "0,09662"), 0.1: ("0,050025", "0,19859"),
+             0.25: ("0,13577", "0,39721"), 0.5: ("0,26543", "0,57866"), 0.75: ("0,38500", "0,66646")}
+    for t, (pm, S) in tabla.items():
+        c(pm, float(an[t]["p_menos"]), f"anillo 6, Theta = {t} pi: p_-")
+        c(S, float(an[t]["S"]), f"anillo 6, Theta = {t} pi: S")
+    chk.check(abs(float(an[1.0]["p_menos"]) - 0.5) < 1e-12 and abs(float(an[1.0]["S"]) - np.log(2)) < 1e-12,
+              "anillo 6, Theta = pi: p_- = 1/2, S = ln 2")
+    err = max(abs(float(an[t]["p_menos"]) - float(an[t]["p_menos_pesos"])) for t in (0.1, 0.25, 0.5, 0.75, 1.0))
+    chk.check(1e-9 < err < 5e-9, f"anillo 6: p_- frente a la fórmula de los pesos, error {err:.1e} -> «3e-9»")
+    vistas.add("3e-9")
+    cerca = [r for r in filas if any(abs(float(r["Theta_pi"]) - borde - d) < 1e-9 for d in (1e-4, 3e-4, 1e-3, 3e-3))]
+    chk.check(len(cerca) == 4, "anillo 6: los cuatro puntos junto al borde (1e-4, 3e-4, 1e-3, 3e-3)")
+    pend = [float(r["p_menos"]) / (float(r["Theta_pi"]) - borde) for r in cerca]
+    c("0,632", max(pend), "anillo 6: pendiente máxima de p_- cerca del borde")
+    c("0,631", min(pend), "anillo 6: pendiente mínima")
+    for r, txt in zip(cerca, ("1,00000", "0,99999", "0,99996", "0,99987")):
+        pm = float(r["p_menos"])
+        c(txt, float(r["S"]) / (pm * (1 - np.log(pm))), f"anillo 6: S/[p(1 - ln p)] en {float(r['Theta_pi']) - borde:.0e}")
+    lim = {float(r["Theta_pi"]): r for r in leer("anillo_entropia_limite.csv")}
+    for t, txt in ((0.01, "0,00078"), (0.25, "0,39920"), (1.0, "0,69371")):
+        c(txt, float(lim[t]["S_G"]), f"anillo 6: S_G en 1 - v/vmax = 1e-5, Theta = {t} pi")
 
     # Cobertura
     sueltos = sorted(set(en_tex) - vistas - set(OTROS))
