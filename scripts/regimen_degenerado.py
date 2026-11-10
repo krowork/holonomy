@@ -20,13 +20,16 @@ Comprobaciones:
   1. 2 x 3: espectro de P Sr P, a, S*, polinomio de z, factibilidad de rho* (15 correlaciones por arista); máxima
      entropía densa en eps = 1e-2..1e-4: multiplicador de peldaño -> a, beta sqrt(eps) frente a 18 a sqrt(c/6),
      S - S* ~ sqrt(eps).
+  1b. 2 x 3 con flujo: rho*(t) por máxima entropía en el soporte de la Proposición 8(b) (dimensión 36); rango 16,
+     parte impar derivable y parte par con un pico, S*(t) = S*(0) + s1 |t|; la SLD de la máxima entropía tiende a
+     la Fisher de la parte impar, y con eps = 1e-4 el pico aparece suavizado en |t| ~ 23/beta.
   2. Diamantes k = 2, 3, 4: espectro conjunto completo, vmax por programación lineal, cara óptima y S* frente a la
      fórmula; k = 3, 5, 7: degeneración 2k del fundamental en S^z = 1/2 y sus (o, w); k = 2, 4, 6: fundamental de
      H(0,185) = las dos teselas.
   3. Diamantes k = 3, 4: máxima entropía clásica de dos parámetros en eps = 1e-2..1e-6: beta/ln(1/eps) acotado,
      beta sqrt(eps) -> 0, S - S* ~ eps; k = 4: el a de la máxima entropía frente al a de mayor gap.
 
-Escribe data/regimen_degenerado{,_diamantes,_aproximacion}.csv.
+Escribe data/regimen_degenerado{,_fisher,_diamantes,_aproximacion,_resumen}.csv.
 
 Uso: (ulimit -v 14000000; OMP_NUM_THREADS=4 .venv/bin/python scripts/regimen_degenerado.py)
 """
@@ -44,7 +47,7 @@ import cvxpy as cp
 from fisher_kubo_mori import MaxEnt, escalera
 from holonomy.diamond import chain_edges, n_sites, edge_kinds
 from holonomy.paulis import pauli_string
-from holonomy.report import write_csv
+from holonomy.report import read_csv, write_csv
 
 E_PENT = -3.3815016433276  # menor raíz de 2x^3 + 8x^2 + 3x - 4 (Prop. del punto A)
 C_A = (8 + 2 * E_PENT) / (3 * (2 - E_PENT))
@@ -113,6 +116,108 @@ def prisma(chk):
               f"2x3: S - S* cae {q[0]:.3f} y {q[1]:.3f} veces por década (sqrt(10) = {np.sqrt(10):.3f}): ~ sqrt(eps)")
     write_csv("regimen_degenerado.csv", ("eps", "beta", "beta_sqrt_eps", "x_peldano", "S", "S_menos_Sast", "residuo"),
               filas)
+    return me, edges, u, rho, Sst
+
+
+def maxent_soporte(Op, objetivo, tol=1e-12):
+    """Máxima entropía dentro de un subespacio (operadores ya restringidos), por Newton con mínimos cuadrados: los
+    operadores restringidos son dependientes, y el óptimo puede estar en el borde (los pesos que sobran caen a 0)."""
+    K = len(Op)
+    y = np.zeros(K)
+    for _ in range(300):
+        E, U = eigh(np.einsum("k,kab->ab", y, Op))
+        p = np.exp(E - logsumexp(E))
+        M = U.conj().T[None] @ Op @ U[None]
+        m = np.einsum("i,kii->k", p, M).real
+        r = m - objetivo
+        if np.abs(r).max() < tol:
+            break
+        dE, dp = E[:, None] - E[None, :], p[:, None] - p[None, :]
+        with np.errstate(divide="ignore", invalid="ignore"):
+            w = np.where(np.abs(dE) > 1e-10, dp / np.where(dE == 0, 1, dE), (p[:, None] + p[None, :]) / 2)
+        g = ((M * w[None]).reshape(K, -1) @ M.transpose(0, 2, 1).reshape(K, -1).T).real - np.outer(m, m)
+        paso = -np.linalg.lstsq(g, r, rcond=1e-12)[0]
+        a = 1.0
+        while a > 1e-8:
+            En, Un = eigh(np.einsum("k,kab->ab", y + a * paso, Op))
+            pn = np.exp(En - logsumexp(En))
+            if np.abs(np.einsum("i,kii->k", pn, Un.conj().T[None] @ Op @ Un[None]).real - objetivo).max() < np.abs(r).max():
+                break
+            a /= 2
+        y = y + a * paso
+    return (U * p) @ U.conj().T, float(np.abs(r).max())
+
+
+def fisher_prisma(chk, me, edges, u, rho64, Sst):
+    """La familia de estados óptimos rho*(t) de la 2 x 3 en el flujo de plaquetas. Por la Proposición 8(b) de
+    holonomia, todo estado factible en vmax = 1/3 vive en (Z_a + Z_b + Z_c)^2 = 1 en cada triángulo (dimensión 36,
+    sin depender de t); rho*(t) es la máxima entropía ahí. rho*(t) = rho0 + t X + |t| Y + O(t^2): la parte par tiene
+    un pico, S*(t) = S*(0) + s1 |t|, y la SLD de la máxima entropía tiende a la Fisher de la parte impar."""
+    s = np.arange(64)
+    z = lambda i: 1 - 2 * ((s >> (5 - i)) & 1)
+    idx = np.flatnonzero(((z(0) + z(1) + z(2))**2 == 1) & ((z(3) + z(4) + z(5))**2 == 1))
+    Op = me.O[:, idx][:, :, idx]
+    R0 = rho64[np.ix_(idx, idx)]
+    e0, U0 = np.linalg.eigh(R0)
+    filas = []
+    res_max = 0.0
+    rho_t = {}
+    for t in (0.001, 0.002, 0.004, 0.005, 0.01, 0.02, 0.05, 0.2):
+        for sg in (1, -1):
+            rho_t[sg * t], r = maxent_soporte(Op, me.objetivo(1 / 3, sg * t * u))
+            res_max = max(res_max, r)
+    ent = lambda R: entropia(np.clip(np.linalg.eigvalsh(R), 0, None))
+    rango = [int((np.linalg.eigvalsh(rho_t[t]) > 1e-7).sum()) for t in (0.01, 0.05, 0.2)]
+    resto = max(np.sort(np.linalg.eigvalsh(rho_t[t]))[-17] for t in (0.01, 0.05, 0.2))
+    chk.check(len(idx) == 36 and rango == [16, 16, 16] and res_max < 1e-11,
+              f"2x3: rho*(t) en el soporte de dimensión {len(idx)}: rango 16 en t = 0,01, 0,05, 0,2 (los otros 20 "
+              f"autovalores <= {resto:.0e}); residuo <= {res_max:.0e}")
+
+    def sld(X):
+        Xt = U0.conj().T @ X @ U0
+        ss = e0[:, None] + e0[None, :]
+        return float((2 * np.abs(Xt)**2 / np.where(ss > 1e-12, ss, np.inf)).sum())
+
+    impar, par, F = {}, {}, {}
+    for t in (0.005, 0.01, 0.02):
+        D = rho_t[t] - rho_t[-t]
+        impar[t] = np.abs(np.linalg.eigvalsh(D)).sum() / 2 / t
+        par[t] = np.abs(np.linalg.eigvalsh((rho_t[t] + rho_t[-t]) / 2 - R0)).sum() / t
+        F[t] = sld(D / (2 * t))
+        filas.append([t, impar[t], par[t], F[t], ent(rho_t[t]) - Sst])
+    F_odd = (4 * F[0.005] - F[0.01]) / 3
+    chk.check(max(impar.values()) - min(impar.values()) < 1e-3 and min(par.values()) > 0.8,
+              f"2x3: |parte impar|_1/t = {', '.join(f'{v:.5f}' for v in impar.values())} y |parte par|_1/t = "
+              f"{', '.join(f'{v:.4f}' for v in par.values())} (t = 0,005..0,02): rho*(t) no es derivable en t = 0")
+    pend = {t: (ent(rho_t[t]) - Sst) / t for t in (0.001, 0.002, 0.004)}
+    s1 = 2 * pend[0.001] - pend[0.002]
+    chk.check(all(abs(ent(rho_t[t]) - ent(rho_t[-t])) < 1e-9 for t in (0.01, 0.2)) and 0.6 < s1 < 0.66,
+              f"2x3: S*(t) par y (S*(t) - S*(0))/t = {pend[0.004]:.6f}, {pend[0.002]:.6f}, {pend[0.001]:.6f} "
+              f"(t = 0,004..0,001): pico s1 = {s1:.4f}")
+    t0 = {float(r["eps"]): float(r["fisher_sld"]) for r in read_csv("fisher_kubo_mori_T0.csv") if int(r["L"]) == 3}
+    ext = t0[1e-4] + (t0[1e-4] - t0[1e-3]) / (np.sqrt(10) - 1)
+    chk.check(abs(ext / F_odd - 1) < 1e-3,
+              f"2x3: Fisher (SLD) de la parte impar en rho0 = {F_odd:.6f} (Richardson; {F[0.02]:.6f}, {F[0.01]:.6f}, "
+              f"{F[0.005]:.6f}); la SLD de la máxima entropía, {t0[1e-2]:.4f}, {t0[1e-3]:.4f}, {t0[1e-4]:.4f}, "
+              f"extrapolada como sqrt(eps): {ext:.5f}")
+    # cruce en la máxima entropía completa: pico suavizado en |t| ~ 2 s1/(beta f'')
+    T0 = {float(r["eps"]): r for r in read_csv("fisher_energia_libre_T0.csv") if int(r["L"]) == 3}
+    S2, beta = float(T0[1e-4]["S2"]), float(T0[1e-4]["beta"])
+    v = (1 - 1e-4) / 3
+    x, _, S0, _ = me.resuelve(me.objetivo(v, 0 * u))
+    cruce = {}
+    for t in (0.01, 0.2):
+        x, _, St, r = me.resuelve(me.objetivo(v, t * u), x)
+        cruce[t] = St - S0
+    w = 2 * s1 / float(T0[1e-4]["f_tt"]) / beta
+    chk.check(abs(cruce[0.01] / (S2 * 0.01**2 / 2) - 1) < 0.1 and abs(cruce[0.2] / (ent(rho_t[0.2]) - Sst) - 1) < 0.15,
+              f"2x3, eps = 1e-4 (beta = {beta:.1f}): Delta S_G = {cruce[0.01]:.5f} en t = 0,01 (1/2 S'' t^2 = "
+              f"{S2 * 0.01**2 / 2:.5f}) y {cruce[0.2]:.5f} en t = 0,2 (S*(0,2) - S*(0) = {ent(rho_t[0.2]) - Sst:.5f}; "
+              f"1/2 S'' t^2 = {S2 * 0.2**2 / 2:.4f}); anchura del pico 2 s1/(beta f'') = {w:.4f} = {w * beta:.1f}/beta")
+    RESUMEN.extend([["F_impar_prisma", F_odd], ["s1_prisma", s1], ["sld_ext_prisma", ext], ["anchura_beta", w * beta],
+                    ["impar_prisma", impar[0.01]], ["par_prisma", par[0.01]], ["dS_cruce_001", cruce[0.01]],
+                    ["dS_cruce_02", cruce[0.2]], ["Sast_02", ent(rho_t[0.2]) - Sst], ["S2_1e-4", S2]])
+    write_csv("regimen_degenerado_fisher.csv", ("t", "impar_sobre_t", "par_sobre_t", "sld_impar", "S_menos_S0"), filas)
 
 
 def ops_sector(n, M, pares):
@@ -277,7 +382,7 @@ def aproximacion(chk):
 
 def main():
     chk = Checker("regimen_degenerado")
-    prisma(chk)
+    fisher_prisma(chk, *prisma(chk))
     diamantes(chk)
     aproximacion(chk)
     write_csv("regimen_degenerado_resumen.csv", ("magnitud", "valor"), RESUMEN)

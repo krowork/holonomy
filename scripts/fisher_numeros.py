@@ -316,6 +316,20 @@ def main():
         c(txt, float(pr[eps]["x_peldano"]), f"2x3: multiplicador de peldaño en {eps:.0e}")
     c("3,152", float(pr[1e-2]["S_menos_Sast"]) / float(pr[1e-3]["S_menos_Sast"]), "2x3: caída de S - S* por década")
     c("3,163", float(pr[1e-3]["S_menos_Sast"]) / float(pr[1e-4]["S_menos_Sast"]), "2x3: caída de S - S* por década")
+    fp = {float(r["t"]): r for r in leer("regimen_degenerado_fisher.csv")}
+    c("0,28868", float(fp[0.01]["impar_sobre_t"]), "2x3: |X|_1 (parte impar)")
+    c("0,82", float(fp[0.01]["par_sobre_t"]), "2x3: |Y|_1 (parte par)")
+    c("0,6325", rd["s1_prisma"], "2x3: pendiente del pico s1")
+    c("0,308618", rd["F_impar_prisma"], "2x3: Fisher SLD de la parte impar")
+    c("0,30854", rd["sld_ext_prisma"], "2x3: SLD de la máxima entropía extrapolada")
+    c("2e-4", abs(rd["sld_ext_prisma"] / rd["F_impar_prisma"] - 1), "2x3: dif. rel. SLD / Fisher de la parte impar")
+    c("0,00121", rd["dS_cruce_001"], "2x3, eps = 1e-4: Delta S_G en t = 0,01")
+    c("0,00127", rd["S2_1e-4"] * 0.01**2 / 2, "2x3, eps = 1e-4: 1/2 S'' t^2 en t = 0,01")
+    c("0,09479", rd["dS_cruce_02"], "2x3, eps = 1e-4: Delta S_G en t = 0,2")
+    c("0,10751", rd["Sast_02"], "2x3: S*(0,2) - S*(0)")
+    c("0,5061", rd["S2_1e-4"] * 0.2**2 / 2, "2x3, eps = 1e-4: 1/2 S'' t^2 en t = 0,2")
+    beta_1e4 = [r for r in leer("fisher_energia_libre_T0.csv") if int(r["L"]) == 3 and float(r["eps"]) == 1e-4][0]
+    c("467,0", float(beta_1e4["beta"]), "2x3: beta en eps = 1e-4")
     di = {(int(r["k"]), r["metodo"]): r for r in leer("regimen_degenerado_diamantes.csv")}
     for k, txt in ((2, "0,3000"), (4, "0,4338"), (6, "0,4338")):
         c(txt, float(di[k, "teselas"]["gap"]), f"diamantes k = {k}: gap de H(0,185)")
