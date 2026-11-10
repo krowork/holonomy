@@ -2,8 +2,8 @@
 
 Artículo (~/fisica/holonomia_fisher.tex, «Holonomía y pegado de perspectivas de Werner II: información de
 Fisher, primera ley del entrelazamiento y el testigo como hamiltoniano modular»): todas las secciones. No
-resuelve ningún SDP ni diagonaliza nada: lee los CSV de fisher_kubo_mori.py, anillo_entropia.py y
-fisher_energia_libre.py.
+resuelve ningún SDP ni diagonaliza nada: lee los CSV de fisher_kubo_mori.py, anillo_entropia.py,
+fisher_energia_libre.py y anillo_termico.py.
 
 Dos comprobaciones:
   1. Cada cifra contra su CSV, redondeada como en el texto (cifra() de diamond_numeros.py). Las
@@ -60,6 +60,8 @@ OTROS = {
     "1e-5": "1 - v/vmax del límite de S_G (anillo_entropia.py)",
     "3e-3": "distancia al borde, en pi (CERCA de anillo_entropia.py)",
     "5e-3": "paso h del SDP en vmax'' (fisher_energia_libre.py)",
+    "0,4": "v de los anillos (VS_ESCALA de anillo_termico.py)",
+    "0,55": "v de los anillos (VS_ESCALA de anillo_termico.py)",
 }
 
 
@@ -263,6 +265,36 @@ def main():
     c("18,4", fr["vmax_tt_4"] / fr["kohn_tt_4"], "2x4: cociente de curvaturas reoptimizada/girada")
     for eps, txt in ((1e-1, "0,0260"), (1e-2, "0,0435"), (1e-3, "0,0514"), (1e-4, "0,0542")):
         c(txt, float(fe[3, eps]["f_tt"]), f"2x3: f_beta''(0) en eps = {eps:.0e}")
+
+    # Anillos térmicos (anillo_termico.py)
+    c("0,59086", (4 * np.log(2) - 1) / 3, "vmax del anillo infinito, (4 ln 2 - 1)/3")
+    esc = {(int(r["n"]), float(r["v"])): r for r in leer("anillo_termico_escala.csv")}
+    c("0,46847962", float(esc[16, 0.4]["S_G"]) / 16, "anillo 16, v = 0,4: S_G/n")
+    c("0,46847959", float(esc[18, 0.4]["S_G"]) / 18, "anillo 18, v = 0,4: S_G/n")
+    esca = {r["direccion"] + r["L"]: r for r in leer("anillo_termico_escaleras.csv")}
+    chk.check(max(abs(float(esca[f"plaquetas{L}"]["PQ_d2"]) - 1) for L in (3, 4)) <= 7e-9,
+              "escaleras, plaquetas: |PQ/d^2 - 1| <= 7e-9 -> «7e-9»")
+    vistas.add("7e-9")
+    c("1,0193", float(esca["azar3"]["PQ_d2"]), "2x3, dirección al azar: PQ/d^2")
+    c("1,0080", float(esca["azar4"]["PQ_d2"]), "2x4, dirección al azar: PQ/d^2")
+    an8 = {round(float(r["Theta"]) / np.pi, 6): float(r["dS"]) for r in leer("anillo_termico.csv")
+           if int(r["n"]) == 8 and abs(float(r["v_frac"]) - 0.5) < 1e-9}
+    c("2,00005", an8[1.0] / an8[0.5], "anillo 8, v = 0,5 vmax: Delta S(pi)/Delta S(pi/2)")
+    xi = {(float(r["v"]), r["paridad"]): r for r in leer("anillo_termico_xi.csv")}
+    tabla = {0.2: ("0,1815", "0,5937", "0,5946", "3,27"), 0.3: ("0,2777", "0,7821", "0,7820", "2,82"),
+             0.4: ("0,4016", "1,0401", "1,0401", "2,59"), 0.5: ("0,6203", "1,5254", "1,5252", "2,46"),
+             0.55: ("0,8997", "2,168", "2,152", "2,41")}
+    for v, (tb, xp, xim, cociente) in tabla.items():
+        p, im = xi[v, "pares"], xi[v, "impares"]
+        c(tb, float(p["b"]), f"anillos, v = {v}: b del mayor anillo par")
+        c(xp, float(p["xi"]), f"anillos, v = {v}: xi de los pares")
+        c(xim, float(im["xi"]), f"anillos, v = {v}: xi de los impares")
+        c(cociente, float(p["xi_sobre_b"]), f"anillos, v = {v}: xi/b")
+    c("2,4", float(xi[0.55, "pares"]["xi_sobre_b"]), "xi ~ 2,4 b (el mayor v)")
+    c("0,3", 100 * abs(float(xi[0.55, "impares"]["b"]) / float(xi[0.55, "pares"]["b"]) - 1),
+      "v = 0,55: deriva de b entre los anillos usados, en %")
+    c("0,7", 100 * abs(float(xi[0.55, "pares"]["xi"]) / float(xi[0.55, "impares"]["xi"]) - 1),
+      "v = 0,55: diferencia de xi entre pares e impares, en %")
 
     # Cobertura
     sueltos = sorted(set(en_tex) - vistas - set(OTROS))
