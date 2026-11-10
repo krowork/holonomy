@@ -3,7 +3,7 @@
 Artículo (~/fisica/holonomia_fisher.tex, «Holonomía y pegado de perspectivas de Werner II: información de
 Fisher, primera ley del entrelazamiento y el testigo como hamiltoniano modular»): todas las secciones. No
 resuelve ningún SDP ni diagonaliza nada: lee los CSV de fisher_kubo_mori.py, anillo_entropia.py,
-fisher_energia_libre.py, anillo_termico.py y regimen_degenerado.py.
+fisher_energia_libre.py, anillo_termico.py, regimen_degenerado.py y berry_tiempo.py.
 
 Dos comprobaciones:
   1. Cada cifra contra su CSV, redondeada como en el texto (cifra() de diamond_numeros.py). Las
@@ -63,6 +63,7 @@ OTROS = {
     "0,4": "v de los anillos (VS_ESCALA de anillo_termico.py)",
     "0,55": "v de los anillos (VS_ESCALA de anillo_termico.py)",
     "0,185": "a del testigo de los diamantes con k par (regimen_degenerado.py)",
+    "0,0": "el punto de flujo nulo (f1, f2) = (0, 0) de la escalera abierta 2x3",
 }
 
 
@@ -330,6 +331,16 @@ def main():
     c("0,5061", rd["S2_1e-4"] * 0.2**2 / 2, "2x3, eps = 1e-4: 1/2 S'' t^2 en t = 0,2")
     beta_1e4 = [r for r in leer("fisher_energia_libre_T0.csv") if int(r["L"]) == 3 and float(r["eps"]) == 1e-4][0]
     c("467,0", float(beta_1e4["beta"]), "2x3: beta en eps = 1e-4")
+    # Sin curvatura de Berry (berry_tiempo.py)
+    bt = {r["magnitud"]: float(r["valor"]) for r in leer("berry_tiempo_resumen.csv")}
+    c("5e-6", bt["distancia_0_pi"], "escalera abierta 2x3: distancia del flujo de Berry por plaqueta a {0, pi}")
+    c("8,578e-4", bt["tr_rho_L1_L2_real"], "escalera abierta 2x3: Re tr(rho L1 L2)")
+    c("5e-17", bt["tr_rho_L1_L2_imag"], "escalera abierta 2x3: Im tr(rho L1 L2)")
+    be = {(round(float(r["f1"]), 3), round(float(r["f2"]), 3)): float(r["S_1e-4"]) for r in leer("berry_tiempo_entropia.csv")}
+    for clave, txt in (((0.0, 0.0), "0,0142"), ((0.05, 0.0), "0,0191"), ((0.5, 0.0), "0,3093"),
+                       ((round(np.pi / 2, 3), round(np.pi / 3, 3)), "0,9630"), ((round(np.pi, 3), 0.0), "1,1035"),
+                       ((round(np.pi, 3), round(np.pi, 3)), "0,6973")):
+        c(txt, be[clave], f"escalera abierta 2x3: S_G en eps = 1e-4, flujo {clave}")
     di = {(int(r["k"]), r["metodo"]): r for r in leer("regimen_degenerado_diamantes.csv")}
     for k, txt in ((2, "0,3000"), (4, "0,4338"), (6, "0,4338")):
         c(txt, float(di[k, "teselas"]["gap"]), f"diamantes k = {k}: gap de H(0,185)")
