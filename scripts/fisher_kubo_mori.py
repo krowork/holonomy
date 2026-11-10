@@ -26,9 +26,12 @@ Comprobaciones:
      beta gap - ln(1/eps) tiende a una constante, S -> 0, la Fisher de Kubo--Mori diverge como beta y la SLD queda
      finita. En 2 x 3 (máximo 16 veces degenerado), beta ~ eps^{-1/2}, queda entropía residual y las dos Fisher son
      finitas. Las dos Fisher se calculan por Daleckii--Krein.
-No se comprueba la relación con la susceptibilidad de fidelidad del fundamental del testigo.
+  6. Susceptibilidad de fidelidad (solo 2 x 4): el límite de la SLD (Aitken en eps) es 4 chi_F del fundamental del
+     testigo reoptimizado en cada flujo (SDP en +-h, Richardson en h), el estado pegado óptimo psi*(t); el del testigo
+     de t = 0 girado (Kohn) es unas 340 veces menor, y un giro efectivo k h con k ~ 17 explica casi todo el cambio de
+     psi*. 4 chi_F depende del gauge del camino; todas las familias usan el mismo. En 2 x 3 no hay fundamental puro.
 
-Escribe data/fisher_kubo_mori{,_primera_ley,_vmax,_T0}.csv.
+Escribe data/fisher_kubo_mori{,_primera_ley,_vmax,_T0,_chiF}.csv.
 
 Uso: (ulimit -v 12000000; OMP_NUM_THREADS=4 .venv/bin/python scripts/fisher_kubo_mori.py)
 """
@@ -230,16 +233,109 @@ def primera_ley(chk):
               ("L", "v", "F", "t", "dS", "dK", "S_rel", "dK_2orden", "S_rel_fisher", "residuo"), filas)
 
 
-def testigo_optimo(me, u):
-    """vmax = min lambda_max(y.O) con N(y.O) = 1, por SDP (parte real e imaginaria en bloques)."""
+def testigo_optimo(me, u, t=0.0):
+    """vmax = min lambda_max(y.O) con N_t(y.O) = 1 en el flujo phi = t u, por SDP (parte real e imaginaria en bloques)."""
     K, N = len(me.O), me.O.shape[1]
-    t1 = me.objetivo(1.0, 0 * u)
+    t1 = me.objetivo(1.0, t * u)
     y, lam = cp.Variable(K), cp.Variable()
     Wr = sum(y[k] * me.O[k].real for k in range(K))
     Wi = sum(y[k] * me.O[k].imag for k in range(K))
     prob = cp.Problem(cp.Minimize(lam), [lam * np.eye(2 * N) - cp.bmat([[Wr, -Wi], [Wi, Wr]]) >> 0, y @ t1 == 1])
     prob.solve(solver="CLARABEL")
     return float(lam.value), y.value, prob.status
+
+
+def girado(me, edges, u, y, t):
+    """W[delta] = sum_e (1 x U(delta_e)) W_e (1 x U(delta_e))^dag, U(a) = exp(i a Z/2) en el qubit de llegada,
+    delta_e = t u_e: el testigo de la cota de Kohn. Qubit 0 = bit más significativo, como en pauli_string."""
+    n, N = len(me.O[0]).bit_length() - 1, me.O.shape[1]
+    W = 0
+    for e, (_, j) in enumerate(edges):
+        We = np.einsum("a,aij->ij", y[3 * e:3 * e + 3], me.O[3 * e:3 * e + 3])
+        z = 1 - 2 * ((np.arange(N) >> (n - 1 - j)) & 1)
+        d = np.exp(1j * t * u[e] * z / 2)
+        W = W + d[:, None] * We * d.conj()[None, :]
+    return W
+
+
+def fundamental(W):
+    E, V = eigh(W)
+    return V[:, -1]
+
+
+def cuatro_chiF(psi_p, psi_m, h):
+    """4 chi_F = (1 - |<psi(h)|psi(-h)>|^2)/h^2 + O(h^2)."""
+    return (1 - abs(np.vdot(psi_p, psi_m))**2) / h**2
+
+
+def susceptibilidad(chk):
+    """Límite de la SLD frente a 4 chi_F, en 2 x 4 (máximo único). Candidatos, en el mismo gauge de camino u:
+    el fundamental del testigo reoptimizado en cada flujo (SDP en +-h, soporte del primal óptimo en vmax(t)), el del
+    testigo óptimo de t = 0 girado (Kohn) y el del testigo que elige la máxima entropía, girado. La SLD tiende al
+    primero; el girado queda unas 340 veces por debajo. En 2 x 3 (degenerado) no hay fundamental puro: no se compara.
+    El 4 chi_F depende del gauge del camino; la comparación vale porque todos usan el mismo."""
+    L = 4
+    edges, u = escalera(L)
+    me = MaxEnt(2 * L, edges)
+    vmax, y0, status = testigo_optimo(me, u)
+    psi0 = fundamental(np.einsum("k,kab->ab", y0, me.O))
+    filas = []
+    A = {}
+    for h in (4e-2, 2e-2, 1e-2):
+        vp, yp, sp = testigo_optimo(me, u, h)
+        vm, ym, sm = testigo_optimo(me, u, -h)
+        A[h] = cuatro_chiF(fundamental(np.einsum("k,kab->ab", yp, me.O)), fundamental(np.einsum("k,kab->ab", ym, me.O)), h)
+        chk.info(f"2x4, h = {h:.0e}: vmax(+-h) - vmax(0) = {vp - vmax:+.4e}, {vm - vmax:+.4e}; 4 chi_F del testigo "
+                 f"reoptimizado {A[h]:.5f}" + chk.status_note(sp) + chk.status_note(sm))
+        filas.append(["reoptimizado", h, np.nan, A[h]])
+    r1, r2 = (4 * A[2e-2] - A[4e-2]) / 3, (4 * A[1e-2] - A[2e-2]) / 3
+    A0 = (16 * r2 - r1) / 15
+    chk.check(abs(vp - vm) < 1e-8 and vp < vmax,
+              f"2x4: vmax(h) = vmax(-h) < vmax(0) (par en el flujo; baja {vmax - vp:.3e} en h = 1e-2)")
+    h = 1e-2
+    Wp = girado(me, edges, u, y0, h)
+    Np = sum(np.vdot(me.O[k], Wp).real / np.vdot(me.O[k], me.O[k]).real * me.objetivo(1.0, h * u)[k]
+             for k in range(len(me.O)))
+    chk.check(abs(Np - 1) < 1e-10, f"2x4: N_h(W*[h]) = {Np:.12f}: el giro conserva la normalización (Prop. de Kohn)")
+    B = cuatro_chiF(fundamental(Wp), fundamental(girado(me, edges, u, y0, -h)), h)
+    # SLD de la máxima entropía, extrapolada por Aitken (las diferencias caen un factor ~3 por paso)
+    x = np.zeros(len(me.O))
+    sld = {}
+    for eps in EPSS_T0:
+        v = vmax * (1 - eps)
+        x, g, S, res = me.resuelve(me.objetivo(v, 0 * u), x)
+        dm, _ = derivadas(v, u)
+        xd = np.linalg.solve(g, dm)
+        sld[eps] = me.fisher(x, xd)[1]
+        D = cuatro_chiF(fundamental(np.einsum("k,kab->ab", x + 1e-3 * xd, me.O)),
+                        fundamental(np.einsum("k,kab->ab", x - 1e-3 * xd, me.O)), 1e-3)
+        filas.append(["sld_maxima_entropia", np.nan, eps, sld[eps]])
+        filas.append(["fundamental_x", 1e-3, eps, D])
+        if eps == 1e-3:
+            D3 = D
+    yhat = x / float(x @ me.objetivo(1.0, 0 * u))
+    C = cuatro_chiF(fundamental(girado(me, edges, u, yhat, h)), fundamental(girado(me, edges, u, yhat, -h)), h)
+    filas += [["girado_sdp", h, np.nan, B], ["girado_maxima_entropia", h, 1e-4, C], ["reoptimizado_extrapolado", 0, np.nan, A0]]
+    s1, s2, s3 = sld[1e-3], sld[3e-4], sld[1e-4]
+    lim = s3 - (s2 - s3)**2 / ((s1 - s2) - (s2 - s3))
+    chk.check(abs(lim - A0) / A0 < 5e-3,
+              f"2x4: límite de la SLD {lim:.4f} (Aitken de {s1:.5f}, {s2:.5f}, {s3:.5f}) = 4 chi_F del testigo reoptimizado "
+              f"{A0:.4f} (Richardson), dif. rel. {abs(lim - A0) / A0:.1e}")
+    chk.check(abs(D - A0) < abs(D3 - A0),
+              f"2x4: 4 chi_F del fundamental de x(t).O se acerca: {D3:.4f} en 1e-3, {D:.4f} en 1e-4 (consistencia)")
+    chk.check(B < 0.01 * A0 and abs(C - B) < 1e-3 * A0,
+              f"2x4: 4 chi_F del testigo girado (Kohn) {B:.5f}, del de máxima entropía girado {C:.5f}: "
+              f"{A0 / B:.0f} veces menor que el reoptimizado")
+    # flujo efectivo: el fundamental reoptimizado en h se parece al del testigo girado k h
+    pp = fundamental(np.einsum("k,kab->ab", testigo_optimo(me, u, h)[1], me.O))
+    base = 1 - abs(np.vdot(pp, psi0))**2
+    ks = np.arange(1.0, 41.0)
+    inf = [1 - abs(np.vdot(pp, fundamental(girado(me, edges, u, y0, k * h))))**2 for k in ks]
+    kbest = ks[int(np.argmin(inf))]
+    chk.check(min(inf) < 0.1 * base,
+              f"2x4: el giro efectivo k h con k = {kbest:.0f} baja la infidelidad de {base:.2e} a {min(inf):.2e}; "
+              f"sqrt(reoptimizado/girado) = {np.sqrt(A0 / B):.1f}: aproximado, no exacto")
+    write_csv("fisher_kubo_mori_chiF.csv", ("familia", "h", "eps", "valor"), filas)
 
 
 def limite_T0(chk):
@@ -350,6 +446,7 @@ def main():
     primera_ley(chk)
     cerca_de_vmax(chk)
     limite_T0(chk)
+    susceptibilidad(chk)
     chk.finish()
 
 
