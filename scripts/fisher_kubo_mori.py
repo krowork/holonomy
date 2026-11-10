@@ -21,9 +21,14 @@ Comprobaciones:
   4. Cerca de vmax (dual por SDP), x.O se alinea con el testigo óptimo W* y el término de multiplicadores por unidad
      de ||x.O|| tiende a -v d2N_t(W*)/dt2 / ||W*||. En 2 x 3 (patas triangulares, vmax = 1/3) el testigo es degenerado y
      la alineación es lenta; el límite del término de multiplicadores solo se comprueba en 2 x 4 (el cubo).
+  5. El testigo como hamiltoniano modular a T = 0: con x.O = beta W_v y N(W_v) = 1, K_G = beta (lambda_max - W_v) + cte
+     y beta = -dS/dv (envolvente, comprobada por diferencias finitas). En 2 x 4 (máximo único, gap 0,091),
+     beta gap - ln(1/eps) tiende a una constante, S -> 0, la Fisher de Kubo--Mori diverge como beta y la SLD queda
+     finita. En 2 x 3 (máximo 16 veces degenerado), beta ~ eps^{-1/2}, queda entropía residual y las dos Fisher son
+     finitas. Las dos Fisher se calculan por Daleckii--Krein.
 No se comprueba la relación con la susceptibilidad de fidelidad del fundamental del testigo.
 
-Escribe data/fisher_kubo_mori.csv, data/fisher_kubo_mori_primera_ley.csv y data/fisher_kubo_mori_vmax.csv.
+Escribe data/fisher_kubo_mori{,_primera_ley,_vmax,_T0}.csv.
 
 Uso: (ulimit -v 12000000; OMP_NUM_THREADS=4 .venv/bin/python scripts/fisher_kubo_mori.py)
 """
@@ -41,6 +46,7 @@ from holonomy.report import read_csv, write_csv
 VS = (0.1, 0.2, 0.3)
 H = 2e-3
 EPSS = (0.3, 0.1, 0.03, 0.01, 3e-3, 1e-3)
+EPSS_T0 = (0.1, 0.03, 0.01, 3e-3, 1e-3, 3e-4, 1e-4)
 
 
 def escalera(L):
@@ -96,6 +102,22 @@ class MaxEnt:
         E, U = eigh(np.einsum("k,kab->ab", x, self.O))
         p = np.exp(E - logsumexp(E))
         return (U * p) @ U.conj().T
+
+    def fisher(self, x, dx):
+        """Fisher de Kubo--Mori y SLD de la familia rho(x + s dx) en s = 0, por Daleckii--Krein (sin diferencias
+        finitas, que con pesos de 1e-30 dan ruido en la SLD)."""
+        E, U = eigh(np.einsum("k,kab->ab", x, self.O))
+        p = np.exp(E - logsumexp(E))
+        dH = U.conj().T @ np.einsum("k,kab->ab", dx, self.O) @ U
+        dE = E[:, None] - E[None, :]
+        with np.errstate(divide="ignore", invalid="ignore"):
+            w = np.where(np.abs(dE) > 1e-10, (p[:, None] - p[None, :]) / np.where(dE == 0, 1, dE),
+                         (p[:, None] + p[None, :]) / 2)
+        drho = w * dH - np.diag(p) * np.trace(np.diag(p) @ dH).real
+        bkm = (w * np.abs(dH)**2).sum().real - np.trace(np.diag(p) @ dH).real**2
+        s = p[:, None] + p[None, :]
+        sld = (2 * np.abs(drho)**2 / np.where(s > 0, s, np.inf)).sum()
+        return float(bkm), float(sld)
 
     def resuelve(self, t, x0=None, tol=1e-12):
         """Newton sobre las medias, amortiguado por el residuo (una búsqueda de línea sobre ln Z - x.t se atasca en el
@@ -208,24 +230,97 @@ def primera_ley(chk):
               ("L", "v", "F", "t", "dS", "dK", "S_rel", "dK_2orden", "S_rel_fisher", "residuo"), filas)
 
 
+def testigo_optimo(me, u):
+    """vmax = min lambda_max(y.O) con N(y.O) = 1, por SDP (parte real e imaginaria en bloques)."""
+    K, N = len(me.O), me.O.shape[1]
+    t1 = me.objetivo(1.0, 0 * u)
+    y, lam = cp.Variable(K), cp.Variable()
+    Wr = sum(y[k] * me.O[k].real for k in range(K))
+    Wi = sum(y[k] * me.O[k].imag for k in range(K))
+    prob = cp.Problem(cp.Minimize(lam), [lam * np.eye(2 * N) - cp.bmat([[Wr, -Wi], [Wi, Wr]]) >> 0, y @ t1 == 1])
+    prob.solve(solver="CLARABEL")
+    return float(lam.value), y.value, prob.status
+
+
+def limite_T0(chk):
+    """El testigo como hamiltoniano modular a T = 0. Con x.O = beta W_v y N(W_v) = 1, rho_G = exp(beta W_v)/Z,
+    K_G = beta (lambda_max(W_v) - W_v) + cte y beta = x.t1 = -dS/dv (envolvente). Cuando v -> vmax, beta -> oo.
+    Con gap (2 x 4): beta Delta - ln(1/eps) tiende a una constante, S -> 0, Fisher de Kubo--Mori ~ beta y SLD finita.
+    Degenerado (2 x 3, autovalor máximo 16 veces): beta ~ eps^{-1/2}, entropía residual y las dos Fisher finitas."""
+    filas = []
+    for L in (3, 4):
+        edges, u = escalera(L)
+        me = MaxEnt(2 * L, edges)
+        vmax, ys, status = testigo_optimo(me, u)
+        ev, V = np.linalg.eigh(np.einsum("k,kab->ab", ys, me.O))
+        deg = int((ev > ev[-1] - 1e-6).sum())
+        gap = ev[-1] - ev[-1 - deg]
+        P = V[:, -deg:] @ V[:, -deg:].conj().T
+        t1 = me.objetivo(1.0, 0 * u)
+        chk.info(f"2x{L}: vmax = {vmax:.8f}, autovalor máximo de W* {deg} veces degenerado, gap {gap:.4f}"
+                 + chk.status_note(status))
+        x = np.zeros(len(me.O))
+        res_ = {}
+        for eps in EPSS_T0:
+            v = vmax * (1 - eps)
+            x, g, S, res = me.resuelve(me.objetivo(v, 0 * u), x)
+            beta = float(x @ t1)
+            dm, _ = derivadas(v, u)
+            bkm, sld = me.fisher(x, np.linalg.solve(g, dm))
+            peso = np.trace(P @ me.rho(x)).real
+            chk.info(f"2x{L}, 1 - v/vmax = {eps:.0e}: beta = {beta:8.3f}, beta gap - ln(1/eps) = {beta * gap - np.log(1 / eps):+8.3f}, "
+                     f"peso en el autoespacio máximo {peso:.6f}, S = {S:.4f}, Fisher Kubo-Mori {bkm:9.3f}, SLD {sld:.4f}, "
+                     f"residuo {res:.0e}")
+            res_[eps] = (beta, S, bkm, sld, x, res)
+            filas.append([L, vmax, deg, gap, eps, v, beta, beta * gap - np.log(1 / eps), peso, S, bkm, sld, res])
+        # beta = -dS/dv, por diferencias finitas centradas en eps = 1e-2
+        b, _, _, _, xb, _ = res_[1e-2]
+        dv = 1e-5 * vmax
+        Sp = me.resuelve(me.objetivo(vmax * (1 - 1e-2) + dv, 0 * u), xb)[2]
+        Sm = me.resuelve(me.objetivo(vmax * (1 - 1e-2) - dv, 0 * u), xb)[2]
+        dSdv = (Sp - Sm) / (2 * dv)
+        chk.check(abs(b + dSdv) / b < 1e-5, f"2x{L}: beta = x.t1 = {b:.6f} = -dS/dv = {-dSdv:.6f} (envolvente)")
+        # comprobación cruzada: la Fisher de Kubo--Mori de Daleckii--Krein es la m'^T g^{-1} m' de antes
+        x1, g1, *_ = me.resuelve(me.objetivo(0.2, 0 * u))
+        dm, _ = derivadas(0.2, u)
+        chk.check(abs(me.fisher(x1, np.linalg.solve(g1, dm))[0] - dm @ np.linalg.solve(g1, dm)) < 1e-10,
+                  f"2x{L}, v = 0,2: Fisher de Kubo-Mori por Daleckii-Krein = m'^T g^-1 m'")
+        bs = [res_[e][0] for e in (1e-3, 3e-4, 1e-4)]
+        Sf, bkmf, sldf = res_[1e-4][1:4]
+        if deg == 1:
+            c = [bb * gap - np.log(1 / e) for bb, e in zip(bs, (1e-3, 3e-4, 1e-4))]
+            chk.check(max(c) - min(c) < 0.01, f"2x{L}: beta gap - ln(1/eps) = {c[0]:+.4f}, {c[1]:+.4f}, {c[2]:+.4f} "
+                                              "en 1e-3, 3e-4, 1e-4: Boltzmann a través del gap")
+            chk.check(Sf < 0.01, f"2x{L}: S = {Sf:.4f} en 1e-4: el estado tiende a puro")
+            r = [res_[e][2] / res_[e][0] for e in (1e-3, 3e-4, 1e-4)]
+            s = [res_[e][3] for e in (1e-2, 3e-3, 1e-3, 3e-4, 1e-4)]
+            chk.check(bkmf > 1e2 and max(r) - min(r) < 0.1 * max(r),
+                      f"2x{L}: Fisher de Kubo-Mori / beta = {r[0]:.3f}, {r[1]:.3f}, {r[2]:.3f}: diverge como beta")
+            chk.check(max(s) - min(s) < 0.05 * max(s),
+                      f"2x{L}: Fisher SLD = {', '.join(f'{z:.4f}' for z in s)} entre 1e-2 y 1e-4: finita")
+        else:
+            q = bs[2] / bs[0]
+            chk.check(abs(q / np.sqrt(10) - 1) < 0.05, f"2x{L}: beta(1e-4)/beta(1e-3) = {q:.3f}, sqrt(10) = {np.sqrt(10):.3f}: "
+                                                       "beta ~ eps^-1/2")
+            chk.check(1.5 < Sf < np.log(deg), f"2x{L}: S = {Sf:.4f} en 1e-4, entre 1,5 y ln {deg} = {np.log(deg):.4f}: "
+                                              "entropía residual en el autoespacio degenerado")
+            chk.check(bkmf < 1 and sldf < 1, f"2x{L}: Fisher de Kubo-Mori {bkmf:.4f} y SLD {sldf:.4f} en 1e-4: finitas")
+    write_csv("fisher_kubo_mori_T0.csv", ("L", "vmax", "degeneracion", "gap", "eps", "v", "beta", "beta_gap_menos_ln",
+                                          "peso_max", "S", "fisher_kubo_mori", "fisher_sld", "residuo"), filas)
+
+
 def cerca_de_vmax(chk):
     filas = []
     for L in (3, 4):
         edges, u = escalera(L)
         me = MaxEnt(2 * L, edges)
-        K, N = len(me.O), me.O.shape[1]
-        t1 = me.objetivo(1.0, 0 * u)
-        y, lam = cp.Variable(K), cp.Variable()
-        Wr = sum(y[k] * me.O[k].real for k in range(K))
-        Wi = sum(y[k] * me.O[k].imag for k in range(K))
-        prob = cp.Problem(cp.Minimize(lam), [lam * np.eye(2 * N) - cp.bmat([[Wr, -Wi], [Wi, Wr]]) >> 0, y @ t1 == 1])
-        prob.solve(solver="CLARABEL")
-        vmax, ys = float(lam.value), y.value
+        K = len(me.O)
+        vmax, ys, status = testigo_optimo(me, u)
         Wst = np.einsum("k,kab->ab", ys, me.O)
         ev = np.linalg.eigvalsh(Wst)
         chk.check(abs(ev[-1] - vmax) < 1e-6,
                   f"2x{L}: vmax = {vmax:.8f} = lambda_max(W*) = {ev[-1]:.8f}, gap del testigo {ev[-1] - ev[-2]:.2e}"
-                  + chk.status_note(prob.status))
+                  + chk.status_note(status))
         if L == 3:
             chk.check(abs(vmax - 1 / 3) < 1e-7, f"2x3: vmax = 1/3 (patas triangulares), {vmax - 1 / 3:+.1e}")
         x = np.zeros(K)
@@ -254,6 +349,7 @@ def main():
     formula_frente_a_fd(chk)
     primera_ley(chk)
     cerca_de_vmax(chk)
+    limite_T0(chk)
     chk.finish()
 
 
