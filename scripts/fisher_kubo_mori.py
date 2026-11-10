@@ -15,12 +15,15 @@ Comprobaciones:
   1. S'' por diferencias finitas de cinco puntos frente a la fórmula, en v = 0,1, 0,2, 0,3 y en una dirección al azar;
      control: en una dirección pura de gauge (u_e = g_j - g_i) las dos dan 0.
   2. 1/2 S'' t^2 frente a Delta S_hol de data/sphere_entropia_holonomia_escaleras.csv con F = pi/8 (difiere en O(t^4)).
-  3. Cerca de vmax (dual por SDP), x.O se alinea con el testigo óptimo W* y el término de multiplicadores por unidad
+  3. Primera ley del entrelazamiento: con K_0 = -ln rho_0 (local, suma de términos de arista), Delta S = Delta<K_0>
+     - S(rho_t || rho_0) exactamente, en F = pi/8 a 2 pi. A primer orden, delta S = delta<K_0> = 0 (multiplicadores de B
+     nulos); a segundo, Delta<K_0> es el término de multiplicadores y S_rel >= 0 el de Fisher.
+  4. Cerca de vmax (dual por SDP), x.O se alinea con el testigo óptimo W* y el término de multiplicadores por unidad
      de ||x.O|| tiende a -v d2N_t(W*)/dt2 / ||W*||. En 2 x 3 (patas triangulares, vmax = 1/3) el testigo es degenerado y
      la alineación es lenta; el límite del término de multiplicadores solo se comprueba en 2 x 4 (el cubo).
 No se comprueba la relación con la susceptibilidad de fidelidad del fundamental del testigo.
 
-Escribe data/fisher_kubo_mori.csv y data/fisher_kubo_mori_vmax.csv.
+Escribe data/fisher_kubo_mori.csv, data/fisher_kubo_mori_primera_ley.csv y data/fisher_kubo_mori_vmax.csv.
 
 Uso: (ulimit -v 12000000; OMP_NUM_THREADS=4 .venv/bin/python scripts/fisher_kubo_mori.py)
 """
@@ -83,6 +86,16 @@ class MaxEnt:
         g = ((M * w[None]).reshape(K, -1) @ M.transpose(0, 2, 1).reshape(K, -1).T).real - np.outer(m, m)
         S = -(p[p > 0] * np.log(p[p > 0])).sum()
         return m, g, S
+
+    def ln_rho(self, x):
+        """ln rho = x.O - ln Z (con la identidad)."""
+        H = np.einsum("k,kab->ab", x, self.O)
+        return H - logsumexp(eigh(H, eigvals_only=True)) * np.eye(len(H))
+
+    def rho(self, x):
+        E, U = eigh(np.einsum("k,kab->ab", x, self.O))
+        p = np.exp(E - logsumexp(E))
+        return (U * p) @ U.conj().T
 
     def resuelve(self, t, x0=None, tol=1e-12):
         """Newton sobre las medias, amortiguado por el residuo (una búsqueda de línea sobre ln Z - x.t se atasca en el
@@ -162,6 +175,39 @@ def formula_frente_a_fd(chk):
                                        "multiplicadores", "pred_dS_F_pi8", "dS_csv", "residuo"), filas)
 
 
+def primera_ley(chk):
+    """Delta S = Delta<K_0> - S(rho_t || rho_0), con K_0 = -ln rho_0 = -x_0.O + ln Z local: es exacta, y su desarrollo da
+    la primera ley (delta S = -x_0.m' = 0, porque los multiplicadores de B son nulos sin flujo), Delta<K_0> ~ -t^2 x_0.m''/2
+    (multiplicadores) y S_rel ~ t^2 m'^T g^{-1} m'/2 (Fisher)."""
+    filas = []
+    for L in (3, 4):
+        edges, u = escalera(L)
+        me = MaxEnt(2 * L, edges)
+        v = 0.2
+        x0, g, S0, _ = me.resuelve(me.objetivo(v, 0 * u))
+        chk.check(np.abs(x0[1::3]).max() == 0,
+                  f"2x{L}, v = 0,2: multiplicadores de B nulos sin flujo ({np.abs(x0[1::3]).max():.1e}): delta S = -x_0.m' = 0")
+        lr0 = me.ln_rho(x0)
+        dm, d2m = derivadas(v, u)
+        for F in (np.pi / 8, np.pi / 2, np.pi, 2 * np.pi):
+            t = F / L
+            xt, _, St, res = me.resuelve(me.objetivo(v, t * u), x0)
+            lrt = me.ln_rho(xt)
+            rt = me.rho(xt)
+            r0 = me.rho(x0)
+            dK = -np.trace((rt - r0) @ lr0).real
+            Srel = np.trace(rt @ (lrt - lr0)).real
+            dK2, Srel2 = -x0 @ d2m * t**2 / 2, dm @ np.linalg.solve(g, dm) * t**2 / 2
+            ok = res < 1e-10 and abs(St - S0 - (dK - Srel)) < 1e-10 and Srel > 0
+            if F < 0.5:
+                ok = ok and abs(dK - dK2) / dK2 < 1e-3 and abs(Srel - Srel2) / Srel2 < 1e-2
+            chk.check(ok, f"2x{L}, F = {F / np.pi:.3f} pi: Delta S = {St - S0:+.8e}, Delta<K> - S_rel = {dK - Srel:+.8e}; "
+                          f"Delta<K> = {dK:+.4e} (2.º orden {dK2:+.4e}), S_rel = {Srel:.4e} (Fisher {Srel2:.4e})")
+            filas.append([L, v, F, t, St - S0, dK, Srel, dK2, Srel2, res])
+    write_csv("fisher_kubo_mori_primera_ley.csv",
+              ("L", "v", "F", "t", "dS", "dK", "S_rel", "dK_2orden", "S_rel_fisher", "residuo"), filas)
+
+
 def cerca_de_vmax(chk):
     filas = []
     for L in (3, 4):
@@ -206,6 +252,7 @@ def cerca_de_vmax(chk):
 def main():
     chk = Checker("fisher_kubo_mori")
     formula_frente_a_fd(chk)
+    primera_ley(chk)
     cerca_de_vmax(chk)
     chk.finish()
 
