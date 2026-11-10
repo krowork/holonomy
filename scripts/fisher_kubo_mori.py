@@ -50,6 +50,7 @@ VS = (0.1, 0.2, 0.3)
 H = 2e-3
 EPSS = (0.3, 0.1, 0.03, 0.01, 3e-3, 1e-3)
 EPSS_T0 = (0.1, 0.03, 0.01, 3e-3, 1e-3, 3e-4, 1e-4)
+RESUMEN = []  # magnitudes derivadas que solo se imprimían; las lee el guion de números del artículo
 
 
 def escalera(L):
@@ -336,31 +337,60 @@ def susceptibilidad(chk):
               f"2x4: el giro efectivo k h con k = {kbest:.0f} baja la infidelidad de {base:.2e} a {min(inf):.2e}; "
               f"sqrt(reoptimizado/girado) = {np.sqrt(A0 / B):.1f}: aproximado, no exacto")
     write_csv("fisher_kubo_mori_chiF.csv", ("familia", "h", "eps", "valor"), filas)
+    RESUMEN.extend([["sld_limite_aitken", lim], ["chiF_reoptimizado_richardson", A0], ["chiF_girado_sdp", B],
+                    ["k_efectivo", kbest], ["infidelidad_sin_girar", base], ["infidelidad_giro_efectivo", min(inf)],
+                    ["vmax_h_menos_vmax0", vp - vmax], ["h", h]])
 
 
 def limite_T0(chk):
     """El testigo como hamiltoniano modular a T = 0. Con x.O = beta W_v y N(W_v) = 1, rho_G = exp(beta W_v)/Z,
     K_G = beta (lambda_max(W_v) - W_v) + cte y beta = x.t1 = -dS/dv (envolvente). Cuando v -> vmax, beta -> oo.
+    Sin flujo, la máxima entropía es invariante por SU(2) y por los automorfismos, así que x.O es un testigo simétrico:
+    en la 2 x 4 (el cubo, transitivo en aristas) exactamente beta veces el Heisenberg uniforme, que es óptimo; en la
+    2 x 3 tiende a los dos triángulos desacoplados (peldaño 0). El testigo del SDP es otro óptimo, no simétrico.
     Con gap (2 x 4): beta Delta - ln(1/eps) tiende a una constante, S -> 0, Fisher de Kubo--Mori ~ beta y SLD finita.
-    Degenerado (2 x 3, autovalor máximo 16 veces): beta ~ eps^{-1/2}, entropía residual y las dos Fisher finitas."""
+    Degenerado (2 x 3, autovalor máximo 16 veces, gap 1/3): beta ~ eps^{-1/2}, entropía residual y las dos Fisher
+    finitas."""
     filas = []
     for L in (3, 4):
         edges, u = escalera(L)
         me = MaxEnt(2 * L, edges)
-        vmax, ys, status = testigo_optimo(me, u)
-        ev, V = np.linalg.eigh(np.einsum("k,kab->ab", ys, me.O))
-        deg = int((ev > ev[-1] - 1e-6).sum())
+        vsdp, ys, status = testigo_optimo(me, u)
+        t1 = me.objetivo(1.0, 0 * u)
+        # Testigo óptimo simétrico (SU(2) y automorfismos): Heisenberg -(XX+YY+ZZ) = A + C en cada arista, con peso 1 en
+        # las patas y `peldano` en los peldaños. En la 2 x 4 (el cubo, transitivo en aristas) es el único invariante y la
+        # máxima entropía es exactamente beta veces él; en la 2 x 3 el óptimo invariante son los dos triángulos (peldaño 0).
+        peldano = 1.0 if L == 4 else 0.0
+        ysim = np.array([[1.0 if e < 2 * L else peldano, 0.0, 1.0 if e < 2 * L else peldano]
+                         for e in range(len(edges))]).ravel()
+        ysim /= ysim @ t1
+        Wsim = np.einsum("k,kab->ab", ysim, me.O)
+        ev, V = np.linalg.eigh(Wsim)
+        vmax = ev[-1]
+        deg = int((ev > ev[-1] - 1e-9).sum())
         gap = ev[-1] - ev[-1 - deg]
         P = V[:, -deg:] @ V[:, -deg:].conj().T
-        t1 = me.objetivo(1.0, 0 * u)
-        chk.info(f"2x{L}: vmax = {vmax:.8f}, autovalor máximo de W* {deg} veces degenerado, gap {gap:.4f}"
-                 + chk.status_note(status))
+        chk.check(abs(vmax - vsdp) < 1e-8,
+                  f"2x{L}: testigo simétrico (peldaño {peldano:.0f}): lambda_max = {vmax:.10f} = vmax del SDP {vsdp:.10f}; "
+                  f"máximo {deg} veces degenerado, gap {gap:.6f}" + chk.status_note(status))
+        Wst = np.einsum("k,kab->ab", ys, me.O)
+        cos_sdp = np.vdot(Wsim, Wst).real / np.linalg.norm(Wsim) / np.linalg.norm(Wst)
+        chk.check(cos_sdp < 1 - 1e-6 and abs(np.linalg.eigvalsh(Wst)[-1] - vmax) < 1e-8,
+                  f"2x{L}: el testigo del SDP es otro óptimo (coseno con el simétrico {cos_sdp:.6f}): la cara óptima del "
+                  "dual no es un punto")
+        if L == 3:
+            chk.check(abs(vmax - 1 / 3) < 1e-12 and deg == 16 and abs(gap - 1 / 3) < 1e-12,
+                      f"2x3: dos triángulos desacoplados, lambda_max = 1/3, 16 veces degenerado, gap 1/3")
+        RESUMEN.extend([[f"gap_simetrico_{L}", gap], [f"cos_sdp_simetrico_{L}", cos_sdp]])
         x = np.zeros(len(me.O))
         res_ = {}
+        alin = []
         for eps in EPSS_T0:
             v = vmax * (1 - eps)
             x, g, S, res = me.resuelve(me.objetivo(v, 0 * u), x)
             beta = float(x @ t1)
+            X = np.einsum("k,kab->ab", x, me.O)
+            alin.append(np.vdot(X, Wsim).real / np.linalg.norm(X) / np.linalg.norm(Wsim))
             dm, _ = derivadas(v, u)
             bkm, sld = me.fisher(x, np.linalg.solve(g, dm))
             peso = np.trace(P @ me.rho(x)).real
@@ -383,6 +413,14 @@ def limite_T0(chk):
                   f"2x{L}, v = 0,2: Fisher de Kubo-Mori por Daleckii-Krein = m'^T g^-1 m'")
         bs = [res_[e][0] for e in (1e-3, 3e-4, 1e-4)]
         Sf, bkmf, sldf = res_[1e-4][1:4]
+        if L == 4:
+            chk.check(min(alin) > 1 - 1e-10, f"2x4: x.O es exactamente beta veces el testigo simétrico en todo eps "
+                                             f"(1 - coseno <= {1 - min(alin):.1e})")
+        else:
+            r = [res_[e][4][3 * 2 * L::3].mean() / res_[e][4][:3 * 2 * L:3].mean() for e in (1e-2, 1e-3, 1e-4)]
+            chk.check(r[0] > r[1] > r[2] > 0, f"2x3: cociente peldaño/pata de x = {r[0]:.3e}, {r[1]:.3e}, {r[2]:.3e} en "
+                                              "1e-2, 1e-3, 1e-4: decrece hacia los triángulos desacoplados")
+            RESUMEN.extend([["peldano_pata_1e-2", r[0]], ["peldano_pata_1e-3", r[1]], ["peldano_pata_1e-4", r[2]]])
         if deg == 1:
             c = [bb * gap - np.log(1 / e) for bb, e in zip(bs, (1e-3, 3e-4, 1e-4))]
             chk.check(max(c) - min(c) < 0.01, f"2x{L}: beta gap - ln(1/eps) = {c[0]:+.4f}, {c[1]:+.4f}, {c[2]:+.4f} "
@@ -436,6 +474,7 @@ def cerca_de_vmax(chk):
             pred, med = -vmax * d2N / np.linalg.norm(Wst), mul / np.linalg.norm(X)
             chk.check(abs(med - pred) / abs(pred) < 1e-2,
                       f"2x4: multiplicadores / ||x.O|| = {med:+.5e} frente a -v d2N(W*)/dt2 / ||W*|| = {pred:+.5e}")
+            RESUMEN.extend([["multiplicadores_por_norma", med], ["menos_v_d2N_por_norma", pred]])
     write_csv("fisher_kubo_mori_vmax.csv", ("L", "vmax", "eps", "v", "norma_xO", "cos_W", "S", "fisher",
                                             "multiplicadores", "S2", "residuo"), filas)
 
@@ -447,6 +486,7 @@ def main():
     cerca_de_vmax(chk)
     limite_T0(chk)
     susceptibilidad(chk)
+    write_csv("fisher_kubo_mori_resumen.csv", ("magnitud", "valor"), RESUMEN)
     chk.finish()
 
 
