@@ -2,7 +2,8 @@
 
 Artículo (~/fisica/holonomia_fisher.tex, «Holonomía y pegado de perspectivas de Werner II: información de
 Fisher, primera ley del entrelazamiento y el testigo como hamiltoniano modular»): todas las secciones. No
-resuelve ningún SDP ni diagonaliza nada: lee los CSV de fisher_kubo_mori.py.
+resuelve ningún SDP ni diagonaliza nada: lee los CSV de fisher_kubo_mori.py, anillo_entropia.py y
+fisher_energia_libre.py.
 
 Dos comprobaciones:
   1. Cada cifra contra su CSV, redondeada como en el texto (cifra() de diamond_numeros.py). Las
@@ -58,6 +59,7 @@ OTROS = {
     "2e-5": "error del contraste de la fórmula de los pesos con el SDP en el primer artículo (observación tras el Teorema 19)",
     "1e-5": "1 - v/vmax del límite de S_G (anillo_entropia.py)",
     "3e-3": "distancia al borde, en pi (CERCA de anillo_entropia.py)",
+    "5e-3": "paso h del SDP en vmax'' (fisher_energia_libre.py)",
 }
 
 
@@ -228,6 +230,39 @@ def main():
     lim = {float(r["Theta_pi"]): r for r in leer("anillo_entropia_limite.csv")}
     for t, txt in ((0.01, "0,00078"), (0.25, "0,39920"), (1.0, "0,69371")):
         c(txt, float(lim[t]["S_G"]), f"anillo 6: S_G en 1 - v/vmax = 1e-5, Theta = {t} pi")
+
+    # Energía libre modular (fisher_energia_libre.py)
+    leg = leer("fisher_energia_libre.csv")
+    con_S = [r for r in leg if r["S_G"] == r["S_G"] and r["S_G"] != "nan"]
+    c("4,4e-15", max(abs(float(r["min_dual"]) - float(r["S_G"])) for r in con_S), "Legendre: min_beta [Phi - beta v] - S_G")
+    c("4,3e-8", max(abs(float(r["argmin"]) / float(r["beta_star"]) - 1) for r in con_S), "Legendre: argmin frente a x.t1")
+    rejilla = {int(r["L"]): r for r in leg if r["S_G"] == "nan" and abs(float(r["beta_star"]) - 300) < 1e-9}
+    d4 = float(rejilla[4]["Phi"]) - 300 * float(t0[4, 0.1]["vmax"])
+    chk.check(abs(d4) < 1e-11, f"2x4: Phi - beta vmax = {d4:.1e} en beta = 300 -> «1e-11» (redondeo de Phi ~ 160)")
+    vistas.add("1e-11")
+    c("1,7903", float(rejilla[3]["Phi"]) - 300 / 3, "2x3: Phi - beta vmax en beta = 300")
+    cb = leer("fisher_energia_libre_curvatura.csv")
+    c("6e-11", max(abs(float(r["Phi_tt"]) / float(r["S2"]) - 1) for r in cb), "S'' = Phi_tt(beta*): dif. rel. máxima")
+    ko = leer("fisher_energia_libre_kohn.csv")
+    for L, lo, hi in ((4, "1,05", "1,60"), (3, "0,21", "0,76")):
+        q = [float(r["dS"]) / float(r["cota"]) for r in ko if int(r["L"]) == L]
+        chk.check(len(q) == 12 and (L == 3 or all(float(r["cota"]) < 0 for r in ko if int(r["L"]) == L)),
+                  f"2x{L}: doce casos de la cota de Kohn térmica" + (", todos con cota negativa" if L == 4 else ""))
+        c(lo, min(q), f"2x{L}: menor Delta S / cota")
+        c(hi, max(q), f"2x{L}: mayor Delta S / cota")
+    fl = {(int(r["L"]), round(float(r["beta"]))): r for r in leer("fisher_energia_libre_T0.csv")}
+    fe = {(int(r["L"]), float(r["eps"])): r for r in leer("fisher_energia_libre_T0.csv")}
+    for eps, txt in ((1e-2, "0,7300"), (1e-3, "0,9974"), (1e-4, "1,0338")):
+        c(txt, float(fe[4, eps]["f_tt"]), f"2x4: f_beta''(0) en eps = {eps:.0e}")
+    for b in (200, 300):
+        c("1,038025", float(fl[4, b]["f_tt"]), f"2x4: f_beta''(0) en beta = {b}")
+    fr = {r["magnitud"]: float(r["valor"]) for r in leer("fisher_energia_libre_resumen.csv")}
+    c("1,03804", fr["vmax_tt_4"], "2x4: vmax''(0) del SDP")
+    c("1,7e-5", fr["f_tt_lim_4"] - fr["vmax_tt_4"], "2x4: f_beta'' límite menos vmax''")
+    c("0,05627", fr["kohn_tt_4"], "2x4: curvatura del testigo girado")
+    c("18,4", fr["vmax_tt_4"] / fr["kohn_tt_4"], "2x4: cociente de curvaturas reoptimizada/girada")
+    for eps, txt in ((1e-1, "0,0260"), (1e-2, "0,0435"), (1e-3, "0,0514"), (1e-4, "0,0542")):
+        c(txt, float(fe[3, eps]["f_tt"]), f"2x3: f_beta''(0) en eps = {eps:.0e}")
 
     # Cobertura
     sueltos = sorted(set(en_tex) - vistas - set(OTROS))
