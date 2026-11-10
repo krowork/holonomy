@@ -3,7 +3,7 @@
 Artículo (~/fisica/holonomia_fisher.tex, «Holonomía y pegado de perspectivas de Werner II: información de
 Fisher, primera ley del entrelazamiento y el testigo como hamiltoniano modular»): todas las secciones. No
 resuelve ningún SDP ni diagonaliza nada: lee los CSV de fisher_kubo_mori.py, anillo_entropia.py,
-fisher_energia_libre.py y anillo_termico.py.
+fisher_energia_libre.py, anillo_termico.py y regimen_degenerado.py.
 
 Dos comprobaciones:
   1. Cada cifra contra su CSV, redondeada como en el texto (cifra() de diamond_numeros.py). Las
@@ -62,6 +62,7 @@ OTROS = {
     "5e-3": "paso h del SDP en vmax'' (fisher_energia_libre.py)",
     "0,4": "v de los anillos (VS_ESCALA de anillo_termico.py)",
     "0,55": "v de los anillos (VS_ESCALA de anillo_termico.py)",
+    "0,185": "a del testigo de los diamantes con k par (regimen_degenerado.py)",
 }
 
 
@@ -295,6 +296,39 @@ def main():
       "v = 0,55: deriva de b entre los anillos usados, en %")
     c("0,7", 100 * abs(float(xi[0.55, "pares"]["xi"]) / float(xi[0.55, "impares"]["xi"]) - 1),
       "v = 0,55: diferencia de xi entre pares e impares, en %")
+
+    # Régimen degenerado (regimen_degenerado.py)
+    rd = {r["magnitud"]: float(r["valor"]) for r in leer("regimen_degenerado_resumen.csv")}
+    c("0,6028199", rd["a_prisma"], "2x3: a")
+    c("1,7660521", rd["S_prisma"], "2x3: S*")
+    c("1,110174", rd["c2_prisma"], "2x3: c_2")
+    c("4,66745", rd["pred_beta_sqrt_eps"], "2x3: 18 a sqrt(c_2/6)")
+    c("0,557465", rd["p_pentamero"], "diamantes: p = (2 + 3c)/4")
+    c("0,686528", rd["H_p"], "diamantes: H(p)")
+    c("0,07662", rd["p_pentamero"] * 4 / 3 - 2 / 3, "diamantes: c de la Proposición 29 de holonomia")
+    c("0,184857", rd["a_gap_4"], "diamantes k = 4: a del testigo de mayor gap")
+    c("27,487", 1 / rd["gap_norm_4"], "diamantes k = 4: 1/gap normalizado")
+    pr = {float(r["eps"]): r for r in leer("regimen_degenerado.csv")}
+    for eps, txt in ((1e-3, "4,67009"), (1e-4, "4,66963")):
+        c(txt, float(pr[eps]["beta_sqrt_eps"]), f"2x3: beta sqrt(eps) en {eps:.0e}")
+    c("5e-4", float(pr[1e-4]["beta_sqrt_eps"]) / rd["pred_beta_sqrt_eps"] - 1, "2x3: dif. rel. con la predicción")
+    for eps, txt in ((1e-2, "0,5066"), (1e-3, "0,5720"), (1e-4, "0,5930")):
+        c(txt, float(pr[eps]["x_peldano"]), f"2x3: multiplicador de peldaño en {eps:.0e}")
+    c("3,152", float(pr[1e-2]["S_menos_Sast"]) / float(pr[1e-3]["S_menos_Sast"]), "2x3: caída de S - S* por década")
+    c("3,163", float(pr[1e-3]["S_menos_Sast"]) / float(pr[1e-4]["S_menos_Sast"]), "2x3: caída de S - S* por década")
+    di = {(int(r["k"]), r["metodo"]): r for r in leer("regimen_degenerado_diamantes.csv")}
+    for k, txt in ((2, "0,3000"), (4, "0,4338"), (6, "0,4338")):
+        c(txt, float(di[k, "teselas"]["gap"]), f"diamantes k = {k}: gap de H(0,185)")
+    for k, txt in ((3, "1,5020"), (5, "1,9699"), (7, "1,9699")):
+        c(txt, float(di[k, "fundamental"]["gap"]), f"diamantes k = {k}: gap del testigo óptimo")
+    chk.check(all(abs(float(di[k, "programa lineal"]["S_ast"]) - float(di[k, "programa lineal"]["S_formula"])) < 1e-7
+                  for k in (2, 3, 4)), "diamantes k = 2, 3, 4: S* del programa lineal = fórmula a 1e-7")
+    ap = {(int(r["k"]), float(r["eps"])): r for r in leer("regimen_degenerado_aproximacion.csv")}
+    for k, txts in ((4, ("29,60", "29,11", "28,79")), (3, ("21,58", "23,66", "25,08"))):
+        for eps, txt in zip((1e-4, 1e-5, 1e-6), txts):
+            c(txt, float(ap[k, eps]["beta_sobre_ln"]), f"diamantes k = {k}: beta/ln(1/eps) en {eps:.0e}")
+    for eps, txt in ((1e-4, "0,185455"), (1e-5, "0,185338"), (1e-6, "0,185257")):
+        c(txt, float(ap[4, eps]["a"]), f"diamantes k = 4: a de la máxima entropía en {eps:.0e}")
 
     # Cobertura
     sueltos = sorted(set(en_tex) - vistas - set(OTROS))
