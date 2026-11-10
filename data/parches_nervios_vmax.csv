@@ -1,0 +1,9 @@
+grafo,N,E,v_max,gap,fuente
+tetraedro trivial,4,6,0.33333333333333326,0.0,sphere_series.csv
+tetraedro curvado,4,6,0.33333333390184877,0.0,sphere_series.csv
+octaedro trivial,6,12,0.33333333333333326,0.0,sphere_series.csv
+octaedro curvado,6,12,0.29629629637410587,0.0,sphere_series.csv
+icosaedro trivial,12,30,0.2750173317332269,0.0,sphere_series.csv
+icosaedro curvado,12,30,0.25561797551807214,0.0,sphere_series.csv
+toro 3x3,9,27,0.2592592592592593,-6.328271240363392e-15,OrbitDual
+toro 3x4,12,36,0.24919151197733527,1.3253329267381986e-09,OrbitDual
