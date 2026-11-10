@@ -1,6 +1,7 @@
 """Entropía del estado pegado óptimo del anillo de 6 frente a la holonomía: marca la ventana de desanclaje.
 
-Artículo II (~/fisica/holonomia_fisher.tex), sección del testigo como hamiltoniano modular. Para cada Theta:
+Artículo II (~/fisica/holonomia_fisher.tex), sección del signo de la holonomía (anillos), párrafo «La
+entropía residual marca la ventana». Para cada Theta:
   1. Testigo óptimo por el dual del anillo (holonomy.dual: flujo libre, y la cúspide Phi = pi si el flujo óptimo está
      en ella), construido como matriz de 2^6 en la base de qubits, W = sum_e (cos chi A_e + sin chi B_e + Delta C_e),
      chi = Phi/n; se comprueba lambda_max(W)/N(W) = vmax.
