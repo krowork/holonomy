@@ -307,6 +307,8 @@ def main():
     c("0,557465", rd["p_pentamero"], "diamantes: p = (2 + 3c)/4")
     c("0,686528", rd["H_p"], "diamantes: H(p)")
     c("0,07662", rd["p_pentamero"] * 4 / 3 - 2 / 3, "diamantes: c de la Proposición 29 de holonomia")
+    c("0,0766202939", min(np.roots([675, -1836, 972, -64]).real),
+      "diamantes: c, menor raíz de 675c^3-1836c^2+972c-64 (Marco)")
     c("0,184857", rd["a_gap_4"], "diamantes k = 4: a del testigo de mayor gap")
     c("27,487", 1 / rd["gap_norm_4"], "diamantes k = 4: 1/gap normalizado")
     pr = {float(r["eps"]): r for r in leer("regimen_degenerado.csv")}
