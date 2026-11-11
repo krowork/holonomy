@@ -106,12 +106,12 @@ class MaxEnt:
             g = self._medias(p, U) - t
             if np.abs(g).max() < 1e-11:
                 break
-            Ok = np.einsum("ai,kab,bj->kij", U.conj(), self.ops, U)
+            Ok = np.einsum("ai,kab,bj->kij", U.conj(), self.ops, U, optimize=True)
             dw = w[:, None] - w[None, :]
             dp = p[:, None] - p[None, :]
             with np.errstate(divide="ignore", invalid="ignore"):
                 k = np.where(np.abs(dw) > 1e-12, dp / np.where(dw == 0, 1, dw), p[:, None])
-            H = np.einsum("kij,lji,ij->kl", Ok, Ok, k).real
+            H = np.einsum("kij,lji,ij->kl", Ok, Ok, k, optimize=True).real
             m = self._medias(p, U)
             H -= np.outer(m, m)
             paso = np.linalg.lstsq(H, -g, rcond=1e-12)[0]
