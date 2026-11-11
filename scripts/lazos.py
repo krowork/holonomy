@@ -20,14 +20,18 @@ Comprueba, con el resolutor general de parches_boosts.MaxEnt:
 2. el anillo de 4 con datos SO(3) al azar (no abelianos);
 3. el cubo (escalera 2x4) con fases al azar: -2 v^4 sum_caras (1 - cos f_p);
 4. la casa (un cuadrado y un triángulo con una arista común) con flujo solo en el cuadrado;
+6. la familia U(1) de holonomia_parches (P2u), con M_e = diag(R(phi_e), c) y c = v_z/v_perp != 1: el término es
+   (-v_perp)^l [tr R_C(M) - tr R_C(M^0)] = 2 (-1)^(l+1) v_perp^l (1 - cos f), en anillos de 3 a 5 con c = 1/2 y 2;
 5. que el cociente de 1 es (r(v)/v)^l con r(v) común a los anillos, y que r(v) = e^(-1/xi(v)), con xi la longitud
    de decaimiento de la entropía de holonomía de los anillos (Holonomía II, tabla tab:xi).
 
 Escribe data/lazos.csv.
 
-Uso: OMP_NUM_THREADS=8 python scripts/lazos.py
+Uso: OMP_NUM_THREADS=8 python scripts/lazos.py [secciones, p. ej. 6]
 """
 import _common  # noqa: F401
+
+import sys
 
 import numpy as np
 from scipy.spatial.transform import Rotation
@@ -54,19 +58,21 @@ def holonomia(edges, Ms, ciclo):
     return R
 
 
-def prediccion(edges, Ms, ciclos, v):
-    """Término líder: sum_C (-v)^l (tr R_C - 3)."""
-    return sum((-v) ** len(c) * (np.trace(holonomia(edges, Ms, c)) - 3) for c in ciclos)
+def prediccion(edges, Ms, M0s, ciclos, v):
+    """Término líder: sum_C (-v)^l (tr R_C - tr R_C^0); con datos SO(3) triviales, tr R_C^0 = 3."""
+    return sum((-v) ** len(c) * (np.trace(holonomia(edges, Ms, c)) - np.trace(holonomia(edges, M0s, c)))
+               for c in ciclos)
 
 
-def serie(nombre, n, edges, Ms, ciclos, vs, tol):
+def serie(nombre, n, edges, Ms, ciclos, vs, tol, M0s=None):
+    M0s = [np.eye(3)] * len(edges) if M0s is None else M0s
     me = MaxEnt(n, edges)
-    S0 = {v: me.resuelve([np.eye(3)] * len(edges), v)[0] for v in vs}
+    S0 = {v: me.resuelve(M0s, v)[0] for v in vs}
     cocientes = []
     for v in vs:
         S, res, _ = me.resuelve(Ms, v)
         dS = S - S0[v]
-        pred = prediccion(edges, Ms, ciclos, v)
+        pred = prediccion(edges, Ms, M0s, ciclos, v)
         cocientes.append(dS / pred)
         FILAS.append([nombre, v, dS, pred, dS / pred, res])
         print(f"  {nombre:22s} v = {v:.3f}: Delta S = {dS: .6e}, líder {pred: .6e}, cociente {dS / pred:.5f}"
@@ -81,7 +87,29 @@ def anillo(n):
     return tuple((i, (i + 1) % n) for i in range(n))
 
 
-def main():
+def main(secciones):
+    if 1 in secciones:
+        seccion_1()
+    if 5 in secciones:
+        seccion_5()
+    if 2 in secciones:
+        seccion_2()
+    if 3 in secciones:
+        seccion_3()
+    if 4 in secciones:
+        seccion_4()
+    if 6 in secciones:
+        seccion_6()
+    if secciones == TODAS:
+        write_csv("lazos.csv", ("caso", "v", "Delta_S", "lider", "cociente", "residuo"), FILAS)
+    print(f"\n{'TODO OK' if not FALLOS else f'{len(FALLOS)} FALLOS'}")
+    raise SystemExit(bool(FALLOS))
+
+
+TODAS = {1, 2, 3, 4, 5, 6}
+
+
+def seccion_1():
     print("\n1. Anillos con flujo en una arista")
     raices = {}
     for n in (4, 5, 6, 7):
@@ -96,6 +124,8 @@ def main():
     ok(disp.max() < 1e-3, f"anillos: (cociente)^(1/l) común a l = 4..7 y a los dos flujos, dispersión {disp.max():.1e}")
     print("  r(v) = v (cociente)^(1/l): " + ", ".join(f"{v}: {v * raices[4, np.pi][k]:.6f}" for k, v in enumerate(VS)))
 
+
+def seccion_5():
     print("\n5. Anillos a v mayor: r(v) frente a la xi de la tabla tab:xi de fisher")
     XI = {0.2: (0.5937, 0.5946), 0.3: (0.7821, 0.7820), 0.4: (1.0401, 1.0401)}
     for v, (xp, xi) in XI.items():
@@ -110,12 +140,19 @@ def main():
               f"{np.exp(-1 / xi):.5f} (impares); amplitud A/2 = {A:.4f}", flush=True)
         ok(abs(r78 - np.exp(-1 / xp)) < 0.02 * r78, f"v = {v}: r(v) = e^(-1/xi) a un 2 %")
 
+
+def seccion_2():
     print("\n2. Anillo de 4 con datos SO(3) al azar")
     rng = np.random.default_rng(3)
     for k in range(3):
         Ms = list(Rotation.random(4, random_state=rng).as_matrix())
         serie(f"anillo 4, SO(3) #{k}", 4, anillo(4), Ms, [[0, 1, 2, 3]], VS, 2e-3)
 
+
+def seccion_3():
+    # misma semilla y orden de sorteos que cuando el cubo seguía a la sección 2
+    rng = np.random.default_rng(3)
+    Rotation.random(4, random_state=rng), Rotation.random(4, random_state=rng), Rotation.random(4, random_state=rng)
     print("\n3. Cubo (escalera 2x4) con fases al azar")
     # sitios 0..3 abajo, 4..7 arriba; caras: dos tapas y cuatro laterales
     edges = tuple([(i, (i + 1) % 4) for i in range(4)] + [(4 + i, 4 + (i + 1) % 4) for i in range(4)]
@@ -124,16 +161,25 @@ def main():
     Ms = [rz(f) for f in rng.uniform(-np.pi, np.pi, len(edges))]
     serie("cubo, fases al azar", 8, edges, Ms, caras, VS, 5e-3)
 
+
+def seccion_4():
     print("\n4. Casa: cuadrado 0123 y triángulo 2 3 4, flujo solo en el cuadrado")
     edges = ((0, 1), (1, 2), (2, 3), (0, 3), (2, 4), (3, 4))
     Ms = [np.eye(3)] * 3 + [rz(-2.0)] + [np.eye(3)] * 2
     # el pentágono exterior 0 1 2 4 3 tiene la misma holonomía, pero entra a orden v^5
     serie("casa, f_cuadrado = 2", 5, edges, Ms, [[0, 1, 2, 3]], VS, 5e-3)
 
-    write_csv("lazos.csv", ("caso", "v", "Delta_S", "lider", "cociente", "residuo"), FILAS)
-    print(f"\n{'TODO OK' if not FALLOS else f'{len(FALLOS)} FALLOS'}")
-    raise SystemExit(bool(FALLOS))
+
+def seccion_6():
+    print("\n6. Familia U(1): v_z = c v_perp, anillos con flujo en una arista")
+    for n in (3, 4, 5):
+        for c in (0.5, 2.0):
+            M0 = np.diag([1.0, 1.0, c])
+            for f in (np.pi / 2, np.pi):
+                Ms = [M0] * (n - 1) + [rz(f) @ M0]
+                serie(f"anillo {n}, c = {c}, f = {f / np.pi:.2f} pi", n, anillo(n), Ms, [list(range(n))], VS, 5e-3,
+                      M0s=[M0] * n)
 
 
 if __name__ == "__main__":
-    main()
+    main({int(a) for a in sys.argv[1:]} or TODAS)
