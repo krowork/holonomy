@@ -40,7 +40,7 @@ Datos:
   §9 tabla de guiones: README.md.
 
 Uso: python scripts/rigidez_numeros.py [ruta del .tex]
-     (por defecto ~/fisica/holonomia_rigidez.tex; 0,5 s y 0,12 GB de pico, medidos con
+     (por defecto ~/fisica-old/holonomia_rigidez.tex; 0,5 s y 0,12 GB de pico, medidos con
      /usr/bin/time -f "%M KB %e s"; sin SDP)
 """
 import _common  # noqa: F401  (fija OMP_NUM_THREADS antes de numpy)
@@ -59,7 +59,7 @@ from rigidez_escaleras import fits, local_exponents, shanks, witness_params
 from holonomy.report import DATA
 
 pi = math.pi
-TEX = Path.home() / "fisica" / "holonomia_rigidez.tex"
+TEX = Path.home() / "fisica-old" / "holonomia_rigidez.tex"
 README = Path(__file__).resolve().parent.parent / "README.md"
 
 # Tiempos y picos de la tabla de guiones (§9): (texto en el artículo, texto en

@@ -42,6 +42,8 @@ from rigidez_numeros import Cifras, anillos, cuerpo, diamantes, escaleras, f, le
 
 FISICA = Path.home() / "fisica"
 TEX = FISICA / "holonomia.tex"
+# Los artículos de origen no se publican: están archivados en ~/fisica-old.
+FISICA_OLD = Path.home() / "fisica-old"
 FUENTES = ["holonomia_werner.tex", "holonomia_escaleras.tex", "holonomia_diamantes.tex",
            "holonomia_esfera.tex", "holonomia_rigidez.tex"]
 
@@ -127,9 +129,9 @@ def main():
 
     todos = numeros(s)
     resto = sorted(set(todos) - num.vistas, key=todos.index)
-    fuentes = [FISICA / n for n in FUENTES if (FISICA / n).exists()]
+    fuentes = [FISICA_OLD / n for n in FUENTES if (FISICA_OLD / n).exists()]
     if len(fuentes) < len(FUENTES):
-        ck.info(f"faltan {len(FUENTES) - len(fuentes)} artículos de origen en {FISICA}: "
+        ck.info(f"faltan {len(FUENTES) - len(fuentes)} artículos de origen en {FISICA_OLD}: "
                 "no se comprueba la procedencia")
     else:
         en_fuentes = set()
