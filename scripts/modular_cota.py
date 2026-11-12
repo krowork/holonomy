@@ -8,7 +8,7 @@ V* = min |V(C) u {0, j}| sobre los ciclos simples con holonomía no trivial:
   2. Proposición 2: c_{p,k} = tr(K^p ad_K^k(Z_0) Z_j)/N no depende de las fases si k + 2p < 2V* - 2; el mínimo de
      k + 2p con dependencia es 2V* - 2, la parte estática (k = 0) empieza en p >= V*, y Z(phi) en p = l (ciclo no trivial
      más corto).
-  3. Proposición 4: en la máxima entropía, x(v, phi) - giro(x(v, 0)) = O(v^{l-1}); pendientes log-log en
+  3. Proposición 6: en la máxima entropía, x(v, phi) - giro(x(v, 0)) = O(v^{l-1}); pendientes log-log en
      v = 0,02-0,15 (tabla tab:dx). Anillo y escalera se resuelven por invariancia por traslación (3 y 9 multiplicadores).
 
 Escribe data/modular_cota_{momentos,pk,dx}.csv.

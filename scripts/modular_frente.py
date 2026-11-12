@@ -4,7 +4,7 @@
    T K T^-1 = K (T = (iY)^{xn} K), y frente de ||[Z_0(s), Z_j]||_HS/sqrt(N) > 0,2 en v = 0,3, 0,6, 0,9 vmax(0):
    velocidad (pendiente de j frente a s_j, j = 2..5) proporcional a b = |x_A| (tabla tab:frente), los mismos s_j para
    Theta = 0, pi/2, pi con v <= 0,6 vmax. La fase de x es Theta/n exactamente en Theta = 0, pi y se separa con
-   Theta = pi/2 (renormalización de los multiplicadores, Proposición 4 de la nota).
+   Theta = pi/2 (renormalización de los multiplicadores, Proposición 6 de la nota).
 2. Escalera periódica 2 x 4 cerca de vmax, v = vmax (1 - eps): gap de K / beta = gap del testigo (0,09112), peso
    espectral de Z_0 en frecuencia modular nula ~ 0,24 eps, frecuencia media / beta -> 0,1785, cociente de pesos de
    frecuencia negativa y positiva ~ 0,92 eps.
