@@ -1,4 +1,4 @@
-"""Nota «Tiempo modular y holonomía», sección 3.1 (el caso XX, Proposiciones 4 y 5).
+"""Artículo II, sección 11.3.1 (el caso XX, Proposiciones 27 y 28).
 
 Con c_e = 0, K_phi = sum_e a_e (cos phi_e A_e + sin phi_e B_e).
 

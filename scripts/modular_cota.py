@@ -1,14 +1,14 @@
-"""Nota «Tiempo modular y holonomía», secciones 3, 4 y 7: orden en que la holonomía entra en el flujo modular.
+"""Artículo II, secciones 11.3, 11.4 y 11.7: orden en que la holonomía entra en el flujo modular.
 
 Giro puro: K_phi = sum_e a_e (cos phi_e A_e + sin phi_e B_e) + c_e C_e, las mismas amplitudes y solo las fases. Con
 V* = min |V(C) u {0, j}| sobre los ciclos simples con holonomía no trivial:
-  1. Teorema 1: mu_k = tr(ad_K^k(Z_0) Z_j)/N no depende de las fases para k < 2V* - 2. Primer k con dependencia, por
+  1. Teorema 24: mu_k = tr(ad_K^k(Z_0) Z_j)/N no depende de las fases para k < 2V* - 2. Primer k con dependencia, por
      momentos exactos densos, en anillos de 6 y 8 y escaleras periódicas 2 x 4 y 2 x 5 (tabla tab:momentos): igual a
      2V* - 2 con c_e != 0 (también a = 0,7, c = 0,3); con XX puro (c = 0) es 2V*.
-  2. Proposición 2: c_{p,k} = tr(K^p ad_K^k(Z_0) Z_j)/N no depende de las fases si k + 2p < 2V* - 2; el mínimo de
+  2. Proposición 25: c_{p,k} = tr(K^p ad_K^k(Z_0) Z_j)/N no depende de las fases si k + 2p < 2V* - 2; el mínimo de
      k + 2p con dependencia es 2V* - 2, la parte estática (k = 0) empieza en p >= V*, y Z(phi) en p = l (ciclo no trivial
      más corto).
-  3. Proposición 6: en la máxima entropía, x(v, phi) - giro(x(v, 0)) = O(v^{l-1}); pendientes log-log en
+  3. Proposición 29: en la máxima entropía, x(v, phi) - giro(x(v, 0)) = O(v^{l-1}); pendientes log-log en
      v = 0,02-0,15 (tabla tab:dx). Anillo y escalera se resuelven por invariancia por traslación (3 y 9 multiplicadores).
 
 Escribe data/modular_cota_{momentos,pk,dx}.csv.

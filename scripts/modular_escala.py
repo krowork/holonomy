@@ -1,4 +1,4 @@
-"""Nota «Tiempo modular y holonomía», secciones 4 y 7: escala temporal de la holonomía y renormalización a v finito.
+"""Artículo II, secciones 11.4 y 11.7: escala temporal de la holonomía y renormalización a v finito.
 
 1. Giro puro a temperatura infinita, C_j(s) = tr(Z_0(s) Z_j)/N, amplitudes del flujo nulo en v = 0,6 vmax:
    - anillos de 6, 8 y 10 con Theta = pi: primer s con |Delta C_j|/max|C_j| > 1e-2, en unidades del tiempo de vuelta

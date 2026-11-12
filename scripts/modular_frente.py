@@ -1,10 +1,10 @@
-"""Nota «Tiempo modular y holonomía», sección 2: el flujo modular sigma_s(A) = e^{-iKs} A e^{iKs}, K = -x.O.
+"""Artículo II, sección 11.2: el flujo modular sigma_s(A) = e^{-iKs} A e^{iKs}, K = -x.O.
 
 1. Anillo de 10 con flujo uniforme Theta (multiplicadores iguales por traslación),
    T K T^-1 = K (T = (iY)^{xn} K), y frente de ||[Z_0(s), Z_j]||_HS/sqrt(N) > 0,2 en v = 0,3, 0,6, 0,9 vmax(0):
    velocidad (pendiente de j frente a s_j, j = 2..5) proporcional a b = |x_A| (tabla tab:frente), los mismos s_j para
    Theta = 0, pi/2, pi con v <= 0,6 vmax. La fase de x es Theta/n exactamente en Theta = 0, pi y se separa con
-   Theta = pi/2 (renormalización de los multiplicadores, Proposición 6 de la nota).
+   Theta = pi/2 (renormalización de los multiplicadores, Proposición 29).
 2. Escalera periódica 2 x 4 cerca de vmax, v = vmax (1 - eps): gap de K / beta = gap del testigo (0,09112), peso
    espectral de Z_0 en frecuencia modular nula ~ 0,24 eps, frecuencia media / beta -> 0,1785, cociente de pesos de
    frecuencia negativa y positiva ~ 0,92 eps.
@@ -79,16 +79,16 @@ def frente(chk):
             b = abs(y[0])
             vel = np.polyfit(sj[1:], np.arange(2, n // 2 + 1), 1)[0]
             sj_por_v.setdefault(frac, []).append(sj)
-            filas.append((frac, Th, S, b, *sj, vel, vel / b))
+            filas.append((frac, Th, S, b, *sj, vel, vel / b, y[1] / y[0]))
             chk.info(f"v = {frac} vmax, Theta = {Th:.4f}: S = {S:.4f}, b = {b:.4f}, s_j = {sj}, velocidad = {vel:.4f}, "
                      f"velocidad/b = {vel / b:.4f}")
         if frac <= 0.6:
             igual = all(np.array_equal(sj_por_v[frac][0], s) for s in sj_por_v[frac][1:])
             chk.check(igual, f"v = {frac} vmax: los s_j no cambian con Theta")
-    vb = np.array([f[-1] for f in filas if f[1] == 0.0])
+    vb = np.array([f[-2] for f in filas if f[1] == 0.0])
     chk.check(np.all(np.abs(vb - 6.75) < 0.15), f"velocidad/b en Theta = 0: {np.round(vb, 2)} (en torno a 6,7)")
     write_csv("modular_frente.csv", ("v_sobre_vmax", "Theta", "S", "b", "s1", "s2", "s3", "s4", "s5", "velocidad",
-                                     "velocidad_sobre_b"), filas)
+                                     "velocidad_sobre_b", "xB_sobre_xA"), filas)
 
 
 def cerca_de_vmax(chk):

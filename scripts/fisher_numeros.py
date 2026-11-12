@@ -3,7 +3,9 @@
 Artículo (~/fisica/holonomia_fisher.tex, «Holonomía y pegado de perspectivas de Werner II: información de
 Fisher, primera ley del entrelazamiento y el testigo como hamiltoniano modular»): todas las secciones. No
 resuelve ningún SDP ni diagonaliza nada: lee los CSV de fisher_kubo_mori.py, anillo_entropia.py,
-fisher_energia_libre.py, anillo_termico.py, regimen_degenerado.py y berry_tiempo.py.
+fisher_energia_libre.py, anillo_termico.py, regimen_degenerado.py, berry_tiempo.py y, para la sección «Tiempo
+modular y holonomía», modular_{frente,cota,xx,escala,cociclo,canales}.py (solo vmax(0) del anillo de 10 se recalcula,
+con xxz.eps).
 
 Dos comprobaciones:
   1. Cada cifra contra su CSV, redondeada como en el texto (cifra() de diamond_numeros.py). Las
@@ -12,7 +14,7 @@ Dos comprobaciones:
      está comprobado en 1 o en OTROS, cada uno con su motivo.
 
 Uso: python scripts/fisher_numeros.py [ruta del .tex]
-     (por defecto ~/fisica/holonomia_fisher.tex; menos de 1 s)
+     (por defecto ~/fisica/holonomia_fisher.tex; menos de 2 s)
 """
 import _common  # noqa: F401  (fija OMP_NUM_THREADS antes de numpy)
 from _common import Checker
@@ -22,6 +24,7 @@ from pathlib import Path
 
 import numpy as np
 
+from holonomy import xxz
 from diamond_numeros import cifra
 from rigidez_numeros import cuerpo, leer, numeros, sin_signo
 
@@ -64,6 +67,11 @@ OTROS = {
     "0,55": "v de los anillos (VS_ESCALA de anillo_termico.py)",
     "0,185": "a del testigo de los diamantes con k par (regimen_degenerado.py)",
     "0,0": "el punto de flujo nulo (f1, f2) = (0, 0) de la escalera abierta 2x3",
+    "0,6": "v/vmax de la rejilla de modular_frente.py y modular_escala.py",
+    "0,9": "v/vmax de la rejilla de modular_frente.py",
+    "0,02": "v de la rejilla de modular_cota.py (tabla tab:tm-dx)",
+    "2,3": "la arista (2,3) de K4 en modular_xx.py, no es un dato",
+    "6,8": "la lista n = 6, 8, 10 de los anillos de modular_escala.py, no es un dato",
 }
 
 
@@ -356,6 +364,188 @@ def main():
             c(txt, float(ap[k, eps]["beta_sobre_ln"]), f"diamantes k = {k}: beta/ln(1/eps) en {eps:.0e}")
     for eps, txt in ((1e-4, "0,185455"), (1e-5, "0,185338"), (1e-6, "0,185257")):
         c(txt, float(ap[4, eps]["a"]), f"diamantes k = 4: a de la máxima entropía en {eps:.0e}")
+
+    # §11, tiempo modular y holonomía (modular_frente.py, modular_cota.py, modular_xx.py, modular_escala.py,
+    # modular_cociclo.py, modular_canales.py)
+    vmax_2x4 = float(t0[4, 0.1]["vmax"])
+    c("0,602060", 4 * xxz.eps(10, 1.0, 0.0) / 3, "anillo 10: vmax(0) = 4 eps(10)/3")
+    c("0,53556549", vmax_2x4, "2x4: vmax")
+    c("0,0911", float(t0[4, 0.1]["gap"]), "2x4: gap del testigo")
+    c("0,158384", np.tan(np.pi / 20), "tan(pi/20)")
+    fr_ = leer("modular_frente.csv")
+    frente = {(float(r["v_sobre_vmax"]), round(float(r["Theta"]) / np.pi, 6)): r for r in fr_}
+    if "xB_sobre_xA" in fr_[0]:
+        for v, txt in ((0.3, "0,158385"), (0.6, "0,158552"), (0.9, "0,173680")):
+            c(txt, float(frente[v, 0.5]["xB_sobre_xA"]), f"anillo 10, Theta = pi/2, v = {v} vmax: x_B/x_A")
+        chk.check(all(abs(float(frente[v, t]["xB_sobre_xA"]) - np.tan(t * np.pi / 10)) < 1e-12
+                      for v in (0.3, 0.6, 0.9) for t in (0.0, 1.0)),
+                  "anillo 10, Theta = 0, pi: x_B/x_A = tan(Theta/n) a 1e-12")
+    else:
+        chk.check(False, "modular_frente.csv sin la columna xB_sobre_xA (hay que regenerarlo)")
+    tabla = {0.3: ("0,1641", ("0,25", "1,2", "2,05", "3,1", "3,8"), "1,124", "6,85"),
+             0.6: ("0,3481", ("0,15", "0,55", "1,0", "1,5", "1,8"), "2,330", "6,70"),
+             0.9: ("0,8047", ("0,05", "0,25", "0,45", "0,65", "0,8"), "5,382", "6,69")}
+    for v, (b, sj, vel, vb) in tabla.items():
+        r = frente[v, 0.0]
+        c(b, float(r["b"]), f"anillo 10, v = {v} vmax: b = |x_A|")
+        s_ = [float(r[f"s{j}"]) for j in range(1, 6)]
+        for j, txt in enumerate(sj, 1):
+            c(txt, s_[j - 1], f"anillo 10, v = {v} vmax: s_{j}")
+        pen = np.polyfit(s_[1:], np.arange(2, 6), 1)[0]
+        chk.check(abs(pen - float(r["velocidad"])) < 1e-9, f"anillo 10, v = {v} vmax: velocidad = pendiente de j frente a s_j")
+        c(vel, pen, f"anillo 10, v = {v} vmax: velocidad")
+        c(vb, pen / float(r["b"]), f"anillo 10, v = {v} vmax: velocidad/b")
+        if v <= 0.6:
+            chk.check(all([float(frente[v, t][f"s{j}"]) for j in range(1, 6)] == s_ for t in (0.5, 1.0)),
+                      f"anillo 10, v = {v} vmax: los s_j no cambian con Theta")
+    c("6,7", np.mean([float(frente[v, 0.0]["velocidad_sobre_b"]) for v in (0.3, 0.6, 0.9)]),
+      "anillo 10: velocidad/b media (y tiempo de vuelta n/(6,7 a) de modular_escala.py)")
+    fv = {float(r["eps"]): r for r in leer("modular_frente_vmax.csv")}
+    for eps, r in fv.items():
+        c("0,09112", float(r["gap_K_sobre_beta"]), f"2x4, eps = {eps:g}: gap de K / beta")
+    c("0,24", float(fv[1e-3]["peso_estatico"]) / 1e-3, "2x4, eps = 1e-3: peso de Z_0 en frecuencia nula / eps")
+    c("0,1785", float(fv[1e-3]["omega_medio_sobre_beta"]), "2x4, eps = 1e-3: frecuencia media / beta")
+    c("0,92", float(fv[1e-3]["w_neg_sobre_w_pos"]) / 1e-3, "2x4, eps = 1e-3: w-/w+ / eps")
+
+    # §11.3 y §11.7, momentos y c_{p,k} (modular_cota.py)
+    mo = leer("modular_cota_momentos.csv")
+    xx = [r for r in mo if "XX" in r["caso"]]
+    chk.check(all(r["k_min"] == r["2Vstar_menos_2"] for r in mo if r not in xx)
+              and all(int(r["k_min"]) == int(r["2Vstar_menos_2"]) + 2 for r in xx) and len(xx) == 6,
+              "momentos: primer orden = 2V* - 2 con c_e != 0 (también a = 0,7, c = 0,3) y 2V* en los seis sitios XX")
+    chk.check(next(int(r["k_min"]) for r in xx if r["j"] == "6") == 10, "2x4, XX, j = 6: primer orden 10")
+    js = {}
+    for r in mo:
+        js.setdefault((r["caso"], r["2Vstar_menos_2"]), []).append(int(r["j"]))
+    filas_tab = {("anillo 6, Theta=3.1416", "10"): [0, 1, 2, 3], ("anillo 6, Theta=1.0000", "10"): [0, 1, 2, 3],
+                 ("anillo 8, Theta=3.1416", "14"): [0, 1, 2, 3, 4],
+                 ("escalera 2x4, t=1.5708", "6"): [0, 1, 2, 4, 5], ("escalera 2x4, t=1.5708", "8"): [6],
+                 ("escalera 2x4, t=3.1416", "6"): [0, 1, 4, 5], ("escalera 2x4, t=3.1416", "8"): [2, 6],
+                 ("escalera 2x5, t=2.5133", "6"): [0, 1, 5, 6], ("escalera 2x5, t=2.5133", "8"): [2, 7]}
+    chk.check(all(js[k] == v for k, v in filas_tab.items()),
+              "tabla tab:tm-momentos: sitios j y 2V* - 2 de cada fila («0,1,2,4,5», «2,6», «0,1,4,5», «0,1,5,6», «2,7»)")
+    vistas.update({"2,6", "4,5", "5,6", "2,7"})
+    pk = leer("modular_cota_pk.csv")
+    chk.check(all(r["min_k_2p"] == r["2Vstar_menos_2"] and r["p_Z"] == r["l"]
+                  and (r["p_estatico"] == "" or 2 * int(r["p_estatico"]) >= int(r["2Vstar_menos_2"]) + 2) for r in pk),
+              "c_{p,k}: mínimo de k + 2p con dependencia = 2V* - 2, parte estática en p >= V*, Z en p = l")
+    chk.check(next(r["borde_p_k"] for r in pk if r["caso"] == "anillo 6, Theta=3.1416" and r["j"] == "0")
+              == "0:10 1:8 2:6 3:4 4:2", "anillo 6, j = 0: (p, k) = (0,10), (1,8), (2,6), (3,4), (4,2)")
+    vistas.update({"0,10", "1,8", "2,6", "3,4", "4,2"})
+    dx = {}
+    for r in leer("modular_cota_dx.csv"):
+        dx.setdefault(r["caso"], []).append((float(r["v"]), float(r["dx_max"])))
+    for caso, (t1, t2) in (("anillo 6, Theta=pi", ("4,92", "4,82")), ("anillo 8, Theta=pi", ("6,89", "6,75")),
+                           ("escalera 2x4, t=3.1416", ("2,92", "2,98")), ("escalera 2x4, t=1.5708", ("2,92", "2,98"))):
+        vv, dd = np.array(dx[caso]).T
+        pend = np.diff(np.log(dd)) / np.diff(np.log(vv))
+        hi, lo = (t1, t2) if caso.startswith("anillo") else (t2, t1)
+        c(hi, pend.max(), f"{caso}: pendiente local máxima de |x - xbar|")
+        c(lo, pend.min(), f"{caso}: pendiente local mínima")
+
+    # §11.3.1, el caso XX (modular_xx.py)
+    xc = leer("modular_xx.csv")
+    sup = [r for r in xc if int(r["k_min"]) != int(r["cota"])]
+    una = lambda r: sum(float(p) != 0 for p in r["fases"].split()) == 1
+    chk.check(len(xc) == 354 and len({r["grafo"] for r in xc}) == 10 and all(int(r["k_min"]) >= int(r["cota"]) for r in xc)
+              and len(xc) - len(sup) == 341 and len(sup) == 13
+              and all(int(r["k_min"]) == int(r["cota"]) + 2 and una(r) for r in sup),
+              f"cota XX: {len({r['grafo'] for r in xc})} grafos, se cumple en {len(xc)} casos, se alcanza en "
+              f"{len(xc) - len(sup)}, {len(sup)} van dos órdenes por encima con la fase en una arista")
+    chk.check({(r["grafo"], r["j"]) for r in sup} == {("casa", "4"), ("casa", "1"), ("escalera abierta 2x3", "3"),
+                                                    ("rueda W4 (centro 4)", "2"), ("dos triángulos por un vértice", "1")},
+              "cota XX: los 13 casos por encima son casa j = 4, 1; escalera abierta 2x3 j = 3; W4 j = 2; dos triángulos j = 1")
+    k4 = [r for r in xc if r["grafo"] == "K4" and r["j"] == "1" and [float(p) for p in r["fases"].split()][:5] == [0] * 5]
+    chk.check(len(k4) == 1 and k4[0]["Vstar"] == k4[0]["Vstar2"] == "4" and k4[0]["k_min"] == "6",
+              "K4, fase solo en la arista (2,3), j = 1: V* = V*_2 = 4, primer orden 6")
+    pal = {r["j"]: r for r in leer("modular_xx_palabras.csv")}
+    chk.check(pal["0"]["con_ciclo_XX"] == pal["1"]["con_ciclo_XX"] == "0" and pal["0"]["con_ciclo_XXZ"] == "432"
+              and pal["1"]["con_ciclo_XXZ"] == "528", "triángulo, k = 4: palabras con el ciclo, XX 0, XXZ 432 y 528")
+
+    # §11.4 y §11.7, escala temporal y máxima entropía a v finito (modular_escala.py)
+    es = leer("modular_escala.csv")
+    anti = [float(r["llegada"]) for r in es if r["unidad"] == "vueltas" and int(r["j"]) > 0]
+    cero = [float(r["llegada"]) for r in es if r["unidad"] == "vueltas" and int(r["j"]) == 0]
+    c("0,72", min(anti), "anillos: llegada en las antípodas, mínima (en vueltas)")
+    c("0,81", max(anti), "anillos: llegada en las antípodas, máxima")
+    c("1,0", min(cero), "anillos: llegada en j = 0, mínima")
+    c("2,0", max(cero), "anillos: llegada en j = 0, máxima")
+    for L, lo, hi in ((4, "0,29", "0,63"), (5, "0,30", "1,0")):
+        sa = [float(r["llegada"]) for r in es if r["caso"].startswith(f"escalera 2x{L}")]
+        c(lo, min(sa), f"escalera 2x{L}: llegada mínima en s a")
+        c(hi, max(sa), f"escalera 2x{L}: llegada máxima en s a")
+    em = {}
+    for r in leer("modular_escala_maxent.csv"):
+        em.setdefault(r["magnitud"], {})[round(float(r["flujo"]) / np.pi, 6)] = float(r["valor"])
+    c("0,32", 0.6 * vmax_2x4, "2x4: v = 0,6 vmax")
+    c("0,321", 0.6 * vmax_2x4, "2x4: v = 0,6 vmax")
+    c("0,289", em["escalera 2x4, |x| pata"][0.0], "2x4, v = 0,6 vmax: |x| de las patas, t = 0")
+    c("0,423", em["escalera 2x4, |x| pata"][0.5], "2x4, v = 0,6 vmax: |x| de las patas, t = pi/2")
+    c("2e-4", em["anillo 10, cambio relativo |x_e|"][0.5], "anillo 10, v = 0,6 vmax: cambio relativo de |x_e|, Theta = pi/2")
+    c("4e-4", em["anillo 10, cambio relativo |x_e|"][1.0], "anillo 10: cambio relativo de |x_e|, Theta = pi")
+    zz = [x for k, d in em.items() if "<Z0 Z" in k for x in d.values()]
+    c("7e-5", min(zz), "anillo 10: cambio relativo mínimo de <Z0 Zj>, j >= 2")
+    c("2e-4", max(zz), "anillo 10: cambio relativo máximo de <Z0 Zj>")
+
+    # §11.5, cociclo de Connes (modular_cociclo.py)
+    co = {(r["caso"], round(float(r["v"]), 6)): {k: float(x) for k, x in r.items() if k != "caso"}
+          for r in leer("modular_cociclo.csv")}
+    err = max(max(abs(r["Delta_S"] - (r["h"] - r["S_rho_rhobar"])),
+                  abs(r["giro"] + r["renormalizacion"] - r["S_rho_rhobar"] - r["Delta_S"])) for r in co.values())
+    chk.check(err <= 2e-14, f"cociclo: Delta S = h - S_rel y giro + ren = Delta S + S_rel, error {err:.1e} -> «2e-14»")
+    vistas.add("2e-14")
+    tabla = {"anillo 6, Theta=pi": (0.03, "5,047", "6,047", "1,0000", "1,0022", "9,59", None),
+             "anillo 8, Theta=pi": (0.05, "7,09", "8,09", "1,0000", "1,0001", "13,4", None),
+             "escalera 2x4, t=3.1416": (0.03, "3,015", "4,010", "1,0141", "1,1231", "5,78", ("1,004", "1,000", "0,948")),
+             "escalera 2x4, t=1.5708": (0.03, "3,015", "4,010", "1,0141", "1,1234", "5,78", ("1,004", "1,000", "0,951"))}
+    for caso, (v, gi, re_n, q05, q15, pend, fF) in tabla.items():
+        r = co[caso, v]
+        c(gi, r["giro"] / r["Delta_S"], f"{caso}, v = {v}: giro / Delta S")
+        chk.check(r["giro"] / r["Delta_S"] < 0, f"{caso}: el giro tiene signo opuesto a Delta S")
+        c(re_n, r["renormalizacion"] / r["Delta_S"], f"{caso}, v = {v}: renormalización / Delta S")
+        c(q05, co[caso, 0.05]["Delta_S_sobre_h"], f"{caso}: Delta S/h en v = 0,05")
+        c(q15, co[caso, 0.15]["Delta_S_sobre_h"], f"{caso}: Delta S/h en v = 0,15")
+        a, b = co[caso, 0.1], co[caso, 0.15]
+        c(pend, np.log(b["S_rho_rhobar"] / a["S_rho_rhobar"]) / np.log(1.5), f"{caso}: pendiente de S(rho||rhobar) en v = 0,1-0,15")
+        if fF:
+            for col, txt in zip(("F_0.25", "F_1", "F_4"), fF, strict=True):
+                c(txt, co[caso, 0.05][col], f"{caso}, v = 0,05: (1 - |F|)/(s^2 S), {col}")
+    # el párrafo tras la tabla es la 2x4 con t = pi (con t = pi/2: 1,74; 1,68; 1,11; 0,40)
+    r = co["escalera 2x4, t=3.1416", round(0.6 * 0.53556549, 6)]
+    c("1,73", r["Delta_S_sobre_h"], "2x4, t = pi, v = 0,6 vmax: Delta S/h")
+    for col, txt in (("F_0.25", "1,70"), ("F_1", "1,11"), ("F_4", "0,40")):
+        c(txt, r[col], f"2x4, t = pi, v = 0,6 vmax: (1 - |F|)/(s^2 S), {col}")
+
+    # §11.6, los dos canales (modular_canales.py)
+    ca = {}
+    for r in leer("modular_canales.csv"):
+        ca.setdefault((r["caso"], int(r["j"])), []).append(r)
+    tabla = {("anillo 6, Theta=pi", 0): ("3,96", "0,27"), ("anillo 6, Theta=pi", 3): ("3,90", "0,18"),
+             ("escalera 2x4, t=pi", 0): ("1,99", "0,13"), ("escalera 2x4, t=pi", 1): ("1,91", "0,07"),
+             ("escalera 2x4, t=pi", 2): ("1,82", "0,08"), ("escalera 2x4, t=pi", 6): ("1,85", "0,35")}
+    for (caso, j), (tR, tI) in tabla.items():
+        rs = ca[caso, j]
+        lv = np.log([float(r["v"]) for r in rs])
+        pR = np.polyfit(lv, np.log([float(r["env_DR_tau1"]) for r in rs]), 1)[0]
+        pI = np.polyfit(lv, np.log([float(r["env_DI_tau1"]) for r in rs]), 1)[0]
+        c(tR, pR, f"{caso}, j = {j}: exponente de la envolvente de D_R")
+        c(tI, pI, f"{caso}, j = {j}: exponente de la envolvente de D_I")
+        chk.check((pI < 0) == (j in (2, 3, 6)), f"{caso}, j = {j}: signo del exponente de D_I")
+    coc = [max(float(r["cociente_cota_DR"]) for r in rs) for rs in ca.values()]
+    chk.check(max(coc) <= 1, "canales: la cota (b) se cumple punto a punto")
+    c("0,014", min(coc), "canales: menor cociente máximo |D_R| / cota")
+    c("0,19", max(coc), "canales: mayor cociente máximo")
+    for v, lo, hi in ((0.01, "0,03", "0,22"), (0.05, "0,17", "1,25")):
+        rel = [float(r["rel_DI_Dinf"]) for rs in ca.values() for r in rs if float(r["v"]) == v]
+        c(lo, min(rel), f"canales, v = {v}: menor max|D_I - D_inf|/max|D_inf|")
+        c(hi, max(rel), f"canales, v = {v}: mayor")
+    cr = {r["caso"]: r for r in leer("modular_canales_cruce.csv")}
+    for caso, (te, tp) in (("anillo 6, Theta=pi", ("0,473", "0,444")), ("escalera 2x4, t=pi", ("0,420", "0,400"))):
+        c(te, float(cr[caso]["exponente_tau_c"]), f"{caso}, j = 0: exponente del cruce tau_c")
+        r = cr[caso]
+        c(tp, (int(r["l"]) - 2) / (2 * int(r["Vstar"]) - 3), f"{caso}, j = 0: predicción (l - 2)/(2V* - 3)")
+        chk.check(abs(float(r["prediccion"]) - (int(r["l"]) - 2) / (2 * int(r["Vstar"]) - 3)) < 1e-12,
+                  f"{caso}: predicción del CSV = (l - 2)/(2V* - 3)")
 
     # Cobertura
     sueltos = sorted(set(en_tex) - vistas - set(OTROS))

@@ -1,9 +1,9 @@
-"""Nota «Tiempo modular y holonomía», sección 5: cociclo de Connes entre la máxima entropía y el giro puro.
+"""Artículo II, sección 11.5: cociclo de Connes entre la máxima entropía y el giro puro.
 
 rho_T = e^{x.O}/Z es la máxima entropía con holonomía; rhobar = e^{xbar.O}/Zbar el giro puro (los multiplicadores de
 flujo nulo girados), con la misma holonomía. Los dos giran juntos con el gauge, y u_s = rho_T^{is} rhobar^{-is} es
 covariante. Con h = ln Zbar - ln Z_0 y x0 los multiplicadores sin flujo:
-  1. Identidad exacta: Delta S_hol = h - S(rho_T || rhobar) (el defecto de la Proposición 15, Kohn a temperatura finita, del artículo II).
+  1. Identidad exacta: Delta S_hol = h - S(rho_T || rhobar) (el defecto de la Proposición 15, Kohn a temperatura finita).
   2. Reparto exacto: S(rhobar) - S_0 = h - x0.grad h y -xbar.(m_T - mbar) = x0.grad h; a orden dominante,
      -(l - 1) h y l h (homogeneidad), y h ~ término de lazos 2 (-1)^{l+1} v^l sum_{|C|=l} (1 - cos theta_C).
   3. S(rho_T || rhobar), S(rhobar || rho_T) = O(v^{2l-2}), y Delta S/h - 1 ~ v^{l-2}.

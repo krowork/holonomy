@@ -1,8 +1,8 @@
-"""Nota «Tiempo modular y holonomía», sección 6: los dos canales del correlador de máxima entropía.
+"""Artículo II, sección 11.6: los dos canales del correlador de máxima entropía.
 
 G(s) = tr(rho Z_0(s) Z_j), K = -x.O. Con Gbar el giro puro (multiplicadores de flujo nulo girados) y tau = v s:
   G_phi - G_0 = D_I + D_R,  D_I = Gbar - G_0 (interferencia),  D_R = G_phi - Gbar (renormalización).
-Proposición 8: |D_I| <= C max(v, tau^2)^{V*-1}, con D_I -> D_inf(tau) (giro puro a T infinita con K/v) a tau fijo, y
+Proposición 31: |D_I| <= C max(v, tau^2)^{V*-1}, con D_I -> D_inf(tau) (giro puro a T infinita con K/v) a tau fijo, y
 |D_R| <= sqrt(2 S(rho_phi || rhobar)) + 2|s| ||K_phi - Kbar|| = O(v^{l-1} + tau v^{l-2}).
 Se comprueba, en el anillo de 6 (Theta = pi) y la escalera 2 x 4 (t = pi), v = 0,01-0,05:
   1. la desigualdad de D_R punto a punto (tau en 0,001-2);
@@ -78,7 +78,8 @@ def main():
                 ss = TAUS / v
                 g0, gb, g1 = corr(O, y0, n, j, ss), corr(O, yb, n, j, ss), corr(O, y1, n, j, ss)
                 DI, DR = gb - g0, g1 - gb
-                viol = max(viol, (np.abs(DR) / (pinsker + 2 * ss * normdK)).max())
+                cociente = (np.abs(DR) / (pinsker + 2 * ss * normdK)).max()
+                viol = max(viol, cociente)
                 Dinf = corr(O, yb / v, n, j, TAUS, False) - corr(O, y0 / v, n, j, TAUS, False)
                 eI, eR = np.maximum.accumulate(np.abs(DI)), np.maximum.accumulate(np.abs(DR))
                 envI.append(eI[b1])
@@ -86,7 +87,7 @@ def main():
                 dinf.append(np.abs(DI - Dinf)[:b1 + 1].max() / np.abs(Dinf)[:b1 + 1].max())
                 k = np.argmax(eI > eR)
                 tc.append(TAUS[k] if k > 0 else np.nan)
-                filas.append((nombre, j, v, eI[b1], eR[b1], dinf[-1], tc[-1]))
+                filas.append((nombre, j, v, eI[b1], eR[b1], dinf[-1], tc[-1], cociente))
             pR = np.polyfit(np.log(VS), np.log(envR), 1)[0]
             pI = np.polyfit(np.log(VS), np.log(envI), 1)[0]
             chk.check(viol <= 1.0, f"{nombre}, j = {j}: |D_R| <= sqrt(2 S_rel) + 2|s| ||dK|| en todo tau (máximo del "
@@ -105,7 +106,8 @@ def main():
                 filas_c.append((nombre, j, ell, Vs, ptc, pred))
             else:
                 chk.info(f"{nombre}, j = {j}: cruce tau_c = {np.round(tc, 4)} (la cota de D_R no ve la localidad)")
-    write_csv("modular_canales.csv", ("caso", "j", "v", "env_DI_tau1", "env_DR_tau1", "rel_DI_Dinf", "tau_c"), filas)
+    write_csv("modular_canales.csv", ("caso", "j", "v", "env_DI_tau1", "env_DR_tau1", "rel_DI_Dinf", "tau_c",
+                                         "cociente_cota_DR"), filas)
     write_csv("modular_canales_cruce.csv", ("caso", "j", "l", "Vstar", "exponente_tau_c", "prediccion"), filas_c)
     chk.finish()
 
