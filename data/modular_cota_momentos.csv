@@ -1,0 +1,44 @@
+caso,j,2Vstar_menos_2,k_min
+"anillo 6, Theta=3.1416",0,10,10
+"anillo 6, Theta=3.1416",1,10,10
+"anillo 6, Theta=3.1416",2,10,10
+"anillo 6, Theta=3.1416",3,10,10
+"anillo 6, Theta=1.0000",0,10,10
+"anillo 6, Theta=1.0000",1,10,10
+"anillo 6, Theta=1.0000",2,10,10
+"anillo 6, Theta=1.0000",3,10,10
+"anillo 8, Theta=3.1416",0,14,14
+"anillo 8, Theta=3.1416",1,14,14
+"anillo 8, Theta=3.1416",2,14,14
+"anillo 8, Theta=3.1416",3,14,14
+"anillo 8, Theta=3.1416",4,14,14
+"escalera 2x4, t=1.5708",0,6,6
+"escalera 2x4, t=1.5708",1,6,6
+"escalera 2x4, t=1.5708",2,6,6
+"escalera 2x4, t=1.5708",4,6,6
+"escalera 2x4, t=1.5708",5,6,6
+"escalera 2x4, t=1.5708",6,8,8
+"escalera 2x4, t=3.1416",0,6,6
+"escalera 2x4, t=3.1416",1,6,6
+"escalera 2x4, t=3.1416",2,8,8
+"escalera 2x4, t=3.1416",4,6,6
+"escalera 2x4, t=3.1416",5,6,6
+"escalera 2x4, t=3.1416",6,8,8
+"escalera 2x5, t=2.5133",0,6,6
+"escalera 2x5, t=2.5133",1,6,6
+"escalera 2x5, t=2.5133",2,8,8
+"escalera 2x5, t=2.5133",5,6,6
+"escalera 2x5, t=2.5133",6,6,6
+"escalera 2x5, t=2.5133",7,8,8
+"escalera 2x4, t=1, a=0,7, c=0,3",0,6,6
+"escalera 2x4, t=1, a=0,7, c=0,3",1,6,6
+"escalera 2x4, t=1, a=0,7, c=0,3",2,6,6
+"escalera 2x4, t=1, a=0,7, c=0,3",4,6,6
+"escalera 2x4, t=1, a=0,7, c=0,3",5,6,6
+"escalera 2x4, t=1, a=0,7, c=0,3",6,8,8
+"escalera 2x4, t=1, XX (c=0)",0,6,8
+"escalera 2x4, t=1, XX (c=0)",1,6,8
+"escalera 2x4, t=1, XX (c=0)",2,6,8
+"escalera 2x4, t=1, XX (c=0)",4,6,8
+"escalera 2x4, t=1, XX (c=0)",5,6,8
+"escalera 2x4, t=1, XX (c=0)",6,8,10
