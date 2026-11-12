@@ -1,4 +1,4 @@
-"""Nota «Tiempo modular y holonomía», secciones 3, 4 y 6: orden en que la holonomía entra en el flujo modular.
+"""Nota «Tiempo modular y holonomía», secciones 3, 4 y 7: orden en que la holonomía entra en el flujo modular.
 
 Giro puro: K_phi = sum_e a_e (cos phi_e A_e + sin phi_e B_e) + c_e C_e, las mismas amplitudes y solo las fases. Con
 V* = min |V(C) u {0, j}| sobre los ciclos simples con holonomía no trivial:
