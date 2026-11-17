@@ -141,10 +141,10 @@ def trnorm(X):
     return np.abs(np.linalg.eigvalsh((X + X.conj().T) / 2)).sum()
 
 
-def run(name, q, charges, n_brute, ms):
+def run(name, q, charges, n_brute, ms, A=None):
     print(f"\n=== {name} ===")
     k, d = len(charges), len(q)
-    A = random_u1_cell(q, charges)
+    A = random_u1_cell(q, charges) if A is None else A
     Q = np.diag(q)
     t = 0.613
     check(all(np.allclose(u(charges[i], t) @ A[i][s] @ u(charges[(i + 1) % k], t).conj().T,

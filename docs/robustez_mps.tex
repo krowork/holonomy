@@ -410,7 +410,9 @@ $s=1,\dots,d$, con:
 \item[(M3$_k$)] \emph{datos}: $\sigma=\tfrac1k\sum_{i=1}^k\sigma_i$, con $\sigma_i$ la marginal, en
   el límite termodinámico, de la arista $(i,i{+}1)$ del MPS de periodo $k$.
 \end{itemize}
-Con $k=1$ es (M). La media sobre los tipos hace que $\sigma$ sea la marginal de arista de la mezcla
+Con $k=1$ es (M). Se admite también una carga desplazada, $q_s\to q_s-\mu$ en (M2$_k$), para
+estados con carga $\mu$ por sitio: cambiar $Q$ por $Q-\mu$ multiplica $V$ por una fase global,
+que no altera los datos girados, y $e^{2\pi i(Q-\mu)}$ sigue siendo escalar. La media sobre los tipos hace que $\sigma$ sea la marginal de arista de la mezcla
 de los $k$ trasladados del MPS, que sí es invariante por traslación.
 
 Sean $\mathcal A_i(X)=\sum_sA_i^sXA_i^{s\dagger}$, de $M_{D_{i+1}}$ en $M_{D_i}$, y
@@ -540,9 +542,100 @@ Comprueba:
 Con el máximo sobre $9$ valores de $\Theta\in[0,\pi]$ y $n=6,\dots,60$, el cociente
 $\varepsilon_n/\lambda^{m-1}$ queda en $[1{,}67;\,1{,}69]$ y en $[1{,}39;\,1{,}61]$,
 respectivamente, hasta que $\varepsilon_n$ llega al redondeo. El ejemplo de espín $\tfrac12$ tiene
-$\sigma$ de rango completo: vale la cota inferior, pero no el techo $p\le1$. No he encontrado un
-MPS de qubits de celda doble, inyectivo y con $U(1)$, cuya $\sigma$ tenga núcleo; con las cargas
-virtuales más pequeñas, anular $\ket{\uparrow\uparrow}$ en las dos aristas rompe la ergodicidad
-de la celda.
+$\sigma$ de rango completo: vale la cota inferior, pero no el techo $p\le1$. No es casualidad.
+
+\subsection*{Qubits: con núcleo, la celda doble solo admite el Néel clásico}
+
+\begin{proposicion}[qubits con núcleo]\label{prop:qubits}
+Sean qubits con $Q=\tfrac12Z$ y un MPS que cumple (M$_k$) con carga desplazada $\mu=f-\tfrac12$,
+$0<f<1$ (la fracción de espines arriba), con celdas inyectivas empiecen en el tipo que empiecen.
+Si $\sigma$ tiene núcleo, entonces, salvo inversión de todos los espines:
+\begin{enumerate}
+\item[(i)] el núcleo contiene $\ket{\uparrow\uparrow}$: en ningún anillo hay dos espines arriba
+  contiguos, y $f\le\tfrac12$;
+\item[(ii)] $kf\in\mathbb Z$;
+\item[(iii)] si $f=\tfrac12$, el MPS es el Néel clásico ($D=1$, $k$ par).
+\end{enumerate}
+En particular, con $k=2$ el único ejemplo es el Néel clásico.
+\end{proposicion}
+
+\begin{proof}
+\emph{El núcleo es exacto.} Si $\bra v\sigma_i\ket v=0$, con
+$W=\sum_{ab}\bar v_{ab}A_i^aA_{i+1}^b$ se tiene $\bra v\sigma_i\ket v=\tr(L_iWXW^\dagger)$, donde
+$X$ es el punto fijo derecho de la celda que empieza en el tipo $i+2$. Por inyectividad, $L_i>0$ y
+$X>0$, así que $W=0$: la componente $v$ se anula exactamente en toda arista de tipo $i$ de todo
+anillo. El núcleo de $\sigma$ es $\bigcap_i\ker\sigma_i$ y es invariante por la $U(1)$, así que
+contiene un vector de carga definida: $\ket{\uparrow\uparrow}$, $\ket{\downarrow\downarrow}$ o
+$v=a\ket{\uparrow\downarrow}+b\ket{\downarrow\uparrow}$.
+
+\emph{Carga.} Por (M2$_k$), $\tr(B^{s_1}\cdots B^{s_n})=e^{-it\sum_j(q_{s_j}-\mu)}\tr(B^{s_1}\cdots B^{s_n})$
+para todo $t$: solo hay amplitud en configuraciones con exactamente $fn$ espines arriba. Con
+$n=k$ esto da (ii), y es también el Corolario~\ref{cor:lsmk} con $e^{2\pi i(Q-\mu)}=e^{-2\pi if}$.
+
+\emph{Sector intermedio.} Si $v=a\ket{\uparrow\downarrow}+b\ket{\downarrow\uparrow}$ se anula
+en todas las aristas, la amplitud de un anillo cumple $\psi(x')=r\,\psi(x)$ cuando $x'$ sale de
+$x$ cambiando un par $\uparrow\downarrow$ por $\downarrow\uparrow$, con $r=-\bar a/\bar b$. Si
+$b=0$, ninguna configuración con $0<fn<n$ tiene amplitud. Si no, avanzar todos los espines
+arriba un sitio cuesta $r^{fn}$, y dar la vuelta, $r^{fn^2}=1$; así que o bien $\psi=0$, o bien
+$|r|=1$ y $\psi$ es un estado de Dicke salvo fases locales. El primero contradice que el MPS
+inyectivo da anillos no nulos. El segundo también lo contradice: el rango de Schmidt de un
+bloque de $\ell$ sitios de un estado de Dicke crece como $\ell+1$, y el de un MPS está acotado por
+$D_{\max}^2$.
+
+\emph{Llenado mitad.} Si el núcleo contiene $\ket{\uparrow\uparrow}$ (lo que obliga a $f\le\tfrac12$)
+y $f=\tfrac12$, las únicas configuraciones con $n/2$ espines arriba y ninguno contiguo son los dos
+estados de Néel. La reducción a un bloque de $L$ celdas tiene entonces rango $\le2$, mientras que
+la inyectividad le da rango $D_1^2$ para $L\ge L_0$ y anillos grandes. Luego $D_1=1$, y del mismo
+modo todos los $D_i=1$: un producto, que solo puede ser uno de los estados de Néel. Con $k=2$,
+(ii) deja $f=\tfrac12$.
+\end{proof}
+
+\subsection*{El ejemplo mínimo: celda de tres sitios y llenado $1/3$}
+
+La Proposición~\ref{prop:qubits} pide $f<\tfrac12$ y $kf\in\mathbb Z$ para un ejemplo con
+fluctuaciones cuánticas; lo mínimo es $k=3$ y $f=\tfrac13$. Sea el MPS con un espín arriba por
+celda, en superposición sobre los tres sitios, y sin dos espines arriba contiguos: está
+prohibido «arriba en el sitio 3» seguido de «arriba en el sitio 1» de la celda siguiente. Los
+enlaces llevan un bit cada uno ($D_1=D_2=D_3=2$):
+\begin{itemize}
+\item el enlace 1 recuerda si el sitio anterior estaba arriba;
+\item los enlaces 2 y 3 recuerdan si el espín de la celda ya se ha colocado.
+\end{itemize}
+Con las cargas virtuales $\{0,0\}$, $\{-\tfrac23,\tfrac13\}$ y $\{-\tfrac13,\tfrac23\}$ y
+$\mu=-\tfrac16$, cumple (M2$_k$). Con amplitudes $1$ para las tres posiciones
+(\texttt{scripts/qubits\_celda3.py}):
+\begin{itemize}
+\item los productos de dos celdas generan $M_2$, y $\lambda=0{,}146$ en los tres tipos;
+\item $\sigma$ tiene espectro $\{0;\ 0{,}149;\ \tfrac13;\ 0{,}518\}$, con núcleo
+  $\ket{\uparrow\uparrow}$ exactamente, y $\ev Z=-\tfrac13$;
+\item las marginales por fuerza bruta ($n=6,9,12$) coinciden con las de la transferencia a
+  $2\times10^{-16}$, y $\varepsilon_n/\lambda^{m-1}=0{,}30$ desde $n=6$ hasta el redondeo, uniforme
+  en $\Theta$.
+\end{itemize}
+El Teorema~\ref{teo:celda} da $1-O(n\lambda^{n/3})\le p(n,\Theta)\le1$ para $3\mid n$. El SDP
+exacto, diagonal por bloques de magnetización:
+\begin{center}\small
+\begin{tabular}{rccc}
+\toprule
+$n$ & $\Theta=0$ & $\pi/2$ & $\pi$\\
+\midrule
+4 & $0{,}998146$ & $0{,}968120$ & $0{,}949735$\\
+5 & $1$ & $0{,}997910$ & $0{,}994144$\\
+6 & $1$ & $1$ & $1$\\
+7 & $1$ & $1$ & $0{,}99989^*$\\
+8 & $1$ & $1$ & $1$\\
+9 & $1$ & $1$ & ---$^\dagger$\\
+\bottomrule
+\end{tabular}
+\end{center}
+($^*$: SCS, \texttt{optimal\_inaccurate}. $^\dagger$: SCS no terminó en 40 minutos; Clarabel
+no cabe en memoria en $n=9$.) La sensibilidad a $\Theta$ cae de $5\times10^{-2}$ en
+$n=4$ a $6\times10^{-3}$ en $n=5$ y a menos de $10^{-4}$ desde $n=6$.
+
+Aquí $3\mid n$ es suficiente, pero no necesario: con $n=5$, $7$ y $8$ también se alcanza $p=1$
+en casi todas las $\Theta$. El estado puede mezclar los sectores con $\lfloor n/3\rfloor$ y
+$\lceil n/3\rceil$ espines arriba, y con llenado $\tfrac13$ la restricción «ninguno contiguo» deja
+holgura. Con $f=\tfrac12$ no la deja: es la rigidez del llenado mitad lo que produce el efecto de
+paridad de la Proposición~\ref{prop:neelclas} y de la Sección~\ref{sec:neel}.
 
 \end{document}
