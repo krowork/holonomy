@@ -43,6 +43,9 @@ obstrucción de Lieb--Schultz--Mattis, con una demostración de tres líneas.
 La salida es romper la traslación: con datos $U(1)$ anisótropos de qubits, el testigo óptimo cae en
 la fase de Néel y, con diagonalización exacta hasta $n=18$, la sensibilidad decae exponencialmente
 para $n$ par y como $1/n^2$ para $n$ impar, donde una pared de dominio móvil acopla al flujo.
+El teorema se extiende a MPS con celda de $k$ sitios: robustez $1-O(n\lambda^{n/k})$ para $n$
+múltiplo de $k$, y con carga semientera la celda ha de ser par. El ejemplo de Néel clásico muestra
+que la divisibilidad no sobra: $p=1$ con $n$ par y $p=1-2/n$ con $n$ impar.
 \end{abstract}
 
 %=====================================================================
@@ -135,7 +138,9 @@ $n\ge n_0$, uniformemente en $\Theta$.
 
 \emph{Dilución.} Las marginales de $\psi_\Theta$ son $I/d^2+\tau_j+\Delta_j$ con
 $\|\Delta_j\|_1\le\varepsilon_n$; los $\Delta_j$ tienen traza nula y reducciones compatibles,
-porque las de $\tau_j$ son nulas y las de un estado global lo son. Con
+porque las de $\tau_j$ lo son y las de un estado global también. Para $\tau_j$: la reducción de
+$\sigma$ sobre cualquiera de sus dos sitios es la marginal de un sitio del MPS, y conmuta con $Q$
+por (M2), así que $V\,(\tr_1\sigma)\,V^\dagger=\tr_2\sigma$. Con
 $s=n\varepsilon_n/(r+n\varepsilon_n)$, el Lema~\ref{lem:dilucion} da un estado $\omega$ con
 marginales $I/d^2-\tfrac{1-s}s\Delta_j$, y $(1-s)\ket{\psi_\Theta}\bra{\psi_\Theta}+s\,\omega$
 tiene marginales $I/d^2+(1-s)\tau_j$. Luego $p(n,\Theta)\ge1-s\ge1-n\varepsilon_n/r$. La cota
@@ -381,10 +386,163 @@ traslación no hay testigo con estado fundamental único y gap. La salida es rom
 con periodo 2, y eso solo cabe en el anillo si $n$ es par. Para $n$ par, agrupar pares de sitios
 da un anillo de $n/2$ celdas con carga entera, donde el mecanismo del Teorema~\ref{teo:mps} vuelve a
 estar disponible: un MPS de celda doble no tiene la obstrucción. Para $n$ impar, la
-inconmensurabilidad deja un defecto móvil y la respuesta vuelve a ser crítica. Queda como
-conjetura un enunciado del tipo «robustez exponencial $\iff$ rigidez nula; con espín semientero,
-solo para $n$ múltiplo del periodo de la fase rota», y como siguiente paso, demostrar la versión
-del Teorema~\ref{teo:mps} con celda de $k$ sitios.
+inconmensurabilidad deja un defecto móvil y la respuesta vuelve a ser crítica. La
+Sección~\ref{sec:celda} demuestra la mitad rigurosa de esta lectura: el Teorema~\ref{teo:mps} con
+celda de $k$ sitios. Queda como conjetura que datos como los de la tabla, que no son marginales
+de un MPS de celda doble, se comporten igual.
 \end{observacion}
+
+%=====================================================================
+\section{El teorema con celda de $k$ sitios}\label{sec:celda}
+%=====================================================================
+
+Los datos siguen siendo invariantes por traslación, el mismo $\sigma$ en cada arista; lo que
+cambia es el estado del que salen. Índices de tipo en $\mathbb Z_k$.
+
+\paragraph{Hipótesis (M$_k$).} Tensores $A_i^s\in\mathbb C^{D_i\times D_{i+1}}$, $i\in\mathbb Z_k$,
+$s=1,\dots,d$, con:
+\begin{itemize}
+\item[(M1$_k$)] \emph{inyectividad de la celda}: con $\mathbb A^{s_1\cdots s_k}=A_1^{s_1}\cdots
+  A_k^{s_k}$, para algún $L_0$ los productos de $L$ celdas generan $M_{D_1}(\mathbb C)$ para todo
+  $L\ge L_0$;
+\item[(M2$_k$)] \emph{simetría enlace a enlace}: representaciones unitarias $u^{(i)}_t$ en cada
+  espacio virtual con $u^{(i)}_tA_i^su^{(i+1)\dagger}_t=e^{-itq_s}A_i^s$;
+\item[(M3$_k$)] \emph{datos}: $\sigma=\tfrac1k\sum_{i=1}^k\sigma_i$, con $\sigma_i$ la marginal, en
+  el límite termodinámico, de la arista $(i,i{+}1)$ del MPS de periodo $k$.
+\end{itemize}
+Con $k=1$ es (M). La media sobre los tipos hace que $\sigma$ sea la marginal de arista de la mezcla
+de los $k$ trasladados del MPS, que sí es invariante por traslación.
+
+Sean $\mathcal A_i(X)=\sum_sA_i^sXA_i^{s\dagger}$, de $M_{D_{i+1}}$ en $M_{D_i}$, y
+$\mathcal E_i=\mathcal A_i\circ\mathcal A_{i+1}\circ\cdots\circ\mathcal A_{i+k-1}$ el canal de la
+celda que empieza en el tipo $i$. Como $\mathcal A_i\,\mathcal E_{i+1}=\mathcal E_i\,\mathcal A_i$,
+todos los $\mathcal E_i$ tienen el mismo espectro no nulo, con la misma estructura de Jordan
+($XY$ e $YX$). Por (M1$_k$), $\mathcal E_1$ es primitivo; tras normalizar, todos tienen autovalor
+dominante $1$, simple, con autovectores $R_i$ y $L_i$ ($\mathcal E_iR_i=R_i$,
+$\mathcal E_i^\dagger L_i=L_i$), y el resto del espectro en el disco
+de radio $\lambda<1$.
+
+\begin{teorema}[robustez con celda de $k$ sitios]\label{teo:celda}
+Sea $k\ge2$ (con $k=1$ es el Teorema~\ref{teo:mps}). Bajo (M$_k$) existen $C$ y $m_0$, que solo dependen de los tensores, tales que para todo
+$n=mk$ con $m\ge m_0$ y toda $\Theta$
+\[
+  p(n,\Theta)\ \ge\ 1-6d^2\,n\,\varepsilon_n,\qquad \varepsilon_n\le C\lambda^{m-1}.
+\]
+Si además $\sigma$ no tiene rango completo, es decir, si los $\sigma_i$ tienen un vector común en
+el núcleo, entonces $p(n,\Theta)\le1$ y
+$\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|\le6d^2Cn\lambda^{m-1}$.
+\end{teorema}
+
+\begin{proof}
+\emph{El estado retorcido.} Sea $\phi=\Theta/n$, $w_i=u^{(i)}_\phi$ y $B_i^s=A_i^sw_{i+1}$. El
+estado $\ket{\psi_\Theta}=\sum\tr(B_1^{s_1}B_2^{s_2}\cdots B_n^{s_n})\ket{s_1\cdots s_n}$, con los
+tipos de los $B$ módulo $k$ ($m$ celdas), es invariante por la traslación de $k$ sitios. (M2$_k$) se reescribe como
+$w_iA_i^s=e^{-i\phi q_s}A_i^sw_{i+1}$. Llevando cada $w$ a la derecha a lo largo de una celda que
+empieza en el tipo $i$,
+\[
+  B_i^{s_0}B_{i+1}^{s_1}\cdots B_{i+k-1}^{s_{k-1}}
+  =e^{-i\phi\sum_{l=1}^{k-1}l\,q_{s_l}}\;A_i^{s_0}\cdots A_{i+k-1}^{s_{k-1}}\;U_i,\qquad U_i=u^{(i)}_{k\phi}.
+\]
+En el canal, ket y bra llevan los mismos índices y la fase se cancela: el canal retorcido es
+$\mathcal E_i\circ\Ad_{U_i}$. Componiendo (M2$_k$) a lo largo de la celda,
+$U\,\mathbb A_i^{\vec s}\,U^\dagger$ es $\mathbb A_i^{\vec s}$ por una fase. Así $\Ad_{U_i}$ conmuta
+con $\mathcal E_i$ y, por unicidad, fija $R_i$ y $L_i$.
+
+\emph{Marginal de una arista de tipo $i$.} Se lee el anillo en celdas que empiezan en el tipo $i$.
+Sea $\Phi^{(i)}_{ab,cd}(X)=\sum_{s_2,\dots,s_{k-1}}\mathbb B^{ab\,s_2\cdots}X\,(\mathbb B^{cd\,s_2\cdots})^\dagger$,
+con $\mathbb B^{s_0s_1\cdots}=B_i^{s_0}B_{i+1}^{s_1}\cdots B_{i+k-1}^{s_{k-1}}$: la celda con sus
+dos primeros sitios abiertos y el resto contraído entre ket y bra. Por la misma cuenta, $\Phi^{(i)}_{ab,cd}=e^{-i\phi(q_b-q_d)}\,\Phi^{(i),0}_{ab,cd}\circ\Ad_{U_i}$,
+donde $\Phi^{(i),0}$ es la celda abierta sin giro: solo el segundo sitio abierto deja una fase
+sin cancelar. Con $\mathcal E_i^{\,r}=\ket{R_i}(L_i|+\mathcal S_{i,r}$ y
+$\|\mathcal S_{i,r}\|\le K\lambda^r$ (norma de operadores sobre Hilbert--Schmidt, en la que $\Ad_U$
+es isométrico),
+\[
+  \rho^{(n)}_{i;ab,cd}=\frac{e^{-i\phi(q_b-q_d)}\Big[(L_i|\Phi^{(i),0}_{ab,cd}|R_i)+\tr\big(\Phi^{(i),0}_{ab,cd}\,
+  \mathcal S_{i,m-1}\Ad_{U_i^m}\big)\Big]}{1+\tr\big(\mathcal S_{i,m}\Ad_{U_i^m}\big)},
+\]
+normalizado con $(L_i|R_i)=1$. El término principal es $e^{-i\phi(q_b-q_d)}(\sigma_i)_{ab,cd}=
+[(1\otimes V)\sigma_i(1\otimes V)^\dagger]_{ab,cd}$, porque los $\Ad_U$ fijan $R_i$. Los restos dan
+$\|\rho^{(n)}_i-(1\otimes V)\sigma_i(1\otimes V)^\dagger\|_1\le C\lambda^{m-1}$ para $m\ge m_0$,
+uniformemente en $\Theta$ y en $i$.
+
+\emph{Media sobre traslaciones.} Sea $T$ la traslación de un sitio y
+$\omega_\Theta=\tfrac1k\sum_{r=0}^{k-1}T^r\ket{\psi_\Theta}\bra{\psi_\Theta}T^{-r}$. Los datos en
+el gauge uniforme son los mismos en todas las aristas, y $T^r$ lleva la marginal de la arista $j$
+a la $j+r$. Por tanto, todas las marginales de arista de $\omega_\Theta$ son
+$\tfrac1k\sum_i\rho^{(n)}_i=(1\otimes V)\sigma(1\otimes V)^\dagger+\Delta$, con $\|\Delta\|_1\le\varepsilon_n
+:=\max_i\|\rho^{(n)}_i-(1\otimes V)\sigma_i(1\otimes V)^\dagger\|_1$.
+
+\emph{Dilución.} Hace falta que las reducciones de $\tau_j$ sean compatibles. Las dos reducciones
+de $\sigma$ son $\tfrac1k\sum_i\varrho_i$, la media de las marginales de un sitio, y conmutan con
+$Q$ por (M2$_k$). Luego $V(\tr_1\sigma)V^\dagger=\tr_2\sigma$. El resto es la dilución de la
+demostración del Teorema~\ref{teo:mps}, con $\omega_\Theta$ en lugar de $\psi_\Theta$, y la cota
+superior es el Lema~\ref{lem:techo}, porque $\ker\sigma=\bigcap_i\ker\sigma_i$ al ser los $\sigma_i\ge0$.
+\end{proof}
+
+\begin{corolario}[LSM con celda]\label{cor:lsmk}
+Si $e^{2\pi iQ}=-1$, (M1$_k$) y (M2$_k$) solo son compatibles con $k$ par. En consecuencia, para
+espín semientero el mecanismo del Teorema~\ref{teo:celda} solo existe en anillos con $n$ par.
+\end{corolario}
+
+\begin{proof}
+Componiendo (M2$_k$) a lo largo de la celda,
+$u^{(1)}_{2\pi}\mathbb A^{\vec s}u^{(1)\dagger}_{2\pi}=e^{-2\pi i\sum_lq_{s_l}}\mathbb A^{\vec s}=(-1)^k\mathbb A^{\vec s}$,
+y el argumento de la Proposición~\ref{prop:lsm}, aplicado a las celdas, da $(-1)^k=1$. El
+teorema necesita $k\mid n$.
+\end{proof}
+
+Si $e^{2\pi iQ}=e^{2\pi ia/q}$ con $a/q$ irreducible, la misma cuenta da $q\mid k$: la celda mínima es la que tiene carga entera, como en el teorema de Oshikawa--Yamanaka--Affleck.
+
+\begin{proposicion}[Néel clásico: la divisibilidad no sobra]\label{prop:neelclas}
+Para qubits, sean $\sigma=\tfrac12\big(\ket{\uparrow\downarrow}\bra{\uparrow\downarrow}+
+\ket{\downarrow\uparrow}\bra{\downarrow\uparrow}\big)$, la marginal media del estado de Néel ($k=2$,
+$D_1=D_2=1$), y $Q=\tfrac12Z$. Para toda $\Theta$,
+\[
+  p(n,\Theta)=1\quad(n\text{ par}),\qquad p(n,\Theta)=1-\frac2n\quad(n\text{ impar}).
+\]
+\end{proposicion}
+
+\begin{proof}
+$\sigma$ y $I/4$ son diagonales en la base $Z$, así que los datos no dependen de $\Theta$. Con $n$
+par, la mezcla de los dos estados de Néel tiene exactamente las marginales $\sigma$, y el techo es
+el Lema~\ref{lem:techo} ($\ket{\uparrow\uparrow}\in\ker\sigma$). Con $n$ impar, el peso de las
+configuraciones paralelas en cada arista es $(1-p)/2$. Toda configuración del anillo impar tiene
+al menos una arista paralela, así que $n(1-p)/2\ge1$. La mezcla uniforme, sobre las $n$ posiciones
+y las dos orientaciones, de las configuraciones con una sola arista paralela tiene en cada arista
+pesos $\tfrac1{2n}$ en $\uparrow\uparrow$ y en $\downarrow\downarrow$, $\tfrac12(1-\tfrac1n)$ en
+$\uparrow\downarrow$ y en $\downarrow\uparrow$, coherencias nulas y marginales de un sitio $I/2$.
+Son exactamente los datos con $p=1-2/n$.
+\end{proof}
+
+Aquí la holonomía no actúa: con $D=1$ el canal no tiene más espectro ($\lambda=0$) y los
+datos son diagonales, pero el ejemplo muestra que sin
+$k\mid n$ no hay estado cercano a los datos con $p=1$: el defecto de frustración cuesta $2/n$. En
+la Sección~\ref{sec:neel} ese mismo defecto, con fluctuaciones cuánticas, es la pared de dominio
+móvil que acopla al flujo y da $1/n^2$. Es también el límite $\kappa\to0$ de aquella sección: el
+techo de Ising $(n-2)/n$ con $n$ impar.
+
+\paragraph{Comprobación numérica.} \texttt{scripts/mps\_celda.py} construye MPS aleatorios de
+celda doble con la regla de carga de (M2$_k$) y carga semientera por sitio:
+\begin{itemize}
+\item \emph{espín $\tfrac12$}, con cargas virtuales $\{\pm\tfrac12\}$ y $\{-1,0,1\}$
+  ($\lambda=0{,}096$);
+\item \emph{espín $\tfrac32$}, con cargas virtuales $\{-1,0,1\}$ y $\{\pm\tfrac12\}$
+  ($\lambda=0{,}285$; $\sigma$ tiene rango $12<16$).
+\end{itemize}
+Comprueba:
+\begin{itemize}
+\item la inyectividad de la celda, que ya se cumple con una celda;
+\item que los dos canales de celda tienen el mismo $\lambda$;
+\item que las marginales del anillo retorcido por fuerza bruta ($n\le10$ y $n\le6$) coinciden con
+  las de la transferencia a $5\times10^{-16}$;
+\item que $\tr_1\sigma=\tr_2\sigma$ es diagonal en la base de carga.
+\end{itemize}
+Con el máximo sobre $9$ valores de $\Theta\in[0,\pi]$ y $n=6,\dots,60$, el cociente
+$\varepsilon_n/\lambda^{m-1}$ queda en $[1{,}67;\,1{,}69]$ y en $[1{,}39;\,1{,}61]$,
+respectivamente, hasta que $\varepsilon_n$ llega al redondeo. El ejemplo de espín $\tfrac12$ tiene
+$\sigma$ de rango completo: vale la cota inferior, pero no el techo $p\le1$. No he encontrado un
+MPS de qubits de celda doble, inyectivo y con $U(1)$, cuya $\sigma$ tenga núcleo; con las cargas
+virtuales más pequeñas, anular $\ket{\uparrow\uparrow}$ en las dos aristas rompe la ergodicidad
+de la celda.
 
 \end{document}
