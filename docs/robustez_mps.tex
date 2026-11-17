@@ -1,0 +1,390 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla,es-noshorthands]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{icomma}
+\usepackage{booktabs}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{teorema}{Teorema}
+\newtheorem{lema}[teorema]{Lema}
+\newtheorem{proposicion}[teorema]{Proposición}
+\newtheorem{corolario}[teorema]{Corolario}
+\theoremstyle{remark}
+\newtheorem*{observacion}{Observación}
+
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Ad}{\operatorname{Ad}}
+\newcommand{\ket}[1]{|#1\rangle}
+\newcommand{\bra}[1]{\langle #1|}
+\newcommand{\ev}[1]{\langle #1\rangle}
+
+\title{Robustez del pegado frente a la holonomía:\\ el teorema MPS y el caso AKLT}
+\author{Borrador de trabajo}
+\date{17 de noviembre de 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Si los datos de arista son la marginal de dos sitios de un estado producto de matrices (MPS)
+inyectivo, invariante por traslación y por una simetría $U(1)$, y esa marginal no tiene rango
+completo, entonces el mayor parámetro pegable cumple $1-O(n\lambda^{n})\le p(n,\Theta)\le1$ para
+toda holonomía $\Theta$, con $\lambda<1$ el segundo autovalor de la matriz de transferencia. No hace
+falta ninguna hipótesis espectral sobre el testigo óptimo. Para AKLT la constante es explícita:
+$1-864\,n/(3^n-3)\le p(n,\Theta)\le1$ para todo $n\ge3$ y toda $\Theta$, con una fórmula exacta
+para la distancia entre los datos girados y las marginales del estado retorcido.
+Con carga semientera por sitio no existe ningún MPS de esa clase: es la versión MPS de la
+obstrucción de Lieb--Schultz--Mattis, con una demostración de tres líneas.
+La salida es romper la traslación: con datos $U(1)$ anisótropos de qubits, el testigo óptimo cae en
+la fase de Néel y, con diagonalización exacta hasta $n=18$, la sensibilidad decae exponencialmente
+para $n$ par y como $1/n^2$ para $n$ impar, donde una pared de dominio móvil acopla al flujo.
+\end{abstract}
+
+%=====================================================================
+\section{Marco}
+%=====================================================================
+
+Anillo $\mathbb Z_n$ con espacio local $\mathbb C^d$ y una carga $Q=\sum_sq_s\ket s\bra s$ con
+$e^{2\pi iQ}$ escalar. Sea $\sigma$ un estado de dos sitios invariante bajo
+$e^{-itQ}\otimes e^{-itQ}$ y $\tau=\sigma-I/d^2$. Con holonomía $\Theta$ alrededor del eje de $Q$,
+en el gauge uniforme $V=e^{-i\Theta Q/n}$, la arista $j\to j{+}1$ lleva
+\[
+  \rho_j(p)=\frac I{d^2}+p\,\tau_j,\qquad \tau_j=(1\otimes V)\,\tau\,(1\otimes V)^\dagger,
+\]
+y $p(n,\Theta)$ es el mayor $p$ para el que existe un estado del anillo con esas marginales de
+arista.
+
+\begin{lema}[techo por rango]\label{lem:techo}
+Si $\sigma$ no tiene rango completo, $p(n,\Theta)\le1$ para todos $n$ y $\Theta$.
+\end{lema}
+
+\begin{proof}
+Si $\sigma\ket\chi=0$, entonces $\bra\chi\rho_j(p)\ket\chi=(1-p)/d^2$, en el marco girado de la
+arista, y una marginal de un estado es semidefinida positiva.
+\end{proof}
+
+\begin{lema}[dilución; informe de fases, Lema 6]\label{lem:dilucion}
+Sean $\Delta_j$ hermíticos de dos sitios, de traza nula y con reducciones compatibles,
+$\tr_1\Delta_{j-1}=\tr_2\Delta_j$. Si $\|\Delta_j\|_1\le r/n$ con $r=1/(6d^2)$, existe un estado
+del anillo con marginales de arista exactamente $I/d^2+\Delta_j$.
+\end{lema}
+
+%=====================================================================
+\section{El teorema}
+%=====================================================================
+
+\paragraph{Hipótesis (M).} Tensores $A^s\in\mathbb C^{D\times D}$, $s=1,\dots,d$, con:
+\begin{itemize}
+\item[(M1)] \emph{inyectividad}: para algún $L_0$, los productos $A^{s_1}\cdots A^{s_L}$ generan
+  $M_D(\mathbb C)$ para todo $L\ge L_0$. En particular, el canal
+  $\mathcal E(X)=\sum_sA^sXA^{s\dagger}$ puede normalizarse con $\mathcal E(I)=I$, tiene un único
+  punto fijo dual $\Lambda>0$ con $\tr\Lambda=1$, y el resto de su espectro tiene módulo
+  $\le\lambda<1$;
+\item[(M2)] \emph{simetría}: existe una representación unitaria $u_t$ en el espacio virtual con
+  $u_tA^su_t^\dagger=e^{-itq_s}A^s$;
+\item[(M3)] \emph{datos}: $\sigma$ es la marginal de dos sitios del MPS en el límite
+  termodinámico, $\sigma_{ab,cd}=\tr\big(\Lambda\,A^aA^bA^{d\dagger}A^{c\dagger}\big)$, y su rango
+  es menor que $d^2$ (basta $D<d$, porque el rango es como mucho $D^2$).
+\end{itemize}
+
+\begin{teorema}[robustez MPS]\label{teo:mps}
+Bajo (M) existen $C$ y $n_0$, que solo dependen de los tensores $A^s$, tales que para todo
+$n\ge n_0$ y todo $\Theta$
+\[
+  1-6d^2\,n\,\varepsilon_n\ \le\ p(n,\Theta)\ \le\ 1,\qquad \varepsilon_n\le C\lambda^{n-2}.
+\]
+En particular, $\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|\le6d^2Cn\lambda^{n-2}$: la
+sensibilidad a la holonomía decae exponencialmente, sin hipótesis sobre el testigo óptimo.
+\end{teorema}
+
+\begin{proof}
+\emph{El estado retorcido.} Sea $\phi=\Theta/n$, $w=u_\phi$ y $B^s=A^sw$. Se define
+\[
+  \ket{\psi_\Theta}=\sum_{s_0,\dots,s_{n-1}}\tr\big(B^{s_0}B^{s_1}\cdots B^{s_{n-1}}\big)\ket{s_0\cdots s_{n-1}},
+\]
+el MPS con el giro $w$ en cada enlace virtual. Es invariante bajo la traslación compuesta con
+$e^{-i\phi Q}$, así que basta estudiar una arista.
+
+\emph{Transferencia.} Por (M2), $\Ad_u\circ\mathcal E=\mathcal E\circ\Ad_u$: en efecto,
+$u\,\mathcal E(X)u^\dagger=\sum_s(uA^su^\dagger)(uXu^\dagger)(uA^su^\dagger)^\dagger$ y las fases se
+cancelan. Como los puntos fijos son únicos, $\Ad_u$ fija $I$ y $\Lambda$. El canal retorcido es
+$\mathcal E_w=\mathcal E\circ\Ad_w$, y
+\[
+  \mathcal E_w^{\,m}=\mathcal E^m\circ\Ad_{w^m}=\ket I(\Lambda|+\mathcal R_m\circ\Ad_{w^m},\qquad
+  \|\mathcal R_m\|\le K\lambda^m,
+\]
+con $K$ que solo depende de $\mathcal E$ (forma de Jordan de su parte no dominante).
+
+\emph{Marginal.} Con $\Phi_{ab,cd}(X)=B^aB^bX(B^cB^d)^\dagger$, la marginal normalizada de
+$\psi_\Theta$ en una arista es
+\[
+  \rho^{(n)}_{ab,cd}=\frac{(\Lambda|\Phi_{ab,cd}\ket I+\big(\Lambda\big|\Phi_{ab,cd}\,
+  \mathcal R_{n-2}\Ad_{w^{n-2}}\big|I\big)}{1+\tr(\mathcal R_n\Ad_{w^n})}.
+\]
+El término principal es exactamente el dato girado con $p=1$:
+$B^aB^b(B^cB^d)^\dagger=A^a\,(wA^bA^{d\dagger}w^\dagger)\,A^{c\dagger}=e^{-i\phi(q_b-q_d)}A^aA^bA^{d\dagger}A^{c\dagger}$,
+luego $(\Lambda|\Phi_{ab,cd}\ket I=[(1\otimes V)\sigma(1\otimes V)^\dagger]_{ab,cd}$. Los dos
+restos están acotados por $K\lambda^{n-2}$ y $D^2K\lambda^n$ veces constantes que solo dependen de
+los $A^s$. Por tanto $\varepsilon_n:=\|\rho^{(n)}-\rho_j(1)\|_1\le C\lambda^{n-2}$ para
+$n\ge n_0$, uniformemente en $\Theta$.
+
+\emph{Dilución.} Las marginales de $\psi_\Theta$ son $I/d^2+\tau_j+\Delta_j$ con
+$\|\Delta_j\|_1\le\varepsilon_n$; los $\Delta_j$ tienen traza nula y reducciones compatibles,
+porque las de $\tau_j$ son nulas y las de un estado global lo son. Con
+$s=n\varepsilon_n/(r+n\varepsilon_n)$, el Lema~\ref{lem:dilucion} da un estado $\omega$ con
+marginales $I/d^2-\tfrac{1-s}s\Delta_j$, y $(1-s)\ket{\psi_\Theta}\bra{\psi_\Theta}+s\,\omega$
+tiene marginales $I/d^2+(1-s)\tau_j$. Luego $p(n,\Theta)\ge1-s\ge1-n\varepsilon_n/r$. La cota
+superior es el Lema~\ref{lem:techo}.
+\end{proof}
+
+\begin{observacion}
+La demostración no usa que el testigo óptimo tenga gap, ni siquiera cuál es: usa un estado
+explícito (el MPS retorcido) y el techo por rango. El gap del hamiltoniano padre, que existe por
+el teorema de Fannes--Nachtergaele--Werner, no interviene; interviene el gap de la matriz de
+transferencia, que es su análogo para correlaciones. Por eso el resultado es incondicional.
+\end{observacion}
+
+%=====================================================================
+\section{La obstrucción con carga semientera}
+%=====================================================================
+
+\begin{proposicion}[LSM para MPS con $U(1)$]\label{prop:lsm}
+Si $e^{2\pi iQ}=-1$ (por ejemplo, $Q=S^z$ con espín semientero), no existen tensores que cumplan
+(M1) y (M2).
+\end{proposicion}
+
+\begin{proof}
+Con $t=2\pi$, (M2) da $u_{2\pi}A^su_{2\pi}^\dagger=-A^s$ para todo $s$, así que la conjugación por
+$u_{2\pi}$ actúa como $(-1)^L$ sobre los productos de longitud $L$. Por (M1) los productos de
+longitud $L_0$ y $L_0+1$ generan ambos $M_D$, que contiene a $I$; luego $I=(-1)^{L_0}I=(-1)^{L_0+1}I$,
+contradicción.
+\end{proof}
+
+Así, el mecanismo del Teorema~\ref{teo:mps} no está disponible para el anillo de qubits con datos
+invariantes por traslación. No es un enunciado sobre todos los datos posibles: excluye datos que
+sean marginales de un MPS inyectivo, invariante por traslación, con esa $U(1)$. Quedan fuera los
+estados con simetría rota (MPS no inyectivos, celda de dos sitios), que es el hueco que deja también
+el teorema de Lieb--Schultz--Mattis.
+
+%=====================================================================
+\section{AKLT}
+%=====================================================================
+
+Espín 1, $d=3$, $D=2$, $Q=S^z$ con cargas $(+1,0,-1)$, y
+\[
+  A^{+}=\sqrt{\tfrac23}\,\sigma^+,\qquad A^0=-\sqrt{\tfrac13}\,\sigma^z,\qquad A^{-}=-\sqrt{\tfrac23}\,\sigma^-,
+\]
+con $u_t=e^{-it\sigma^z/2}$. El canal tiene autovalores $1$ y $-1/3$ (triple), así que
+$\lambda=1/3$. La marginal del límite termodinámico es
+\[
+  \sigma_{\rm AKLT}=\tfrac13P_0+\tfrac23\cdot\tfrac{P_1}3,\qquad \tr(\sigma P_2)=0,
+\]
+de rango $4<9$, con $\ev{\vec S_1\cdot\vec S_2}=-4/3$. Es el rayo «$\tfrac13P_0+\tfrac23P_1$» del
+diagrama de espín 1 del informe de fases, en la fase de Haldane.
+
+\begin{proposicion}[AKLT, constante explícita]\label{prop:aklt}
+Con los datos $\sigma_{\rm AKLT}$, para todo $n\ge3$ y todo $\Theta$,
+\[
+  \varepsilon_n(\Theta)=\frac{f(\Theta)}{3^n+(-1)^n(1+2\cos\Theta)},\qquad
+  f(\Theta)=\frac49\Big[2(5+\cos\Theta)+\sqrt2\,\sqrt{245+44\cos\Theta-\cos^2\Theta}\Big],
+\]
+con $f(0)=16$ y $f(\pi)=112/9$. En consecuencia
+\[
+  1-\frac{864\,n}{3^n-3}\ \le\ \frac1{1+864\,n/(3^n-3)}\ \le\ p(n,\Theta)\ \le\ 1,
+\]
+y $\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|\le864\,n/(3^n-3)$.
+\end{proposicion}
+
+\begin{proof}
+\emph{Espectro.} $\mathcal E$ es covariante bajo $SU(2)$, así que actúa como un escalar sobre la
+parte de espín $0$ del espacio de operadores ($I$) y como otro sobre la de espín $1$
+($\sigma^z,\sigma^\pm$): $\mathcal E=\ket{I}(I|/2-\tfrac13(\text{resto})$, autoadjunto en el
+producto de Hilbert--Schmidt. Como $\Ad_w\sigma^\pm=e^{\mp i\phi}\sigma^\pm$ y $\Ad_w$ fija $I$ y
+$\sigma^z$, el canal retorcido $\mathcal E_w$ es normal, con base ortonormal de autovectores
+$e_0=I/\sqrt2$, $e_z=\sigma^z/\sqrt2$, $e_\pm=\sigma^\pm$ y autovalores $\mu_0=1$, $\mu_z=-\tfrac13$,
+$\mu_\pm=-\tfrac13e^{\mp i\phi}$.
+
+\emph{Marginal exacta.} Con $M_k=(e_k|\Phi|e_k)$, matrices de $9\times9$,
+\[
+  \rho^{(n)}=\frac{\sum_k\mu_k^{n-2}M_k}{\sum_k\mu_k^n},\qquad
+  \rho^{(n)}-M_0=\frac{\sum_{k\neq0}\mu_k^{n-2}\big(M_k-\mu_k^2M_0\big)}{1+\sum_{k\ne0}\mu_k^n},
+\]
+con $M_0=(1\otimes V)\sigma(1\otimes V)^\dagger$ y $\sum_{k\ne0}\mu_k^n=(-\tfrac13)^n(1+2\cos\Theta)$,
+porque $n\phi=\Theta$. Por la conmutación $wA^b=e^{-i\phi q_b}A^bw$, cada $M_k$ es
+$(1\otimes V)\widehat M_k(1\otimes V)^\dagger$ por una fase $e^{\pm2i\phi}$ en $k=\pm$, y esa fase,
+con $\mu_\pm^{n-2}$, da exactamente $e^{\mp i\Theta}$. Así
+\[
+  \rho^{(n)}-M_0=\frac{(-1)^n}{3^n+(-1)^n(1+2\cos\Theta)}\,(1\otimes V)\,G(\Theta)\,(1\otimes V)^\dagger,
+\]
+con $G(\Theta)$ hermítica e independiente de $n$, y $\varepsilon_n=\|G(\Theta)\|_1/(3^n+(-1)^n(1+2\cos\Theta))$.
+
+\emph{Norma de $G$.} $G$ conserva la carga total $m_1+m_2$. Los bloques $m=\pm2$ son nulos; los
+bloques $m=\pm1$ son $-\tfrac{10+2c}9\begin{pmatrix}1&-1\\-1&1\end{pmatrix}$, con $c=\cos\Theta$,
+de norma traza $\tfrac{4(5+c)}9$ cada uno; y el bloque $m=0$ tiene polinomio característico
+proporcional a $x\,\big(27x^2-(24c+120)x+8c^2-64c-520\big)$. El término independiente es negativo en
+$[-1,1]$, así que las dos raíces no nulas tienen signos opuestos y su norma traza es su diferencia,
+$\sqrt{288(245+44c-c^2)}/27$. Sumando sale $f$. Las dos partes crecen con $c$ en $[-1,1]$, así que
+$\max f=f(0)=16$.
+
+\emph{Cota.} El denominador es $\ge3^n-3$, luego $\varepsilon_n\le16/(3^n-3)$, y del
+Teorema~\ref{teo:mps}, con $r=1/54$, $p\ge1-s=1/(1+54n\varepsilon_n)$.
+\end{proof}
+
+La fórmula de $\varepsilon_n$ es exacta para todo $n$ y no solo asintótica: el MPS retorcido tiene
+exactamente dos escalas, la del punto fijo y la de los tres modos de $-1/3$. Las matrices $G$ y
+los polinomios de bloque se obtuvieron con SymPy; el guion compara la fórmula con la matriz de
+transferencia numérica en $n=3,\dots,20$ y 25 ángulos (error relativo $\le8\times10^{-8}$,
+dominado por el redondeo, que crece como $3^n\cdot10^{-16}$).
+
+\begin{observacion}[canal normal general]
+El mismo cálculo vale para cualquier MPS cuyo canal retorcido sea normal: con $\lambda=\max_{k\ne0}
+|\mu_k|$,
+\[
+  \varepsilon_n\le\frac{\lambda^{n-2}\sum_{k\neq0}\big(\|M_k\|_1+\lambda^2\big)}{1-(D^2-1)\lambda^n},
+\]
+que da la constante $C$ del Teorema~\ref{teo:mps} en términos de $D^2-1$ matrices de $d^2\times d^2$.
+Sin normalidad aparece la forma de Jordan de $\mathcal E$ y $C$ deja de ser tan limpia.
+\end{observacion}
+
+\paragraph{Libre de frustración en los marcos girados.} Cada par de $\psi_\Theta$ es, salvo una
+conjugación por $w$, de la forma $A^aA^b$, que tiene espín total $\le1$. Así que $\psi_\Theta$ tiene
+peso exactamente nulo en $J=2$ en el marco girado de cada arista: es un estado fundamental del
+hamiltoniano AKLT retorcido, para todo $\Theta$.
+
+\paragraph{Valores.} Con el guion \texttt{scripts/aklt\_twist.py} del repositorio
+\texttt{holonomy}: las marginales por fuerza bruta ($n\le9$, todas las aristas) coinciden con las
+de la matriz de transferencia a $2\times10^{-16}$; el peso en $J=2$ girado es $\le8\times10^{-17}$;
+y, con el máximo sobre 13 valores de $\Theta\in[0,\pi]$,
+\begin{center}\small
+\begin{tabular}{rccc}
+\toprule
+$n$ & $\max_\Theta\varepsilon_n$ & $3^n\max_\Theta\varepsilon_n$ & cota inferior de $p(n,\Theta)$\\
+\midrule
+8 & $2{,}44\times10^{-3}$ & $15{,}99$ & $0{,}487$\\
+10 & $2{,}71\times10^{-4}$ & $16{,}00$ & $0{,}872$\\
+12 & $3{,}01\times10^{-5}$ & $16{,}00$ & $0{,}9809$\\
+16 & $3{,}72\times10^{-7}$ & $16{,}00$ & $0{,}99968$\\
+20 & $4{,}59\times10^{-9}$ & $16{,}00$ & $0{,}9999950$\\
+30 & $7{,}77\times10^{-14}$ & $16{,}00$ & $1-1{,}3\times10^{-10}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+Son los valores de la Proposición~\ref{prop:aklt}: $3^n\varepsilon_n\to f(\Theta)$, de $16$ en
+$\Theta=0$ a $112/9$ en $\Theta=\pi$. El máximo está en $\Theta=0$, donde $\varepsilon_n$ mide solo la diferencia entre el
+anillo finito y la cadena infinita. Lo que depende de la holonomía,
+$\|\rho^{(n)}(\Theta)-(1\otimes V)\rho^{(n)}(0)(1\otimes V)^\dagger\|_1$, es todavía menor:
+$3{,}3\times10^{-3}$, $4{,}0\times10^{-5}$ y $5{,}0\times10^{-7}$ en $n=8$, 12 y 16.
+
+\paragraph{SDP exacto.} El primal completo, diagonal por bloques de $S^z$ total, da $p(n,\Theta)$
+en $n=4$ y $5$ ($n=6$ pide más de 8\,GB con esta formulación):
+\begin{center}\small
+\begin{tabular}{rcccc}
+\toprule
+$n$ & $\Theta=0$ & $\pi/2$ & $\pi$ & $\max-\min$\\
+\midrule
+4 & $0{,}975610$ & $0{,}922811^*$ & $0{,}902726$ & $7{,}3\times10^{-2}$\\
+5 & $0{,}969821^*$ & $0{,}985079$ & $0{,}997422$ & $2{,}8\times10^{-2}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+($^*$: Clarabel termina en \texttt{optimal\_inaccurate}.) En $n=4$, $p(4,0)=40/41$ a $10^{-9}$.
+Todos los valores están en $[1-s_n,1]$, aunque a estos tamaños la cota inferior del teorema es
+trivial ($0{,}02$ y $0{,}05$): se vuelve informativa a partir de $n\approx9$. Dos rasgos de los
+valores exactos: la tendencia en $\Theta$ cambia de signo con la paridad de $n$, como en los
+anillos de qubits, y la variación cae un factor $0{,}38$ de $n=4$ a $n=5$, cerca del $1/3$ por
+sitio de la matriz de transferencia y del $0{,}37$ que el informe de fases midió en la respuesta
+del testigo cerca de AKLT. Con dos tamaños esto es solo indicativo.
+
+\paragraph{Contraste con el caso crítico.} En el anillo de qubits con datos de Werner, el análogo
+de los datos AKLT son las marginales del anillo de Heisenberg infinito, $v_\infty=(4\ln2-1)/3\approx
+0{,}5909$. Con $n=16$ y $\Theta=\pi$, $v_{\max}=0{,}5878<v_\infty$ (tabla de valores del artículo de
+pegado): la holonomía hace incompatibles esos datos, con un déficit relativo de
+$5\times10^{-3}\sim1/n^2$. Con los datos AKLT y el mismo $n$, el déficit es como mucho
+$3{,}2\times10^{-4}$ para toda $\Theta$, y cae como $n\,3^{-n}$.
+
+%=====================================================================
+\section{Simetría rota: el testigo de Néel y la paridad de $n$}\label{sec:neel}
+%=====================================================================
+
+La Proposición~\ref{prop:lsm} deja abierta una puerta para espín $\tfrac12$: romper la
+traslación. Un orden de Néel tiene celda de dos sitios y, agrupando pares, carga entera por celda.
+Esta sección explora numéricamente si esa puerta lleva a robustez exponencial. No hay teorema: son
+diagonalizaciones exactas hasta $n=18$.
+
+\paragraph{Datos y dual.} Anillo de qubits con datos $U(1)$ anisótropos en cada arista (gauge
+uniforme, $\phi=\Theta/n$):
+\[
+  \ev{A_e}=2\kappa v\cos\phi,\quad \ev{B_e}=2\kappa v\sin\phi,\quad \ev{C_e}=v,\quad \ev{Z_i}=0,
+\]
+con $A=-(XX+YY)$, $B=XY-YX$, $C=-ZZ$ y $0<\kappa\le1$; $\kappa=1$ es el Werner girado del
+artículo de pegado. Con $\kappa<1$ los datos favorecen las correlaciones $ZZ$. El mismo argumento
+de reducción da
+\[
+  v_{\max}(n,\Theta;\kappa)=\inf_{\Delta,\Phi}\frac{4\,\varepsilon_n(\Delta,\Phi)}{\Delta+2\kappa\cos\big((\Phi-\Theta)/n\big)},
+\]
+con $\varepsilon_n(\Delta,\Phi)$ la energía por enlace del XXZ con flujo $\Phi$. El testigo óptimo
+puede caer ahora en $\Delta>1$, la fase de Néel. Dos detalles. El multiplicador de
+$\ev{Z_i}=0$, un campo uniforme en el testigo, no mejora la cota en ningún caso probado. Para $n$
+impar y $\kappa$ pequeño el ínfimo está en $\Delta\to\infty$: es el techo clásico del antiferro de
+Ising frustrado, $v=(n-2)/n$, que no depende de $\Theta$ (en $n=5$ ya manda con $\kappa=0{,}6$ y $\Theta=\pi$, y
+con $\kappa\le0{,}4$ para toda $\Theta$). Con ambos detalles, el dual coincide con el SDP primal $U(1)$ en $n=4,5,6$,
+$\kappa\in\{1;\,0{,}6;\,0{,}3\}$ y $\Theta\in\{0,\pi/2,\pi\}$, con error $\le3\times10^{-8}$.
+
+\paragraph{Resultados.} La sensibilidad a la holonomía, multiplicada por $n^2$
+(\texttt{scripts/neel\_u1.py}, \texttt{data/neel\_u1.csv}):
+\begin{center}\small
+\begin{tabular}{rc*{11}{r}}
+\toprule
+$\kappa$ & $\Delta^*$ & \multicolumn{11}{c}{$n^2\,[v(n,0)-v(n,\pi)]$}\\
+& ($n=18$) & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 & 17 & 18\\
+\midrule
+1   & 1,00 & 2,05 & $-1{,}80$ & 1,98 & $-1{,}83$ & 1,93 & $-1{,}61$ & 1,78 & $-1{,}62$ & 1,76 & $-1{,}35$ & 1,74\\
+0,8 & 1,44 & 1,74 & $-1{,}41$ & 1,64 & $-1{,}46$ & 1,57 & $-1{,}29$ & 1,41 & $-1{,}30$ & 1,37 & $-1{,}08$ & 1,33\\
+0,6 & 1,92 & 1,22 & $-0{,}86$ & 1,09 & $-0{,}93$ & 0,98 & $-0{,}84$ & 0,88 & $-0{,}84$ & 0,77 & $-0{,}83$ & 0,80\\
+0,4 & 2,70 & 0,57 & $-0{,}28$ & 0,43 & $-0{,}37$ & 0,32 & $-0{,}37$ & 0,24 & $-0{,}38$ & 0,17 & $-0{,}38$ & 0,12\\
+\bottomrule
+\end{tabular}
+\end{center}
+Con decaimiento $1/n^2$ las filas serían constantes. Se leen tres regímenes.
+\begin{itemize}
+\item \emph{$n$ par, Néel profundo ($\kappa=0{,}4$, $\Delta^*\approx2{,}7$).} La sensibilidad cae
+  exponencialmente: el ajuste $e^{-n/\xi}$ da $\xi\approx3{,}2$ y el de potencia daría un
+  exponente $\approx3{,}9$ con peor residuo. El espectro del testigo óptimo tiene la firma del gap
+  con simetría rota: el primer gap, que es el desdoblamiento túnel entre las dos configuraciones
+  de Néel, cae de $0{,}118$ ($n=8$) a $0{,}012$ ($n=18$); el siguiente baja de $1{,}84$ a $1{,}15$,
+  lejos de cero. $v(n,0)$ y $v(n,\pi)$ convergen ambos a $0{,}8736$.
+\item \emph{$n$ impar.} La sensibilidad vuelve a $1/n^2$, con meseta clara ($\approx0{,}38$ en
+  $\kappa=0{,}4$, $\approx0{,}84$ en $\kappa=0{,}6$) y signo opuesto: $v(n,0)<v(n,\pi)$. Un anillo
+  impar no admite Néel. El testigo tiene una pared de dominio que se mueve libremente: en
+  $\kappa=0{,}4$, por encima del doblete exacto de inversión de espín, hay una banda con separación
+  $0{,}011$, $0{,}009$ y $0{,}007$ en $n=13$, 15 y 17. Esa partícula móvil acopla al flujo como en la
+  fase crítica.
+\item \emph{Néel débil ($\kappa=0{,}6$ y $0{,}8$, $\Delta^*\approx1{,}9$ y $1{,}4$).} $n^2|\Delta v|$
+  decrece, pero despacio. La longitud de correlación de Néel, $\xi\approx\tfrac14e^{\pi^2/(2\gamma)}$ con
+  $\Delta=\cosh\gamma$ (asintótica cerca de $\Delta=1$), es $\approx12$ y $\approx55$: comparable
+  al anillo o mayor. Con $n\le18$ no se distingue del caso isótropo, que
+  también deriva por correcciones logarítmicas. Hacen falta tamaños de DMRG.
+\end{itemize}
+Precisión: la minimización en $\Phi$ tiene mínimos locales; se toma, fila a fila, el menor valor
+entre dos mallas (9 y 33 puntos), que difieren hasta $4\times10^{-4}$ en $v(n,\pi)$ para
+$\kappa\ge0{,}6$ y $n\ge12$. Queda un ruido de unos pocos por ciento en las filas de $\kappa\ge0{,}6$,
+que no afecta a las conclusiones de $\kappa=0{,}4$ ni a las de $n$ impar.
+
+\begin{observacion}[lectura]
+El cuadro encaja con la Proposición~\ref{prop:lsm}. Con espín semientero e invariancia por
+traslación no hay testigo con estado fundamental único y gap. La salida es romper la traslación
+con periodo 2, y eso solo cabe en el anillo si $n$ es par. Para $n$ par, agrupar pares de sitios
+da un anillo de $n/2$ celdas con carga entera, donde el mecanismo del Teorema~\ref{teo:mps} vuelve a
+estar disponible: un MPS de celda doble no tiene la obstrucción. Para $n$ impar, la
+inconmensurabilidad deja un defecto móvil y la respuesta vuelve a ser crítica. Queda como
+conjetura un enunciado del tipo «robustez exponencial $\iff$ rigidez nula; con espín semientero,
+solo para $n$ múltiplo del periodo de la fase rota», y como siguiente paso, demostrar la versión
+del Teorema~\ref{teo:mps} con celda de $k$ sitios.
+\end{observacion}
+
+\end{document}
