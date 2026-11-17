@@ -14,7 +14,9 @@ Cargas con Q' = Q - mu, mu = -1/6 (magnetización por sitio): q' = (2/3, -1/3).
 
 Comprobaciones: las de scripts/mps_celda.py (simetría, inyectividad, fuerza bruta,
 eps_n = O(lambda^(m-1)) uniforme en Theta), el peso nulo en |up up>, y p(n, Theta)
-exacto por SDP para n = 4..9 y Theta = 0, pi/2, pi, con la cota del teorema
+exacto por SDP (invariante por traslación y U(1): sdp_p_ti; sdp_p es la
+versión completa, que coincide hasta n = 8) para n = 4..9 y Theta = 0, pi/2, pi,
+con la cota del teorema
 p >= 1 - 6 d^2 n eps_n en n = 3m.
 """
 import sys
@@ -100,6 +102,79 @@ def sdp_p(n, Theta, sigma):
     return float(p.value), prob.status
 
 
+def sdp_p_ti(n, Theta, sigma):
+    """Como sdp_p, pero con un estado invariante por traslación y por la U(1).
+
+    Los datos (gauge uniforme) son iguales en todas las aristas y T lleva la
+    arista j a la j+1, así que promediar sobre traslaciones conserva la
+    factibilidad. El estado es diagonal por bloques (M, momento) y basta
+    imponer la arista (0, 1)."""
+    import cvxpy as cp
+    q = np.array([0.5, -0.5])
+    V = np.kron(np.eye(2), np.diag(np.exp(-1j * Theta / n * q)))
+    tau = V @ (sigma - np.eye(4) / 4) @ V.conj().T
+    dim = 2 ** n
+    shift = lambda s: ((s >> 1) | ((s & 1) << (n - 1)))  # sitio j -> j+1 (sitio 0 = bit alto)
+    # operadores de arista |x><y| en los sitios 0, 1 (x, y en {0..3}; bit 1 = abajo)
+    def edge_op(x, y):
+        rows, cols = [], []
+        for s in range(dim):
+            if (s >> (n - 2)) == y:
+                rows.append((s & ((1 << (n - 2)) - 1)) | (x << (n - 2)))
+                cols.append(s)
+        E = np.zeros((dim, dim))
+        E[rows, cols] = 1
+        return E
+    pairs = [(x, y) for x in range(4) for y in range(4) if bin(x).count("1") == bin(y).count("1")]
+    ops = {xy: edge_op(*xy) for xy in pairs}
+    p = cp.Variable()
+    tr, lin, cons = 0, {xy: 0 for xy in pairs}, []
+    # bases de momento por sector de magnetización
+    for M in range(n + 1):
+        reps, done = [], set()
+        for s in range(dim):
+            if bin(s).count("1") != M or s in done:
+                continue
+            orb, t = [], s
+            while t not in orb:
+                orb.append(t)
+                t = shift(t)
+            done.update(orb)
+            reps.append(s)
+        for kk in range(n):
+            vecs = []
+            for r in reps:
+                v = np.zeros(dim, dtype=complex)
+                t = r
+                for j in range(n):
+                    v[t] += np.exp(2j * np.pi * kk * j / n)
+                    t = shift(t)
+                nv = np.linalg.norm(v)
+                if nv > 1e-9:
+                    vecs.append(v / nv)
+            if not vecs:
+                continue
+            B = np.array(vecs).T
+            R = cp.Variable((B.shape[1], B.shape[1]), hermitian=True)
+            cons.append(R >> 0)
+            tr = tr + cp.real(cp.trace(R))
+            for xy in pairs:
+                # <x|rho_01|y> = tr(rho |y><x|)
+                O = B.conj().T @ ops[(xy[1], xy[0])] @ B
+                lin[xy] = lin[xy] + cp.trace(O @ R)
+    cons.append(tr == 1)
+    for (x, y) in pairs:
+        cons += [cp.real(lin[(x, y)]) == np.eye(4)[x, y] / 4 + p * tau[x, y].real,
+                 cp.imag(lin[(x, y)]) == p * tau[x, y].imag]
+    prob = cp.Problem(cp.Maximize(p), cons)
+    try:
+        prob.solve(solver="CLARABEL")
+        return float(p.value), prob.status
+    except cp.error.SolverError:
+        prob.solve(solver="SCS", eps=1e-10, max_iters=500000)
+        return float(p.value), "SCS " + prob.status
+
+
 if __name__ == "__main__":
     A = tensors()
     k, d = 3, 2
@@ -117,7 +192,7 @@ if __name__ == "__main__":
         for n in range(4, 10):
             for Theta in (0.0, np.pi / 2, np.pi):
                 t = time.time()
-                pv, st = sdp_p(n, Theta, sigma)
+                pv, st = sdp_p_ti(n, Theta, sigma)
                 bound = ""
                 if n % k == 0:
                     phi = Theta / n

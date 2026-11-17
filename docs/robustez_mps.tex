@@ -613,7 +613,9 @@ $\mu=-\tfrac16$, cumple (M2$_k$). Con amplitudes $1$ para las tres posiciones
   en $\Theta$.
 \end{itemize}
 El Teorema~\ref{teo:celda} da $1-O(n\lambda^{n/3})\le p(n,\Theta)\le1$ para $3\mid n$. El SDP
-exacto, diagonal por bloques de magnetización:
+exacto, con el estado invariante por la $U(1)$ y por traslación (los datos son iguales en todas
+las aristas, así que promediar sobre traslaciones conserva la factibilidad) y, por tanto,
+diagonal por bloques de magnetización y momento:
 \begin{center}\small
 \begin{tabular}{rccc}
 \toprule
@@ -622,14 +624,15 @@ $n$ & $\Theta=0$ & $\pi/2$ & $\pi$\\
 4 & $0{,}998146$ & $0{,}968120$ & $0{,}949735$\\
 5 & $1$ & $0{,}997910$ & $0{,}994144$\\
 6 & $1$ & $1$ & $1$\\
-7 & $1$ & $1$ & $0{,}99989^*$\\
+7 & $1$ & $1$ & $0{,}999924$\\
 8 & $1$ & $1$ & $1$\\
-9 & $1$ & $1$ & ---$^\dagger$\\
+9 & $1$ & $1$ & $1$\\
 \bottomrule
 \end{tabular}
 \end{center}
-($^*$: SCS, \texttt{optimal\_inaccurate}. $^\dagger$: SCS no terminó en 40 minutos; Clarabel
-no cabe en memoria en $n=9$.) La sensibilidad a $\Theta$ cae de $5\times10^{-2}$ en
+Hasta $n=8$ coincide con el SDP sin traslación a $4\times10^{-7}$ (salvo en $n=7$, $\Theta=\pi$,
+donde aquel terminaba inexacto en $0{,}99989$); $n=9$ se resuelve con SCS
+(tolerancia $10^{-10}$). La sensibilidad a $\Theta$ cae de $5\times10^{-2}$ en
 $n=4$ a $6\times10^{-3}$ en $n=5$ y a menos de $10^{-4}$ desde $n=6$.
 
 Aquí $3\mid n$ es suficiente, pero no necesario: con $n=5$, $7$ y $8$ también se alcanza $p=1$
