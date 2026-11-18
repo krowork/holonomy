@@ -60,6 +60,19 @@ def hamiltonian(n, M, Delta, Phi):
 
 
 _lanczos_start = {}  # último autovector por (n, M): arranque en caliente
+_rng = np.random.default_rng(12345)
+
+
+def _warm_start(n, M, dim):
+    """Arranque en caliente con una componente aleatoria. El autovector anterior
+    tiene momento definido (H conmuta con la traslación), y Lanczos no sale del
+    subespacio de Krylov de un vector con momento fijo: tras un cruce de niveles
+    en el flujo (p. ej. Phi = pi con n par) devolvería el fundamental del sector
+    de momento equivocado. La componente aleatoria rompe esa trampa."""
+    prev = _lanczos_start.get((n, M))
+    noise = _rng.standard_normal(dim) + 1j * _rng.standard_normal(dim)
+    noise /= np.linalg.norm(noise)
+    return noise if prev is None else prev + 0.1 * noise
 
 
 def sector_spectrum(n, M, Delta, Phi, k=1):
@@ -67,7 +80,7 @@ def sector_spectrum(n, M, Delta, Phi, k=1):
     H = hamiltonian(n, M, Delta, Phi)
     if H.shape[0] <= DENSE_MAX:
         return np.linalg.eigvalsh(H.toarray())[:k]
-    w, V = spla.eigsh(H, k=k, which="SA", tol=1e-13, v0=_lanczos_start.get((n, M)))
+    w, V = spla.eigsh(H, k=k, which="SA", tol=1e-13, v0=_warm_start(n, M, H.shape[0]))
     _lanczos_start[(n, M)] = V[:, np.argmin(w)]
     return np.sort(w)
 

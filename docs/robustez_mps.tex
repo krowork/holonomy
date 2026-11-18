@@ -32,29 +32,23 @@
 \maketitle
 
 \begin{abstract}
-Si los datos de arista son la marginal de dos sitios de un estado producto de matrices (MPS)
-inyectivo, invariante por traslación y por una simetría $U(1)$, y esa marginal no tiene rango
-completo, entonces el mayor parámetro pegable cumple $1-O(n\lambda^{n})\le p(n,\Theta)\le1$ para
-toda holonomía $\Theta$, con $\lambda<1$ el segundo autovalor de la matriz de transferencia. La
-cota inferior la da un estado explícito, el MPS retorcido, y no requiere conocer el hamiltoniano
-testigo del problema dual. Para AKLT la constante es explícita:
-$1-864\,n/(3^n-3)\le p(n,\Theta)\le1$ para todo $n\ge3$ y toda $\Theta$, con una fórmula exacta
-para la distancia entre los datos girados y las marginales del estado retorcido. El SDP exacto
-hasta $n=8$ muestra que la dependencia real en $\Theta$ es mucho menor que esa cota:
-$3\times10^{-7}$ en $n=8$, donde la cota solo garantiza $0{,}5$.
-Con carga semientera por sitio no existe ningún MPS de esa clase: es la versión MPS de la
-obstrucción de Lieb--Schultz--Mattis, con una demostración de tres líneas.
-La salida es romper la traslación: con datos $U(1)$ anisótropos de qubits, el testigo dual óptimo cae en
-la fase de Néel y, con diagonalización exacta hasta $n=18$, la sensibilidad decae exponencialmente
-para $n$ par y como $1/n^2$ para $n$ impar, donde una pared de dominio móvil acopla al flujo.
-El teorema se extiende a MPS con celda de $k$ sitios: robustez $1-O(n\lambda^{n/k})$ para $n$
-múltiplo de $k$, y con carga semientera la celda ha de ser par. El ejemplo de Néel clásico muestra
-que la divisibilidad no sobra: $p=1$ con $n$ par y $p=1-2/n$ con $n$ impar.
-Para qubits, una celda doble con marginal de rango incompleto solo admite el Néel clásico; el
-ejemplo cuántico mínimo tiene celda de tres sitios y llenado $\tfrac13$, y el SDP exacto da
-$p(n,\Theta)=1$ en $n=6,8,9$ para toda $\Theta$ probada.
-Todo apunta a que la robustez equivale a rigidez nula del testigo; aquí se demuestra la dirección
-«marginal de un MPS inyectivo $\Rightarrow$ robustez» y la otra queda respaldada solo por los números.
+Unos estados de dos sitios, cada uno expresado en los ejes propios de su arista, se pueden
+\emph{pegar} en un anillo si son las marginales de un mismo estado global. Los cambios de ejes
+alrededor del anillo componen una holonomía $\Theta$, invisible desde cualquier arista, y la pregunta
+es cuánto depende de ella el mayor parámetro pegable $p(n,\Theta)$. Por dualidad, esa dependencia es
+la respuesta a un flujo de un hamiltoniano testigo. El resultado central (Teorema~\ref{teo:mps}) pone
+la hipótesis en los datos y no en el testigo: si los datos son la marginal de dos sitios, de rango
+incompleto, de un estado producto de matrices (MPS) inyectivo e invariante por traslación y por la
+$U(1)$ de la holonomía, entonces $1-O(n^J\lambda^{n})\le p(n,\Theta)\le1$ para toda $\Theta$, con
+$\lambda<1$ el módulo del segundo autovalor de la matriz de transferencia y $J$ el tamaño de su
+mayor bloque de Jordan ($J=1$ si es semisimple); la cota inferior la da un
+estado explícito, el MPS retorcido. La tesis que sostienen el teorema, sus extensiones y los cálculos
+es que la robustez frente a la holonomía equivale a que el testigo óptimo tenga rigidez de espín
+nula. Con carga semientera el mecanismo del teorema está prohibido, una versión MPS de
+Lieb--Schultz--Mattis, y solo vuelve rompiendo la traslación con una celda compatible con $n$; con
+testigo crítico la sensibilidad es del orden de $1/n^2$. La implicación «datos MPS $\Rightarrow$
+robustez» está demostrada; de la recíproca, solo el caso de datos de Werner con $n$ par, mediante un
+argumento de Marshall.
 \end{abstract}
 
 %=====================================================================
@@ -62,12 +56,38 @@ Todo apunta a que la robustez equivale a rigidez nula del testigo; aquí se demu
 %=====================================================================
 
 El problema de las marginales cuánticas pregunta cuándo unos estados locales son las reducciones de
-un mismo estado global \cite{klyachko}. Aquí se estudia una variante con geometría. A cada arista de
+un mismo estado global \cite{klyachko}. En sistemas invariantes por traslación, el conjunto de
+marginales de dos sitios compatibles con un estado de la cadena infinita es complicado (no es
+semialgebraico \cite{blakaj-wolf}), y se aproxima por dentro con MPS y por fuera con anillos finitos
+y jerarquías de programación semidefinida \cite{blakaj-wolf,navascues-baccari-acin,kim-marginal}.
+Aquí se estudia una variante con geometría. A cada arista de
 un anillo se le asigna un estado de dos sitios expresado en ejes propios, y la composición de los
 cambios de ejes alrededor del anillo es una holonomía $\Theta$. Con datos de la forma
 $I/d^2+p\,\tau$ (ruido blanco más una correlación fija), los datos se pueden \emph{pegar} si existe
 un estado del anillo que los tenga como marginales de arista. La pregunta es el mayor $p$ pegable,
 $p(n,\Theta)$, y cómo depende de $\Theta$.
+
+\paragraph{De dónde sale la holonomía.} Piénsese en $n$ partes en un anillo sin un sistema de
+referencia común: cada par de vecinos caracteriza su estado conjunto, por ejemplo por tomografía
+local, en unos ejes que acuerdan entre ellos, y pasar de los ejes de una arista a los de la
+siguiente es una rotación. Si todas las aristas ven el mismo estado $\sigma$ en sus propios ejes, los
+datos son localmente indistinguibles, pero el producto ordenado de las rotaciones alrededor del
+anillo no se puede eliminar redefiniendo ejes locales: es una holonomía, el único invariante gauge
+de los datos. La misma estructura aparece en sistemas de espines en anillo cuando el salto entre
+sitios lleva asociada una rotación de espín, como con un flujo que atraviesa el anillo o con
+acoplamiento espín-órbita, y en el lenguaje de las condiciones de contorno retorcidas
+\cite{shastry}: $\Theta$ es el giro que se impone al cerrar el anillo.
+
+\paragraph{Por qué interesa.} $\Theta$ es una propiedad global que ningún subconjunto de aristas
+detecta, como la fase de Aharonov--Bohm. La pregunta es si, aun así, restringe qué correlaciones
+pueden coexistir: $p(n,\Theta)$ mide cuánta correlación $\tau$ se puede repartir de forma compatible
+por todo el anillo, y su dependencia en $\Theta$ dice si la monogamia de las correlaciones «ve» la
+geometría global. Por el lado dual la pregunta es clásica. Las marginales de dos sitios fijan la
+energía de cualquier hamiltoniano de dos sitios, y el problema de pegado es el problema de la
+energía fundamental visto desde las marginales; la respuesta de esa energía a un giro de las
+condiciones de contorno es el criterio de Kohn \cite{kohn} para distinguir sistemas con gap de
+sistemas críticos. Que $p(n,\Theta)$ sea o no sensible a la holonomía es, pues, la versión del
+problema de marginales de esa distinción.
 
 Por dualidad de programación semidefinida, $p(n,\Theta)$ es el ínfimo de un cociente entre la
 energía fundamental de un hamiltoniano de espines con flujo $\Theta$, el \emph{testigo}, y su valor
@@ -90,8 +110,8 @@ son:
 \begin{enumerate}
 \item Si $\sigma$ es la marginal de dos sitios de un MPS inyectivo, invariante por traslación y por
   la $U(1)$ de la holonomía, y no tiene rango completo, entonces
-  $1-O(n\lambda^n)\le p(n,\Theta)\le1$, con $\lambda$ el segundo autovalor de la matriz de
-  transferencia (Teorema~\ref{teo:mps}). La demostración no pasa por el testigo: la cota inferior la
+  $1-O(n^J\lambda^n)\le p(n,\Theta)\le1$, con $\lambda$ el módulo del segundo autovalor de la
+  matriz de transferencia y $J$ el tamaño de su mayor bloque de Jordan (Teorema~\ref{teo:mps}). La demostración no pasa por el testigo: la cota inferior la
   da el MPS retorcido (el mismo MPS con la holonomía repartida entre sus enlaces virtuales) y la
   superior, el núcleo de $\sigma$.
 \item Para AKLT la constante es explícita y la distancia entre datos y MPS retorcido tiene una
@@ -99,10 +119,15 @@ son:
 \item Con carga semientera ese mecanismo no existe (Proposición~\ref{prop:lsm}), que es la versión
   MPS de la obstrucción de Lieb--Schultz--Mattis \cite{lsm,affleck-lieb}.
 \item Rompiendo la traslación con celda de $k$ sitios el teorema vuelve a valer en anillos con
-  $k\mid n$ (Teorema~\ref{teo:celda}), y con carga semientera la celda ha de ser par
+  $k\mid n$, con cota $1-O(n^{J_k}\lambda_k^{n/k})$ y $\lambda_k$, $J_k$ los del canal de la
+  celda (Teorema~\ref{teo:celda}), y con carga semientera la celda ha de ser par
   (Corolario~\ref{cor:lsmk}). La diagonalización exacta del testigo de Néel
   (Sección~\ref{sec:neel}) y el Néel clásico (Proposición~\ref{prop:neelclas}) muestran que la
-  paridad de $n$ es real: robustez con $n$ par y $1/n^2$ con $n$ impar.
+  paridad de $n$ es real: robustez con $n$ par y $1/n^2$ con $n$ impar. El signo de la dependencia
+  en $\Theta$ sí se demuestra: girando el testigo óptimo y con un argumento de Marshall, $\Theta=0$
+  es el máximo con $n$ par y $\Theta=\pi$ con $n$ impar, y con datos de Werner y $n$ par el déficit
+  es al menos la rigidez del anillo de Heisenberg (Proposición~\ref{prop:marshall} y
+  Corolario~\ref{cor:paridad}).
 \item Para qubits, la celda doble con núcleo solo admite el Néel clásico
   (Proposición~\ref{prop:qubits}), y el primer ejemplo con fluctuaciones cuánticas tiene $k=3$.
 \end{enumerate}
@@ -111,7 +136,8 @@ La imagen que sale es que la robustez equivale a que el testigo tenga \emph{rigi
 energía fundamental del testigo no responde al flujo en el límite termodinámico. Un testigo con gap,
 o con gap salvo un desdoblamiento por ruptura de simetría compatible con $n$, tiene rigidez nula
 \cite{kohn,watanabe}; uno crítico tiene rigidez finita \cite{shastry} y da $1/n^2$. Aquí solo se
-demuestra la mitad que va de los datos MPS a la robustez; la recíproca se discute en la
+demuestra la mitad que va de los datos MPS a la robustez y, de la recíproca, el caso de datos de
+Werner con $n$ par (Corolario~\ref{cor:paridad}); el resto se discute en la
 Sección~\ref{sec:conclusiones}.
 
 \paragraph{Organización.} La Sección~\ref{sec:marco} fija el problema y dos lemas. Las
@@ -173,7 +199,9 @@ $\|\delta_k\|_1\le\|\Delta\|_1$ y $\|C_j\|_1\le3\|\Delta\|_1$, y basta $\|\Delta
   $M_D(\mathbb C)$ para todo $L\ge L_0$. En particular, el canal
   $\mathcal E(X)=\sum_sA^sXA^{s\dagger}$ puede normalizarse con $\mathcal E(I)=I$, tiene un único
   punto fijo dual $\Lambda>0$ con $\tr\Lambda=1$, y el resto de su espectro tiene módulo
-  $\le\lambda<1$;
+  $\le\lambda<1$. Tomamos $\lambda$ igual al mayor de esos módulos, y $J$ el mayor tamaño de los
+  bloques de Jordan de los autovalores de módulo $\lambda$ ($J=1$ si son semisimples, por ejemplo
+  si el canal es normal);
 \item[(M2)] \emph{simetría}: existe una representación unitaria $u_t$ en el espacio virtual
   \cite{sanz} con
   $u_tA^su_t^\dagger=e^{-itq_s}A^s$;
@@ -186,10 +214,11 @@ $\|\delta_k\|_1\le\|\Delta\|_1$ y $\|C_j\|_1\le3\|\Delta\|_1$, y basta $\|\Delta
 Bajo (M) existen $C$ y $n_0$, que solo dependen de los tensores $A^s$, tales que para todo
 $n\ge n_0$ y todo $\Theta$
 \[
-  1-6d^2\,n\,\varepsilon_n\ \le\ p(n,\Theta)\ \le\ 1,\qquad \varepsilon_n\le C\lambda^{n-2},
+  1-6d^2\,n\,\varepsilon_n\ \le\ \frac1{1+6d^2\,n\,\varepsilon_n}\ \le\ p(n,\Theta)\ \le\ 1,\qquad
+  \varepsilon_n\le C\,n^{J-1}\lambda^{n-2},
 \]
 donde $\varepsilon_n$ es la distancia en norma traza entre la marginal de arista del MPS retorcido
-(definido en la demostración) y el dato girado con $p=1$. En particular, $\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|\le6d^2Cn\lambda^{n-2}$: la
+(definido en la demostración) y el dato girado con $p=1$. En particular, $\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|\le6d^2Cn^J\lambda^{n-2}$: la
 sensibilidad a la holonomía decae exponencialmente.
 \end{teorema}
 
@@ -198,7 +227,9 @@ sensibilidad a la holonomía decae exponencialmente.
 \[
   \ket{\psi_\Theta}=\sum_{s_0,\dots,s_{n-1}}\tr\big(B^{s_0}B^{s_1}\cdots B^{s_{n-1}}\big)\ket{s_0\cdots s_{n-1}},
 \]
-el MPS con el giro $w$ en cada enlace virtual. Es invariante bajo la traslación compuesta con
+el MPS con el giro $w$ en cada enlace virtual. Insertar un flujo actuando con la simetría sobre
+los enlaces virtuales es una técnica estándar para leer respuestas a flujo y bombeo de carga en MPS
+\cite{zaletel-mong-pollmann}; aquí se usa solo para construir un estado primal. Es invariante bajo la traslación compuesta con
 $e^{-i\phi Q}$, así que basta estudiar una arista.
 
 \emph{Transferencia.} Por (M2), $\Ad_u\circ\mathcal E=\mathcal E\circ\Ad_u$: en efecto,
@@ -207,21 +238,27 @@ cancelan. Como los puntos fijos son únicos, $\Ad_u$ fija $I$ y $\Lambda$. El ca
 $\mathcal E_w=\mathcal E\circ\Ad_w$, y
 \[
   \mathcal E_w^{\,m}=\mathcal E^m\circ\Ad_{w^m}=\ket I(\Lambda|+\mathcal R_m\circ\Ad_{w^m},\qquad
-  \|\mathcal R_m\|\le K\lambda^m,
+  \|\mathcal R_m\|\le K\,m^{J-1}\lambda^m\quad(m\ge1),
 \]
-con $K$ que solo depende de $\mathcal E$ (forma de Jordan de su parte no dominante).
+con $K$ que solo depende de $\mathcal E$: es la cota de las potencias de un bloque de Jordan de
+tamaño $J$, y el factor $m^{J-1}$ no se puede quitar si $J>1$.
 
-\emph{Marginal.} Con $\Phi_{ab,cd}(X)=B^aB^bX(B^cB^d)^\dagger$, la marginal normalizada de
-$\psi_\Theta$ en una arista es
+\emph{Marginal.} Con $\Phi_{ab,cd}(X)=B^aB^bX(B^cB^d)^\dagger$, el elemento $(ab,cd)$ de la
+marginal sin normalizar de $\psi_\Theta$ en una arista es $\tr\big(\Phi_{ab,cd}\,\mathcal E_w^{\,n-2}\big)$,
+la traza de la superaplicación, y la norma es $\tr\mathcal E_w^{\,n}$. Con la descomposición
+anterior, la marginal normalizada es
 \[
-  \rho^{(n)}_{ab,cd}=\frac{(\Lambda|\Phi_{ab,cd}\ket I+\big(\Lambda\big|\Phi_{ab,cd}\,
-  \mathcal R_{n-2}\Ad_{w^{n-2}}\big|I\big)}{1+\tr(\mathcal R_n\Ad_{w^n})}.
+  \rho^{(n)}_{ab,cd}=\frac{(\Lambda|\Phi_{ab,cd}\ket I+\tr\big(\Phi_{ab,cd}\,
+  \mathcal R_{n-2}\Ad_{w^{n-2}}\big)}{1+\tr(\mathcal R_n\Ad_{w^n})},
 \]
 El término principal es exactamente el dato girado con $p=1$:
 $B^aB^b(B^cB^d)^\dagger=A^a\,(wA^bA^{d\dagger}w^\dagger)\,A^{c\dagger}=e^{-i\phi(q_b-q_d)}A^aA^bA^{d\dagger}A^{c\dagger}$,
-luego $(\Lambda|\Phi_{ab,cd}\ket I=[(1\otimes V)\sigma(1\otimes V)^\dagger]_{ab,cd}$. Los dos
-restos están acotados por $K\lambda^{n-2}$ y $D^2K\lambda^n$ veces constantes que solo dependen de
-los $A^s$. Por tanto $\varepsilon_n:=\|\rho^{(n)}-\rho_j(1)\|_1\le C\lambda^{n-2}$ para
+luego $(\Lambda|\Phi_{ab,cd}\ket I=[(1\otimes V)\sigma(1\otimes V)^\dagger]_{ab,cd}$. (El resto
+no puede escribirse como $(\Lambda|\Phi\,\mathcal R\cdots|I)$: $\mathcal R_m(I)=0$, porque
+$\mathcal E^m(I)=I$, y $\Ad_w$ fija $I$.) Como $|\tr(\Phi\,\mathcal X)|\le D^2\|\Phi\|\,\|\mathcal X\|$,
+los dos restos están acotados por $K(n-2)^{J-1}\lambda^{n-2}$ y $D^2Kn^{J-1}\lambda^n$ veces
+constantes que solo dependen de los $A^s$. Por tanto
+$\varepsilon_n:=\|\rho^{(n)}-\rho_j(1)\|_1\le Cn^{J-1}\lambda^{n-2}$ para
 $n\ge n_0$, uniformemente en $\Theta$.
 
 \emph{Dilución.} Las marginales de $\psi_\Theta$ son $I/d^2+\tau_j+\Delta_j$ con
@@ -231,7 +268,7 @@ $\sigma$ sobre cualquiera de sus dos sitios es la marginal de un sitio del MPS, 
 por (M2), así que $V\,(\tr_1\sigma)\,V^\dagger=\tr_2\sigma$. Con
 $\eta=n\varepsilon_n/(r+n\varepsilon_n)$, el Lema~\ref{lem:dilucion} da un estado $\omega$ con
 marginales $I/d^2-\tfrac{1-\eta}\eta\Delta_j$, y $(1-\eta)\ket{\psi_\Theta}\bra{\psi_\Theta}+\eta\,\omega$
-tiene marginales $I/d^2+(1-\eta)\tau_j$. Luego $p(n,\Theta)\ge1-\eta\ge1-n\varepsilon_n/r$. La cota
+tiene marginales $I/d^2+(1-\eta)\tau_j$. Luego $p(n,\Theta)\ge1-\eta=1/(1+n\varepsilon_n/r)\ge1-n\varepsilon_n/r$. La cota
 superior es el Lema~\ref{lem:techo}.
 \end{proof}
 
@@ -245,6 +282,13 @@ transferencia, que es su análogo para correlaciones y se lee directamente de lo
 %=====================================================================
 \section{La obstrucción con carga semientera}\label{sec:lsm}
 %=====================================================================
+
+El resultado siguiente no es nuevo: es la restricción de llenado de Lieb--Schultz--Mattis y
+Oshikawa--Yamanaka--Affleck \cite{lsm,oya} para estados con simetría $U(1)$ representados como MPS
+inyectivos, y aparece, en este lenguaje o en otros equivalentes, en la clasificación de fases
+simétricas en una dimensión \cite{chen-gu-wen,sanz} y en las restricciones de llenado de
+\cite{wpvz}; véase también \cite{tasaki-lsm}. Lo rederivamos porque la demostración es corta y es
+la que se adapta a celdas en la Sección~\ref{sec:celda}.
 
 \begin{proposicion}[LSM para MPS con $U(1)$]\label{prop:lsm}
 Si $e^{2\pi iQ}=-1$ (por ejemplo, $Q=S^z$ con espín semientero), no existen tensores que cumplan
@@ -289,9 +333,10 @@ Con los datos $\sigma_{\rm AKLT}$, para todo $n\ge3$ y todo $\Theta$,
 \]
 con $f(0)=16$ y $f(\pi)=112/9$. En consecuencia
 \[
-  1-\frac{864\,n}{3^n-3}\ \le\ \frac1{1+864\,n/(3^n-3)}\ \le\ p(n,\Theta)\ \le\ 1,
+  \frac1{1+864\,n/(3^n-3)}\ \le\ p(n,\Theta)\ \le\ 1,
 \]
-y $\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|\le864\,n/(3^n-3)$.
+y $\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|\le864\,n/(3^n-3+864\,n)$. La forma lineal
+$1-864\,n/(3^n-3)$, más débil, solo es positiva desde $n=9$.
 \end{proposicion}
 
 \begin{proof}
@@ -342,7 +387,8 @@ El mismo cálculo vale para cualquier MPS cuyo canal retorcido sea normal: con $
   \varepsilon_n\le\frac{\lambda^{n-2}\sum_{k\neq0}\big(\|M_k\|_1+\lambda^2\big)}{1-(D^2-1)\lambda^n},
 \]
 que da la constante $C$ del Teorema~\ref{teo:mps} en términos de $D^2-1$ matrices de $d^2\times d^2$.
-Sin normalidad aparece la forma de Jordan de $\mathcal E$ y $C$ deja de ser tan limpia.
+Con canal normal, $J=1$. Sin normalidad aparece la forma de Jordan de $\mathcal E$, con el factor
+$n^{J-1}$ si hay bloques no triviales de módulo $\lambda$, y $C$ deja de ser tan limpia.
 \end{observacion}
 
 \paragraph{Libre de frustración en los marcos girados.} Cada par de $\psi_\Theta$ es, salvo una
@@ -350,8 +396,8 @@ conjugación por $w$, de la forma $A^aA^b$, que tiene espín total $\le1$. Así 
 peso exactamente nulo en $J=2$ en el marco girado de cada arista: es un estado fundamental del
 hamiltoniano AKLT retorcido, para todo $\Theta$.
 
-\paragraph{Valores.} Con el guion \texttt{scripts/aklt\_twist.py} del repositorio
-\texttt{holonomy}: las marginales por fuerza bruta ($n\le9$, todas las aristas) coinciden con las
+\paragraph{Valores.} Con el guion \texttt{scripts/aklt\_twist.py} del repositorio \texttt{holonomy} (ver
+\emph{Reproducibilidad} en la Sección~\ref{sec:conclusiones}): las marginales por fuerza bruta ($n\le9$, todas las aristas) coinciden con las
 de la matriz de transferencia a $2\times10^{-16}$; el peso en $J=2$ girado es $\le8\times10^{-17}$;
 y, con el máximo sobre 13 valores de $\Theta\in[0,\pi]$,
 \begin{center}\small
@@ -409,14 +455,18 @@ $\Theta=\pi/2$ y en $n=5$, $\Theta=0$ el SDP completo terminaba inexacto ($0{,}9
 $0{,}969821$); los valores de la tabla son los del SDP invariante por traslación y $U(1)$, con
 cinco cifras fiables.
 
-Todos los valores están entre la cota inferior de la Proposición~\ref{prop:aklt} y $1$. Esa cota del teorema es trivial en $n\le5$
-($0{,}02$ a $0{,}07$) y vale $0{,}49$--$0{,}55$ en $n=8$. Tres rasgos de los valores exactos:
+Todos los valores están entre la cota inferior de la Proposición~\ref{prop:aklt} y $1$. Esa cota,
+en la forma $1/(1+54n\varepsilon_n)$, es trivial en $n\le5$ ($0{,}02$ a $0{,}07$) y vale
+$0{,}49$--$0{,}55$ en $n=8$, según $\Theta$. Tres rasgos de los valores exactos:
 \begin{itemize}
 \item la tendencia en $\Theta$ cambia de signo con la paridad de $n$ en los cinco tamaños
-  (decreciente con $n$ par, creciente con $n$ impar), como en los anillos de qubits;
+  (decreciente con $n$ par, creciente con $n$ impar), como en los anillos de qubits. Con qubits
+  ese signo se demuestra (Proposición~\ref{prop:marshall}); para AKLT haría falta que el testigo
+  óptimo, que tiene términos bicuadráticos, fuera estocástico tras un giro de Marshall, y no lo
+  hemos comprobado;
 \item el déficit $1-p(n,0)$, que mide la distancia entre el anillo finito y la cadena infinita, cae
   de $2\times10^{-2}$ en $n\le5$ a $3{,}4\times10^{-6}$ en $n=8$;
-\item la sensibilidad $\max-\min$ cae mucho más deprisa que la cota $864\,n/(3^n-3)$: un factor
+\item la sensibilidad $\max-\min$ cae mucho más deprisa que la cota $864\,n/(3^n-3+864\,n)$: un factor
   $\sim10^{-3}$ cada dos sitios desde $n=5$, frente al $1/9$ de $3^{-n}$. La cota del teorema
   controla la distancia del MPS retorcido a los datos, que sí es $\sim3^{-n}$
   (Proposición~\ref{prop:aklt}); la dependencia en $\Theta$ del óptimo es mucho menor. Con tres
@@ -470,6 +520,96 @@ impar y $\kappa$ pequeño el ínfimo está en $\Delta\to\infty$: es el techo cl�
 Ising frustrado, $v=(n-2)/n$, que no depende de $\Theta$ (en $n=5$ ya manda con $\kappa=0{,}6$ y $\Theta=\pi$, y
 con $\kappa\le0{,}4$ para toda $\Theta$). Con ambos detalles, el dual coincide con el SDP primal $U(1)$ en $n=4,5,6$,
 $\kappa\in\{1;\,0{,}6;\,0{,}3\}$ y $\Theta\in\{0,\pi/2,\pi\}$, con error $\le3\times10^{-8}$.
+
+\paragraph{El signo: giro del testigo y argumento de Marshall.} Antes de los números, el signo de
+$p(n,0)-p(n,\pi)$ se puede demostrar. Vuelve al marco general de la Sección~\ref{sec:marco}. Para
+operadores hermíticos de dos sitios $h_j$ en las aristas, todo estado con marginales $\rho_j(p)$
+cumple $\sum_j\tr(\rho\,h_j)=\sum_j\tr h_j/d^2+p\sum_j\tr(h_j\tau_j)$, así que
+\begin{equation}\label{eq:dualgen}
+  p(n,\Theta)\le\frac{\lambda_{\max}\big(\sum_jh_j\big)-\sum_j\tr h_j/d^2}{\sum_j\tr(h_j\tau_j)}
+  \qquad\text{si }\textstyle\sum_j\tr(h_j\tau_j)>0,
+\end{equation}
+y por dualidad fuerte (hay un estado estrictamente factible, $I/d^n$ con $p=0$) el ínfimo
+de~\eqref{eq:dualgen} es $p(n,\Theta)$ y se alcanza. Un testigo que lo alcanza es un \emph{testigo
+óptimo}. Promediarlo sobre la $U(1)$ global, que fija los datos, no aumenta $\lambda_{\max}$ por
+convexidad, así que puede tomarse con cada $h_j$ invariante por $e^{-itQ}\otimes e^{-itQ}$.
+
+\begin{lema}[giro del testigo]\label{lem:giro}
+Sea $\{h_j\}$ un testigo óptimo en $\Theta_0$ y, con $W=e^{-i(\Theta-\Theta_0)Q/n}$,
+$h_j^\Theta=(1\otimes W)h_j(1\otimes W)^\dagger$. Entonces
+\[
+  p(n,\Theta_0)-p(n,\Theta)\ \ge\
+  \frac{\lambda_{\max}\big(\sum_jh_j\big)-\lambda_{\max}\big(\sum_jh^\Theta_j\big)}{\sum_j\tr(h_j\tau_j)} .
+\]
+\end{lema}
+
+\begin{proof}
+En el gauge uniforme, $\tau_j(\Theta)=(1\otimes W)\tau_j(\Theta_0)(1\otimes W)^\dagger$, así que
+$\tr(h^\Theta_j\tau_j(\Theta))=\tr(h_j\tau_j(\Theta_0))$ y $\tr h^\Theta_j=\tr h_j$. Se
+aplica~\eqref{eq:dualgen} en $\Theta$ con $\{h^\Theta_j\}$ y se resta la igualdad en $\Theta_0$.
+\end{proof}
+
+Es la versión del pegado de la cota de Kohn \cite{kohn}: el déficit en $\Theta$ es al menos lo que
+baja el autovalor máximo del testigo óptimo de $\Theta_0$ al girarlo. El signo de esa bajada lo da el
+argumento de Marshall \cite{marshall}.
+
+\begin{proposicion}[signo de la holonomía]\label{prop:marshall}
+Sea $\{\ket s\}$ la base de autoestados de $Q$ y supongamos que hay un testigo óptimo en
+$\Theta_0$, invariante por la $U(1)$, y un unitario diagonal $U$ en la base producto tales que
+$U\big(\sum_jh_j\big)U^\dagger$ tiene todos sus elementos fuera de la diagonal reales y $\ge0$.
+Entonces $p(n,\Theta)\le p(n,\Theta_0)$ para toda $\Theta$.
+\end{proposicion}
+
+\begin{proof}
+Por la invariancia, $h_j$ solo conecta configuraciones de los sitios $j,j{+}1$ con la misma carga
+total, y $\bra{s'}h^\Theta_j\ket s=e^{-i\varphi(q_{s'_{j+1}}-q_{s_{j+1}})}\bra{s'}h_j\ket s$, con
+$\varphi=(\Theta-\Theta_0)/n$. El giro, pues, deja la diagonal y multiplica cada elemento fuera de
+ella por una fase; lo mismo tras conjugar por $U$, que es diagonal. Sea
+$M_\Theta=U\big(\sum_jh_j^\Theta\big)U^\dagger+cI$, con $c$ tan grande que $M_0$ tenga todos sus
+elementos $\ge0$ y $M_\Theta$ sea semidefinida positiva para toda $\Theta$. Entonces
+$|(M_\Theta)_{ab}|\le(M_0)_{ab}$, por inducción $|(M_\Theta^k)_{ab}|\le(M_0^k)_{ab}$, y con la norma
+de Frobenius y la fórmula de Gelfand,
+$\lambda_{\max}(M_\Theta)=\lim_k\|M_\Theta^k\|_F^{1/k}\le\lim_k\|M_0^k\|_F^{1/k}=\lambda_{\max}(M_0)$:
+el radio espectral de una matriz semidefinida positiva es su mayor autovalor. Así $\lambda_{\max}(\sum_jh_j^\Theta)\le\lambda_{\max}(\sum_jh_j)$,
+y el Lema~\ref{lem:giro} concluye.
+\end{proof}
+
+Para el testigo XXZ de esta sección, $\sum_eh_e=-4H_{\rm XXZ}(\Delta,\Phi)$ tiene, fuera de la
+diagonal, los términos $-2(e^{i\Phi/n}S^+_iS^-_{i+1}+{\rm h.c.})$. Con $n$ par y $\Phi\equiv0$, el
+giro de Marshall $U=\prod_{i\ \rm impar}2S^z_i$ cambia el signo de todos ellos y los deja $\ge0$.
+Con $n$ impar queda un enlace con el signo equivocado, que es un flujo $\pi$: con $\Phi\equiv\pi$, la
+transformación gauge $\prod_ie^{-i\theta_iS^z_i}$ que concentra el flujo en ese enlace, seguida del
+giro de Marshall, deja de nuevo todos los elementos $\ge0$. Por tanto:
+
+\begin{corolario}[paridad]\label{cor:paridad}
+Con los datos de esta sección, si el ínfimo del dual en $\Theta_0$ se alcanza con
+$\Phi^\ast\equiv0$ ($n$ par) o $\Phi^\ast\equiv\pi$ ($n$ impar) módulo $2\pi$, entonces
+$v(n,\Theta)\le v(n,\Theta_0)$ para toda $\Theta$. Con $\kappa=1$ y $n$ par se cumple en $\Theta_0=0$,
+con $\Delta^\ast=1$, y
+\[
+  v(n,0)-v(n,\Theta)\ \ge\ \frac4{3n}\big[E_0(1,\Theta)-E_0(1,0)\big]\ \ge\ 0,
+\]
+con $E_0(\Delta,\Phi)$ la energía fundamental de $H_{\rm XXZ}$.
+\end{corolario}
+
+\begin{proof}
+La primera parte es la Proposición~\ref{prop:marshall}, porque el término $C$ y el multiplicador
+de $\ev{Z_i}=0$ son diagonales. Con $\kappa=1$ y $\Theta=0$ los datos son invariantes por la
+$SU(2)$ global y por las traslaciones; promediando un testigo óptimo sobre las dos queda otro
+testigo óptimo con el mismo término en cada arista e invariante por $SU(2)$, y el único operador
+de dos qubits sin traza con esa invariancia es $\vec\sigma\cdot\vec\sigma=-(A+C)$: es $\Delta=1$,
+$\Phi=0$, y $v(n,0)=4e_n(1,0)/3$. Su giro tiene flujo $\Theta$ y el mismo denominador, $3$; el
+Lema~\ref{lem:giro} da la cota.
+\end{proof}
+
+Los números de la tabla siguiente cumplen el Corolario~\ref{cor:paridad} en todos los casos: con
+$n$ par, $v(n,0)>v(n,\pi)$, y con $n$ impar el máximo está en $\Theta=\pi$ (allí el dual elige
+$\Phi^\ast=\pi$). Con $\kappa=1$ y $n$ par, la cota del corolario en $\Theta=\pi$ es
+$n^2\big[v(n,0)-v(n,\pi)\big]\ge1{,}887$, $1{,}864$, $1{,}849$, $1{,}838$, $1{,}830$ y $1{,}824$ en
+$n=8,10,\dots,18$, frente a los valores exactos de la tabla: el giro del testigo óptimo de
+$\Theta=0$ explica más del 90\,\% del déficit. Es la mitad de la recíproca del problema abierto~1 en
+el caso crítico más simple: si $E_0(1,\pi)-E_0(1,0)\ge c/n$, que es la rigidez de espín positiva del
+anillo de Heisenberg \cite{shastry}, el déficit es al menos $4c/(3n^2)$.
 
 \paragraph{Resultados.} La sensibilidad a la holonomía, multiplicada por $n^2$
 (\texttt{scripts/neel\_u1.py}, \texttt{data/neel\_u1.csv}):
@@ -553,19 +693,21 @@ todos los $\mathcal E_i$ tienen el mismo espectro no nulo, con la misma estructu
 ($XY$ e $YX$). Por (M1$_k$), $\mathcal E_1$ es primitivo; tras normalizar, todos tienen autovalor
 dominante $1$, simple, con autovectores $R_i$ y $L_i$ ($\mathcal E_iR_i=R_i$,
 $\mathcal E_i^\dagger L_i=L_i$), y el resto del espectro en el disco
-de radio $\lambda<1$.
+de radio $\lambda_k<1$; $J_k$ es el mayor tamaño de los bloques de Jordan de módulo $\lambda_k$. Es el análogo para la celda del $\lambda$ de (M1), con $\lambda_1=\lambda$:
+$\lambda_k$ es un autovalor del canal de $k$ sitios, y la tasa por sitio es $\lambda_k^{1/k}$. Si
+el MPS de celda $k$ es un MPS de un sitio agrupado, $\lambda_k=\lambda^k$.
 
 \begin{teorema}[robustez con celda de $k$ sitios]\label{teo:celda}
 Sea $k\ge2$ (con $k=1$ es el Teorema~\ref{teo:mps}). Bajo (M$_k$) existen $C$ y $m_0$, que solo dependen de los tensores, tales que para todo
 $n=mk$ con $m\ge m_0$ y toda $\Theta$
 \[
-  p(n,\Theta)\ \ge\ 1-6d^2\,n\,\varepsilon_n,\qquad \varepsilon_n\le C\lambda^{m-1},
+  p(n,\Theta)\ \ge\ 1-6d^2\,n\,\varepsilon_n,\qquad \varepsilon_n\le C\,m^{J_k-1}\lambda_k^{m-1}=C\,m^{J_k-1}\lambda_k^{n/k-1},
 \]
 con $\varepsilon_n$ el máximo sobre los tipos de arista de la distancia en norma traza entre la
 marginal del MPS retorcido y el dato girado $(1\otimes V)\sigma_i(1\otimes V)^\dagger$.
 Si además $\sigma$ no tiene rango completo, es decir, si los $\sigma_i$ tienen un vector común en
 el núcleo, entonces $p(n,\Theta)\le1$ y
-$\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|\le6d^2Cn\lambda^{m-1}$.
+$\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|\le6d^2Cn\,m^{J_k-1}\lambda_k^{m-1}$.
 \end{teorema}
 
 \begin{proof}
@@ -589,7 +731,7 @@ con $\mathbb B^{s_0s_1\cdots}=B_i^{s_0}B_{i+1}^{s_1}\cdots B_{i+k-1}^{s_{k-1}}$:
 dos primeros sitios abiertos y el resto contraído entre ket y bra. Por la misma cuenta, $\Phi^{(i)}_{ab,cd}=e^{-i\phi(q_b-q_d)}\,\Phi^{(i),0}_{ab,cd}\circ\Ad_{U_i}$,
 donde $\Phi^{(i),0}$ es la celda abierta sin giro: solo el segundo sitio abierto deja una fase
 sin cancelar. Con $\mathcal E_i^{\,r}=\ket{R_i}(L_i|+\mathcal S_{i,r}$ y
-$\|\mathcal S_{i,r}\|\le K\lambda^r$ (norma de operadores sobre Hilbert--Schmidt, en la que $\Ad_U$
+$\|\mathcal S_{i,r}\|\le K\,r^{J_k-1}\lambda_k^r$ (norma de operadores sobre Hilbert--Schmidt, en la que $\Ad_U$
 es isométrico),
 \[
   \rho^{(n)}_{i;ab,cd}=\frac{e^{-i\phi(q_b-q_d)}\Big[(L_i|\Phi^{(i),0}_{ab,cd}|R_i)+\tr\big(\Phi^{(i),0}_{ab,cd}\,
@@ -597,7 +739,7 @@ es isométrico),
 \]
 normalizado con $(L_i|R_i)=1$. El término principal es $e^{-i\phi(q_b-q_d)}(\sigma_i)_{ab,cd}=
 [(1\otimes V)\sigma_i(1\otimes V)^\dagger]_{ab,cd}$, porque los $\Ad_U$ fijan $R_i$. Los restos dan
-$\|\rho^{(n)}_i-(1\otimes V)\sigma_i(1\otimes V)^\dagger\|_1\le C\lambda^{m-1}$ para $m\ge m_0$,
+$\|\rho^{(n)}_i-(1\otimes V)\sigma_i(1\otimes V)^\dagger\|_1\le C\,m^{J_k-1}\lambda_k^{m-1}$ para $m\ge m_0$,
 uniformemente en $\Theta$ y en $i$.
 
 \emph{Media sobre traslaciones.} Sea $T$ la traslación de un sitio y
@@ -626,7 +768,8 @@ y el argumento de la Proposición~\ref{prop:lsm}, aplicado a las celdas, da $(-1
 teorema necesita $k\mid n$.
 \end{proof}
 
-Si $e^{2\pi iQ}=e^{2\pi ia/q}$ con $a/q$ irreducible, la misma cuenta da $q\mid k$: la celda mínima es la que tiene carga entera, como en el teorema de Oshikawa--Yamanaka--Affleck \cite{oya}.
+Si $e^{2\pi iQ}=e^{2\pi ia/q}$ con $a/q$ irreducible, la misma cuenta da $q\mid k$: la celda mínima es la que tiene carga entera. Es la condición de
+llenado conocida \cite{oya,wpvz}, aquí rederivada para MPS inyectivos.
 
 \begin{proposicion}[Néel clásico: la divisibilidad no sobra]\label{prop:neelclas}
 Para qubits, sean $\sigma=\tfrac12\big(\ket{\uparrow\downarrow}\bra{\uparrow\downarrow}+
@@ -649,7 +792,7 @@ $\uparrow\downarrow$ y en $\downarrow\uparrow$, coherencias nulas y marginales d
 Son exactamente los datos con $p=1-2/n$.
 \end{proof}
 
-Aquí la holonomía no actúa: con $D=1$ el canal no tiene más espectro ($\lambda=0$) y los
+Aquí la holonomía no actúa: con $D=1$ el canal no tiene más espectro ($\lambda_2=0$) y los
 datos son diagonales, pero el ejemplo muestra que sin
 $k\mid n$ no hay estado cercano a los datos con $p=1$: el defecto de frustración cuesta $2/n$. En
 la Sección~\ref{sec:neel} ese mismo defecto, con fluctuaciones cuánticas, es la pared de dominio
@@ -660,20 +803,20 @@ techo de Ising $(n-2)/n$ con $n$ impar.
 celda doble con la regla de carga de (M2$_k$) y carga semientera por sitio:
 \begin{itemize}
 \item \emph{espín $\tfrac12$}, con cargas virtuales $\{\pm\tfrac12\}$ y $\{-1,0,1\}$
-  ($\lambda=0{,}096$);
+  ($\lambda_2=0{,}096$);
 \item \emph{espín $\tfrac32$}, con cargas virtuales $\{-1,0,1\}$ y $\{\pm\tfrac12\}$
-  ($\lambda=0{,}285$; $\sigma$ tiene rango $12<16$).
+  ($\lambda_2=0{,}285$; $\sigma$ tiene rango $12<16$).
 \end{itemize}
 Comprueba:
 \begin{itemize}
 \item la inyectividad de la celda, que ya se cumple con una celda;
-\item que los dos canales de celda tienen el mismo $\lambda$;
+\item que los dos canales de celda tienen el mismo $\lambda_2$;
 \item que las marginales del anillo retorcido por fuerza bruta ($n\le10$ y $n\le6$) coinciden con
   las de la transferencia a $5\times10^{-16}$;
 \item que $\tr_1\sigma=\tr_2\sigma$ es diagonal en la base de carga.
 \end{itemize}
 Con el máximo sobre $9$ valores de $\Theta\in[0,\pi]$ y $n=6,\dots,60$, el cociente
-$\varepsilon_n/\lambda^{m-1}$ queda en $[1{,}67;\,1{,}69]$ y en $[1{,}39;\,1{,}61]$,
+$\varepsilon_n/\lambda_2^{m-1}$ queda en $[1{,}67;\,1{,}69]$ y en $[1{,}39;\,1{,}61]$,
 respectivamente, hasta que $\varepsilon_n$ llega al redondeo. El ejemplo de espín $\tfrac12$ tiene
 $\sigma$ de rango completo: vale la cota inferior, pero no el techo $p\le1$. No es casualidad,
 como muestra la proposición siguiente.
@@ -703,8 +846,10 @@ contiene un vector de carga definida: $\ket{\uparrow\uparrow}$, $\ket{\downarrow
 $v=a\ket{\uparrow\downarrow}+b\ket{\downarrow\uparrow}$.
 
 \emph{Carga.} Por (M2$_k$), $\tr(B^{s_1}\cdots B^{s_n})=e^{-it\sum_j(q_{s_j}-\mu)}\tr(B^{s_1}\cdots B^{s_n})$
-para todo $t$: solo hay amplitud en configuraciones con exactamente $fn$ espines arriba. Con
-$n=k$ esto da (ii), y es también el Corolario~\ref{cor:lsmk} con $e^{2\pi i(Q-\mu)}=e^{-2\pi if}$.
+para todo $t$: solo hay amplitud en configuraciones con exactamente $fn$ espines arriba. Un
+anillo de una sola celda puede anularse, pero, por (M1$_k$), los productos de $L$ celdas generan
+$M_{D_1}$ para $L\ge L_0$, así que alguno tiene traza no nula y el anillo de $Lk$ sitios no es
+nulo. Aplicado a $L_0$ y a $L_0+1$ celdas, $fL_0k$ y $f(L_0+1)k$ son enteros, y su diferencia da (ii), y es también el Corolario~\ref{cor:lsmk} con $e^{2\pi i(Q-\mu)}=e^{-2\pi if}$.
 
 \emph{Sector intermedio.} Si $v=a\ket{\uparrow\downarrow}+b\ket{\downarrow\uparrow}$ se anula
 en todas las aristas, la amplitud de un anillo cumple $\psi(x')=r\,\psi(x)$ cuando $x'$ sale de
@@ -739,14 +884,14 @@ Con las cargas virtuales $\{0,0\}$, $\{-\tfrac23,\tfrac13\}$ y $\{-\tfrac13,\tfr
 $\mu=-\tfrac16$, cumple (M2$_k$). Con amplitudes $1$ para las tres posiciones
 (\texttt{scripts/qubits\_celda3.py}):
 \begin{itemize}
-\item los productos de dos celdas generan $M_2$, y $\lambda=0{,}146$ en los tres tipos;
+\item los productos de dos celdas generan $M_2$, y $\lambda_3=0{,}146$ en los tres tipos;
 \item $\sigma$ tiene espectro $\{0;\ 0{,}149;\ \tfrac13;\ 0{,}518\}$, con núcleo
   $\ket{\uparrow\uparrow}$ exactamente, y $\ev Z=-\tfrac13$;
 \item las marginales por fuerza bruta ($n=6,9,12$) coinciden con las de la transferencia a
-  $2\times10^{-16}$, y $\varepsilon_n/\lambda^{m-1}=0{,}30$ desde $n=6$ hasta el redondeo, uniforme
+  $2\times10^{-16}$, y $\varepsilon_n/\lambda_3^{m-1}=0{,}30$ desde $n=6$ hasta el redondeo, uniforme
   en $\Theta$.
 \end{itemize}
-El Teorema~\ref{teo:celda} da $1-O(n\lambda^{n/3})\le p(n,\Theta)\le1$ para $3\mid n$. El SDP
+El Teorema~\ref{teo:celda} da $1-O(n\lambda_3^{n/3})\le p(n,\Theta)\le1$ (aquí $J_3=1$, como indica el cociente constante) para $3\mid n$. El SDP
 exacto, con el estado invariante por la $U(1)$ y por traslación (los datos son iguales en todas
 las aristas, así que promediar sobre traslaciones conserva la factibilidad) y, por tanto,
 diagonal por bloques de magnetización y momento:
@@ -784,15 +929,18 @@ y~\ref{lem:dilucion}); la robustez para marginales de MPS inyectivos con núcleo
 (Teorema~\ref{teo:mps}) y su versión con celda (Teorema~\ref{teo:celda}); la obstrucción con carga
 semientera y la condición de divisibilidad de la celda (Proposición~\ref{prop:lsm} y
 Corolario~\ref{cor:lsmk}); la constante explícita de AKLT (Proposición~\ref{prop:aklt}); el valor
-exacto de $p(n,\Theta)$ para el Néel clásico (Proposición~\ref{prop:neelclas}); y que con qubits la
-celda doble con núcleo solo admite el Néel clásico (Proposición~\ref{prop:qubits}).
+exacto de $p(n,\Theta)$ para el Néel clásico (Proposición~\ref{prop:neelclas}); que con qubits la
+celda doble con núcleo solo admite el Néel clásico (Proposición~\ref{prop:qubits}); y el signo de
+la dependencia en $\Theta$ cuando el testigo óptimo es estocástico tras un giro de Marshall, con la
+cota del déficit por la rigidez para datos de Werner y $n$ par (Lema~\ref{lem:giro},
+Proposición~\ref{prop:marshall} y Corolario~\ref{cor:paridad}).
 
 \paragraph{Numérico, con comprobaciones independientes.} La fórmula de $\varepsilon_n$ de AKLT
 frente a la matriz de transferencia ($n\le20$); $p(n,\Theta)$ exacto de AKLT hasta $n=8$ (dual con
 primal certificado; en cuatro puntos de $n\le5$, un intervalo de anchura $\le1{,}4\times10^{-4}$
 que contiene el valor del SDP primal); los tres
 regímenes del testigo de Néel (diagonalización exacta, $n\le18$, con el dual contrastado con el
-primal en $n\le6$); las cotas $\varepsilon_n=O(\lambda^{m-1})$ de los ejemplos aleatorios con
+primal en $n\le6$); las cotas $\varepsilon_n=O(\lambda_2^{m-1})$ de los ejemplos aleatorios con
 celda doble; y el SDP exacto del ejemplo de celda triple hasta $n=9$.
 
 \begin{figure}[t]
@@ -815,15 +963,19 @@ sensibilidad a la holonomía mide la rigidez de espín del testigo óptimo: nula
 desdoblamiento por ruptura de simetría compatible con $n$; finita en la fase crítica, donde da
 $1/n^2$ (fila $\kappa=1$ de la Sección~\ref{sec:neel}); y finita también con $n$ incompatible con la celda, donde un defecto móvil
 transporta la carga (Sección~\ref{sec:neel}). Aquí solo se demuestra la dirección
-«datos MPS $\Rightarrow$ robustez»; no hay teorema para la recíproca.
+«datos MPS $\Rightarrow$ robustez»; de la recíproca solo el caso crítico más simple, datos de
+Werner con $n$ par, donde el giro del testigo y el argumento de Marshall acotan el déficit por la
+rigidez del anillo de Heisenberg (Corolario~\ref{cor:paridad}).
 
 \paragraph{Problemas abiertos.}
 \begin{enumerate}
 \item \emph{La recíproca.} Demostrar que, si el testigo óptimo es crítico, con rigidez de espín
   positiva en el límite termodinámico, entonces $n^2\sup_\Theta|p(n,\Theta)-p(n,0)|$ no tiende a
-  cero. Girar a la vez el testigo óptimo de $\Theta=0$ y los datos da un testigo admisible en
-  $\Theta$, y con él una cota superior de $p(n,\Theta)-p(n,0)$ por la rigidez, al estilo de Kohn
-  \cite{kohn}; falta la cota en el otro sentido, que es primal.
+  cero. El Lema~\ref{lem:giro} acota $p(n,\Theta)-p(n,0)$ por la respuesta del testigo óptimo al
+  giro, al estilo de Kohn \cite{kohn}, y cuando esa respuesta tiene signo fijo
+  (Proposición~\ref{prop:marshall}) es ya la recíproca: así ocurre con datos de Werner y $n$ par
+  (Corolario~\ref{cor:paridad}), módulo la rigidez positiva del anillo de Heisenberg. Falta el caso
+  general: $n$ impar, $\kappa<1$ con testigo crítico, y testigos que no sean estocásticos.
 \item \emph{Datos que no son marginales de un MPS.} Los datos de la Sección~\ref{sec:neel} no son
   marginales de un MPS de celda doble, pero se comportan como si lo fueran con $n$ par. Hace falta
   un argumento de aproximación: que $p(n,\Theta)$ sea robusto en un entorno de las marginales MPS con
@@ -834,7 +986,7 @@ transporta la carga (Sección~\ref{sec:neel}). Aquí solo se demuestra la direcc
 \item \emph{La sensibilidad de AKLT.} Hasta $n=8$ cae como $\sim10^{-3}$ cada dos sitios, mucho
   más deprisa que la cota $\sim n\,3^{-n}$ del teorema. Falta entender esa ley, y si la cota es
   mejorable en general o solo para AKLT.
-\item \emph{Constantes.} La dilución pierde un factor $n$. ¿Es $p(n,\Theta)\ge1-O(\lambda^n)$?
+\item \emph{Constantes.} La dilución pierde un factor $n$. ¿Es $p(n,\Theta)\ge1-O(n^{J-1}\lambda^n)$?
 \item \emph{Rango completo.} En el ejemplo aleatorio de espín $\tfrac12$ y celda doble, $\sigma$ tiene
   rango completo: vale la cota inferior, pero $p$ puede superar $1$ y nada impide que dependa de
   $\Theta$ a orden mayor. Falta un techo que sustituya al del núcleo.
@@ -843,7 +995,7 @@ transporta la carga (Sección~\ref{sec:neel}). Aquí solo se demuestra la direcc
 \end{enumerate}
 
 \paragraph{Reproducibilidad.} Los guiones están en \texttt{scripts/} del repositorio
-\texttt{holonomy}: \texttt{aklt\_twist.py} y \texttt{aklt\_sdp\_ti.py} (Sección~\ref{sec:aklt}), \texttt{neel\_u1.py} con los
+\texttt{holonomy}, \url{https://github.com/krowork/holonomy}: \texttt{aklt\_twist.py} y \texttt{aklt\_sdp\_ti.py} (Sección~\ref{sec:aklt}), \texttt{neel\_u1.py} con los
 datos en \texttt{data/neel\_u1.csv} (Sección~\ref{sec:neel}), \texttt{mps\_celda.py} y
 \texttt{qubits\_celda3.py} (Sección~\ref{sec:celda}), y \texttt{figura\_sensibilidad.py} (Figura~\ref{fig:sensibilidad}). Requieren \texttt{numpy}, \texttt{scipy} y,
 para los SDP, \texttt{cvxpy} con \texttt{clarabel} o \texttt{scs}.
@@ -901,6 +1053,33 @@ arXiv:1102.0842.
 \bibitem{hulthen}
 L.~Hulthén, Über das Austauschproblem eines Kristalles, Arkiv Mat.\ Astron.\ Fys.\ \textbf{26A},
 n.º~11 (1938).
+
+\bibitem{chen-gu-wen}
+X.~Chen, Z.-C. Gu y X.-G. Wen, Classification of gapped symmetric phases in one-dimensional spin
+systems, Phys.\ Rev.\ B \textbf{83}, 035107 (2011), arXiv:1008.3745.
+
+\bibitem{wpvz}
+H.~Watanabe, H.~C. Po, A.~Vishwanath y M.~Zaletel, Filling constraints for spin-orbit coupled
+insulators in symmorphic and nonsymmorphic crystals, Proc.\ Natl.\ Acad.\ Sci.\ USA \textbf{112},
+14551 (2015), arXiv:1505.04193.
+
+\bibitem{blakaj-wolf}
+V.~Blakaj y M.~M. Wolf, On the set of reduced states of translation invariant, infinite quantum
+systems, Lett.\ Math.\ Phys.\ \textbf{114}, 28 (2024), arXiv:2308.14585.
+
+\bibitem{navascues-baccari-acin}
+M.~Navascués, F.~Baccari y A.~Acín, Entanglement marginal problems, Quantum \textbf{5}, 589 (2021).
+
+\bibitem{kim-marginal}
+I.~H. Kim, Entropy scaling law and the quantum marginal problem, Phys.\ Rev.\ X \textbf{11}, 021039
+(2021), arXiv:2010.07424.
+
+\bibitem{zaletel-mong-pollmann}
+M.~P. Zaletel, R.~S.~K. Mong y F.~Pollmann, Flux insertion, entanglement, and quantized responses,
+J.\ Stat.\ Mech.\ (2014) P10007, arXiv:1405.6028.
+
+\bibitem{marshall}
+W.~Marshall, Antiferromagnetism, Proc.\ R.\ Soc.\ Lond.\ A \textbf{232}, 48 (1955).
 
 \bibitem{watanabe}
 H.~Watanabe, Insensitivity of bulk properties to the twisted boundary condition, Phys.\ Rev.\ B

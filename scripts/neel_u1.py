@@ -16,9 +16,13 @@ Salida: data/neel_u1.csv y una tabla por pantalla.
 
 Notas numéricas. (1) Para n impar y kappa pequeño el ínfimo está en Delta -> inf
 (techo de Ising frustrado (n-2)/n, independiente de Theta); v_at_flux lo incluye.
-(2) La minimización en Phi encuentra mínimos locales con error de hasta ~4e-4
-en v(pi) para n >= 12 y kappa >= 0.6. El CSV guardado toma, fila a fila, el
-mínimo entre nphi = 9 y nphi = 33 (este último es el valor por defecto ahora).
+(2) Hasta noviembre de 2026 el CSV tenía v(pi) sobrestimado (hasta ~3e-4) en
+n >= 14: el arranque en caliente de Lanczos en holonomy.xxz reutilizaba un
+autovector de momento definido y, tras el cruce de niveles en Phi = pi, devolvía
+el fundamental del sector de momento equivocado. Con la componente aleatoria
+del arranque (xxz._warm_start) el CSV se ha regenerado con nphi = 33. La cota
+v(n, pi) <= 4 eps_n(1, pi) / 3 (giro del testigo de Heisenberg, kappa = 1, n par)
+sirve de control: ver la comprobación al final del barrido.
 """
 import csv
 import sys
@@ -160,6 +164,14 @@ if __name__ == "__main__":
             print(f" {kappa:4.2f} {n:3d}  {v0:.8f}  {vp:.8f}  {v0 - vp:+.3e}   {D0:7.4f}  {Dp:7.4f}"
                   f"   {P0 / np.pi:+7.4f}   {Pp / np.pi:+7.4f}   {g1:.2e} {g2:.2e}  ({time.time() - t:.0f} s)",
                   flush=True)
+    # --- controles: signo (Marshall) y cota de Kohn con kappa = 1 ----------
+    for r in rows:
+        n = r["n"]
+        if n % 2 == 0:
+            check(r["v0"] >= r["vpi"] - 1e-9, f"kappa={r['kappa']}, n={n}: v(0) >= v(pi) (Marshall)")
+        if r["kappa"] == 1.0 and n % 2 == 0:
+            cota = 4 * xxz.eps(n, 1.0, np.pi) / 3
+            check(r["vpi"] <= cota + 1e-9, f"n={n}: v(pi) <= 4 eps_n(1, pi)/3 (giro del testigo)")
     out = Path(__file__).resolve().parents[1] / "data" / "neel_u1.csv"
     with open(out, "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0]))
