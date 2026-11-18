@@ -8,6 +8,7 @@
 \usepackage{icomma}
 \usepackage{booktabs}
 \usepackage{graphicx}
+\usepackage{placeins}
 \usepackage[margin=2.5cm]{geometry}
 \usepackage[hidelinks]{hyperref}
 
@@ -46,7 +47,8 @@ estado explícito, el MPS retorcido. La tesis que sostienen el teorema, sus exte
 es que la robustez frente a la holonomía equivale a que el testigo óptimo tenga rigidez de espín
 nula. Con carga semientera el mecanismo del teorema está prohibido, una versión MPS de
 Lieb--Schultz--Mattis, y solo vuelve rompiendo la traslación con una celda compatible con $n$; con
-testigo crítico la sensibilidad es del orden de $1/n^2$. La implicación «datos MPS $\Rightarrow$
+testigo crítico la sensibilidad es al menos del orden de $1/n^2$, con la rigidez del testigo, y
+numéricamente de ese orden. La implicación «datos MPS $\Rightarrow$
 robustez» está demostrada. De la recíproca, para datos $U(1)$ en un anillo de qubits, se demuestran
 el signo de la dependencia en $\Theta$ y una cota del déficit por la respuesta a un flujo del
 testigo óptimo, mediante una reducción por simetría y un argumento de Marshall.
@@ -144,7 +146,8 @@ del anillo de qubits, el signo y la reducción del déficit a la respuesta a un 
 
 \paragraph{Organización.} La Sección~\ref{sec:marco} fija el problema y dos lemas. Las
 Secciones~\ref{sec:teorema}--\ref{sec:aklt} demuestran el teorema MPS, la obstrucción con carga
-semientera y el caso AKLT. La Sección~\ref{sec:neel} estudia numéricamente el testigo de Néel. La
+semientera y el caso AKLT. La Sección~\ref{sec:neel} estudia el testigo de Néel: demuestra el signo de la dependencia en
+$\Theta$ y una cota del déficit, y explora numéricamente los regímenes. La
 Sección~\ref{sec:celda} extiende el teorema a celdas de $k$ sitios, con los ejemplos de qubits. La
 Sección~\ref{sec:conclusiones} resume qué está demostrado, qué es numérico y qué queda abierto.
 
@@ -479,8 +482,8 @@ $0{,}49$--$0{,}55$ en $n=8$, según $\Theta$. Tres rasgos de los valores exactos
 $\kappa=1$ de la Sección~\ref{sec:neel}), el análogo de los datos AKLT son las marginales del anillo
 de Heisenberg infinito, $v_\infty=4e_\infty/3=(4\ln2-1)/3\approx0{,}5909$, con
 $e_\infty=\ln2-\tfrac14$ la energía por enlace, cambiada de signo, \cite{hulthen}. Con $n=16$ y
-$\Theta=\pi$, el dual de la Sección~\ref{sec:neel} da $v_{\max}=0{,}5883<v_\infty$: la holonomía
-hace incompatibles esos datos, con un déficit relativo de $4\times10^{-3}\sim1/n^2$. Con los datos AKLT y el mismo $n$, el déficit es como mucho
+$\Theta=\pi$, el dual de la Sección~\ref{sec:neel} da $v_{\max}=0{,}5878<v_\infty$: la holonomía
+hace incompatibles esos datos, con un déficit relativo de $5\times10^{-3}\sim1/n^2$. Con los datos AKLT y el mismo $n$, el déficit es como mucho
 $3{,}2\times10^{-4}$ para toda $\Theta$, y cae como $n\,3^{-n}$.
 
 %=====================================================================
@@ -489,8 +492,9 @@ $3{,}2\times10^{-4}$ para toda $\Theta$, y cae como $n\,3^{-n}$.
 
 La Proposición~\ref{prop:lsm} deja abierta una puerta para espín $\tfrac12$: romper la
 traslación. Un orden de Néel tiene celda de dos sitios y, agrupando pares, carga entera por celda.
-Esta sección explora numéricamente si esa puerta lleva a robustez exponencial. No hay teorema: son
-diagonalizaciones exactas hasta $n=18$.
+Si esa puerta lleva a robustez exponencial se explora numéricamente, con diagonalizaciones exactas
+hasta $n=18$. El signo de la dependencia en $\Theta$ y una cota inferior del déficit sí se
+demuestran (Lema~\ref{lem:reduccion} y Corolario~\ref{cor:paridad}).
 
 \paragraph{Datos y dual.} Anillo de qubits con datos $U(1)$ anisótropos en cada arista (gauge
 uniforme, $\phi=\Theta/n$):
@@ -500,7 +504,8 @@ uniforme, $\phi=\Theta/n$):
 con $A=-(XX+YY)$, $B=XY-YX$, $C=-ZZ$ y $\kappa>0$. Con $\kappa=1$ son los datos de Werner
 girados: $\ev{\vec\sigma\cdot\vec\sigma}=-3v$ en el marco de cada arista. Con $\kappa<1$ favorecen
 las correlaciones $ZZ$, y con $\kappa>1$ las $XY$; son estados de dos qubits si $v\le1$ y
-$v(2\kappa-1)\le1$.
+$v(2\kappa-1)\le1$. Los óptimos calculados la cumplen: con $\kappa=1{,}5$, $v\approx0{,}43<1/2$, y
+con $\kappa=2$, $v\approx0{,}316$ a $0{,}320<1/3$, cerca del borde.
 
 \emph{Dual.} Para el testigo $h_e=\cos\psi\,A_e+\sin\psi\,B_e+\Delta\,C_e$, un estado con esos
 datos cumple $\sum_e\ev{h_e}=nv\big(\Delta+2\kappa\cos(\psi-\phi)\big)\le\lambda_{\max}(\sum_eh_e)$.
@@ -516,7 +521,8 @@ $e_n(\Delta,\Phi)=-E_0/n$ su energía fundamental por enlace, cambiada de signo,
 \]
 Por la $U(1)$, el testigo óptimo puede tomarse invariante, y los términos de dos sitios invariantes
 son estos tres, la identidad y un campo $Z$; por eso, salvo el campo, la cota es una igualdad.
-Con $\kappa=1$ el ínfimo está en el punto isótropo $\Delta=1$, crítico; con $\kappa<1$ el testigo
+Con $\kappa=1$ y $\Theta=0$ el ínfimo está en el punto isótropo $\Delta=1$, crítico (en
+$\Theta=\pi$, $\Delta^\ast$ va de $0{,}73$ en $n=8$ a $0{,}94$ en $n=18$); con $\kappa<1$ el testigo
 óptimo puede tener $\Delta>1$, en la fase de Néel. Dos detalles. El multiplicador de
 $\ev{Z_i}=0$, un campo uniforme en el testigo, no mejora la cota en ningún caso probado; en
 $\Theta\in\{0,\pi\}$ se demuestra (Lema~\ref{lem:reduccion}). Para $n$
@@ -567,8 +573,12 @@ Entonces $p(n,\Theta)\le p(n,\Theta_0)$ para toda $\Theta$.
 \begin{proof}
 Por la invariancia, $h_j$ solo conecta configuraciones de los sitios $j,j{+}1$ con la misma carga
 total, y $\bra{s'}h^\Theta_j\ket s=e^{-i\varphi(q_{s'_{j+1}}-q_{s_{j+1}})}\bra{s'}h_j\ket s$, con
-$\varphi=(\Theta-\Theta_0)/n$. El giro, pues, deja la diagonal y multiplica cada elemento fuera de
-ella por una fase; lo mismo tras conjugar por $U$, que es diagonal. Sea
+$\varphi=(\Theta-\Theta_0)/n$. El giro, pues, deja la diagonal y multiplica la contribución de cada arista a un elemento fuera de
+ella por una fase. Con $n\ge3$, un elemento fuera de la diagonal con fase no trivial procede de una
+sola arista: la carga del sitio $j{+}1$ cambia, y por la conservación también la del sitio $j$, así
+que $s$ y $s'$ difieren exactamente en $\{j,j{+}1\}$. Los elementos con varias contribuciones
+difieren en un solo sitio, con su carga intacta, y tienen fase $1$. Lo mismo vale tras conjugar por
+$U$, que es diagonal. Sea
 $M_\Theta=U\big(\sum_jh_j^\Theta\big)U^\dagger+cI$, con $c$ tan grande que $M_0$ tenga todos sus
 elementos $\ge0$ y $M_\Theta$ sea semidefinida positiva para toda $\Theta$. Entonces
 $|(M_\Theta)_{ab}|\le(M_0)_{ab}$, por inducción $|(M_\Theta^k)_{ab}|\le(M_0^k)_{ab}$, y con la norma
@@ -706,7 +716,7 @@ hacia $\pi^2/6$ al ritmo de $D_n$.
 \begin{tabular}{rc*{11}{r}}
 \toprule
 $\kappa$ & $\Delta^*$ & \multicolumn{11}{c}{$n^2\,[v(n,0)-v(n,\pi)]$}\\
-& ($n=18$) & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 & 17 & 18\\
+& ($n=18$, $\Theta=0$) & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 & 17 & 18\\
 \midrule
 1   & 1,00 & 2,05 & $-1{,}80$ & 1,98 & $-1{,}83$ & 1,93 & $-1{,}83$ & 1,90 & $-1{,}84$ & 1,88 & $-1{,}84$ & 1,87\\
 0,8 & 1,44 & 1,74 & $-1{,}41$ & 1,64 & $-1{,}46$ & 1,56 & $-1{,}47$ & 1,51 & $-1{,}47$ & 1,46 & $-1{,}47$ & 1,42\\
@@ -757,6 +767,18 @@ Sección~\ref{sec:celda} demuestra la mitad rigurosa de esta lectura: el Teorema
 celda de $k$ sitios. Queda como conjetura que datos como los de la tabla, que no son marginales
 de un MPS de celda doble, se comporten igual.
 \end{observacion}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.78\textwidth]{sensibilidad.pdf}
+\caption{Sensibilidad a la holonomía, $|p(n,0)-p(n,\pi)|$, en escala logarítmica: AKLT (SDP
+exacto, Sección~\ref{sec:aklt}) y el anillo de qubits con datos $U(1)$ (Sección~\ref{sec:neel}, donde
+el parámetro se llama $v$), con $\kappa=0{,}4$ separado por paridad y con $\kappa=1$, de testigo
+crítico. Una recta es un decaimiento exponencial; el caso crítico y el de $n$ impar siguen
+$1/n^2$.}
+\label{fig:sensibilidad}
+\end{figure}
+\FloatBarrier
 
 %=====================================================================
 \section{El teorema con celda de $k$ sitios}\label{sec:celda}
@@ -1037,19 +1059,11 @@ frente a la matriz de transferencia ($n\le20$); $p(n,\Theta)$ exacto de AKLT has
 primal certificado; en cuatro puntos de $n\le5$, un intervalo de anchura $\le1{,}4\times10^{-4}$
 que contiene el valor del SDP primal); los tres
 regímenes del testigo de Néel (diagonalización exacta, $n\le18$, con el dual contrastado con el
-primal en $n\le6$); las cotas $\varepsilon_n=O(\lambda_2^{m-1})$ de los ejemplos aleatorios con
-celda doble; y el SDP exacto del ejemplo de celda triple hasta $n=9$.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.78\textwidth]{sensibilidad.pdf}
-\caption{Sensibilidad a la holonomía, $|p(n,0)-p(n,\pi)|$, en escala logarítmica: AKLT (SDP
-exacto, Sección~\ref{sec:aklt}) y el anillo de qubits con datos $U(1)$ (Sección~\ref{sec:neel}, donde
-el parámetro se llama $v$), con $\kappa=0{,}4$ separado por paridad y con $\kappa=1$, de testigo
-crítico. Una recta es un decaimiento exponencial; el caso crítico y el de $n$ impar siguen
-$1/n^2$.}
-\label{fig:sensibilidad}
-\end{figure}
+primal en $n\le6$); la cota del déficit del Corolario~\ref{cor:paridad} con $\kappa=1{,}5$ y $2$ ($n\le17$, con
+el dual reducido del Lema~\ref{lem:reduccion}); la rigidez $D_n$ del anillo de Heisenberg y su
+parábola (Observación de la constante asintótica, $n\le18$); las cotas
+$\varepsilon_n=O(\lambda_2^{m-1})$ de los ejemplos aleatorios con celda doble; y el SDP exacto del
+ejemplo de celda triple hasta $n=9$.
 
 \paragraph{La tesis: robustez y rigidez nula.} La Figura~\ref{fig:sensibilidad} reúne los tres comportamientos. En los casos demostrados la cota superior la da un
 testigo explícito: si $\sigma\ket\chi=0$, la suma de los proyectores sobre $\chi$ en el marco girado
@@ -1077,8 +1091,8 @@ Werner y $n$ par es la rigidez del anillo de Heisenberg (Corolario~\ref{cor:pari
   falta además ver que $\Delta^\ast(n)$ se queda en un compacto de $(-1,1)$. Con $n$ impar y
   $\kappa<1$, $\Delta^\ast>1$ y es la energía de un espinón en el anillo impar con giro, sin
   fórmula conocida. Con $\kappa=1$ y $n$ impar, $\Delta^\ast(n)\to1^+$, en la frontera entre
-  ambos. Con datos de Werner y $n$ par se reduce a la rigidez del anillo de Heisenberg, que es
-  positiva. Fuera de estos datos falta el caso de testigos que no sean estocásticos.
+  ambos. Con datos de Werner y $n$ par se reduce a la rigidez del anillo de Heisenberg, positiva según
+  el Bethe ansatz \cite{shastry}; aquí no se demuestra. Fuera de estos datos falta el caso de testigos que no sean estocásticos.
 \item \emph{Datos que no son marginales de un MPS.} Los datos de la Sección~\ref{sec:neel} no son
   marginales de un MPS de celda doble, pero se comportan como si lo fueran con $n$ par. Hace falta
   un argumento de aproximación: que $p(n,\Theta)$ sea robusto en un entorno de las marginales MPS con
