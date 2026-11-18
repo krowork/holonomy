@@ -23,9 +23,9 @@
 \newcommand{\bra}[1]{\langle #1|}
 \newcommand{\ev}[1]{\langle #1\rangle}
 
-\title{Robustez del pegado frente a la holonomía:\\ el teorema MPS y el caso AKLT}
-\author{Borrador de trabajo}
-\date{17 de noviembre de 2026}
+\title{Robustez del pegado frente a la holonomía:\\ estados producto de matrices, celdas y paridad}
+\author{Alejandro Gama}
+\date{18 de noviembre de 2026}
 
 \begin{document}
 \maketitle
@@ -46,10 +46,72 @@ para $n$ par y como $1/n^2$ para $n$ impar, donde una pared de dominio móvil ac
 El teorema se extiende a MPS con celda de $k$ sitios: robustez $1-O(n\lambda^{n/k})$ para $n$
 múltiplo de $k$, y con carga semientera la celda ha de ser par. El ejemplo de Néel clásico muestra
 que la divisibilidad no sobra: $p=1$ con $n$ par y $p=1-2/n$ con $n$ impar.
+Para qubits, una celda doble con marginal de rango incompleto solo admite el Néel clásico; el
+ejemplo cuántico mínimo tiene celda de tres sitios y llenado $\tfrac13$, y el SDP exacto da
+$p(n,\Theta)=1$ en $n=6,8,9$ para toda $\Theta$ probada.
+Todo apunta a que la robustez equivale a rigidez nula del testigo; aquí se demuestra la dirección
+«marginal de un MPS inyectivo $\Rightarrow$ robustez» y la otra queda respaldada solo por los números.
 \end{abstract}
 
 %=====================================================================
-\section{Marco}
+\section{Introducción}
+%=====================================================================
+
+El problema de las marginales cuánticas pregunta cuándo unos estados locales son las reducciones de
+un mismo estado global \cite{klyachko}. En el artículo de pegado \cite{pegado} se estudia una
+variante con geometría: a cada arista de un grafo se le asigna un estado de dos qubits expresado en
+ejes propios, y la composición de los cambios de ejes alrededor de un ciclo es una holonomía. El
+mayor parámetro pegable depende de los datos solo a través de esa holonomía, y su dual es la
+energía fundamental de un hamiltoniano de espines con flujo, el \emph{testigo óptimo}. En el
+anillo de $n$ qubits con datos de Werner el testigo es un XXZ crítico con flujo, y la holonomía
+cambia el parámetro pegable en un orden $1/n^2$ (bajo una hipótesis espectral comprobada hasta
+$n=18$), con una curvatura proporcional a la rigidez de espín del testigo.
+
+El informe de fases \cite{informe} generaliza el problema a qutrits, qudits y espín $1$ y propone
+una regla: la sensibilidad a la holonomía la decide la fase del testigo. Es nula si el testigo está
+polarizado, casi exponencialmente pequeña si tiene un estado fundamental único con gap y de tipo
+potencia si es crítico. La regla se demuestra allí bajo una hipótesis de gap uniforme del testigo
+óptimo, (G), que no se sabe comprobar más que numéricamente, y se demuestra también que con espín
+semientero (G) no puede cumplirse.
+
+Este documento sustituye la hipótesis sobre el testigo por una hipótesis sobre los datos. La
+pregunta es qué datos $\sigma$ son \emph{robustos}: aquellos para los que $p(n,\Theta)$ no depende de
+$\Theta$ salvo por términos que decaen más deprisa que cualquier potencia de $n$. Los resultados
+son:
+\begin{enumerate}
+\item Si $\sigma$ es la marginal de dos sitios de un MPS inyectivo, invariante por traslación y por
+  la $U(1)$ de la holonomía, y no tiene rango completo, entonces
+  $1-O(n\lambda^n)\le p(n,\Theta)\le1$, con $\lambda$ el segundo autovalor de la matriz de
+  transferencia (Teorema~\ref{teo:mps}). No hace falta saber nada del testigo: la cota inferior la
+  da el propio MPS retorcido y la superior, el núcleo de $\sigma$.
+\item Para AKLT la constante es explícita y la distancia entre datos y MPS retorcido tiene una
+  fórmula cerrada (Proposición~\ref{prop:aklt}).
+\item Con carga semientera ese mecanismo no existe (Proposición~\ref{prop:lsm}), que es la versión
+  MPS de la obstrucción de Lieb--Schultz--Mattis \cite{lsm,affleck-lieb}.
+\item Rompiendo la traslación con celda de $k$ sitios el teorema vuelve a valer en anillos con
+  $k\mid n$ (Teorema~\ref{teo:celda}), y con carga semientera la celda ha de ser par
+  (Corolario~\ref{cor:lsmk}). La diagonalización exacta del testigo de Néel
+  (Sección~\ref{sec:neel}) y el Néel clásico (Proposición~\ref{prop:neelclas}) muestran que la
+  paridad de $n$ es real: robustez con $n$ par y $1/n^2$ con $n$ impar.
+\item Para qubits, la celda doble con núcleo solo admite el Néel clásico
+  (Proposición~\ref{prop:qubits}), y el primer ejemplo con fluctuaciones cuánticas tiene $k=3$.
+\end{enumerate}
+
+La imagen que sale es que la robustez equivale a que el testigo tenga \emph{rigidez nula}: la
+energía fundamental del testigo no responde al flujo en el límite termodinámico. Un testigo con gap,
+o con gap salvo un desdoblamiento por ruptura de simetría compatible con $n$, tiene rigidez nula
+\cite{kohn,watanabe}; uno crítico tiene rigidez finita \cite{shastry} y da $1/n^2$. Aquí solo se
+demuestra la mitad que va de los datos MPS a la robustez; la recíproca se discute en la
+Sección~\ref{sec:conclusiones}.
+
+\paragraph{Organización.} La Sección~\ref{sec:marco} fija el problema y dos lemas. Las
+Secciones~\ref{sec:teorema}--\ref{sec:aklt} demuestran el teorema MPS, la obstrucción con carga
+semientera y el caso AKLT. La Sección~\ref{sec:neel} estudia numéricamente el testigo de Néel. La
+Sección~\ref{sec:celda} extiende el teorema a celdas de $k$ sitios, con los ejemplos de qubits. La
+Sección~\ref{sec:conclusiones} resume qué está demostrado, qué es numérico y qué queda abierto.
+
+%=====================================================================
+\section{Marco}\label{sec:marco}
 %=====================================================================
 
 Anillo $\mathbb Z_n$ con espacio local $\mathbb C^d$ y una carga $Q=\sum_sq_s\ket s\bra s$ con
@@ -71,24 +133,25 @@ Si $\sigma\ket\chi=0$, entonces $\bra\chi\rho_j(p)\ket\chi=(1-p)/d^2$, en el mar
 arista, y una marginal de un estado es semidefinida positiva.
 \end{proof}
 
-\begin{lema}[dilución; informe de fases, Lema 6]\label{lem:dilucion}
+\begin{lema}[dilución \cite{informe}]\label{lem:dilucion}
 Sean $\Delta_j$ hermíticos de dos sitios, de traza nula y con reducciones compatibles,
 $\tr_1\Delta_{j-1}=\tr_2\Delta_j$. Si $\|\Delta_j\|_1\le r/n$ con $r=1/(6d^2)$, existe un estado
 del anillo con marginales de arista exactamente $I/d^2+\Delta_j$.
 \end{lema}
 
 %=====================================================================
-\section{El teorema}
+\section{El teorema}\label{sec:teorema}
 %=====================================================================
 
-\paragraph{Hipótesis (M).} Tensores $A^s\in\mathbb C^{D\times D}$, $s=1,\dots,d$, con:
+\paragraph{Hipótesis (M).} Notación de \cite{fnw,pvwc}. Tensores $A^s\in\mathbb C^{D\times D}$, $s=1,\dots,d$, con:
 \begin{itemize}
 \item[(M1)] \emph{inyectividad}: para algún $L_0$, los productos $A^{s_1}\cdots A^{s_L}$ generan
   $M_D(\mathbb C)$ para todo $L\ge L_0$. En particular, el canal
   $\mathcal E(X)=\sum_sA^sXA^{s\dagger}$ puede normalizarse con $\mathcal E(I)=I$, tiene un único
   punto fijo dual $\Lambda>0$ con $\tr\Lambda=1$, y el resto de su espectro tiene módulo
   $\le\lambda<1$;
-\item[(M2)] \emph{simetría}: existe una representación unitaria $u_t$ en el espacio virtual con
+\item[(M2)] \emph{simetría}: existe una representación unitaria $u_t$ en el espacio virtual
+  \cite{sanz} con
   $u_tA^su_t^\dagger=e^{-itq_s}A^s$;
 \item[(M3)] \emph{datos}: $\sigma$ es la marginal de dos sitios del MPS en el límite
   termodinámico, $\sigma_{ab,cd}=\tr\big(\Lambda\,A^aA^bA^{d\dagger}A^{c\dagger}\big)$, y su rango
@@ -150,12 +213,12 @@ superior es el Lema~\ref{lem:techo}.
 \begin{observacion}
 La demostración no usa que el testigo óptimo tenga gap, ni siquiera cuál es: usa un estado
 explícito (el MPS retorcido) y el techo por rango. El gap del hamiltoniano padre, que existe por
-el teorema de Fannes--Nachtergaele--Werner, no interviene; interviene el gap de la matriz de
+el teorema de Fannes--Nachtergaele--Werner \cite{fnw}, no interviene; interviene el gap de la matriz de
 transferencia, que es su análogo para correlaciones. Por eso el resultado es incondicional.
 \end{observacion}
 
 %=====================================================================
-\section{La obstrucción con carga semientera}
+\section{La obstrucción con carga semientera}\label{sec:lsm}
 %=====================================================================
 
 \begin{proposicion}[LSM para MPS con $U(1)$]\label{prop:lsm}
@@ -174,13 +237,13 @@ Así, el mecanismo del Teorema~\ref{teo:mps} no está disponible para el anillo 
 invariantes por traslación. No es un enunciado sobre todos los datos posibles: excluye datos que
 sean marginales de un MPS inyectivo, invariante por traslación, con esa $U(1)$. Quedan fuera los
 estados con simetría rota (MPS no inyectivos, celda de dos sitios), que es el hueco que deja también
-el teorema de Lieb--Schultz--Mattis.
+el teorema de Lieb--Schultz--Mattis \cite{lsm,tasaki-lsm}.
 
 %=====================================================================
-\section{AKLT}
+\section{AKLT}\label{sec:aklt}
 %=====================================================================
 
-Espín 1, $d=3$, $D=2$, $Q=S^z$ con cargas $(+1,0,-1)$, y
+El estado de Affleck--Kennedy--Lieb--Tasaki \cite{aklt}: espín 1, $d=3$, $D=2$, $Q=S^z$ con cargas $(+1,0,-1)$, y
 \[
   A^{+}=\sqrt{\tfrac23}\,\sigma^+,\qquad A^0=-\sqrt{\tfrac13}\,\sigma^z,\qquad A^{-}=-\sqrt{\tfrac23}\,\sigma^-,
 \]
@@ -190,7 +253,7 @@ $\lambda=1/3$. La marginal del límite termodinámico es
   \sigma_{\rm AKLT}=\tfrac13P_0+\tfrac23\cdot\tfrac{P_1}3,\qquad \tr(\sigma P_2)=0,
 \]
 de rango $4<9$, con $\ev{\vec S_1\cdot\vec S_2}=-4/3$. Es el rayo «$\tfrac13P_0+\tfrac23P_1$» del
-diagrama de espín 1 del informe de fases, en la fase de Haldane.
+diagrama de espín 1 del informe de fases \cite{informe}, en la fase de Haldane.
 
 \begin{proposicion}[AKLT, constante explícita]\label{prop:aklt}
 Con los datos $\sigma_{\rm AKLT}$, para todo $n\ge3$ y todo $\Theta$,
@@ -307,8 +370,7 @@ del testigo cerca de AKLT. Con dos tamaños esto es solo indicativo.
 
 \paragraph{Contraste con el caso crítico.} En el anillo de qubits con datos de Werner, el análogo
 de los datos AKLT son las marginales del anillo de Heisenberg infinito, $v_\infty=(4\ln2-1)/3\approx
-0{,}5909$. Con $n=16$ y $\Theta=\pi$, $v_{\max}=0{,}5878<v_\infty$ (tabla de valores del artículo de
-pegado): la holonomía hace incompatibles esos datos, con un déficit relativo de
+0{,}5909$. Con $n=16$ y $\Theta=\pi$, $v_{\max}=0{,}5878<v_\infty$ (tabla de valores de \cite{pegado}): la holonomía hace incompatibles esos datos, con un déficit relativo de
 $5\times10^{-3}\sim1/n^2$. Con los datos AKLT y el mismo $n$, el déficit es como mucho
 $3{,}2\times10^{-4}$ para toda $\Theta$, y cae como $n\,3^{-n}$.
 
@@ -327,7 +389,7 @@ uniforme, $\phi=\Theta/n$):
   \ev{A_e}=2\kappa v\cos\phi,\quad \ev{B_e}=2\kappa v\sin\phi,\quad \ev{C_e}=v,\quad \ev{Z_i}=0,
 \]
 con $A=-(XX+YY)$, $B=XY-YX$, $C=-ZZ$ y $0<\kappa\le1$; $\kappa=1$ es el Werner girado del
-artículo de pegado. Con $\kappa<1$ los datos favorecen las correlaciones $ZZ$. El mismo argumento
+artículo de pegado \cite{pegado}. Con $\kappa<1$ los datos favorecen las correlaciones $ZZ$. El mismo argumento
 de reducción da
 \[
   v_{\max}(n,\Theta;\kappa)=\inf_{\Delta,\Phi}\frac{4\,\varepsilon_n(\Delta,\Phi)}{\Delta+2\kappa\cos\big((\Phi-\Theta)/n\big)},
@@ -493,7 +555,7 @@ y el argumento de la Proposición~\ref{prop:lsm}, aplicado a las celdas, da $(-1
 teorema necesita $k\mid n$.
 \end{proof}
 
-Si $e^{2\pi iQ}=e^{2\pi ia/q}$ con $a/q$ irreducible, la misma cuenta da $q\mid k$: la celda mínima es la que tiene carga entera, como en el teorema de Oshikawa--Yamanaka--Affleck.
+Si $e^{2\pi iQ}=e^{2\pi ia/q}$ con $a/q$ irreducible, la misma cuenta da $q\mid k$: la celda mínima es la que tiene carga entera, como en el teorema de Oshikawa--Yamanaka--Affleck \cite{oya}.
 
 \begin{proposicion}[Néel clásico: la divisibilidad no sobra]\label{prop:neelclas}
 Para qubits, sean $\sigma=\tfrac12\big(\ket{\uparrow\downarrow}\bra{\uparrow\downarrow}+
@@ -640,5 +702,123 @@ en casi todas las $\Theta$. El estado puede mezclar los sectores con $\lfloor n/
 $\lceil n/3\rceil$ espines arriba, y con llenado $\tfrac13$ la restricción «ninguno contiguo» deja
 holgura. Con $f=\tfrac12$ no la deja: es la rigidez del llenado mitad lo que produce el efecto de
 paridad de la Proposición~\ref{prop:neelclas} y de la Sección~\ref{sec:neel}.
+
+%=====================================================================
+\section{Estado de las afirmaciones y problemas abiertos}\label{sec:conclusiones}
+%=====================================================================
+
+\paragraph{Demostrado.} El techo por rango y la dilución (Lemas~\ref{lem:techo}
+y~\ref{lem:dilucion}); la robustez para marginales de MPS inyectivos con núcleo
+(Teorema~\ref{teo:mps}) y su versión con celda (Teorema~\ref{teo:celda}); la obstrucción con carga
+semientera y la condición de divisibilidad de la celda (Proposición~\ref{prop:lsm} y
+Corolario~\ref{cor:lsmk}); la constante explícita de AKLT (Proposición~\ref{prop:aklt}); el valor
+exacto de $p(n,\Theta)$ para el Néel clásico (Proposición~\ref{prop:neelclas}); y que con qubits la
+celda doble con núcleo solo admite el Néel clásico (Proposición~\ref{prop:qubits}).
+
+\paragraph{Numérico, con comprobaciones independientes.} La fórmula de $\varepsilon_n$ de AKLT
+frente a la matriz de transferencia ($n\le20$); el SDP exacto de AKLT en $n=4,5$; los tres
+regímenes del testigo de Néel (diagonalización exacta, $n\le18$, con el dual contrastado con el
+primal en $n\le6$); las cotas $\varepsilon_n=O(\lambda^{m-1})$ de los ejemplos aleatorios con
+celda doble; y el SDP exacto del ejemplo de celda triple hasta $n=9$.
+
+\paragraph{La tesis: robustez y rigidez nula.} En los casos demostrados la cota superior la da un
+testigo explícito: si $\sigma\ket\chi=0$, la suma de los proyectores sobre $\chi$ en el marco girado
+de cada arista es el hamiltoniano padre retorcido, con energía fundamental nula para toda
+$\Theta$ (en AKLT, el MPS retorcido es exactamente su estado fundamental). Es un testigo de rigidez
+exactamente nula, y el MPS retorcido es el estado primal que casi lo satura. La lectura es que la
+sensibilidad a la holonomía mide la rigidez de espín del testigo óptimo: nula con gap, o con un
+desdoblamiento por ruptura de simetría compatible con $n$; finita en la fase crítica, donde da
+$1/n^2$ \cite{pegado}; y finita también con $n$ incompatible con la celda, donde un defecto móvil
+transporta la carga (Sección~\ref{sec:neel}). Aquí solo se demuestra la dirección
+«datos MPS $\Rightarrow$ robustez»; no hay teorema para la recíproca.
+
+\paragraph{Problemas abiertos.}
+\begin{enumerate}
+\item \emph{La recíproca.} Demostrar que, si el testigo óptimo es crítico, con rigidez de espín
+  positiva en el límite termodinámico, entonces $n^2\sup_\Theta|p(n,\Theta)-p(n,0)|$ no tiende a
+  cero. La cota de tipo Kohn de \cite{informe} da la desigualdad en el otro sentido; falta una cota
+  primal.
+\item \emph{Datos que no son marginales de un MPS.} Los datos de la Sección~\ref{sec:neel} no son
+  marginales de un MPS de celda doble, pero se comportan como si lo fueran con $n$ par. Hace falta
+  un argumento de aproximación: que $p(n,\Theta)$ sea robusto en un entorno de las marginales MPS con
+  núcleo común, o una versión del Teorema~\ref{teo:celda} con datos en el interior.
+\item \emph{Néel débil.} Con $\kappa=0{,}6$ y $0{,}8$ la longitud de correlación de Néel es
+  comparable al anillo; separar la caída exponencial del $1/n^2$ pide DMRG en anillos de
+  $n\sim100$.
+\item \emph{SDP exacto de AKLT más allá de $n=5$.} La reducción por traslación y $U(1)$ de la
+  Sección~\ref{sec:celda} debería alcanzar $n\approx8$, donde la cota del teorema empieza a ser
+  informativa, y comprobar la caída $\sim3^{-n}$ de la sensibilidad con más de dos tamaños.
+\item \emph{Constantes.} La dilución pierde un factor $n$. ¿Es $p(n,\Theta)\ge1-O(\lambda^n)$?
+\item \emph{Rango completo.} En el ejemplo aleatorio de espín $\tfrac12$ y celda doble, $\sigma$ tiene
+  rango completo: vale la cota inferior, pero $p$ puede superar $1$ y nada impide que dependa de
+  $\Theta$ a orden mayor. Falta un techo que sustituya al del núcleo.
+\item \emph{Holonomías no abelianas.} El marco supone una $U(1)$ en la que vive toda la holonomía.
+  En grafos con dos ciclos y holonomías que no conmutan no hay gauge uniforme ni un único flujo.
+\end{enumerate}
+
+\paragraph{Reproducibilidad.} Los guiones están en \texttt{scripts/} del repositorio
+\texttt{holonomy}: \texttt{aklt\_twist.py} (Sección~\ref{sec:aklt}), \texttt{neel\_u1.py} con los
+datos en \texttt{data/neel\_u1.csv} (Sección~\ref{sec:neel}), \texttt{mps\_celda.py} y
+\texttt{qubits\_celda3.py} (Sección~\ref{sec:celda}). Requieren \texttt{numpy}, \texttt{scipy} y,
+para los SDP, \texttt{cvxpy} con \texttt{clarabel} o \texttt{scs}.
+
+\begin{thebibliography}{99}
+
+\bibitem{pegado}
+A.~Gama, Holonomía y pegado de perspectivas de Werner: el problema dual y sus resultados exactos,
+manuscrito (15 de noviembre de 2026).
+
+\bibitem{informe}
+Pegado de marginales en anillos: del XXZ retorcido a la estructura de fases del testigo, notas de
+trabajo (17 de noviembre de 2026).
+
+\bibitem{klyachko}
+A.~A. Klyachko, Quantum marginal problem and N-representability, J.\ Phys.: Conf.\ Ser.\
+\textbf{36}, 72 (2006), doi:10.1088/1742-6596/36/1/014.
+
+\bibitem{fnw}
+M.~Fannes, B.~Nachtergaele y R.~F. Werner, Finitely correlated states on quantum spin chains,
+Commun.\ Math.\ Phys.\ \textbf{144}, 443 (1992).
+
+\bibitem{pvwc}
+D.~Pérez-García, F.~Verstraete, M.~M. Wolf y J.~I. Cirac, Matrix product state representations,
+Quantum Inf.\ Comput.\ \textbf{7}, 401 (2007), arXiv:quant-ph/0608197.
+
+\bibitem{sanz}
+M.~Sanz, M.~M. Wolf, D.~Pérez-García y J.~I. Cirac, Matrix product states: symmetries and two-body
+Hamiltonians, Phys.\ Rev.\ A \textbf{79}, 042308 (2009), arXiv:0901.2223.
+
+\bibitem{aklt}
+I.~Affleck, T.~Kennedy, E.~H. Lieb y H.~Tasaki, Rigorous results on valence-bond ground states in
+antiferromagnets, Phys.\ Rev.\ Lett.\ \textbf{59}, 799 (1987).
+
+\bibitem{lsm}
+E.~Lieb, T.~Schultz y D.~Mattis, Two soluble models of an antiferromagnetic chain, Ann.\ Phys.\
+\textbf{16}, 407 (1961).
+
+\bibitem{affleck-lieb}
+I.~Affleck y E.~H. Lieb, A proof of part of Haldane's conjecture on spin chains, Lett.\ Math.\
+Phys.\ \textbf{12}, 57 (1986).
+
+\bibitem{tasaki-lsm}
+H.~Tasaki, Lieb--Schultz--Mattis theorem with a local twist for general one-dimensional quantum
+systems, J.\ Stat.\ Phys.\ \textbf{170}, 653 (2018), arXiv:1708.05186.
+
+\bibitem{oya}
+M.~Oshikawa, M.~Yamanaka e I.~Affleck, Magnetization plateaus in spin chains: ``Haldane gap'' for
+half-integer spins, Phys.\ Rev.\ Lett.\ \textbf{78}, 1984 (1997).
+
+\bibitem{kohn}
+W.~Kohn, Theory of the insulating state, Phys.\ Rev.\ \textbf{133}, A171 (1964).
+
+\bibitem{shastry}
+B.~S. Shastry y B.~Sutherland, Twisted boundary conditions and effective mass in Heisenberg-Ising
+and Hubbard rings, Phys.\ Rev.\ Lett.\ \textbf{65}, 243 (1990).
+
+\bibitem{watanabe}
+H.~Watanabe, Insensitivity of bulk properties to the twisted boundary condition, Phys.\ Rev.\ B
+\textbf{98}, 155137 (2018).
+
+\end{thebibliography}
 
 \end{document}
