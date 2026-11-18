@@ -58,21 +58,26 @@ Todo apunta a que la robustez equivale a rigidez nula del testigo; aquí se demu
 %=====================================================================
 
 El problema de las marginales cuánticas pregunta cuándo unos estados locales son las reducciones de
-un mismo estado global \cite{klyachko}. En el artículo de pegado \cite{pegado} se estudia una
-variante con geometría: a cada arista de un grafo se le asigna un estado de dos qubits expresado en
-ejes propios, y la composición de los cambios de ejes alrededor de un ciclo es una holonomía. El
-mayor parámetro pegable depende de los datos solo a través de esa holonomía, y su dual es la
-energía fundamental de un hamiltoniano de espines con flujo, el \emph{testigo óptimo}. En el
-anillo de $n$ qubits con datos de Werner el testigo es un XXZ crítico con flujo, y la holonomía
-cambia el parámetro pegable en un orden $1/n^2$ (bajo una hipótesis espectral comprobada hasta
-$n=18$), con una curvatura proporcional a la rigidez de espín del testigo.
+un mismo estado global \cite{klyachko}. Aquí se estudia una variante con geometría. A cada arista de
+un anillo se le asigna un estado de dos sitios expresado en ejes propios, y la composición de los
+cambios de ejes alrededor del anillo es una holonomía $\Theta$. Con datos de la forma
+$I/d^2+p\,\tau$ (ruido blanco más una correlación fija), la pregunta es el mayor $p$ pegable,
+$p(n,\Theta)$, y cómo depende de $\Theta$.
 
-El informe de fases \cite{informe} generaliza el problema a qutrits, qudits y espín $1$ y propone
-una regla: la sensibilidad a la holonomía la decide la fase del testigo. Es nula si el testigo está
-polarizado, casi exponencialmente pequeña si tiene un estado fundamental único con gap y de tipo
-potencia si es crítico. La regla se demuestra allí bajo una hipótesis de gap uniforme del testigo
-óptimo, (G), que no se sabe comprobar más que numéricamente, y se demuestra también que con espín
-semientero (G) no puede cumplirse.
+Por dualidad de programación semidefinida, $p(n,\Theta)$ es el ínfimo de un cociente entre la
+energía fundamental de un hamiltoniano de espines con flujo $\Theta$, el \emph{testigo}, y su valor
+esperado en los datos. La dependencia en $\Theta$ es, por tanto, la respuesta de la energía
+fundamental del testigo óptimo a un flujo: su rigidez. En el anillo de qubits con datos de Werner
+(invariantes por $SU(2)$) el testigo es un XXZ con flujo, crítico, y la holonomía cambia el
+parámetro pegable en un orden $1/n^2$ (fila $\kappa=1$ de la tabla de la Sección~\ref{sec:neel}).
+
+Una forma natural de atacar la pregunta es por el testigo. Si tuviera un estado fundamental único
+con gap uniforme, el flujo cuasi-adiabático y la cota de Lieb--Robinson \cite{bmns} harían que un
+giro concentrado en un enlace apenas se notara lejos de él, y la dependencia en $\Theta$ decaería más
+deprisa que cualquier potencia de $n$. Pero el testigo óptimo no se conoce, el gap uniforme no se
+sabe comprobar más que numéricamente y, con espín semientero, el argumento de
+Lieb--Schultz--Mattis \cite{lsm,affleck-lieb} impide que un testigo invariante por traslación lo
+tenga.
 
 Este documento sustituye la hipótesis sobre el testigo por una hipótesis sobre los datos. La
 pregunta es qué datos $\sigma$ son \emph{robustos}: aquellos para los que $p(n,\Theta)$ no depende de
@@ -133,11 +138,25 @@ Si $\sigma\ket\chi=0$, entonces $\bra\chi\rho_j(p)\ket\chi=(1-p)/d^2$, en el mar
 arista, y una marginal de un estado es semidefinida positiva.
 \end{proof}
 
-\begin{lema}[dilución \cite{informe}]\label{lem:dilucion}
+\begin{lema}[dilución]\label{lem:dilucion}
 Sean $\Delta_j$ hermíticos de dos sitios, de traza nula y con reducciones compatibles,
-$\tr_1\Delta_{j-1}=\tr_2\Delta_j$. Si $\|\Delta_j\|_1\le r/n$ con $r=1/(6d^2)$, existe un estado
-del anillo con marginales de arista exactamente $I/d^2+\Delta_j$.
+$\tr_1\Delta_{j-1}=\tr_2\Delta_j=:\delta_j$. Si $\|\Delta_j\|_1\le r/n$ con $r=1/(6d^2)$, existe un
+estado del anillo con marginales de arista exactamente $I/d^2+\Delta_j$.
 \end{lema}
+
+\begin{proof}
+Con $C_j=\Delta_j-\delta_j\otimes\tfrac Id-\tfrac Id\otimes\delta_{j+1}$, de reducciones nulas, sean
+\[
+  \omega_C=\frac1n\sum_j\Big(\frac I{d^2}+2nC_j\Big)_{j,j+1}\!\otimes\Big(\frac Id\Big)^{\otimes(n-2)},\qquad
+  \omega_\delta=\frac1n\sum_k\Big(\frac Id+2n\delta_k\Big)_k\otimes\Big(\frac Id\Big)^{\otimes(n-1)}.
+\]
+Como $C_j$ tiene reducciones nulas, el término $j$ de $\omega_C$ solo contribuye a la marginal de la
+arista $j$, y la de $\omega_C$ en esa arista es $I/d^2+2C_j$. La de $\omega_\delta$ es
+$I/d^2+2(\delta_j\otimes I/d+I/d\otimes\delta_{j+1})$. Así $\omega=\tfrac12(\omega_C+\omega_\delta)$
+tiene marginales $I/d^2+\Delta_j$, y es un estado si $\|C_j\|_\infty\le1/(2nd^2)$ y
+$\|\delta_k\|_\infty\le1/(2nd)$. Como la traza parcial no aumenta la norma traza,
+$\|\delta_k\|_1\le\|\Delta\|_1$ y $\|C_j\|_1\le3\|\Delta\|_1$, y basta $\|\Delta_j\|_1\le1/(6nd^2)$.
+\end{proof}
 
 %=====================================================================
 \section{El teorema}\label{sec:teorema}
@@ -253,7 +272,7 @@ $\lambda=1/3$. La marginal del límite termodinámico es
   \sigma_{\rm AKLT}=\tfrac13P_0+\tfrac23\cdot\tfrac{P_1}3,\qquad \tr(\sigma P_2)=0,
 \]
 de rango $4<9$, con $\ev{\vec S_1\cdot\vec S_2}=-4/3$. Es el rayo «$\tfrac13P_0+\tfrac23P_1$» del
-diagrama de espín 1 del informe de fases \cite{informe}, en la fase de Haldane.
+diagrama de fases de espín $1$ con datos invariantes por $SU(2)$, en la fase de Haldane.
 
 \begin{proposicion}[AKLT, constante explícita]\label{prop:aklt}
 Con los datos $\sigma_{\rm AKLT}$, para todo $n\ge3$ y todo $\Theta$,
@@ -349,29 +368,59 @@ $\|\rho^{(n)}(\Theta)-(1\otimes V)\rho^{(n)}(0)(1\otimes V)^\dagger\|_1$, es tod
 $3{,}3\times10^{-3}$, $4{,}0\times10^{-5}$ y $5{,}0\times10^{-7}$ en $n=8$, 12 y 16.
 
 \paragraph{SDP exacto.} El primal completo, diagonal por bloques de $S^z$ total, da $p(n,\Theta)$
-en $n=4$ y $5$ ($n=6$ pide más de 8\,GB con esta formulación):
+en $n=4$ y $5$, y desde $n=6$ no cabe en memoria. Para llegar a $n=8$
+(\texttt{scripts/aklt\_sdp\_ti.py}) se usa el dual: para todo $h$ hermítico de dos sitios con
+$\tr(h\tau_\Theta)=1$,
+\[
+  p(n,\Theta)\le\frac{\lambda_{\max}\big(\sum_jh_{j,j+1}\big)}n-\frac{\tr h}9,
+\]
+con igualdad en el ínfimo. El hamiltoniano conmuta con la traslación y con $S^z$ total, así que
+basta diagonalizar bloques (magnetización, momento) de tamaño $\le142$. Se minimiza una versión
+suavizada (log-suma-exp) y, cuando el autovector superior es único, se pule con Newton la condición
+de estacionariedad, que equivale a que la marginal de ese autovector sea exactamente
+$I/9+p\,\tau_\Theta$. Ese autovector es entonces un estado primal factible, y la cota inferior
+(con el residuo corregido por el Lema~\ref{lem:dilucion}) coincide con la superior a $10^{-10}$.
+En $n=6,7,8$ el autovector superior es único en los tres ángulos, con gap $\ge0{,}014$:
 \begin{center}\small
 \begin{tabular}{rcccc}
 \toprule
 $n$ & $\Theta=0$ & $\pi/2$ & $\pi$ & $\max-\min$\\
 \midrule
-4 & $0{,}975610$ & $0{,}922811^*$ & $0{,}902726$ & $7{,}3\times10^{-2}$\\
-5 & $0{,}969821^*$ & $0{,}985079$ & $0{,}997422$ & $2{,}8\times10^{-2}$\\
+4 & $0{,}975610$ & $0{,}92289$ & $0{,}902726$ & $7{,}3\times10^{-2}$\\
+5 & $0{,}97036$ & $0{,}985079$ & $0{,}997422$ & $2{,}7\times10^{-2}$\\
+6 & $0{,}9997978$ & $0{,}9996082$ & $0{,}9993839$ & $4{,}1\times10^{-4}$\\
+7 & $0{,}9999421$ & $0{,}9999605$ & $0{,}9999770$ & $3{,}5\times10^{-5}$\\
+8 & $0{,}99999658$ & $0{,}99999657$ & $0{,}99999624$ & $3{,}4\times10^{-7}$\\
 \bottomrule
 \end{tabular}
 \end{center}
-($^*$: Clarabel termina en \texttt{optimal\_inaccurate}.) En $n=4$, $p(4,0)=40/41$ a $10^{-9}$.
-Todos los valores están en $[1-s_n,1]$, aunque a estos tamaños la cota inferior del teorema es
-trivial ($0{,}02$ y $0{,}05$): se vuelve informativa a partir de $n\approx9$. Dos rasgos de los
-valores exactos: la tendencia en $\Theta$ cambia de signo con la paridad de $n$, como en los
-anillos de qubits, y la variación cae un factor $0{,}38$ de $n=4$ a $n=5$, cerca del $1/3$ por
-sitio de la matriz de transferencia y del $0{,}37$ que el informe de fases midió en la respuesta
-del testigo cerca de AKLT. Con dos tamaños esto es solo indicativo.
+En $n=4$, $p(4,0)=40/41$ a $10^{-9}$. En $n\le5$ el autovector superior está degenerado en
+cuatro de los seis puntos; el dual con primal restringido solo da allí intervalos de anchura
+$\le3\times10^{-5}$, y la tabla da el valor del SDP completo, que cae dentro. En $n=4$,
+$\Theta=\pi/2$ y en $n=5$, $\Theta=0$ el SDP completo terminaba inexacto ($0{,}922811$ y
+$0{,}969821$); los valores de la tabla son los del SDP invariante por traslación y $U(1)$, con
+cinco cifras fiables.
 
-\paragraph{Contraste con el caso crítico.} En el anillo de qubits con datos de Werner, el análogo
-de los datos AKLT son las marginales del anillo de Heisenberg infinito, $v_\infty=(4\ln2-1)/3\approx
-0{,}5909$. Con $n=16$ y $\Theta=\pi$, $v_{\max}=0{,}5878<v_\infty$ (tabla de valores de \cite{pegado}): la holonomía hace incompatibles esos datos, con un déficit relativo de
-$5\times10^{-3}\sim1/n^2$. Con los datos AKLT y el mismo $n$, el déficit es como mucho
+Todos los valores están en $[1-s_n,1]$. La cota inferior del teorema es trivial en $n\le5$
+($0{,}02$ a $0{,}07$) y vale $0{,}49$--$0{,}55$ en $n=8$. Tres rasgos de los valores exactos:
+\begin{itemize}
+\item la tendencia en $\Theta$ cambia de signo con la paridad de $n$ en los cinco tamaños
+  (decreciente con $n$ par, creciente con $n$ impar), como en los anillos de qubits;
+\item el déficit $1-p(n,0)$, que mide la distancia entre el anillo finito y la cadena infinita, cae
+  de $2\times10^{-2}$ en $n\le5$ a $3{,}4\times10^{-6}$ en $n=8$;
+\item la sensibilidad $\max-\min$ cae mucho más deprisa que la cota $864\,n/(3^n-3)$: un factor
+  $\sim10^{-3}$ cada dos sitios desde $n=5$, frente al $1/9$ de $3^{-n}$. La cota del teorema
+  controla la distancia del MPS retorcido a los datos, que sí es $\sim3^{-n}$
+  (Proposición~\ref{prop:aklt}); la dependencia en $\Theta$ del óptimo es mucho menor. Con tres
+  tamaños por paridad no se puede fijar la ley.
+\end{itemize}
+
+\paragraph{Contraste con el caso crítico.} En el anillo de qubits con datos de Werner (el caso
+$\kappa=1$ de la Sección~\ref{sec:neel}), el análogo de los datos AKLT son las marginales del anillo
+de Heisenberg infinito, $v_\infty=4\varepsilon_\infty/3=(4\ln2-1)/3\approx0{,}5909$, con
+$\varepsilon_\infty=\ln2-\tfrac14$ la energía por enlace \cite{hulthen}. Con $n=16$ y
+$\Theta=\pi$, el dual de la Sección~\ref{sec:neel} da $v_{\max}=0{,}5883<v_\infty$: la holonomía
+hace incompatibles esos datos, con un déficit relativo de $4\times10^{-3}\sim1/n^2$. Con los datos AKLT y el mismo $n$, el déficit es como mucho
 $3{,}2\times10^{-4}$ para toda $\Theta$, y cae como $n\,3^{-n}$.
 
 %=====================================================================
@@ -388,13 +437,25 @@ uniforme, $\phi=\Theta/n$):
 \[
   \ev{A_e}=2\kappa v\cos\phi,\quad \ev{B_e}=2\kappa v\sin\phi,\quad \ev{C_e}=v,\quad \ev{Z_i}=0,
 \]
-con $A=-(XX+YY)$, $B=XY-YX$, $C=-ZZ$ y $0<\kappa\le1$; $\kappa=1$ es el Werner girado del
-artículo de pegado \cite{pegado}. Con $\kappa<1$ los datos favorecen las correlaciones $ZZ$. El mismo argumento
-de reducción da
+con $A=-(XX+YY)$, $B=XY-YX$, $C=-ZZ$ y $0<\kappa\le1$. Con $\kappa=1$ son los datos de Werner
+girados: $\ev{\vec\sigma\cdot\vec\sigma}=-3v$ en el marco de cada arista. Con $\kappa<1$ favorecen
+las correlaciones $ZZ$.
+
+\emph{Dual.} Para el testigo $h_e=\cos\psi\,A_e+\sin\psi\,B_e+\Delta\,C_e$, un estado con esos
+datos cumple $\sum_e\ev{h_e}=nv\big(\Delta+2\kappa\cos(\psi-\phi)\big)\le\lambda_{\max}(\sum_eh_e)$.
+Con $S=\vec\sigma/2$, $\cos\psi\,A+\sin\psi\,B=-2\big(e^{-i\psi}S^+S^-+{\rm h.c.}\big)$ y
+$C=-4S^zS^z$, así que $\sum_eh_e=-4H_{\rm XXZ}$, con
 \[
-  v_{\max}(n,\Theta;\kappa)=\inf_{\Delta,\Phi}\frac{4\,\varepsilon_n(\Delta,\Phi)}{\Delta+2\kappa\cos\big((\Phi-\Theta)/n\big)},
+  H_{\rm XXZ}(\Delta,\Phi)=\sum_i\Big[\tfrac12\big(e^{i\Phi/n}S^+_iS^-_{i+1}+{\rm h.c.}\big)+\Delta S^z_iS^z_{i+1}\Big]
 \]
-con $\varepsilon_n(\Delta,\Phi)$ la energía por enlace del XXZ con flujo $\Phi$. El testigo óptimo
+y flujo $\Phi=n\psi$ (el signo del flujo no cambia el espectro). Con
+$\varepsilon_n(\Delta,\Phi)=-E_0/n$ su energía fundamental por enlace, cambiada de signo,
+\[
+  v_{\max}(n,\Theta;\kappa)\le\inf_{\Delta,\Phi}\frac{4\,\varepsilon_n(\Delta,\Phi)}{\Delta+2\kappa\cos\big((\Phi-\Theta)/n\big)}.
+\]
+Por la $U(1)$, el testigo óptimo puede tomarse invariante, y los términos de dos sitios invariantes
+son estos tres, la identidad y un campo $Z$; por eso, salvo el campo, la cota es una igualdad.
+ El testigo óptimo
 puede caer ahora en $\Delta>1$, la fase de Néel. Dos detalles. El multiplicador de
 $\ev{Z_i}=0$, un campo uniforme en el testigo, no mejora la cota en ningún caso probado. Para $n$
 impar y $\kappa$ pequeño el ínfimo está en $\Delta\to\infty$: es el techo clásico del antiferro de
@@ -716,7 +777,8 @@ exacto de $p(n,\Theta)$ para el Néel clásico (Proposición~\ref{prop:neelclas}
 celda doble con núcleo solo admite el Néel clásico (Proposición~\ref{prop:qubits}).
 
 \paragraph{Numérico, con comprobaciones independientes.} La fórmula de $\varepsilon_n$ de AKLT
-frente a la matriz de transferencia ($n\le20$); el SDP exacto de AKLT en $n=4,5$; los tres
+frente a la matriz de transferencia ($n\le20$); $p(n,\Theta)$ exacto de AKLT hasta $n=8$ (dual con
+primal certificado; en dos puntos de $n\le5$, solo un intervalo de anchura $10^{-5}$); los tres
 regímenes del testigo de Néel (diagonalización exacta, $n\le18$, con el dual contrastado con el
 primal en $n\le6$); las cotas $\varepsilon_n=O(\lambda^{m-1})$ de los ejemplos aleatorios con
 celda doble; y el SDP exacto del ejemplo de celda triple hasta $n=9$.
@@ -728,7 +790,7 @@ $\Theta$ (en AKLT, el MPS retorcido es exactamente su estado fundamental). Es un
 exactamente nula, y el MPS retorcido es el estado primal que casi lo satura. La lectura es que la
 sensibilidad a la holonomía mide la rigidez de espín del testigo óptimo: nula con gap, o con un
 desdoblamiento por ruptura de simetría compatible con $n$; finita en la fase crítica, donde da
-$1/n^2$ \cite{pegado}; y finita también con $n$ incompatible con la celda, donde un defecto móvil
+$1/n^2$ (fila $\kappa=1$ de la Sección~\ref{sec:neel}); y finita también con $n$ incompatible con la celda, donde un defecto móvil
 transporta la carga (Sección~\ref{sec:neel}). Aquí solo se demuestra la dirección
 «datos MPS $\Rightarrow$ robustez»; no hay teorema para la recíproca.
 
@@ -736,8 +798,9 @@ transporta la carga (Sección~\ref{sec:neel}). Aquí solo se demuestra la direcc
 \begin{enumerate}
 \item \emph{La recíproca.} Demostrar que, si el testigo óptimo es crítico, con rigidez de espín
   positiva en el límite termodinámico, entonces $n^2\sup_\Theta|p(n,\Theta)-p(n,0)|$ no tiende a
-  cero. La cota de tipo Kohn de \cite{informe} da la desigualdad en el otro sentido; falta una cota
-  primal.
+  cero. Girar a la vez el testigo óptimo de $\Theta=0$ y los datos da un testigo admisible en
+  $\Theta$, y con él una cota superior de $p(n,\Theta)-p(n,0)$ por la rigidez, al estilo de Kohn
+  \cite{kohn}; falta la cota en el otro sentido, que es primal.
 \item \emph{Datos que no son marginales de un MPS.} Los datos de la Sección~\ref{sec:neel} no son
   marginales de un MPS de celda doble, pero se comportan como si lo fueran con $n$ par. Hace falta
   un argumento de aproximación: que $p(n,\Theta)$ sea robusto en un entorno de las marginales MPS con
@@ -745,9 +808,9 @@ transporta la carga (Sección~\ref{sec:neel}). Aquí solo se demuestra la direcc
 \item \emph{Néel débil.} Con $\kappa=0{,}6$ y $0{,}8$ la longitud de correlación de Néel es
   comparable al anillo; separar la caída exponencial del $1/n^2$ pide DMRG en anillos de
   $n\sim100$.
-\item \emph{SDP exacto de AKLT más allá de $n=5$.} La reducción por traslación y $U(1)$ de la
-  Sección~\ref{sec:celda} debería alcanzar $n\approx8$, donde la cota del teorema empieza a ser
-  informativa, y comprobar la caída $\sim3^{-n}$ de la sensibilidad con más de dos tamaños.
+\item \emph{La sensibilidad de AKLT.} Hasta $n=8$ cae como $\sim10^{-3}$ cada dos sitios, mucho
+  más deprisa que la cota $\sim n\,3^{-n}$ del teorema. Falta entender esa ley, y si la cota es
+  mejorable en general o solo para AKLT.
 \item \emph{Constantes.} La dilución pierde un factor $n$. ¿Es $p(n,\Theta)\ge1-O(\lambda^n)$?
 \item \emph{Rango completo.} En el ejemplo aleatorio de espín $\tfrac12$ y celda doble, $\sigma$ tiene
   rango completo: vale la cota inferior, pero $p$ puede superar $1$ y nada impide que dependa de
@@ -757,20 +820,12 @@ transporta la carga (Sección~\ref{sec:neel}). Aquí solo se demuestra la direcc
 \end{enumerate}
 
 \paragraph{Reproducibilidad.} Los guiones están en \texttt{scripts/} del repositorio
-\texttt{holonomy}: \texttt{aklt\_twist.py} (Sección~\ref{sec:aklt}), \texttt{neel\_u1.py} con los
+\texttt{holonomy}: \texttt{aklt\_twist.py} y \texttt{aklt\_sdp\_ti.py} (Sección~\ref{sec:aklt}), \texttt{neel\_u1.py} con los
 datos en \texttt{data/neel\_u1.csv} (Sección~\ref{sec:neel}), \texttt{mps\_celda.py} y
 \texttt{qubits\_celda3.py} (Sección~\ref{sec:celda}). Requieren \texttt{numpy}, \texttt{scipy} y,
 para los SDP, \texttt{cvxpy} con \texttt{clarabel} o \texttt{scs}.
 
 \begin{thebibliography}{99}
-
-\bibitem{pegado}
-A.~Gama, Holonomía y pegado de perspectivas de Werner: el problema dual y sus resultados exactos,
-manuscrito (15 de noviembre de 2026).
-
-\bibitem{informe}
-Pegado de marginales en anillos: del XXZ retorcido a la estructura de fases del testigo, notas de
-trabajo (17 de noviembre de 2026).
 
 \bibitem{klyachko}
 A.~A. Klyachko, Quantum marginal problem and N-representability, J.\ Phys.: Conf.\ Ser.\
@@ -814,6 +869,15 @@ W.~Kohn, Theory of the insulating state, Phys.\ Rev.\ \textbf{133}, A171 (1964).
 \bibitem{shastry}
 B.~S. Shastry y B.~Sutherland, Twisted boundary conditions and effective mass in Heisenberg-Ising
 and Hubbard rings, Phys.\ Rev.\ Lett.\ \textbf{65}, 243 (1990).
+
+\bibitem{bmns}
+S.~Bachmann, S.~Michalakis, B.~Nachtergaele y R.~Sims, Automorphic equivalence within gapped
+phases of quantum lattice systems, Commun.\ Math.\ Phys.\ \textbf{309}, 835 (2012),
+arXiv:1102.0842.
+
+\bibitem{hulthen}
+L.~Hulthén, Über das Austauschproblem eines Kristalles, Arkiv Mat.\ Astron.\ Fys.\ \textbf{26A},
+n.º~11 (1938).
 
 \bibitem{watanabe}
 H.~Watanabe, Insensitivity of bulk properties to the twisted boundary condition, Phys.\ Rev.\ B
