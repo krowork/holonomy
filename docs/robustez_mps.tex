@@ -7,6 +7,7 @@
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{icomma}
 \usepackage{booktabs}
+\usepackage{graphicx}
 \usepackage[margin=2.5cm]{geometry}
 \usepackage[hidelinks]{hyperref}
 
@@ -38,7 +39,9 @@ toda holonomía $\Theta$, con $\lambda<1$ el segundo autovalor de la matriz de t
 cota inferior la da un estado explícito, el MPS retorcido, y no requiere conocer el hamiltoniano
 testigo del problema dual. Para AKLT la constante es explícita:
 $1-864\,n/(3^n-3)\le p(n,\Theta)\le1$ para todo $n\ge3$ y toda $\Theta$, con una fórmula exacta
-para la distancia entre los datos girados y las marginales del estado retorcido.
+para la distancia entre los datos girados y las marginales del estado retorcido. El SDP exacto
+hasta $n=8$ muestra que la dependencia real en $\Theta$ es mucho menor que esa cota:
+$3\times10^{-7}$ en $n=8$, donde la cota solo garantiza $0{,}5$.
 Con carga semientera por sitio no existe ningún MPS de esa clase: es la versión MPS de la
 obstrucción de Lieb--Schultz--Mattis, con una demostración de tres líneas.
 La salida es romper la traslación: con datos $U(1)$ anisótropos de qubits, el testigo dual óptimo cae en
@@ -183,9 +186,10 @@ $\|\delta_k\|_1\le\|\Delta\|_1$ y $\|C_j\|_1\le3\|\Delta\|_1$, y basta $\|\Delta
 Bajo (M) existen $C$ y $n_0$, que solo dependen de los tensores $A^s$, tales que para todo
 $n\ge n_0$ y todo $\Theta$
 \[
-  1-6d^2\,n\,\varepsilon_n\ \le\ p(n,\Theta)\ \le\ 1,\qquad \varepsilon_n\le C\lambda^{n-2}.
+  1-6d^2\,n\,\varepsilon_n\ \le\ p(n,\Theta)\ \le\ 1,\qquad \varepsilon_n\le C\lambda^{n-2},
 \]
-En particular, $\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|\le6d^2Cn\lambda^{n-2}$: la
+donde $\varepsilon_n$ es la distancia en norma traza entre la marginal de arista del MPS retorcido
+(definido en la demostración) y el dato girado con $p=1$. En particular, $\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|\le6d^2Cn\lambda^{n-2}$: la
 sensibilidad a la holonomía decae exponencialmente.
 \end{teorema}
 
@@ -225,9 +229,9 @@ $\|\Delta_j\|_1\le\varepsilon_n$; los $\Delta_j$ tienen traza nula y reducciones
 porque las de $\tau_j$ lo son y las de un estado global también. Para $\tau_j$: la reducción de
 $\sigma$ sobre cualquiera de sus dos sitios es la marginal de un sitio del MPS, y conmuta con $Q$
 por (M2), así que $V\,(\tr_1\sigma)\,V^\dagger=\tr_2\sigma$. Con
-$s=n\varepsilon_n/(r+n\varepsilon_n)$, el Lema~\ref{lem:dilucion} da un estado $\omega$ con
-marginales $I/d^2-\tfrac{1-s}s\Delta_j$, y $(1-s)\ket{\psi_\Theta}\bra{\psi_\Theta}+s\,\omega$
-tiene marginales $I/d^2+(1-s)\tau_j$. Luego $p(n,\Theta)\ge1-s\ge1-n\varepsilon_n/r$. La cota
+$\eta=n\varepsilon_n/(r+n\varepsilon_n)$, el Lema~\ref{lem:dilucion} da un estado $\omega$ con
+marginales $I/d^2-\tfrac{1-\eta}\eta\Delta_j$, y $(1-\eta)\ket{\psi_\Theta}\bra{\psi_\Theta}+\eta\,\omega$
+tiene marginales $I/d^2+(1-\eta)\tau_j$. Luego $p(n,\Theta)\ge1-\eta\ge1-n\varepsilon_n/r$. La cota
 superior es el Lema~\ref{lem:techo}.
 \end{proof}
 
@@ -322,7 +326,7 @@ $\sqrt{288(245+44c-c^2)}/27$. Sumando sale $f$. Las dos partes crecen con $c$ en
 $\max f=f(0)=16$.
 
 \emph{Cota.} El denominador es $\ge3^n-3$, luego $\varepsilon_n\le16/(3^n-3)$, y del
-Teorema~\ref{teo:mps}, con $r=1/54$, $p\ge1-s=1/(1+54n\varepsilon_n)$.
+Teorema~\ref{teo:mps}, con $r=1/54$, $p\ge1-\eta=1/(1+54n\varepsilon_n)$.
 \end{proof}
 
 La fórmula de $\varepsilon_n$ es exacta para todo $n$ y no solo asintótica: el MPS retorcido tiene
@@ -373,7 +377,8 @@ $3{,}3\times10^{-3}$, $4{,}0\times10^{-5}$ y $5{,}0\times10^{-7}$ en $n=8$, 12 y
 \paragraph{SDP exacto.} El primal completo, diagonal por bloques de $S^z$ total, da $p(n,\Theta)$
 en $n=4$ y $5$, y desde $n=6$ no cabe en memoria. Para llegar a $n=8$
 (\texttt{scripts/aklt\_sdp\_ti.py}) se usa el dual: para todo $h$ hermítico de dos sitios con
-$\tr(h\tau_\Theta)=1$,
+$\tr(h\tau_\Theta)=1$, donde $\tau_\Theta$ es el $\tau_j$ común a todas las aristas en el gauge
+uniforme,
 \[
   p(n,\Theta)\le\frac{\lambda_{\max}\big(\sum_jh_{j,j+1}\big)}n-\frac{\tr h}9,
 \]
@@ -399,12 +404,12 @@ $n$ & $\Theta=0$ & $\pi/2$ & $\pi$ & $\max-\min$\\
 \end{center}
 En $n=4$, $p(4,0)=40/41$ a $10^{-9}$. En $n\le5$ el autovector superior está degenerado en
 cuatro de los seis puntos; el dual con primal restringido solo da allí intervalos de anchura
-$\le3\times10^{-5}$, y la tabla da el valor del SDP completo, que cae dentro. En $n=4$,
+$\le1{,}4\times10^{-4}$, y la tabla da el valor del SDP completo, que cae dentro. En $n=4$,
 $\Theta=\pi/2$ y en $n=5$, $\Theta=0$ el SDP completo terminaba inexacto ($0{,}922811$ y
 $0{,}969821$); los valores de la tabla son los del SDP invariante por traslación y $U(1)$, con
 cinco cifras fiables.
 
-Todos los valores están en $[1-s_n,1]$. La cota inferior del teorema es trivial en $n\le5$
+Todos los valores están entre la cota inferior de la Proposición~\ref{prop:aklt} y $1$. Esa cota del teorema es trivial en $n\le5$
 ($0{,}02$ a $0{,}07$) y vale $0{,}49$--$0{,}55$ en $n=8$. Tres rasgos de los valores exactos:
 \begin{itemize}
 \item la tendencia en $\Theta$ cambia de signo con la paridad de $n$ en los cinco tamaños
@@ -420,8 +425,8 @@ Todos los valores están en $[1-s_n,1]$. La cota inferior del teorema es trivial
 
 \paragraph{Contraste con el caso crítico.} En el anillo de qubits con datos de Werner (el caso
 $\kappa=1$ de la Sección~\ref{sec:neel}), el análogo de los datos AKLT son las marginales del anillo
-de Heisenberg infinito, $v_\infty=4\varepsilon_\infty/3=(4\ln2-1)/3\approx0{,}5909$, con
-$\varepsilon_\infty=\ln2-\tfrac14$ la energía por enlace \cite{hulthen}. Con $n=16$ y
+de Heisenberg infinito, $v_\infty=4e_\infty/3=(4\ln2-1)/3\approx0{,}5909$, con
+$e_\infty=\ln2-\tfrac14$ la energía por enlace, cambiada de signo, \cite{hulthen}. Con $n=16$ y
 $\Theta=\pi$, el dual de la Sección~\ref{sec:neel} da $v_{\max}=0{,}5883<v_\infty$: la holonomía
 hace incompatibles esos datos, con un déficit relativo de $4\times10^{-3}\sim1/n^2$. Con los datos AKLT y el mismo $n$, el déficit es como mucho
 $3{,}2\times10^{-4}$ para toda $\Theta$, y cae como $n\,3^{-n}$.
@@ -452,9 +457,9 @@ $C=-4S^zS^z$, así que $\sum_eh_e=-4H_{\rm XXZ}$, con
   H_{\rm XXZ}(\Delta,\Phi)=\sum_i\Big[\tfrac12\big(e^{i\Phi/n}S^+_iS^-_{i+1}+{\rm h.c.}\big)+\Delta S^z_iS^z_{i+1}\Big]
 \]
 y flujo $\Phi=n\psi$ (el signo del flujo no cambia el espectro). Con
-$\varepsilon_n(\Delta,\Phi)=-E_0/n$ su energía fundamental por enlace, cambiada de signo,
+$e_n(\Delta,\Phi)=-E_0/n$ su energía fundamental por enlace, cambiada de signo,
 \[
-  v_{\max}(n,\Theta;\kappa)\le\inf_{\Delta,\Phi}\frac{4\,\varepsilon_n(\Delta,\Phi)}{\Delta+2\kappa\cos\big((\Phi-\Theta)/n\big)}.
+  v_{\max}(n,\Theta;\kappa)\le\inf_{\Delta,\Phi}\frac{4\,e_n(\Delta,\Phi)}{\Delta+2\kappa\cos\big((\Phi-\Theta)/n\big)}.
 \]
 Por la $U(1)$, el testigo óptimo puede tomarse invariante, y los términos de dos sitios invariantes
 son estos tres, la identidad y un campo $Z$; por eso, salvo el campo, la cota es una igualdad.
@@ -554,8 +559,10 @@ de radio $\lambda<1$.
 Sea $k\ge2$ (con $k=1$ es el Teorema~\ref{teo:mps}). Bajo (M$_k$) existen $C$ y $m_0$, que solo dependen de los tensores, tales que para todo
 $n=mk$ con $m\ge m_0$ y toda $\Theta$
 \[
-  p(n,\Theta)\ \ge\ 1-6d^2\,n\,\varepsilon_n,\qquad \varepsilon_n\le C\lambda^{m-1}.
+  p(n,\Theta)\ \ge\ 1-6d^2\,n\,\varepsilon_n,\qquad \varepsilon_n\le C\lambda^{m-1},
 \]
+con $\varepsilon_n$ el máximo sobre los tipos de arista de la distancia en norma traza entre la
+marginal del MPS retorcido y el dato girado $(1\otimes V)\sigma_i(1\otimes V)^\dagger$.
 Si además $\sigma$ no tiene rango completo, es decir, si los $\sigma_i$ tienen un vector común en
 el núcleo, entonces $p(n,\Theta)\le1$ y
 $\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|\le6d^2Cn\lambda^{m-1}$.
@@ -782,12 +789,24 @@ celda doble con núcleo solo admite el Néel clásico (Proposición~\ref{prop:qu
 
 \paragraph{Numérico, con comprobaciones independientes.} La fórmula de $\varepsilon_n$ de AKLT
 frente a la matriz de transferencia ($n\le20$); $p(n,\Theta)$ exacto de AKLT hasta $n=8$ (dual con
-primal certificado; en dos puntos de $n\le5$, solo un intervalo de anchura $10^{-5}$); los tres
+primal certificado; en cuatro puntos de $n\le5$, un intervalo de anchura $\le1{,}4\times10^{-4}$
+que contiene el valor del SDP primal); los tres
 regímenes del testigo de Néel (diagonalización exacta, $n\le18$, con el dual contrastado con el
 primal en $n\le6$); las cotas $\varepsilon_n=O(\lambda^{m-1})$ de los ejemplos aleatorios con
 celda doble; y el SDP exacto del ejemplo de celda triple hasta $n=9$.
 
-\paragraph{La tesis: robustez y rigidez nula.} En los casos demostrados la cota superior la da un
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.78\textwidth]{sensibilidad.pdf}
+\caption{Sensibilidad a la holonomía, $|p(n,0)-p(n,\pi)|$, en escala logarítmica: AKLT (SDP
+exacto, Sección~\ref{sec:aklt}) y el anillo de qubits con datos $U(1)$ (Sección~\ref{sec:neel}, donde
+el parámetro se llama $v$), con $\kappa=0{,}4$ separado por paridad y con $\kappa=1$, de testigo
+crítico. Una recta es un decaimiento exponencial; el caso crítico y el de $n$ impar siguen
+$1/n^2$.}
+\label{fig:sensibilidad}
+\end{figure}
+
+\paragraph{La tesis: robustez y rigidez nula.} La Figura~\ref{fig:sensibilidad} reúne los tres comportamientos. En los casos demostrados la cota superior la da un
 testigo explícito: si $\sigma\ket\chi=0$, la suma de los proyectores sobre $\chi$ en el marco girado
 de cada arista es el hamiltoniano padre retorcido, con energía fundamental nula para toda
 $\Theta$ (en AKLT, el MPS retorcido es exactamente su estado fundamental). Es un testigo de rigidez
@@ -826,7 +845,7 @@ transporta la carga (Sección~\ref{sec:neel}). Aquí solo se demuestra la direcc
 \paragraph{Reproducibilidad.} Los guiones están en \texttt{scripts/} del repositorio
 \texttt{holonomy}: \texttt{aklt\_twist.py} y \texttt{aklt\_sdp\_ti.py} (Sección~\ref{sec:aklt}), \texttt{neel\_u1.py} con los
 datos en \texttt{data/neel\_u1.csv} (Sección~\ref{sec:neel}), \texttt{mps\_celda.py} y
-\texttt{qubits\_celda3.py} (Sección~\ref{sec:celda}). Requieren \texttt{numpy}, \texttt{scipy} y,
+\texttt{qubits\_celda3.py} (Sección~\ref{sec:celda}), y \texttt{figura\_sensibilidad.py} (Figura~\ref{fig:sensibilidad}). Requieren \texttt{numpy}, \texttt{scipy} y,
 para los SDP, \texttt{cvxpy} con \texttt{clarabel} o \texttt{scs}.
 
 \begin{thebibliography}{99}

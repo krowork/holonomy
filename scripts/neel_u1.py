@@ -3,9 +3,9 @@
 Datos en cada arista del anillo (gauge uniforme, phi = Theta/n):
     <A_e> = 2 v_perp cos phi, <B_e> = 2 v_perp sin phi, <C_e> = v_z,
 con A = -(XX+YY), B = XY-YX, C = -ZZ, sobre el rayo v_perp = kappa v,
-v_z = v. kappa = 1 es el Werner rotado del artículo.
+v_z = v. kappa = 1 son los datos de Werner girados.
 
-Dual (mismo argumento que la Proposición de reducción al XXZ retorcido):
+Dual (el testigo cos psi A + sin psi B + Delta C es -4 H_XXZ con flujo n psi):
     v_max(n, Theta; kappa) = inf_{Delta, Phi}
         4 eps_n(Delta, Phi) / (Delta + 2 kappa cos((Phi - Theta)/n)).
 Con kappa < 1 los datos favorecen ZZ y el testigo óptimo puede caer en
