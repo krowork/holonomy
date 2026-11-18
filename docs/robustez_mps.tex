@@ -47,8 +47,9 @@ es que la robustez frente a la holonomía equivale a que el testigo óptimo teng
 nula. Con carga semientera el mecanismo del teorema está prohibido, una versión MPS de
 Lieb--Schultz--Mattis, y solo vuelve rompiendo la traslación con una celda compatible con $n$; con
 testigo crítico la sensibilidad es del orden de $1/n^2$. La implicación «datos MPS $\Rightarrow$
-robustez» está demostrada; de la recíproca, solo el caso de datos de Werner con $n$ par, mediante un
-argumento de Marshall.
+robustez» está demostrada. De la recíproca, para datos $U(1)$ en un anillo de qubits, se demuestran
+el signo de la dependencia en $\Theta$ y una cota del déficit por la respuesta a un flujo del
+testigo óptimo, mediante una reducción por simetría y un argumento de Marshall.
 \end{abstract}
 
 %=====================================================================
@@ -124,10 +125,11 @@ son:
   (Corolario~\ref{cor:lsmk}). La diagonalización exacta del testigo de Néel
   (Sección~\ref{sec:neel}) y el Néel clásico (Proposición~\ref{prop:neelclas}) muestran que la
   paridad de $n$ es real: robustez con $n$ par y $1/n^2$ con $n$ impar. El signo de la dependencia
-  en $\Theta$ sí se demuestra: girando el testigo óptimo y con un argumento de Marshall, $\Theta=0$
-  es el máximo con $n$ par y $\Theta=\pi$ con $n$ impar, y con datos de Werner y $n$ par el déficit
-  es al menos la rigidez del anillo de Heisenberg (Proposición~\ref{prop:marshall} y
-  Corolario~\ref{cor:paridad}).
+  en $\Theta$ sí se demuestra, para todo $\kappa$: una reducción por simetría lleva el testigo
+  óptimo a un XXZ que es estocástico tras un giro de Marshall, y girándolo, $\Theta=0$ es el máximo
+  con $n$ par y $\Theta=\pi$ con $n$ impar. El déficit queda acotado por la respuesta de ese XXZ a
+  un flujo, que con datos de Werner y $n$ par es la rigidez del anillo de Heisenberg
+  (Lema~\ref{lem:reduccion}, Proposición~\ref{prop:marshall} y Corolario~\ref{cor:paridad}).
 \item Para qubits, la celda doble con núcleo solo admite el Néel clásico
   (Proposición~\ref{prop:qubits}), y el primer ejemplo con fluctuaciones cuánticas tiene $k=3$.
 \end{enumerate}
@@ -136,9 +138,9 @@ La imagen que sale es que la robustez equivale a que el testigo tenga \emph{rigi
 energía fundamental del testigo no responde al flujo en el límite termodinámico. Un testigo con gap,
 o con gap salvo un desdoblamiento por ruptura de simetría compatible con $n$, tiene rigidez nula
 \cite{kohn,watanabe}; uno crítico tiene rigidez finita \cite{shastry} y da $1/n^2$. Aquí solo se
-demuestra la mitad que va de los datos MPS a la robustez y, de la recíproca, el caso de datos de
-Werner con $n$ par (Corolario~\ref{cor:paridad}); el resto se discute en la
-Sección~\ref{sec:conclusiones}.
+demuestra la mitad que va de los datos MPS a la robustez y, de la recíproca, para los datos $U(1)$
+del anillo de qubits, el signo y la reducción del déficit a la respuesta a un flujo del testigo
+óptimo (Corolario~\ref{cor:paridad}); el resto se discute en la Sección~\ref{sec:conclusiones}.
 
 \paragraph{Organización.} La Sección~\ref{sec:marco} fija el problema y dos lemas. Las
 Secciones~\ref{sec:teorema}--\ref{sec:aklt} demuestran el teorema MPS, la obstrucción con carga
@@ -495,9 +497,10 @@ uniforme, $\phi=\Theta/n$):
 \[
   \ev{A_e}=2\kappa v\cos\phi,\quad \ev{B_e}=2\kappa v\sin\phi,\quad \ev{C_e}=v,\quad \ev{Z_i}=0,
 \]
-con $A=-(XX+YY)$, $B=XY-YX$, $C=-ZZ$ y $0<\kappa\le1$. Con $\kappa=1$ son los datos de Werner
+con $A=-(XX+YY)$, $B=XY-YX$, $C=-ZZ$ y $\kappa>0$. Con $\kappa=1$ son los datos de Werner
 girados: $\ev{\vec\sigma\cdot\vec\sigma}=-3v$ en el marco de cada arista. Con $\kappa<1$ favorecen
-las correlaciones $ZZ$.
+las correlaciones $ZZ$, y con $\kappa>1$ las $XY$; son estados de dos qubits si $v\le1$ y
+$v(2\kappa-1)\le1$.
 
 \emph{Dual.} Para el testigo $h_e=\cos\psi\,A_e+\sin\psi\,B_e+\Delta\,C_e$, un estado con esos
 datos cumple $\sum_e\ev{h_e}=nv\big(\Delta+2\kappa\cos(\psi-\phi)\big)\le\lambda_{\max}(\sum_eh_e)$.
@@ -515,7 +518,8 @@ Por la $U(1)$, el testigo óptimo puede tomarse invariante, y los términos de d
 son estos tres, la identidad y un campo $Z$; por eso, salvo el campo, la cota es una igualdad.
 Con $\kappa=1$ el ínfimo está en el punto isótropo $\Delta=1$, crítico; con $\kappa<1$ el testigo
 óptimo puede tener $\Delta>1$, en la fase de Néel. Dos detalles. El multiplicador de
-$\ev{Z_i}=0$, un campo uniforme en el testigo, no mejora la cota en ningún caso probado. Para $n$
+$\ev{Z_i}=0$, un campo uniforme en el testigo, no mejora la cota en ningún caso probado; en
+$\Theta\in\{0,\pi\}$ se demuestra (Lema~\ref{lem:reduccion}). Para $n$
 impar y $\kappa$ pequeño el ínfimo está en $\Delta\to\infty$: es el techo clásico del antiferro de
 Ising frustrado, $v=(n-2)/n$, que no depende de $\Theta$ (en $n=5$ ya manda con $\kappa=0{,}6$ y $\Theta=\pi$, y
 con $\kappa\le0{,}4$ para toda $\Theta$). Con ambos detalles, el dual coincide con el SDP primal $U(1)$ en $n=4,5,6$,
@@ -574,42 +578,127 @@ el radio espectral de una matriz semidefinida positiva es su mayor autovalor. As
 y el Lema~\ref{lem:giro} concluye.
 \end{proof}
 
-Para el testigo XXZ de esta sección, $\sum_eh_e=-4H_{\rm XXZ}(\Delta,\Phi)$ tiene, fuera de la
-diagonal, los términos $-2(e^{i\Phi/n}S^+_iS^-_{i+1}+{\rm h.c.})$. Con $n$ par y $\Phi\equiv0$, el
-giro de Marshall $U=\prod_{i\ \rm impar}2S^z_i$ cambia el signo de todos ellos y los deja $\ge0$.
-Con $n$ impar queda un enlace con el signo equivocado, que es un flujo $\pi$: con $\Phi\equiv\pi$, la
-transformación gauge $\prod_ie^{-i\theta_iS^z_i}$ que concentra el flujo en ese enlace, seguida del
-giro de Marshall, deja de nuevo todos los elementos $\ge0$. Por tanto:
+Para aplicarla al testigo de esta sección hacen falta dos cosas: que en $\Theta_0\in\{0,\pi\}$ haya
+un testigo óptimo de tipo XXZ, y que sea estocástico tras un unitario diagonal. Sea $v_I=1$ si $n$
+es par y $v_I=(n-2)/n$ si $n$ es impar. Es el cociente del testigo de Ising $h_e=C_e$, porque
+$\lambda_{\max}(\sum_eC_e)$ es el mayor número de enlaces antiparalelos menos el de paralelos, $n$
+o $n-2$, y $\sum_e\ev{C_e}=nv$.
+
+\begin{lema}[reducción]\label{lem:reduccion}
+Sean $\kappa>0$ y $\Theta_0\in\{0,\pi\}$. Entonces
+\[
+  v(n,\Theta_0)=\min\Big\{\inf_{\Delta>-2\kappa}\frac{4\,e_n(\Delta,\Theta_0)}{\Delta+2\kappa},\ v_I\Big\},
+\]
+y el valor lo alcanza un testigo: el XXZ \emph{alineado}, con $\Phi=\Theta_0$ y un $\Delta^\ast$
+finito, o el de Ising. En particular, en $\Theta_0$ el multiplicador de $\ev{Z_i}=0$ no mejora la
+cota, y la rama \emph{antialineada}, con $\Phi=\Theta_0+n\pi$ y denominador $\Delta-2\kappa$, nunca
+baja de $v_I$.
+\end{lema}
+
+\begin{proof}
+\emph{Gauge.} $v(n,\Theta)$ no depende del gauge. Con $\Theta_0=0$ se usa el uniforme; con
+$\Theta_0=\pi$, el que concentra todo el giro en la arista $(n,1)$, donde $e^{-i\pi Q}\propto Z$
+cambia el signo de $A$ y de $B$. En los dos casos los datos son reales: $\ev{B_e}=0$ en todas las
+aristas, $\ev{A_e}=2\kappa v$ salvo en la arista especial, donde vale $-2\kappa v$, y
+$\ev{C_e}=v$.
+
+\emph{Simetrías.} En ese gauge fijan los datos la $U(1)$ global; la conjugación compleja $K$ en la
+base producto, porque $A$, $C$ y $Z$ son reales y $B$ es imaginaria pura, con $\ev{B_e}=0$; la
+inversión $X^{\otimes n}$, que fija $A$ y $C$ y cambia el signo de $B$ y de $Z$, de valores nulos;
+y la traslación, compuesta con $Z$ en un sitio cuando $\Theta_0=\pi$, que devuelve el defecto a su
+arista. Todas llevan testigos de dos sitios a testigos de dos sitios y conservan el espectro ($K$ es
+antiunitaria, pero $\overline H$ y $H$ tienen el mismo espectro); como fijan los datos, conservan
+el denominador. Por convexidad de $\lambda_{\max}$, promediar un testigo óptimo sobre el grupo
+compacto que generan da otro testigo óptimo, invariante.
+
+\emph{Qué queda.} Los operadores de dos qubits invariantes por la $U(1)$ son $I$, $Z_1$, $Z_2$,
+$ZZ$, $XX+YY$ y $XY-YX$: el conmutante tiene dimensión $1+4+1$. $K$ quita el término $B$,
+$X^{\otimes n}$ quita el campo, la identidad se cancela en~\eqref{eq:dualgen} y la traslación iguala
+los coeficientes en el marco de cada arista: $h_e=a\,A_e+c\,C_e$, con el signo de $A$ cambiado en
+la arista especial. De vuelta al gauge uniforme, con $a=1$ es el XXZ con $\Phi=\Theta_0$, $\Delta=c$
+y denominador $\Delta+2\kappa$. Con $a=-1$, como $-(\cos\phi\,A+\sin\phi\,B)=\cos(\phi+\pi)A+
+\sin(\phi+\pi)B$, es el XXZ con $\Phi=\Theta_0+n\pi$ y denominador $\Delta-2\kappa$, que ha de ser
+positivo. Con $a=0$ es el de Ising.
+
+\emph{Rama antialineada.} Sea $h_e=-|a|\tilde A_e+c\,C_e$, con $\tilde A_e$ el término de salto y
+$c>2\kappa|a|$. $\tilde A_e$ no tiene diagonal en la base producto; si $\ket x$ es una configuración
+que maximiza $\sum_eC_e$, entonces $\lambda_{\max}(\sum_eh_e)\ge\bra x\sum_eh_e\ket x=cnv_I>0$,
+mientras que el denominador es $n(c-2\kappa|a|)<nc$. El cociente es mayor que $v_I$.
+
+\emph{Alcance.} En la rama alineada el numerador es positivo ($\sum_eh_e$ no tiene traza), así que
+el cociente tiende a $+\infty$ cuando $\Delta\to-2\kappa$ y a $v_I$ cuando $\Delta\to\infty$. Si el
+ínfimo es menor que $v_I$, se alcanza en un $\Delta^\ast$ finito.
+\end{proof}
+
+La segunda es el signo. Los elementos fuera de la diagonal de $-4H_{\rm XXZ}(\Delta,\Phi)$ son
+$-2e^{\pm i\Phi/n}$, uno por salto, y un unitario diagonal los hace todos $\ge0$ si y solo si
+$(-1)^ne^{i\Phi}=1$, es decir, $\Phi\equiv n\pi$ módulo $2\pi$, sea cual sea $\Delta$. Con $n$ par
+y $\Phi\equiv0$ basta el giro de Marshall $U=\prod_{i\ \rm impar}2S^z_i$, que cambia el signo de todos
+los saltos. Con $n$ impar y $\Phi\equiv\pi$, la transformación gauge $\prod_ie^{-i\theta_iS^z_i}$ que
+concentra el flujo en el enlace $(n,1)$, que une dos sitios impares, deja en él el signo correcto, y
+el giro de Marshall arregla los demás. Al revés, el producto de los elementos alrededor de un ciclo
+del grafo de configuraciones no cambia con un unitario diagonal. Los ciclos de dos saltos disjuntos
+dan $|\cdot|^4>0$, pero el ciclo en que cada espín levantado pasa a la posición del siguiente, $n$
+saltos en el mismo sentido, da $(-2)^ne^{i\Phi}$. Así, el testigo alineado del
+Lema~\ref{lem:reduccion} es estocástico en $\Theta_0=0$ con $n$ par y en $\Theta_0=\pi$ con $n$
+impar; el antialineado con $n$ impar no lo es, y por eso hace falta que nunca gane.
 
 \begin{corolario}[paridad]\label{cor:paridad}
-Con los datos de esta sección, si el ínfimo del dual en $\Theta_0$ se alcanza con
-$\Phi^\ast\equiv0$ ($n$ par) o $\Phi^\ast\equiv\pi$ ($n$ impar) módulo $2\pi$, entonces
-$v(n,\Theta)\le v(n,\Theta_0)$ para toda $\Theta$. Con $\kappa=1$ y $n$ par se cumple en $\Theta_0=0$,
-con $\Delta^\ast=1$, y
+Sean $\kappa>0$ y $\Theta_0=0$ si $n$ es par, $\Theta_0=\pi$ si $n$ es impar. Entonces
+$v(n,\Theta)\le v(n,\Theta_0)$ para toda $\Theta$. Si además el ínfimo del
+Lema~\ref{lem:reduccion} es menor que $v_I$, con mínimo en $\Delta^\ast$, entonces
 \[
-  v(n,0)-v(n,\Theta)\ \ge\ \frac4{3n}\big[E_0(1,\Theta)-E_0(1,0)\big]\ \ge\ 0,
+  v(n,\Theta_0)-v(n,\Theta)\ \ge\ \frac{4\big[E_0(\Delta^\ast,\Theta)-E_0(\Delta^\ast,\Theta_0)\big]}
+  {n\,(\Delta^\ast+2\kappa)}\ \ge\ 0,
 \]
-con $E_0(\Delta,\Phi)$ la energía fundamental de $H_{\rm XXZ}$.
+con $E_0(\Delta,\Phi)$ la energía fundamental de $H_{\rm XXZ}$. Con $\kappa=1$ y $n$ par,
+$\Delta^\ast=1$ y la cota es $\frac4{3n}\big[E_0(1,\Theta)-E_0(1,0)\big]$.
 \end{corolario}
 
 \begin{proof}
-La primera parte es la Proposición~\ref{prop:marshall}, porque el término $C$ y el multiplicador
-de $\ev{Z_i}=0$ son diagonales. Con $\kappa=1$ y $\Theta=0$ los datos son invariantes por la
-$SU(2)$ global y por las traslaciones; promediando un testigo óptimo sobre las dos queda otro
-testigo óptimo con el mismo término en cada arista e invariante por $SU(2)$, y el único operador
-de dos qubits sin traza con esa invariancia es $\vec\sigma\cdot\vec\sigma=-(A+C)$: es $\Delta=1$,
-$\Phi=0$, y $v(n,0)=4e_n(1,0)/3$. Su giro tiene flujo $\Theta$ y el mismo denominador, $3$; el
-Lema~\ref{lem:giro} da la cota.
+Por el Lema~\ref{lem:reduccion}, en $\Theta_0$ hay un testigo óptimo alineado o de Ising. El de
+Ising es diagonal y su giro es él mismo, así que $v(n,\Theta)\le v_I=v(n,\Theta_0)$. El alineado
+tiene $\Phi=\Theta_0\equiv n\pi$ y es estocástico tras un unitario diagonal; la
+Proposición~\ref{prop:marshall} da el signo. Para la cota, su giro es el XXZ con flujo $\Theta$ y el
+mismo denominador, con $\lambda_{\max}=-4E_0$, y se aplica el Lema~\ref{lem:giro}. Con $\kappa=1$ y
+$\Theta=0$ los datos son además invariantes por la $SU(2)$ global; promediando sobre ella, el
+testigo óptimo es invariante por $SU(2)$, y el único operador de dos qubits sin traza con esa
+invariancia es $\vec\sigma\cdot\vec\sigma=-(A+C)$: $\Delta^\ast=1$, con denominador $3$.
 \end{proof}
 
-Los números de la tabla siguiente cumplen el Corolario~\ref{cor:paridad} en todos los casos: con
-$n$ par, $v(n,0)>v(n,\pi)$, y con $n$ impar el máximo está en $\Theta=\pi$ (allí el dual elige
-$\Phi^\ast=\pi$). Con $\kappa=1$ y $n$ par, la cota del corolario en $\Theta=\pi$ es
+Los números de la tabla siguiente cumplen el Corolario~\ref{cor:paridad}: con $n$ par,
+$v(n,0)>v(n,\pi)$, y con $n$ impar $v(n,0)<v(n,\pi)$. El ínfimo libre en $(\Delta,\Phi)$ coincide
+con el del Lema~\ref{lem:reduccion} hasta $10^{-15}$ en $n\le9$ y todos los $\kappa$ de la tabla;
+los $\Phi^\ast$ distintos de $0$ y $\pi$ que da a veces la minimización libre con $n\le5$ son óptimos
+degenerados, con el mismo valor. Con $\kappa=1$ y $n$ par, la cota del corolario en $\Theta=\pi$ es
 $n^2\big[v(n,0)-v(n,\pi)\big]\ge1{,}887$, $1{,}864$, $1{,}849$, $1{,}838$, $1{,}830$ y $1{,}824$ en
-$n=8,10,\dots,18$, frente a los valores exactos de la tabla: el giro del testigo óptimo de
-$\Theta=0$ explica más del 90\,\% del déficit. Es la mitad de la recíproca del problema abierto~1 en
-el caso crítico más simple: si $E_0(1,\pi)-E_0(1,0)\ge c/n$, que es la rigidez de espín positiva del
-anillo de Heisenberg \cite{shastry}, el déficit es al menos $4c/(3n^2)$.
+$n=8,10,\dots,18$, frente a los valores de la tabla ($2{,}05$ a $1{,}87$): el giro del testigo
+óptimo explica entre el 92 y el 98\,\% del déficit, más cuanto mayor es $n$. En los demás casos de la
+tabla, con $n\le14$, explica entre el 82 y el 97\,\%. Con $\kappa>1$ los datos favorecen las
+correlaciones $XY$ y el testigo óptimo es crítico, con $\Delta^\ast\in(-1,1)$. Con $\kappa=1{,}5$,
+$n^2$ por la cota vale de $2{,}09$ a $2{,}04$ con $n$ par ($n=8$ a $16$) y de $1{,}97$ a $2{,}01$ con
+$n$ impar ($n=9$ a $17$); con $\kappa=2$ y $n$ par, de $1{,}77$ a $1{,}73$. Para estos datos, el
+corolario reduce la recíproca del problema abierto~1 a la respuesta a un flujo del testigo óptimo:
+si $E_0(\Delta^\ast,\Theta_0+\pi)-E_0(\Delta^\ast,\Theta_0)\ge c/n$, el déficit es al menos
+$4c/\big(n^2(\Delta^\ast+2\kappa)\big)$. Con $\kappa=1$ y $n$ par es la rigidez de espín del anillo
+de Heisenberg \cite{shastry}, y el déficit es al menos $4c/(3n^2)$.
+
+\begin{observacion}[constante asintótica]
+Sea $D_n=n\,\partial_\Phi^2E_0(1,\Phi)|_{\Phi=0}$ la rigidez de espín del anillo de Heisenberg de $n$
+sitios. Para $|\Phi|\le\pi$ el fundamental sigue en la rama sin corriente, y a tamaño grande
+$E_0(1,\Phi)-E_0(1,0)=D_n\Phi^2/(2n)\,(1+o(1))$, con $D_n\to\tfrac14$: es el valor isótropo de la
+rigidez de Shastry y Sutherland \cite{shastry}, que en el lenguaje de líquidos de Luttinger es
+$vK/\pi$ con velocidad $v=\pi/2$ y parámetro $K=\tfrac12$. Con el Corolario~\ref{cor:paridad},
+\[
+  \liminf_{n\to\infty}\,n^2\big[v(n,0)-v(n,\Theta)\big]\ \ge\ \frac{\Theta^2}6,\qquad|\Theta|\le\pi,
+\]
+que en $\Theta=\pi$ es $\pi^2/6\approx1{,}645$. No es una demostración: el desarrollo cuadrático
+uniforme en $|\Phi|\le\pi$ es el de la teoría de bosonización, y en el punto isótropo la convergencia
+es lenta, con correcciones logarítmicas. Numéricamente, $D_n$ vale $0{,}2962$, $0{,}2871$ y
+$0{,}2816$ en $n=8$, $12$ y $18$; la parábola $D_n\pi^2/(2n)$ reproduce $E_0(1,\pi)-E_0(1,0)$ con un
+error del 2--3\,\%, y la cota de $n^2$ por el déficit en $\Theta=\pi$, de $1{,}887$ a $1{,}824$, baja
+hacia $\pi^2/6$ al ritmo de $D_n$.
+\end{observacion}
 
 \paragraph{Resultados.} La sensibilidad a la holonomía, multiplicada por $n^2$
 (\texttt{scripts/neel\_u1.py}, \texttt{data/neel\_u1.csv}):
@@ -619,10 +708,10 @@ anillo de Heisenberg \cite{shastry}, el déficit es al menos $4c/(3n^2)$.
 $\kappa$ & $\Delta^*$ & \multicolumn{11}{c}{$n^2\,[v(n,0)-v(n,\pi)]$}\\
 & ($n=18$) & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 & 17 & 18\\
 \midrule
-1   & 1,00 & 2,05 & $-1{,}80$ & 1,98 & $-1{,}83$ & 1,93 & $-1{,}61$ & 1,78 & $-1{,}62$ & 1,76 & $-1{,}35$ & 1,74\\
-0,8 & 1,44 & 1,74 & $-1{,}41$ & 1,64 & $-1{,}46$ & 1,57 & $-1{,}29$ & 1,41 & $-1{,}30$ & 1,37 & $-1{,}08$ & 1,33\\
-0,6 & 1,92 & 1,22 & $-0{,}86$ & 1,09 & $-0{,}93$ & 0,98 & $-0{,}84$ & 0,88 & $-0{,}84$ & 0,77 & $-0{,}83$ & 0,80\\
-0,4 & 2,70 & 0,57 & $-0{,}28$ & 0,43 & $-0{,}37$ & 0,32 & $-0{,}37$ & 0,24 & $-0{,}38$ & 0,17 & $-0{,}38$ & 0,12\\
+1   & 1,00 & 2,05 & $-1{,}80$ & 1,98 & $-1{,}83$ & 1,93 & $-1{,}83$ & 1,90 & $-1{,}84$ & 1,88 & $-1{,}84$ & 1,87\\
+0,8 & 1,44 & 1,74 & $-1{,}41$ & 1,64 & $-1{,}46$ & 1,56 & $-1{,}47$ & 1,51 & $-1{,}47$ & 1,46 & $-1{,}47$ & 1,42\\
+0,6 & 1,92 & 1,22 & $-0{,}85$ & 1,09 & $-0{,}93$ & 0,97 & $-0{,}95$ & 0,88 & $-0{,}95$ & 0,79 & $-0{,}95$ & 0,72\\
+0,4 & 2,70 & 0,57 & $-0{,}28$ & 0,43 & $-0{,}37$ & 0,32 & $-0{,}42$ & 0,24 & $-0{,}43$ & 0,18 & $-0{,}43$ & 0,13\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -630,15 +719,16 @@ Con decaimiento $1/n^2$ las filas serían constantes. Se leen tres regímenes.
 \begin{itemize}
 \item \emph{$n$ par, Néel profundo ($\kappa=0{,}4$, $\Delta^*\approx2{,}7$).} La sensibilidad cae
   exponencialmente: el ajuste $e^{-n/\xi}$ da $\xi\approx3{,}2$ y el de potencia daría un
-  exponente $\approx3{,}9$ con peor residuo. El espectro del testigo óptimo tiene la firma del gap
+  exponente $\approx3{,}8$ con peor residuo. El espectro del testigo óptimo tiene la firma del gap
   con simetría rota: el primer gap, que es el desdoblamiento túnel entre las dos configuraciones
   de Néel, cae de $0{,}118$ ($n=8$) a $0{,}012$ ($n=18$); el siguiente baja de $1{,}84$ a $1{,}15$,
   lejos de cero. $v(n,0)$ y $v(n,\pi)$ convergen ambos a $0{,}8736$.
-\item \emph{$n$ impar.} La sensibilidad vuelve a $1/n^2$, con meseta clara ($\approx0{,}38$ en
-  $\kappa=0{,}4$, $\approx0{,}84$ en $\kappa=0{,}6$) y signo opuesto: $v(n,0)<v(n,\pi)$. Un anillo
+\item \emph{$n$ impar.} La sensibilidad vuelve a $1/n^2$, con meseta clara ($\approx0{,}43$ en
+  $\kappa=0{,}4$, $\approx0{,}95$ en $\kappa=0{,}6$ y $\approx1{,}47$ en $\kappa=0{,}8$) y signo opuesto: $v(n,0)<v(n,\pi)$. Un anillo
   impar no admite Néel. El testigo tiene una pared de dominio que se mueve libremente: en
-  $\kappa=0{,}4$, por encima del doblete exacto de inversión de espín, hay una banda con separación
-  $0{,}011$, $0{,}009$ y $0{,}007$ en $n=13$, 15 y 17. Esa partícula móvil acopla al flujo como en la
+  $\kappa=0{,}4$, por encima del doblete exacto de inversión de espín, hay una banda de $n$ niveles y
+  anchura $\approx1{,}9$, la pared con momento $2\pi j/n$, cuyo primer nivel queda a $0{,}32$, $0{,}26$
+  y $0{,}22$ en $n=13$, 15 y 17: sin gap en el límite. Esa partícula móvil acopla al flujo como en la
   fase crítica.
 \item \emph{Néel débil ($\kappa=0{,}6$ y $0{,}8$, $\Delta^*\approx1{,}9$ y $1{,}4$).} $n^2|\Delta v|$
   decrece, pero despacio. La longitud de correlación de Néel, $\xi\approx\tfrac14e^{\pi^2/(2\gamma)}$ con
@@ -646,10 +736,15 @@ Con decaimiento $1/n^2$ las filas serían constantes. Se leen tres regímenes.
   al anillo o mayor. Con $n\le18$ no se distingue del caso isótropo, que
   también deriva por correcciones logarítmicas. Hacen falta tamaños de DMRG.
 \end{itemize}
-Precisión: la minimización en $\Phi$ tiene mínimos locales; se toma, fila a fila, el menor valor
-entre dos mallas (9 y 33 puntos), que difieren hasta $4\times10^{-4}$ en $v(n,\pi)$ para
-$\kappa\ge0{,}6$ y $n\ge12$. Queda un ruido de unos pocos por ciento en las filas de $\kappa\ge0{,}6$,
-que no afecta a las conclusiones de $\kappa=0{,}4$ ni a las de $n$ impar.
+Precisión: el ínfimo en $(\Delta,\Phi)$ se toma con una malla de 33 flujos y refinamiento local; para
+$n\le6$ coincide con el SDP primal restringido a $U(1)$ hasta $3\times10^{-8}$. Para $n\ge12$ el
+fundamental se calcula con Lanczos en cada sector de magnetización, arrancando del autovector
+anterior más una componente aleatoria: sin ella, el arranque, que tiene momento definido, no sale
+de su sector de momento y tras el cruce de niveles en $\Phi=\pi$ da un fundamental equivocado (una
+versión anterior de la tabla sobrestimaba así $v(n,\pi)$ hasta en $3\times10^{-4}$ para $n\ge14$).
+Como control, el barrido comprueba el signo de Marshall con $n$ par en todos los $\kappa$ y, con
+$\kappa=1$, la cota del Corolario~\ref{cor:paridad}. En todos los casos con $n\ge7$ el dual elige
+$\Phi^\ast\in\{0,\pi\}$ exactamente.
 
 \begin{observacion}[lectura]
 El cuadro encaja con la Proposición~\ref{prop:lsm}. Con espín semientero e invariancia por
@@ -931,8 +1026,10 @@ semientera y la condición de divisibilidad de la celda (Proposición~\ref{prop:
 Corolario~\ref{cor:lsmk}); la constante explícita de AKLT (Proposición~\ref{prop:aklt}); el valor
 exacto de $p(n,\Theta)$ para el Néel clásico (Proposición~\ref{prop:neelclas}); que con qubits la
 celda doble con núcleo solo admite el Néel clásico (Proposición~\ref{prop:qubits}); y el signo de
-la dependencia en $\Theta$ cuando el testigo óptimo es estocástico tras un giro de Marshall, con la
-cota del déficit por la rigidez para datos de Werner y $n$ par (Lema~\ref{lem:giro},
+la dependencia en $\Theta$ cuando el testigo óptimo es estocástico tras un giro de Marshall. Para
+los datos $U(1)$ del anillo de qubits lo es para todo $\kappa$, por una reducción por simetría, y el
+déficit queda acotado por la respuesta a un flujo del testigo óptimo; con datos de Werner y $n$ par,
+por la rigidez del anillo de Heisenberg (Lemas~\ref{lem:giro} y~\ref{lem:reduccion},
 Proposición~\ref{prop:marshall} y Corolario~\ref{cor:paridad}).
 
 \paragraph{Numérico, con comprobaciones independientes.} La fórmula de $\varepsilon_n$ de AKLT
@@ -963,9 +1060,9 @@ sensibilidad a la holonomía mide la rigidez de espín del testigo óptimo: nula
 desdoblamiento por ruptura de simetría compatible con $n$; finita en la fase crítica, donde da
 $1/n^2$ (fila $\kappa=1$ de la Sección~\ref{sec:neel}); y finita también con $n$ incompatible con la celda, donde un defecto móvil
 transporta la carga (Sección~\ref{sec:neel}). Aquí solo se demuestra la dirección
-«datos MPS $\Rightarrow$ robustez»; de la recíproca solo el caso crítico más simple, datos de
-Werner con $n$ par, donde el giro del testigo y el argumento de Marshall acotan el déficit por la
-rigidez del anillo de Heisenberg (Corolario~\ref{cor:paridad}).
+«datos MPS $\Rightarrow$ robustez»; de la recíproca, para los datos $U(1)$ del anillo de qubits,
+el signo y la cota del déficit por la respuesta a un flujo del testigo óptimo, que con datos de
+Werner y $n$ par es la rigidez del anillo de Heisenberg (Corolario~\ref{cor:paridad}).
 
 \paragraph{Problemas abiertos.}
 \begin{enumerate}
@@ -973,9 +1070,15 @@ rigidez del anillo de Heisenberg (Corolario~\ref{cor:paridad}).
   positiva en el límite termodinámico, entonces $n^2\sup_\Theta|p(n,\Theta)-p(n,0)|$ no tiende a
   cero. El Lema~\ref{lem:giro} acota $p(n,\Theta)-p(n,0)$ por la respuesta del testigo óptimo al
   giro, al estilo de Kohn \cite{kohn}, y cuando esa respuesta tiene signo fijo
-  (Proposición~\ref{prop:marshall}) es ya la recíproca: así ocurre con datos de Werner y $n$ par
-  (Corolario~\ref{cor:paridad}), módulo la rigidez positiva del anillo de Heisenberg. Falta el caso
-  general: $n$ impar, $\kappa<1$ con testigo crítico, y testigos que no sean estocásticos.
+  (Proposición~\ref{prop:marshall}) es ya la recíproca. Para los datos $U(1)$ del anillo de qubits ese signo está demostrado
+  (Corolario~\ref{cor:paridad}), y falta probar que
+  $E_0(\Delta^\ast,\Theta_0+\pi)-E_0(\Delta^\ast,\Theta_0)\ge c/n$ uniformemente en $n$. Hay tres
+  casos. Con $\kappa>1$, $\Delta^\ast\in(-1,1)$ y es la rigidez del XXZ crítico \cite{shastry};
+  falta además ver que $\Delta^\ast(n)$ se queda en un compacto de $(-1,1)$. Con $n$ impar y
+  $\kappa<1$, $\Delta^\ast>1$ y es la energía de un espinón en el anillo impar con giro, sin
+  fórmula conocida. Con $\kappa=1$ y $n$ impar, $\Delta^\ast(n)\to1^+$, en la frontera entre
+  ambos. Con datos de Werner y $n$ par se reduce a la rigidez del anillo de Heisenberg, que es
+  positiva. Fuera de estos datos falta el caso de testigos que no sean estocásticos.
 \item \emph{Datos que no son marginales de un MPS.} Los datos de la Sección~\ref{sec:neel} no son
   marginales de un MPS de celda doble, pero se comportan como si lo fueran con $n$ par. Hace falta
   un argumento de aproximación: que $p(n,\Theta)$ sea robusto en un entorno de las marginales MPS con

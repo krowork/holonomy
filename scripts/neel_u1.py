@@ -89,6 +89,8 @@ def v_free(n, Theta, kappa, eps=xxz.eps, nphi=33):
 def gap_over_E(n, Delta, Phi):
     """Gap del testigo (energía fundamental del XXZ) en todos los sectores,
     por enlace: (E1 - E0) con E1 el primer excitado global."""
+    if not np.isfinite(Delta):  # óptimo en el límite de Ising: sin gap finito que medir
+        return np.nan, np.nan
     levels = []
     for M in range(n + 1):
         k = 2 if xxz.sector_operators(n, M)[0].shape[0] > 1 else 1
@@ -133,8 +135,17 @@ def primal(n, Theta, kappa):
 
 
 if __name__ == "__main__":
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--kappas", type=float, nargs="+", default=[1.0, 0.8, 0.6, 0.4])
+    ap.add_argument("--out", type=Path,
+                    default=Path(__file__).resolve().parents[1] / "data" / "neel_u1.csv")
+    ap.add_argument("--no-primal", action="store_true", help="omite la validación primal")
+    args = ap.parse_args()
     # --- validación contra el primal U(1) en n pequeño --------------------
     try:
+        if args.no_primal:
+            raise ImportError
         err = 0.0
         for n in (4, 5, 6):
             for kappa in (1.0, 0.6, 0.3):
@@ -145,10 +156,10 @@ if __name__ == "__main__":
         check(err < 1e-6, f"dual (Delta, Phi) = primal U(1), n = 4..6, kappa = 1, 0.6, 0.3 "
               f"(error {err:.1e})")
     except ImportError:
-        print("(sin cvxpy: omito la validación primal)")
+        print("(omito la validación primal)")
 
     # --- barrido ----------------------------------------------------------
-    kappas = [1.0, 0.8, 0.6, 0.4]
+    kappas = args.kappas
     ns = list(range(4, 19))
     rows = []
     print("\n kappa  n   v(0)        v(pi)       v0-vpi       Delta*(0) Delta*(pi)  Phi*(0)/pi Phi*(pi)/pi  gap1(0)  gap2(0)",
@@ -172,7 +183,7 @@ if __name__ == "__main__":
         if r["kappa"] == 1.0 and n % 2 == 0:
             cota = 4 * xxz.eps(n, 1.0, np.pi) / 3
             check(r["vpi"] <= cota + 1e-9, f"n={n}: v(pi) <= 4 eps_n(1, pi)/3 (giro del testigo)")
-    out = Path(__file__).resolve().parents[1] / "data" / "neel_u1.csv"
+    out = args.out
     with open(out, "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0]))
         w.writeheader()
