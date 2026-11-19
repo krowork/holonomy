@@ -48,8 +48,10 @@ es que la robustez frente a la holonomía corresponde a que el testigo óptimo t
 desdoblamiento por ruptura de simetría compatible con $n$, y que un testigo crítico, de rigidez de
 espín finita, da sensibilidad $1/n^2$. Con carga semientera el mecanismo del teorema está prohibido, una versión MPS de
 Lieb--Schultz--Mattis, y solo vuelve rompiendo la traslación con una celda compatible con $n$; con
-testigo crítico la sensibilidad queda acotada por debajo por la respuesta del testigo a un flujo, y
-numéricamente es del orden de $1/n^2$. La implicación «datos MPS $\Rightarrow$
+testigo crítico la sensibilidad queda acotada por debajo por la respuesta del testigo a un flujo.
+Numéricamente, con el Bethe ansatz hasta $n=3001$, la sensibilidad cae exponencialmente cuando el
+testigo límite tiene gap y $n$ es par, como $1/n^3$ con $n$ impar (un solo defecto masivo) y como
+$1/n^2$ con testigo crítico, con la constante que da la rigidez de Shastry--Sutherland. La implicación «datos MPS $\Rightarrow$
 robustez» está demostrada. De la recíproca, para datos $U(1)$ en un anillo de qubits, se demuestran
 el signo de la dependencia en $\Theta$ y una cota del déficit por la respuesta a un flujo del
 testigo óptimo, mediante una reducción por simetría y un argumento de Marshall.
@@ -128,9 +130,11 @@ son:
   celda (Teorema~\ref{teo:celda}), y con carga semientera la celda ha de ser par
   (Corolario~\ref{cor:lsmk}). La diagonalización exacta del testigo de Néel
   (Sección~\ref{sec:neel}) y el Néel clásico (Proposición~\ref{prop:neelclas}) muestran que la
-  paridad de $n$ es real: en Néel profundo, robustez con $n$ par y, con $n$ impar, una sensibilidad
-  polinómica, que hasta $n=21$ es del orden de $1/n^2$ pero que, por ser un solo defecto masivo
-  el que acopla al flujo, se espera que acabe cayendo como $1/n^3$. El signo de la dependencia
+  paridad de $n$ es real: con $\kappa<1$, robustez con $n$ par y, con $n$ impar, una sensibilidad
+  polinómica, que hasta $n=21$ parece del orden de $1/n^2$ pero que, por ser un solo defecto masivo
+  el que acopla al flujo, cae como $1/n^3$: lo muestra el Bethe ansatz hasta $n=3001$, que también
+  zanja el régimen de Néel débil, cerca de $\kappa=1$, como exponencial con una longitud que
+  diverge al acercarse al caso crítico (Proposición~\ref{prop:limite}). El signo de la dependencia
   en $\Theta$ sí se demuestra, para todo $\kappa$: una reducción por simetría lleva el testigo
   óptimo a un XXZ que es estocástico tras un giro de Marshall, y girándolo, $\Theta=0$ es el máximo
   con $n$ par y $\Theta=\pi$ con $n$ impar. El déficit queda acotado por la respuesta de ese XXZ a
@@ -145,7 +149,7 @@ desdoblamiento por ruptura de simetría compatible con $n$: entonces su energía
 responde al flujo \cite{kohn,watanabe}. Un testigo crítico tiene \emph{rigidez} finita
 \cite{shastry} y da $1/n^2$. Entre ambos queda el anillo impar con orden de Néel: un solo defecto
 móvil acopla al flujo, la sensibilidad deja de ser exponencial, pero la rigidez tiende a cero y la
-sensibilidad cae, numéricamente, más deprisa que $1/n^2$. Aquí solo se
+sensibilidad cae, numéricamente, como $1/n^3$. Aquí solo se
 demuestra la mitad que va de los datos MPS a la robustez y, de la recíproca, para los datos $U(1)$
 del anillo de qubits, el signo y la reducción del déficit a la respuesta a un flujo del testigo
 óptimo (Corolario~\ref{cor:paridad}); el resto se discute en la Sección~\ref{sec:conclusiones}.
@@ -239,7 +243,9 @@ con $I/d^2+\Delta$ a $10^{-16}$.
 \begin{itemize}
 \item[(M1)] \emph{inyectividad}: para algún $L_0$, los productos $A^{s_1}\cdots A^{s_L}$ generan
   $M_D(\mathbb C)$ para todo $L\ge L_0$. En particular, el canal
-  $\mathcal E(X)=\sum_sA^sXA^{s\dagger}$ puede normalizarse con $\mathcal E(I)=I$, tiene un único
+  $\mathcal E(X)=\sum_sA^sXA^{s\dagger}$ puede normalizarse con $\mathcal E(I)=I$ (con el cambio de
+  gauge $A^s\to R^{-1/2}A^sR^{1/2}$, donde $R>0$ es su punto fijo; $R$ conmuta con el $u_t$ de (M2),
+  porque $\Ad_{u_t}$ conmuta con $\mathcal E$ y el punto fijo es único, así que (M2) se conserva), tiene un único
   punto fijo dual $\Lambda>0$ con $\tr\Lambda=1$, y el resto de su espectro tiene módulo
   $\le\lambda<1$. Tomamos $\lambda$ igual al mayor de esos módulos, y $J$ el mayor tamaño de los
   bloques de Jordan de los autovalores de módulo $\lambda$ ($J=1$ si son semisimples, por ejemplo
@@ -271,8 +277,9 @@ sensibilidad a la holonomía decae exponencialmente.
 \]
 el MPS con el giro $w$ en cada enlace virtual. Insertar un flujo actuando con la simetría sobre
 los enlaces virtuales es una técnica estándar para leer respuestas a flujo y bombeo de carga en MPS
-\cite{zaletel-mong-pollmann}; aquí se usa solo para construir un estado primal. Es invariante bajo la traslación compuesta con
-$e^{-i\phi Q}$, así que basta estudiar una arista.
+\cite{zaletel-mong-pollmann}; aquí se usa solo para construir un estado primal. Como todos los
+$B^s$ son iguales y la traza es cíclica, $\psi_\Theta$ es invariante por traslación, así que todas
+sus marginales de arista coinciden y basta estudiar una.
 
 \emph{Transferencia.} Por (M2), $\Ad_u\circ\mathcal E=\mathcal E\circ\Ad_u$: en efecto,
 $u\,\mathcal E(X)u^\dagger=\sum_s(uA^su^\dagger)(uXu^\dagger)(uA^su^\dagger)^\dagger$ y las fases se
@@ -305,10 +312,7 @@ $n\ge n_0$, uniformemente en $\Theta$.
 
 \emph{Dilución.} Las marginales de $\psi_\Theta$ son $I/d^2+\tau_j+\Delta_j$ con
 $\|\Delta_j\|_1\le\varepsilon_n$. En el gauge uniforme $\tau_j$ no depende de $j$, y las marginales de
-$\psi_\Theta$ tampoco: por (M2), y porque $w$ conmuta con $u_t$, la amplitud
-$\tr(B^{s_0}\cdots B^{s_{n-1}})$ solo es no nula con carga total nula, así que las marginales de
-arista conmutan con $Q\otimes1+1\otimes Q$, y la traslación compuesta con $e^{-i\phi Q}$ las lleva
-de una arista a la siguiente sin cambiarlas. Así $\Delta_j=\Delta$ para todo $j$. $\Delta$ tiene
+$\psi_\Theta$ tampoco, por la invariancia por traslación. Así $\Delta_j=\Delta$ para todo $j$. $\Delta$ tiene
 traza nula y $\tr_1\Delta=\tr_2\Delta$, porque $\tau$ y las marginales de un estado global
 invariante por traslación cumplen lo mismo. Para $\tau_j$: la reducción de
 $\sigma$ sobre cualquiera de sus dos sitios es la marginal de un sitio del MPS, y conmuta con $Q$
@@ -415,7 +419,7 @@ de norma traza $\tfrac{4(5+c)}9$ cada uno; y el bloque $m=0$ tiene polinomio car
 proporcional a $x\,\big(27x^2-(24c+120)x+8c^2-64c-520\big)$. El término independiente es negativo en
 $[-1,1]$, así que las dos raíces no nulas tienen signos opuestos y su norma traza es su diferencia,
 $\sqrt{288(245+44c-c^2)}/27$. Sumando sale $f$. Las dos partes crecen con $c$ en $[-1,1]$, así que
-$\max f=f(0)=16$.
+el máximo está en $c=1$: $\max_\Theta f=f(\Theta{=}0)=16$.
 
 \emph{Cota.} El denominador es $\ge3^n-3$, luego $\varepsilon_n\le16/(3^n-3)$, y del
 Teorema~\ref{teo:mps}, con $r'=1/171$, $p\ge1-\eta=1/(1+171\,\varepsilon_n)$.
@@ -463,9 +467,12 @@ $n$ & $\max_\Theta\varepsilon_n$ & $3^n\max_\Theta\varepsilon_n$ & cota inferior
 \end{center}
 Son los valores de la Proposición~\ref{prop:aklt}: $3^n\varepsilon_n\to f(\Theta)$, de $16$ en
 $\Theta=0$ a $112/9$ en $\Theta=\pi$. El máximo está en $\Theta=0$, donde $\varepsilon_n$ mide solo la diferencia entre el
-anillo finito y la cadena infinita. Lo que depende de la holonomía,
-$\|\rho^{(n)}(\Theta)-(1\otimes V)\rho^{(n)}(0)(1\otimes V)^\dagger\|_1$, es todavía menor:
-$3{,}3\times10^{-3}$, $4{,}0\times10^{-5}$ y $5{,}0\times10^{-7}$ en $n=8$, 12 y 16.
+anillo finito y la cadena infinita. Lo que depende de la holonomía en el MPS retorcido,
+$\max_\Theta\|\rho^{(n)}(\Theta)-(1\otimes V)\rho^{(n)}(0)(1\otimes V)^\dagger\|_1$, no es menor
+sino del mismo orden: $3{,}3\times10^{-3}$, $4{,}0\times10^{-5}$ y $5{,}0\times10^{-7}$ en $n=8$, 12
+y 16, es decir, $\tfrac43\max_\Theta\varepsilon_n$ (dentro de la cota triangular
+$\varepsilon_n(\Theta)+\varepsilon_n(0)$). La dependencia en $\Theta$ del valor óptimo
+$p(n,\Theta)$ sí es mucho menor que $\varepsilon_n$ (tabla siguiente).
 
 \paragraph{SDP exacto.} El primal completo, diagonal por bloques de $S^z$ total, da $p(n,\Theta)$
 en $n=4$ y $5$, y desde $n=6$ no cabe en memoria. Para llegar a $n=8$
@@ -508,9 +515,13 @@ $0{,}71$--$0{,}76$ en $n=8$, según $\Theta$. Tres rasgos de los valores exactos
 \begin{itemize}
 \item la tendencia en $\Theta$ cambia de signo con la paridad de $n$ en los cinco tamaños
   (decreciente con $n$ par, creciente con $n$ impar), como en los anillos de qubits. Con qubits
-  ese signo se demuestra (Proposición~\ref{prop:marshall}); para AKLT haría falta que el testigo
-  óptimo, que tiene términos bicuadráticos, fuera estocástico tras un giro de Marshall, y no lo
-  hemos comprobado;
+  ese signo se demuestra (Proposición~\ref{prop:marshall}); para AKLT esa vía está cerrada en la
+  base de $S^z$. En $\Theta_0=0$ los datos son invariantes por $SU(2)$, así que el testigo óptimo
+  puede tomarse de la forma $a\,\vec S_1\cdot\vec S_2+b\,(\vec S_1\cdot\vec S_2)^2$, y el ciclo
+  $\ket{{+}{-}}\to\ket{00}\to\ket{{-}{+}}\to\ket{{+}{-}}$ de un solo enlace, que un unitario
+  diagonal no cambia, tiene producto $(a-b)^2b$: solo es estocástico si $b\ge0$. El testigo de
+  techo $-P_2=-\tfrac13-\tfrac12\vec S_1\cdot\vec S_2-\tfrac16(\vec S_1\cdot\vec S_2)^2$, del que
+  cabe esperar que el óptimo esté cerca cuando $p\to1$, tiene $b<0$. El signo en AKLT necesita otro argumento;
 \item el déficit $1-p(n,0)$, que mide la distancia entre el anillo finito y la cadena infinita, cae
   de $2\times10^{-2}$ en $n\le5$ a $3{,}4\times10^{-6}$ en $n=8$;
 \item la sensibilidad $\max-\min$ cae mucho más deprisa que la cota $2736/(3^n-3+2736)$: un factor
@@ -535,7 +546,7 @@ $6{,}4\times10^{-5}$ para toda $\Theta$, y cae como $3^{-n}$.
 La Proposición~\ref{prop:lsm} deja abierta una puerta para espín $\tfrac12$: romper la
 traslación. Un orden de Néel tiene celda de dos sitios y, agrupando pares, carga entera por celda.
 Si esa puerta lleva a robustez exponencial se explora numéricamente, con diagonalizaciones exactas
-hasta $n=18$. El signo de la dependencia en $\Theta$ y una cota inferior del déficit sí se
+hasta $n=18$ (hasta $n=21$ en el barrido impar), y con el Bethe ansatz hasta $n=3001$. El signo de la dependencia en $\Theta$ y una cota inferior del déficit sí se
 demuestran (Lema~\ref{lem:reduccion} y Corolario~\ref{cor:paridad}).
 
 \paragraph{Datos y dual.} Anillo de qubits con datos $U(1)$ anisótropos en cada arista (gauge
@@ -741,19 +752,28 @@ sitios. Para $|\Phi|\le\pi$ el fundamental sigue en la rama sin corriente, y a t
 $E_0(1,\Phi)-E_0(1,0)=D_n\Phi^2/(2n)\,(1+o(1))$, con $D_n\to\tfrac14$: es el valor isótropo de la
 rigidez de Shastry y Sutherland \cite{shastry}, que en el lenguaje de líquidos de Luttinger es
 $vK/\pi$ con velocidad $v=\pi/2$ y parámetro $K=\tfrac12$. Con el Corolario~\ref{cor:paridad},
+saldría
 \[
-  \liminf_{n\to\infty}\,n^2\big[v(n,0)-v(n,\Theta)\big]\ \ge\ \frac{\Theta^2}6,\qquad|\Theta|\le\pi,
+  \liminf_{n\to\infty}\,n^2\big[v(n,0)-v(n,\Theta)\big]\ \overset{?}{\ge}\ \frac{\Theta^2}6,\qquad|\Theta|\le\pi
+  \qquad\text{(conjetura)},
 \]
 que en $\Theta=\pi$ es $\pi^2/6\approx1{,}645$. No es una demostración: el desarrollo cuadrático
 uniforme en $|\Phi|\le\pi$ es el de la teoría de bosonización, y en el punto isótropo la convergencia
 es lenta, con correcciones logarítmicas. Numéricamente, $D_n$ vale $0{,}2962$, $0{,}2871$ y
 $0{,}2816$ en $n=8$, $12$ y $18$; la parábola $D_n\pi^2/(2n)$ reproduce $E_0(1,\pi)-E_0(1,0)$ con un
 error que baja del 3,3\,\% en $n=8$ al 1,6\,\% en $n=18$, y la cota de $n^2$ por el déficit en $\Theta=\pi$, de $1{,}887$ a $1{,}824$, baja
-hacia $\pi^2/6$ al ritmo de $D_n$.
+hacia $\pi^2/6$ al ritmo de $D_n$. Con el Bethe ansatz hasta $n=3000$ el déficit mismo,
+$n^2[v(n,0)-v(n,\pi)]$, vale $1{,}7256$ en $n=3000$ y extrapolado en $1/\ln n$ da $1{,}650$
+($1{,}647$ con $n$ impar), a un $0{,}3$\,\% de $\pi^2/6$; ver el apartado de tamaños grandes más
+abajo.
 \end{observacion}
 
-\paragraph{Resultados.} La sensibilidad a la holonomía, multiplicada por $n^2$
-(\texttt{scripts/neel\_u1.py}, \texttt{data/neel\_u1.csv}):
+\paragraph{Resultados.} La sensibilidad a la holonomía, multiplicada por $n^2$, se calcula con
+\texttt{scripts/neel\_u1.py} (datos en \texttt{data/neel\_u1.csv}). Se mide como $v(n,0)-v(n,\pi)$, no como
+$\sup_{\Theta,\Theta'}|v(n,\Theta)-v(n,\Theta')|$: el Corolario~\ref{cor:paridad} garantiza que
+$\Theta_0$ es el máximo, pero no que $\Theta_0+\pi$ sea el mínimo, así que la tabla es una cota
+inferior del supremo, y una igualdad si $v(n,\cdot)$ es monótona en $[\Theta_0,\Theta_0+\pi]$, que
+no se ha demostrado. Lo mismo vale para la Figura~\ref{fig:sensibilidad}.
 \begin{center}\small
 \begin{tabular}{rc*{11}{r}}
 \toprule
@@ -790,14 +810,20 @@ Con decaimiento $1/n^2$ las filas serían constantes. Se leen tres regímenes.
   $3{,}71$), mientras que $n[E_0(\Delta^\ast,0)-E_0(\Delta^\ast,\pi)]$ cae de forma sostenida
   ($0{,}55$, $0{,}52$, $0{,}49$ y $0{,}46$), y la cota del Corolario~\ref{cor:paridad} explica entre
   el 97 y el 99\,\% del déficit. Si $\Delta^\ast(n)$ converge a un valor de la fase de Néel, el
-  déficit va como $1/n^3$. Con $\kappa=0{,}6$ y $0{,}8$, $\Delta^\ast$ está más cerca de $1$ y no
-  se ha comprobado.
+  déficit va como $1/n^3$. El Bethe ansatz lo confirma para $\kappa=0{,}4$, $0{,}6$ y $0{,}8$
+  hasta $n=3001$, con $\Delta^\ast(n)\to\Delta_\infty$, el mismo límite que con $n$ par
+  (Proposición~\ref{prop:limite} y apartado siguiente).
 \item \emph{Néel débil ($\kappa=0{,}6$ y $0{,}8$, $\Delta^*\approx1{,}9$ y $1{,}4$).} $n^2|\Delta v|$
-  decrece, pero despacio. La longitud de correlación de Néel, $\xi\approx\tfrac14e^{\pi^2/(2\gamma)}$ con
-  $\Delta=\cosh\gamma$ (asintótica cerca de $\Delta=1$), es $\approx12$ y $\approx58$: comparable
-  al anillo o mayor. Con $n\le18$ no se distingue del caso isótropo, que
-  también deriva por correcciones logarítmicas. Hacen falta tamaños de DMRG.
+  decrece, pero despacio. La longitud del desdoblamiento túnel, que es el doble de la longitud de
+  correlación de Néel, $\xi=2\xi_{\rm JKM}\approx\tfrac14e^{\pi^2/(2\gamma)}$ con $\Delta=\cosh\gamma$
+  (ver el apartado siguiente), es $\approx12$ y $\approx58$ con el
+  $\Delta^\ast$ de $n=18$, y $\approx14$ y $\approx74$ con el $\Delta_\infty$ de la cadena infinita:
+  comparable al anillo o mayor. Con $n\le18$ no se distingue del caso isótropo, que también deriva
+  por correcciones logarítmicas. El Bethe ansatz (apartado siguiente) zanja la cuestión: la caída
+  es exponencial, con $\xi=14{,}0$ y $74{,}2$.
 \end{itemize}
+En Néel profundo, el $\xi\approx3{,}2$ del ajuste con $n\le18$ es efectivo: con el prefactor
+$n^{-3/2}$ que muestran los tamaños grandes, $\xi=5{,}11$.
 Precisión: el ínfimo en $(\Delta,\Phi)$ se toma con una malla de 33 flujos y refinamiento local; para
 $n\le6$ coincide con el SDP primal restringido a $U(1)$ hasta $3\times10^{-8}$. Para $n\ge12$ el
 fundamental se calcula con Lanczos en cada sector de magnetización, arrancando del autovector
@@ -807,6 +833,135 @@ versión anterior de la tabla sobrestimaba así $v(n,\pi)$ hasta en $3\times10^{
 Como control, el barrido comprueba el signo de Marshall con $n$ par en todos los $\kappa$ y, con
 $\kappa=1$, la cota del Corolario~\ref{cor:paridad}. En todos los casos con $n\ge7$ el dual elige
 $\Phi^\ast\in\{0,\pi\}$ exactamente.
+
+\paragraph{Tamaños grandes: Bethe ansatz.} Por el Lema~\ref{lem:reduccion}, en $\Theta_0\in\{0,\pi\}$
+el dual es un ínfimo en una sola variable, $\Delta$, de la energía fundamental de un XXZ con flujo
+$\Theta_0$, que es integrable. Con las ecuaciones de Bethe del anillo con flujo
+(\texttt{scripts/neel\_bethe.py}, \texttt{data/neel\_bethe.csv}) se llega a $n=3001$. El cociente
+es cuasiconvexo en $\Delta$, porque $e_n$ es convexa (es un máximo de funciones afines de
+$\Delta$) y el denominador es afín, así que basta una búsqueda acotada. Controles: Bethe coincide
+con la diagonalización exacta a $2\times10^{-14}$ ($n=7,\dots,16$, $\Delta\in[0{,}3;\,10]$,
+$\Phi\in\{0,\pi/2,\pi\}$); el dual reducido reproduce la tabla anterior ($n=6,\dots,18$, ambas
+paridades) a $10^{-14}$; y en todos los puntos se cumplen el signo del Corolario~\ref{cor:paridad} y
+la cota de Kohn por los dos lados. Esta última es el Lema~\ref{lem:giro} aplicado en $\Theta_0$ y,
+al revés, en $\Theta_1=\Theta_0+\pi$, con el testigo óptimo de $\Theta_1$, que por el
+Lema~\ref{lem:reduccion} es también un XXZ alineado:
+\begin{equation}\label{eq:kohn2}
+  \frac{4\big[E_0(\Delta^\ast_1,\Theta_1)-E_0(\Delta^\ast_1,\Theta_0)\big]}{n(\Delta^\ast_1+2\kappa)}\ \ge\
+  v(n,\Theta_0)-v(n,\Theta_1)\ \ge\
+  \frac{4\big[E_0(\Delta^\ast_0,\Theta_1)-E_0(\Delta^\ast_0,\Theta_0)\big]}{n(\Delta^\ast_0+2\kappa)} .
+\end{equation}
+Las dos cotas convergen al déficit: sus cocientes con él pasan de $0{,}91$--$0{,}96$ y
+$1{,}04$--$1{,}09$ en $n=16$ (con $n$ par y $\kappa<1$) a $1$ con al menos tres cifras a tamaño
+grande. El testigo hacia el que
+convergen $\Delta^\ast_0(n)$ y $\Delta^\ast_1(n)$ lo fija la cadena infinita.
+
+\begin{proposicion}[testigo límite]\label{prop:limite}
+Sea $e_\infty(\Delta)$ la energía fundamental por enlace, cambiada de signo, del XXZ infinito
+\cite{yang-yang}, y $\Delta_\infty(\kappa)$ el mínimo de $4e_\infty(\Delta)/(\Delta+2\kappa)$ en
+$\Delta>-2\kappa$. Entonces $\Delta_\infty>1$ si $\kappa<1$, $\Delta_\infty=1$ si $\kappa=1$ y
+$\Delta_\infty<1$ si $\kappa>1$.
+\end{proposicion}
+
+\begin{proof}
+$e_\infty$ es convexa, como límite de las $e_n$, y por la solución exacta es derivable. En
+$\Delta=1$ el fundamental es invariante por $SU(2)$, y por Hellmann--Feynman
+$e_\infty'(1)=-\ev{S^z_iS^z_{i+1}}=-\tfrac13\ev{\vec S_i\cdot\vec S_{i+1}}=\tfrac13e_\infty(1)$. La
+derivada del cociente en $\Delta=1$ tiene el signo de $e_\infty'(1)(1+2\kappa)-e_\infty(1)=
+\tfrac23(\kappa-1)\,e_\infty(1)$, negativo si $\kappa<1$ y positivo si $\kappa>1$, y el cociente es
+cuasiconvexo.
+\end{proof}
+
+Así, con $\kappa<1$ el testigo límite está en la fase de Néel, con gap, y con $\kappa>1$ en la fase
+crítica. Como $|e_n(\Delta,\pi)-e_n(\Delta,0)|=O(1/n)$ y las $e_n$ convexas convergen
+uniformemente en compactos, $\Delta^\ast(n)\to\Delta_\infty$ en las dos paridades si el mínimo de
+la cadena infinita es único, como ocurre en todos los $\kappa$ calculados. Numéricamente, con $n$
+par la convergencia es rápida ($\kappa=0{,}4$: $\Delta^\ast=2{,}66004$ desde $n=60$) y con $n$
+impar es lenta, del orden de $1/n$ ($\kappa=0{,}4$: $2{,}6648$ en $n=3001$, frente a
+$\Delta_\infty=2{,}6600$). Con $\kappa=5/4$, $\Delta_\infty=\tfrac12$ y $v_\infty=\tfrac12$
+exactamente: es el punto de Razumov--Stroganov, con $e_\infty(\tfrac12)=\tfrac38$. Con
+$\kappa\gtrsim1{,}55$, $\Delta_\infty<0$, fuera del alcance del guion; $\kappa=2$ solo tiene los
+datos de diagonalización exacta.
+
+Los resultados están en la Figura~\ref{fig:sensibilidad}b y en la tabla siguiente, con
+$s(n)=v(n,\Theta_0)-v(n,\Theta_1)$; los ajustes son los de
+\texttt{scripts/neel\_bethe\_ajuste.py}, con los datos en \texttt{data/neel\_bethe\_ajuste.csv}:
+\begin{center}\small
+\begin{tabular}{llllll}
+\toprule
+régimen & $\kappa$ & $\Delta_\infty$ & $n$ & ajuste & predicción\\
+\midrule
+$n$ par, Néel & 0,4 & 2,660 & 32--92 & $\xi=5{,}113$ & $2\xi_{\rm JKM}=5{,}106$\\
+$s\approx An^{-3/2}e^{-n/\xi}$ & 0,6 & 1,850 & 80--230 & $\xi=14{,}03$ & $14{,}00$\\
+& 0,8 & 1,400 & 340--980 & $\xi=74{,}17$ & $74{,}01$\\
+& 0,9 & 1,206 & 1000--3000 & $\xi=619{,}4$ & $617{,}5$\\
+\midrule
+$n$ impar, un espinón & 0,4 & 2,660 & 1001--3001 & $n^3s\to16{,}98$ & $16{,}98$\\
+$s\approx C/n^3$ & 0,6 & 1,850 & 1001--3001 & $n^3s\to45{,}09$ & $45{,}09$\\
+& 0,8 & 1,400 & 1001--3001 & $n^3s\to216{,}1$ & $216{,}1$\\
+& 0,9 & 1,206 & 1001--3001 & $n^3s\approx2000$ & $1700$\\
+\midrule
+crítico & 1 & 1 & 1000--3001 & $n^2s\to1{,}647$ / $1{,}650$ & $\pi^2/6=1{,}645$\\
+$s\approx C/n^2$ & 1,25 & $\tfrac12$ & 1000--3001 & $n^2s\to2{,}0405$ & $2{,}0405$\\
+& 1,5 & 0,0945 & 1000--3001 & $n^2s\to2{,}0287$ & $2{,}0287$\\
+\bottomrule
+\end{tabular}
+\end{center}
+En el régimen de Néel, la predicción es el doble de la longitud de correlación exacta del XXZ
+\cite{jkm}, con $\Delta_\infty=\cosh\gamma_\infty$:
+\[
+  \xi_{\rm JKM}^{-1}=\gamma+2\sum_{m\ge1}\frac{(-1)^m}m\tanh(m\gamma),\qquad
+  2\xi_{\rm JKM}=\xi_{\rm as}\big(1+O(e^{-\pi^2/\gamma})\big),\quad
+  \xi_{\rm as}=\tfrac14e^{\pi^2/(2\gamma)},
+\]
+donde $\xi_{\rm as}$ es el doble de la forma asintótica, $\tfrac18e^{\pi^2/(2\gamma)}$, cerca de
+$\Delta=1$. Con estos $\Delta_\infty$ las dos solo se separan en $\kappa=0{,}4$ ($\xi_{\rm as}=5{,}122$),
+pero el desdoblamiento $R_n=E_0(\Delta,\pi)-E_0(\Delta,0)$, calculado directamente a $\Delta$ fijo
+(\texttt{scripts/xi\_tunel.py}), las distingue: con el ajuste
+$\log R_n=a-\tfrac12\log n-n/\xi+c/n$ sale $\xi=2\xi_{\rm JKM}$ al $0{,}03$\,\% en
+$\Delta=2$, $2{,}66$, $4$, $6$ y $10$, mientras que $\xi_{\rm as}$ se desvía hasta un $5$\,\% (en
+$\Delta=10$, $1{,}300$ frente a $1{,}2369$ y $1{,}2369$); con el exponente libre, el prefactor sale
+$n^{-\beta}$ con $\beta\in[0{,}47;\,0{,}57]$. El residuo del ajuste en $\log s$ es $\le2{,}5\times10^{-3}$,
+mientras que una potencia pura deja residuos de $0{,}3$ a $0{,}96$. Con $n$ impar,
+$C=4c/(\Delta_\infty+2\kappa)$, con $c=\lim n^2[E_0(\Delta_\infty,0)-E_0(\Delta_\infty,\pi)]$, y la
+predicción no usa el ajuste: $c$ sale de la dispersión exacta del espinón (ecuación~\eqref{eq:espinon}
+más abajo). El exponente ajustado es $2{,}99$ salvo con $\kappa=0{,}9$, que con $n\le5\xi$ aún no es
+asintótico ($2{,}60$, y $n^3s\approx2000$ frente al límite $1700$). En el caso crítico, $C=2\pi^2D/(\Delta_\infty+2\kappa)$, con
+$D=\pi\sin\gamma/(4\gamma(\pi-\gamma))$, $\Delta_\infty=\cos\gamma$, la rigidez de
+Shastry--Sutherland \cite{shastry}; con $\kappa=1$, $D=\tfrac14$ y la extrapolación se hace en
+$1/\ln n$, la de $n$ impar y la de $n$ par, por el operador marginal.
+
+En los tres regímenes el mecanismo es el mismo: $s=4R_n/(n(\Delta_\infty+2\kappa))\,(1+o(1))$, con
+$R_n=E_0(\Delta_\infty,\Theta_1)-E_0(\Delta_\infty,\Theta_0)$ la respuesta al giro del testigo
+límite; el cociente vale entre $0{,}993$ y $1{,}0003$ en el mayor $n$ de cada grupo, y con $n$
+impar se acerca a $1$ despacio, al ritmo de $\Delta^\ast(n)$. Lo que cambia
+es $R_n$:
+\begin{itemize}
+\item con $n$ par y $\kappa<1$, $R_n$ es el desdoblamiento túnel del doblete de Néel, cuyos dos
+  niveles se cruzan en $\Phi=\pi$, y va como $n^{-1/2}e^{-n/\xi}$ (exponente ajustado
+  $0{,}55$--$0{,}56$);
+\item con $n$ impar y $\kappa<1$, es la energía de giro de un solo espinón masivo, $c/n^2$, con
+  $c=14{,}689$, $34{,}383$ y $162{,}08$ en $\kappa=0{,}4$, $0{,}6$ y $0{,}8$: la curvatura de su
+  banda. Con la dispersión exacta del espinón del XXZ con $\Delta=\cosh\gamma>1$
+  \cite{des-cloizeaux-gaudin,jkm},
+  $\varepsilon(p)=\pi^{-1}\sinh\gamma\,K(k)\sqrt{1-k^2\cos^2p}$, con $k$ el módulo elíptico de nomo
+  $e^{-\gamma}$ y $k'=\sqrt{1-k^2}$, los valores de Bethe coinciden a cinco o seis cifras con
+  \begin{equation}\label{eq:espinon}
+    c=\frac{\pi^2}8\,\varepsilon''(0)=\frac\pi8\,\sinh\gamma_\infty\,K(k)\,\frac{k^2}{k'}
+  \end{equation}
+  ($14{,}6889$, $34{,}3831$ y $162{,}082$). Es la parábola de la banda con el momento desplazado
+  en $\pi/(2n)$ cuando el flujo pasa de $\Theta_0$ a $\Theta_0+\pi$, como corresponde a una
+  partícula de $S^z=\tfrac12$. Con $\kappa=0{,}9$ da $c=1277{,}9$, y el $c\approx1506$ de
+  $n\le3001$ aún no es asintótico;
+\item en el caso crítico es la parábola de la rigidez, $nR_n\to\pi^2D/2$: $1{,}53039$ y
+  $1{,}56946$ en $\kappa=1{,}25$ y $1{,}5$, y $1{,}236$--$1{,}237$ en $\kappa=1$, frente a
+  $\pi^2/8=1{,}2337$.
+\end{itemize}
+Esto explica las tendencias de la tabla con $n\le18$. En Néel débil, mientras $n\lesssim\xi$,
+$n^2s$ casi no cambia ($\kappa=0{,}9$: de $1{,}71$ a $1{,}40$ entre $n=16$ y $88$) e imita el caso
+crítico; la caída exponencial empieza en $n\sim\xi$, que diverge como $e^{\pi^2/(2\gamma_\infty)}$
+cuando $\kappa\to1^-$. Con $n$ impar y $\kappa=0{,}4$, $n^2s$ tiene su máximo, $\approx0{,}432$, cerca
+de $n=17$, y luego cae como $1/n$.
 
 \begin{observacion}[lectura]
 El cuadro encaja con la Proposición~\ref{prop:lsm}. Con espín semientero e invariancia por
@@ -824,13 +979,17 @@ de ningún MPS de celda (problema abierto~2), se comporten igual.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.78\textwidth]{sensibilidad.pdf}
-\caption{Sensibilidad a la holonomía, $|p(n,0)-p(n,\pi)|$, en escala logarítmica: AKLT (SDP
-exacto, Sección~\ref{sec:aklt}) y el anillo de qubits con datos $U(1)$ (Sección~\ref{sec:neel}, donde
-el parámetro se llama $v$), con $\kappa=0{,}4$ separado por paridad y con $\kappa=1$, de testigo
-crítico. Una recta es un decaimiento exponencial. El caso crítico sigue $1/n^2$; el de $n$
-impar es polinómico y en este rango se parece a $1/n^2$, pero se espera $1/n^3$ a tamaños mayores
-(Sección~\ref{sec:neel}).}
+\includegraphics[width=\textwidth]{sensibilidad.pdf}
+\caption{Sensibilidad a la holonomía, $|p(n,0)-p(n,\pi)|$ (en la Sección~\ref{sec:neel} el
+parámetro se llama $v$). El color identifica los datos y el trazo la paridad: continuo con $n$ par,
+discontinuo con $n$ impar, punteado en el caso crítico. (a) $n\le18$, escala semilogarítmica, donde
+una recta es un decaimiento exponencial: AKLT (SDP exacto, Sección~\ref{sec:aklt}) y el anillo de
+qubits con datos $U(1)$, con $\kappa=0{,}4$ y con $\kappa=1$, de testigo crítico. (b) Bethe ansatz
+y dual reducido hasta $n=3001$, en escala doble logarítmica, donde una recta es una potencia: con
+$n$ par y $\kappa<1$ la caída es exponencial, con $\xi=5{,}1$ ($\kappa=0{,}4$) y $\xi=74$
+($\kappa=0{,}8$, que hasta $n\sim\xi$ imita el caso crítico); con $n$ impar, $1/n^3$; con
+$\kappa=1$, $1/n^2$. Las rectas grises son las pendientes $n^{-2}$ y $n^{-3}$; las curvas de $n$ par
+se cortan cuando $s$ llega a $10^{-12}$, cerca del redondeo (Sección~\ref{sec:neel}).}
 \label{fig:sensibilidad}
 \end{figure}
 \FloatBarrier
@@ -1118,9 +1277,17 @@ que contiene el valor del SDP primal); los tres
 regímenes del testigo de Néel (diagonalización exacta, $n\le18$, con el dual contrastado con el
 primal en $n\le6$); la cota del déficit del Corolario~\ref{cor:paridad} con $\kappa=1{,}5$ y $2$ ($n\le17$, con
 el dual reducido del Lema~\ref{lem:reduccion}); la rigidez $D_n$ del anillo de Heisenberg y su
-parábola (Observación de la constante asintótica, $n\le18$); las cotas
-$\varepsilon_n=O(\lambda_2^{m-1})$ de los ejemplos aleatorios con celda doble; y el SDP exacto del
-ejemplo de celda triple hasta $n=9$.
+parábola (Observación de la constante asintótica, $n\le18$); las leyes de la sensibilidad a
+tamaños grandes, con el Bethe ansatz y el dual reducido hasta $n=3001$: exponencial con $n$ par y
+$\kappa<1$, con la longitud $2\xi_{\rm JKM}$ del desdoblamiento túnel del testigo límite (también
+comprobada a $\Delta$ fijo, $2\le\Delta\le10$); $1/n^3$ con $n$ impar y $\kappa<1$, con la
+curvatura de la banda de un espinón, que da la ecuación~\eqref{eq:espinon}; $1/n^2$ con $\kappa\ge1$, con la rigidez de Shastry--Sutherland
+(Bethe contrastado con la diagonalización exacta, y la cota de Kohn por los dos lados en todos los
+puntos); las cotas
+$\varepsilon_n=O(\lambda_2^{m-1})$ de los ejemplos aleatorios con celda doble; el SDP exacto del
+ejemplo de celda triple hasta $n=9$; y las dos hipótesis de la vía del testigo límite del problema
+abierto~2, con $\kappa\le0{,}8$, $n$ par hasta $1000$ y marginales contrastadas con la
+diagonalización exacta.
 
 \paragraph{La tesis: robustez, gap y rigidez.} La Figura~\ref{fig:sensibilidad} reúne los tres comportamientos. En los casos demostrados la cota superior la da un
 testigo explícito: si $\sigma\ket\chi=0$, la suma de los proyectores sobre $\chi$ en el marco girado
@@ -1129,12 +1296,16 @@ $\Theta$ (en AKLT, el MPS retorcido es exactamente su estado fundamental). Es un
 exactamente nula, y el MPS retorcido es el estado primal que casi lo satura. La lectura es que la
 sensibilidad a la holonomía mide la rigidez de espín del testigo óptimo: nula con gap, o con un
 desdoblamiento por ruptura de simetría compatible con $n$; finita en la fase crítica, donde da
-$1/n^2$ (fila $\kappa=1$ de la Sección~\ref{sec:neel}). Con $n$ incompatible con la celda queda
-un caso intermedio: un defecto móvil acopla al flujo y la sensibilidad deja de ser exponencial, pero
-un solo defecto masivo tiene rigidez que tiende a cero, y numéricamente la sensibilidad tiende a
-caer más deprisa que $1/n^2$ (Sección~\ref{sec:neel}). Así, la dicotomía es «exponencial frente a
+$1/n^2$, con la constante $2\pi^2D/(\Delta_\infty+2\kappa)$ de la rigidez $D$ (fila $\kappa=1$
+de la Sección~\ref{sec:neel} y Bethe ansatz con $\kappa\ge1$). Con $n$ incompatible con la celda
+queda un caso intermedio: un defecto móvil acopla al flujo y la sensibilidad deja de ser
+exponencial, pero un solo defecto masivo tiene rigidez que tiende a cero, y numéricamente la
+sensibilidad cae como $1/n^3$ (Sección~\ref{sec:neel}). En los tres casos el déficit es, a tamaño
+grande, exactamente la respuesta al giro del testigo límite. Así, la dicotomía es «exponencial frente a
 polinómica» y no exactamente «rigidez nula frente a positiva». Aquí solo se demuestra la dirección
-«datos MPS $\Rightarrow$ robustez»; de la recíproca, para los datos $U(1)$ del anillo de qubits,
+«datos MPS $\Rightarrow$ robustez», y solo para datos cuyo parámetro pegable tiende al techo,
+$p\to1$. La robustez del Néel con $\kappa<1$ y $n$ par, con $v_\infty<1$ (por ejemplo
+$0{,}8736$ con $\kappa=0{,}4$), es de otra clase y por ahora solo numérica (problema abierto~2); de la recíproca, para los datos $U(1)$ del anillo de qubits,
 el signo y la cota del déficit por la respuesta a un flujo del testigo óptimo, que con datos de
 Werner y $n$ par es la rigidez del anillo de Heisenberg (Corolario~\ref{cor:paridad}).
 
@@ -1146,49 +1317,92 @@ Werner y $n$ par es la rigidez del anillo de Heisenberg (Corolario~\ref{cor:pari
   giro, al estilo de Kohn \cite{kohn}, y cuando esa respuesta tiene signo fijo
   (Proposición~\ref{prop:marshall}) es ya la recíproca. Para los datos $U(1)$ del anillo de qubits ese signo está demostrado
   (Corolario~\ref{cor:paridad}), y falta probar que
-  $E_0(\Delta^\ast,\Theta_0+\pi)-E_0(\Delta^\ast,\Theta_0)\ge c/n$ uniformemente en $n$. Hay tres
-  casos. Con $\kappa>1$, $\Delta^\ast\in(-1,1)$ y es la rigidez del XXZ crítico \cite{shastry};
-  falta además ver que $\Delta^\ast(n)$ se queda en un compacto de $(-1,1)$. Con $\kappa=1$ y $n$
-  impar, $\Delta^\ast(n)\to1^+$ y $n[E_0(\Delta^\ast,0)-E_0(\Delta^\ast,\pi)]\approx1{,}38$ es estable
-  hasta $n=17$: parece el caso crítico. Con $n$ impar y $\kappa<1$, en cambio, la condición
-  probablemente es falsa: $\Delta^\ast>1$, la diferencia es la energía de giro de un solo espinón
-  masivo, y con $\Delta$ fijo en la fase de Néel va como $1/n^2$. El problema es entonces otro:
-  determinar a dónde converge $\Delta^\ast(n)$ (con $\kappa=0{,}4$ baja de $10{,}1$ en $n=9$ a
-  $3{,}71$ en $n=21$, quizá hacia el $\approx2{,}66$ de $n$ par; con $\kappa=0{,}8$, de $2{,}08$ a
-  $1{,}61$ entre $n=9$ y $17$) y demostrar que el déficit es $\Theta(n^{-3})$, como sugieren
-  $n\le21$. Con datos de Werner y $n$ par se reduce a la rigidez del anillo de Heisenberg, positiva según
-  el Bethe ansatz \cite{shastry}; aquí no se demuestra. Fuera de estos datos falta el caso de testigos que no sean estocásticos.
+  $E_0(\Delta^\ast,\Theta_0+\pi)-E_0(\Delta^\ast,\Theta_0)\ge c/n$ uniformemente en $n$. Con
+  $\kappa\ge1$ el testigo límite es crítico (Proposición~\ref{prop:limite}), y numéricamente
+  (Bethe ansatz hasta $n=3001$) la condición se cumple con la constante de la rigidez de
+  Shastry--Sutherland, y el déficit con la constante $2\pi^2D/(\Delta_\infty+2\kappa)$. Falta
+  demostrarlo: es una cota inferior de tamaño finito de la rigidez del XXZ crítico, uniforme en
+  $\Delta$ cerca de $\Delta_\infty$, y la convergencia $\Delta^\ast(n)\to\Delta_\infty$, que se
+  sigue de la unicidad del mínimo de la cadena infinita, comprobada solo numéricamente. Con datos de Werner y $n$ par es la rigidez
+  del anillo de Heisenberg, positiva según el Bethe ansatz \cite{shastry}; aquí no se demuestra.
+  Con $n$ impar y $\kappa<1$ la condición es falsa, pero no es un caso de la recíproca, porque el
+  testigo límite tiene gap: la diferencia es la energía de giro de un solo espinón masivo, $c/n^2$,
+  y el déficit, numéricamente, $4c/(n^3(\Delta_\infty+2\kappa))$. Demostrar que el déficit es
+  $\Theta(n^{-3})$ es otro problema abierto. Fuera de estos datos falta el caso de testigos que no
+  sean estocásticos.
 \item \emph{Datos que no son marginales de un MPS.} Con $0<\kappa\le1$, el $\sigma$ de la
   Sección~\ref{sec:neel} (el dato con $v=1$) tiene en el núcleo $\ket{\uparrow\uparrow}$ y
   $\ket{\downarrow\downarrow}$, así que la Proposición~\ref{prop:qubits} obliga a $f=\tfrac12$ y al Néel
   clásico, que es $\kappa=0$: no es marginal de ningún MPS de celda inyectiva, sea cual sea $k$; con
-  $\kappa>1$ ni siquiera es un estado. Aun así, en Néel profundo ($\kappa=0{,}4$) y con $n$ par se
-  comportan como si lo fueran; con $\kappa=1$ no (testigo crítico, $1/n^2$), y con $\kappa=0{,}6$ y
-  $0{,}8$ no se sabe (problema~3). Hace falta
+  $\kappa>1$ ni siquiera es un estado. Aun así, con $\kappa<1$ y $n$ par se comportan como si lo
+  fueran (caída exponencial, numéricamente para todo $\kappa<1$ calculado), y con $\kappa\ge1$ no
+  (testigo crítico, $1/n^2$). Hace falta
   un argumento de aproximación: que $p(n,\Theta)$ sea robusto en un entorno de las marginales MPS con
-  núcleo común, o una versión del Teorema~\ref{teo:celda} con datos de rango completo.
-\item \emph{Néel débil.} Con $\kappa=0{,}6$ y $0{,}8$ la longitud de correlación de Néel es
-  comparable al anillo; separar la caída exponencial del $1/n^2$ pide DMRG en anillos de
-  $n\sim100$.
+  núcleo común, o una versión del Teorema~\ref{teo:celda} con datos de rango completo. Una vía es
+  cambiar el testigo de techo por el testigo límite $h_\infty$ (aquí, el XXZ con $\Delta_\infty$).
+  Por la estacionariedad del mínimo que define $\Delta_\infty$ (Proposición~\ref{prop:limite}), las marginales del
+  fundamental de la cadena infinita son exactamente los datos con $v_\infty$. Si, para $n$ par y
+  uniformemente en $\Theta$, (i) la energía fundamental por enlace del anillo retorcido difiere de la
+  de la cadena infinita en $O(e^{-n/\xi})$ y (ii) las marginales de su fundamental difieren de los
+  datos en $O(e^{-n/\xi})$, entonces el dual con $h_\infty$ girado da
+  $v(n,\Theta)\le v_\infty+O(e^{-n/\xi})$, el Lema~\ref{lem:dilucionti} da
+  $v(n,\Theta)\ge v_\infty-O(e^{-n/\xi})$, y la sensibilidad es $O(e^{-n/\xi})$. Es el
+  Teorema~\ref{teo:mps} con $h_\infty$ en lugar del hamiltoniano padre, y reduce el caso a dos
+  enunciados de tamaño finito del XXZ con gap. Con $n$ impar, la misma cuenta solo da $O(1/n)$.
+  Numéricamente (i) y (ii) se cumplen (\texttt{scripts/testigo\_limite.py}, con $\kappa=0{,}4$,
+  $0{,}6$ y $0{,}8$, $n$ par hasta $1000$ y el máximo sobre nueve $\Theta\in[0,\pi]$). La marginal
+  del fundamental retorcido sale de Bethe: $\ev{S^z_iS^z_{i+1}}=\partial_\Delta E_0/n$, la
+  corriente es $\partial_\Phi E_0$ y el salto, el resto de $E_0/n$; coincide con la del autovector de
+  diagonalización exacta a $2\times10^{-11}$ ($n\le14$, $\Theta<\pi$). Las dos diferencias caen con
+  la longitud del desdoblamiento túnel, $\xi=2\xi_{\rm JKM}$ (problema~3): la de energía como
+  $n^{-3/2}e^{-n/\xi}$ y la de marginales, en norma traza, como $n^{-1/2}e^{-n/\xi}$, con $\xi$
+  ajustada igual a $2\xi_{\rm JKM}$ a $0{,}4$\,\% o menos. La horquilla resultante,
+  $v_\infty/(1+76\,\delta_n)\le v(n,\Theta)\le4e_n(\Delta_\infty,\Theta)/(\Delta_\infty+2\kappa)$,
+  deja una sensibilidad de como mucho $3{,}4\times10^{-10}$ ($\kappa=0{,}4$, $n=120$),
+  $1{,}4\times10^{-9}$ ($\kappa=0{,}6$, $n=320$) y $3{,}8\times10^{-7}$ ($\kappa=0{,}8$, $n=1000$).
+  Es peor que la sensibilidad real en un factor polinómico, porque la dilución cuesta $\delta_n$ y
+  no $\delta_n^2$, pero tiene el exponente correcto. Lo que falta es demostrar (i) y (ii) para el XXZ
+  con $\Delta>1$, con esa longitud.
+\item \emph{Las constantes de los tres regímenes.} El Bethe ansatz las da numéricamente; falta
+  derivarlas. Con $n$ impar, la constante sale de la dispersión exacta del espinón,
+  ecuación~\eqref{eq:espinon}, que reproduce los valores de Bethe a cinco o seis cifras; falta
+  demostrar que la energía de giro es la de la parábola de la banda. Con $n$ par y $\kappa<1$, el
+  desdoblamiento del doblete va como $n^{-1/2}e^{-n/\xi}$ con $\xi=2\xi_{\rm JKM}$, el doble de la
+  longitud de correlación de Johnson--Krinsky--McCoy: los ajustes a $\Delta$ fijo lo dan al
+  $0{,}03$\,\% en $2\le\Delta\le10$ y descartan $\tfrac14e^{\pi^2/(2\gamma)}$, que se desvía hasta
+  un $5$\,\%. Falta derivar la ley y su prefactor de las ecuaciones de Bethe del doblete, y cubrir
+  $\kappa\gtrsim1{,}55$, donde $\Delta_\infty<0$ y el guion de Bethe no llega.
 \item \emph{La sensibilidad de AKLT.} Hasta $n=8$ cae como $\sim10^{-3}$ cada dos sitios, mucho
   más deprisa que la cota $\sim3^{-n}$ del teorema: los cocientes entre $n$ y $n+2$ son $\approx770$
   ($n=5$) y $\approx1200$ ($n=6$), cerca de $3^6$, lo que sugiere $\lambda^{3n}$. Con dos cocientes
-  no se puede afirmar. Falta entender esa ley, y si la cota es mejorable en general o solo para
-  AKLT.
+  no se puede afirmar; el dual con Lanczos por bloques de magnetización y momento debería llegar
+  a $n=10$--$12$. Falta entender esa ley, y si la cota es mejorable en general o solo para
+  AKLT. Tampoco está demostrado el cambio de signo con la paridad, y no puede salir del argumento
+  de Marshall en la base de $S^z$ (Sección~\ref{sec:aklt}).
 \item \emph{Rango completo.} En el ejemplo aleatorio de espín $\tfrac12$ y celda doble, $\sigma$ tiene
   rango completo: vale la cota inferior, pero $p$ puede superar $1$ y nada impide que dependa de
   $\Theta$ a orden mayor. Falta un techo que sustituya al del núcleo.
 \item \emph{Holonomías no abelianas.} El marco supone una $U(1)$ en la que vive toda la holonomía.
   En grafos con dos ciclos y holonomías que no conmutan no hay gauge uniforme ni un único flujo.
+\item \emph{Cuestiones menores.} Que $v(n,\cdot)$ sea monótona en $[\Theta_0,\Theta_0+\pi]$, sin lo
+  cual $v(n,\Theta_0)-v(n,\Theta_0+\pi)$ es solo una cota inferior de la sensibilidad; la unicidad
+  del mínimo $\Delta_\infty(\kappa)$; los datos con $\kappa=2$, que solo tienen diagonalización
+  exacta; y una versión del argumento de Marshall con $d>2$.
 \end{enumerate}
 
+\begin{sloppypar}
 \paragraph{Reproducibilidad.} Los guiones están en \texttt{scripts/} del repositorio
 \texttt{holonomy}, \url{https://github.com/krowork/holonomy}: \texttt{aklt\_twist.py} y \texttt{aklt\_sdp\_ti.py} (Sección~\ref{sec:aklt}), \texttt{neel\_u1.py} con los
-datos en \texttt{data/neel\_u1.csv} y \texttt{neel\_impar.py} para el barrido impar hasta $n=21$
-(Sección~\ref{sec:neel}), \texttt{mps\_celda.py} y
+datos en \texttt{data/neel\_u1.csv}, \texttt{neel\_impar.py} para el barrido impar hasta $n=21$, y
+\texttt{testigo\_limite.py} y \texttt{xi\_tunel.py} (problemas abiertos 2 y 3, datos en
+\texttt{data/testigo\_limite.csv} y \texttt{data/xi\_tunel.csv}),
+\texttt{neel\_bethe.py} y \texttt{neel\_bethe\_ajuste.py}, con los datos en
+\texttt{data/neel\_bethe.csv} y \texttt{data/neel\_bethe\_ajuste.csv}, para el Bethe ansatz hasta
+$n=3001$ (Sección~\ref{sec:neel}), \texttt{mps\_celda.py} y
 \texttt{qubits\_celda3.py} (Sección~\ref{sec:celda}), \texttt{dilucion\_uniforme.py}
 (Lema~\ref{lem:dilucionti}), y \texttt{figura\_sensibilidad.py} (Figura~\ref{fig:sensibilidad}). Requieren \texttt{numpy}, \texttt{scipy} y,
 para los SDP, \texttt{cvxpy} con \texttt{clarabel} o \texttt{scs}.
+\end{sloppypar}
 
 \begin{thebibliography}{99}
 
@@ -1234,6 +1448,19 @@ W.~Kohn, Theory of the insulating state, Phys.\ Rev.\ \textbf{133}, A171 (1964).
 \bibitem{shastry}
 B.~S. Shastry y B.~Sutherland, Twisted boundary conditions and effective mass in Heisenberg-Ising
 and Hubbard rings, Phys.\ Rev.\ Lett.\ \textbf{65}, 243 (1990).
+
+\bibitem{yang-yang}
+C.~N. Yang y C.~P. Yang, One-dimensional chain of anisotropic spin-spin interactions. I y II,
+Phys.\ Rev.\ \textbf{150}, 321 y 327 (1966).
+
+\bibitem{des-cloizeaux-gaudin}
+J.~des Cloizeaux y M.~Gaudin, Anisotropic linear magnetic chain, J.\ Math.\ Phys.\ \textbf{7}, 1384
+(1966).
+
+\bibitem{jkm}
+J.~D. Johnson, S.~Krinsky y B.~M. McCoy, Vertical-arrow correlation length in the eight-vertex
+model and the low-lying excitations of the $X$-$Y$-$Z$ Hamiltonian, Phys.\ Rev.\ A \textbf{8}, 2526
+(1973).
 
 \bibitem{bmns}
 S.~Bachmann, S.~Michalakis, B.~Nachtergaele y R.~Sims, Automorphic equivalence within gapped
