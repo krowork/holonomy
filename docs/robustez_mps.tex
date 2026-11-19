@@ -573,12 +573,20 @@ $e_n(\Delta,\Phi)=-E_0/n$ su energía fundamental por enlace, cambiada de signo,
   v_{\max}(n,\Theta;\kappa)\le\inf_{\Delta,\Phi}\frac{4\,e_n(\Delta,\Phi)}{\Delta+2\kappa\cos\big((\Phi-\Theta)/n\big)}.
 \]
 Por la $U(1)$, el testigo óptimo puede tomarse invariante, y los términos de dos sitios invariantes
-son estos tres, la identidad y un campo $Z$; por eso, salvo el campo, la cota es una igualdad.
+son estos tres, la identidad y un campo $Z$, y el campo no mejora la cota (abajo): la cota es una
+igualdad.
 Con $\kappa=1$ y $\Theta=0$ el ínfimo está en el punto isótropo $\Delta=1$, crítico (en
 $\Theta=\pi$, $\Delta^\ast$ va de $0{,}73$ en $n=8$ a $0{,}94$ en $n=18$); con $\kappa<1$ el testigo
 óptimo puede tener $\Delta>1$, en la fase de Néel. Dos detalles. El multiplicador de
-$\ev{Z_i}=0$, un campo uniforme en el testigo, no mejora la cota en ningún caso probado; en
-$\Theta\in\{0,\pi\}$ se demuestra (Lema~\ref{lem:reduccion}). Para $n$
+$\ev{Z_i}=0$, un campo en el testigo, no mejora la cota para ninguna $\Theta$. Promediando sobre
+las traslaciones, que fijan los datos en el gauge uniforme, el campo es uniforme,
+$\mu\sum_iZ_i$, y no cambia el denominador porque $\ev{Z_i}=0$. Conmuta con $H_{\rm XXZ}$, así que
+$\lambda_{\max}(-4H_{\rm XXZ}+\mu\sum_iZ_i)=\max_M\big[\lambda_M+\mu(2M-n)\big]$, con $\lambda_M$
+el mayor autovalor de $-4H_{\rm XXZ}$ en el sector de $M$ espines arriba: es una función convexa de
+$\mu$. La inversión $X^{\otimes n}$ lleva el sector $M$ al $n-M$ y $H_{\rm XXZ}(\Delta,\Phi)$ a
+$H_{\rm XXZ}(\Delta,-\Phi)$, que la conjugación compleja devuelve a $H_{\rm XXZ}(\Delta,\Phi)$ sin
+cambiar de sector; luego $\lambda_M=\lambda_{n-M}$, la función es par y su mínimo está en $\mu=0$.
+Para $n$
 impar y $\kappa$ pequeño el ínfimo está en $\Delta\to\infty$: es el techo clásico del antiferro de
 Ising frustrado, $v=(n-2)/n$, que no depende de $\Theta$ (en $n=5$ ya manda con $\kappa=0{,}6$ y $\Theta=\pi$, y
 con $\kappa\le0{,}4$ para toda $\Theta$). Con ambos detalles, el dual coincide con el SDP primal $U(1)$ en $n=4,5,6$,
@@ -772,8 +780,18 @@ abajo.
 \texttt{scripts/neel\_u1.py} (datos en \texttt{data/neel\_u1.csv}). Se mide como $v(n,0)-v(n,\pi)$, no como
 $\sup_{\Theta,\Theta'}|v(n,\Theta)-v(n,\Theta')|$: el Corolario~\ref{cor:paridad} garantiza que
 $\Theta_0$ es el máximo, pero no que $\Theta_0+\pi$ sea el mínimo, así que la tabla es una cota
-inferior del supremo, y una igualdad si $v(n,\cdot)$ es monótona en $[\Theta_0,\Theta_0+\pi]$, que
-no se ha demostrado. Lo mismo vale para la Figura~\ref{fig:sensibilidad}.
+inferior del supremo, y una igualdad si $v(n,\cdot)$ es monótona en $[\Theta_0,\Theta_0+\pi]$. Eso
+no se ha demostrado, pero se cumple numéricamente: con el dual completo en $(\Delta,\Phi)$ y Bethe
+(\texttt{scripts/monotonia\_theta.py}), en 33 valores de $\Theta\in[0,\pi]$, con
+$\kappa\in\{0{,}4;\,0{,}6;\,0{,}8;\,1;\,1{,}25\}$ y $8\le n\le129$ de ambas paridades, $v(n,\cdot)$ es
+estrictamente monótona (decreciente con $n$ par, creciente con $n$ impar) en todos los casos cuya
+variación supera el redondeo, y la tabla y la Figura~\ref{fig:sensibilidad} dan el supremo. La
+forma de la curva distingue los regímenes. Con $n$ par y gap, el flujo óptimo es $\Phi^\ast=\Theta$
+y $v(n,\Theta)\approx v(n,0)-s\,(1-\cos\tfrac\Theta2)$, la dependencia del doblete túnel. En el
+caso crítico el flujo óptimo se queda en la cúspide ($\Phi^\ast=\pi$ con $n$ par, $0$ con $n$
+impar) para casi toda $\Theta$, la dependencia viene solo del denominador y $v$ es una parábola en
+$\Theta_0+\pi-\Theta$. Con $n$ impar y gap, la curva tiende despacio a la parábola de la banda del
+espinón.
 \begin{center}\small
 \begin{tabular}{rc*{11}{r}}
 \toprule
@@ -1285,9 +1303,10 @@ curvatura de la banda de un espinón, que da la ecuación~\eqref{eq:espinon}; $1
 (Bethe contrastado con la diagonalización exacta, y la cota de Kohn por los dos lados en todos los
 puntos); las cotas
 $\varepsilon_n=O(\lambda_2^{m-1})$ de los ejemplos aleatorios con celda doble; el SDP exacto del
-ejemplo de celda triple hasta $n=9$; y las dos hipótesis de la vía del testigo límite del problema
+ejemplo de celda triple hasta $n=9$; las dos hipótesis de la vía del testigo límite del problema
 abierto~2, con $\kappa\le0{,}8$, $n$ par hasta $1000$ y marginales contrastadas con la
-diagonalización exacta.
+diagonalización exacta; y la monotonía de $v(n,\cdot)$ en $[\Theta_0,\Theta_0+\pi]$, con el dual
+completo, $\kappa\le1{,}25$ y $n\le129$.
 
 \paragraph{La tesis: robustez, gap y rigidez.} La Figura~\ref{fig:sensibilidad} reúne los tres comportamientos. En los casos demostrados la cota superior la da un
 testigo explícito: si $\sigma\ket\chi=0$, la suma de los proyectores sobre $\chi$ en el marco girado
@@ -1384,8 +1403,11 @@ Werner y $n$ par es la rigidez del anillo de Heisenberg (Corolario~\ref{cor:pari
   $\Theta$ a orden mayor. Falta un techo que sustituya al del núcleo.
 \item \emph{Holonomías no abelianas.} El marco supone una $U(1)$ en la que vive toda la holonomía.
   En grafos con dos ciclos y holonomías que no conmutan no hay gauge uniforme ni un único flujo.
-\item \emph{Cuestiones menores.} Que $v(n,\cdot)$ sea monótona en $[\Theta_0,\Theta_0+\pi]$, sin lo
-  cual $v(n,\Theta_0)-v(n,\Theta_0+\pi)$ es solo una cota inferior de la sensibilidad; la unicidad
+\item \emph{Cuestiones menores.} Demostrar que $v(n,\cdot)$ es monótona en
+  $[\Theta_0,\Theta_0+\pi]$, sin lo cual $v(n,\Theta_0)-v(n,\Theta_0+\pi)$ es solo una cota inferior
+  de la sensibilidad. Numéricamente lo es en todos los casos calculados ($\kappa\le1{,}25$,
+  $n\le129$; Sección~\ref{sec:neel}), y en el caso crítico, donde el flujo óptimo se queda en la
+  cúspide, la monotonía se reduce casi a la del denominador. También quedan la unicidad
   del mínimo $\Delta_\infty(\kappa)$; los datos con $\kappa=2$, que solo tienen diagonalización
   exacta; y una versión del argumento de Marshall con $d>2$.
 \end{enumerate}
@@ -1394,6 +1416,7 @@ Werner y $n$ par es la rigidez del anillo de Heisenberg (Corolario~\ref{cor:pari
 \paragraph{Reproducibilidad.} Los guiones están en \texttt{scripts/} del repositorio
 \texttt{holonomy}, \url{https://github.com/krowork/holonomy}: \texttt{aklt\_twist.py} y \texttt{aklt\_sdp\_ti.py} (Sección~\ref{sec:aklt}), \texttt{neel\_u1.py} con los
 datos en \texttt{data/neel\_u1.csv}, \texttt{neel\_impar.py} para el barrido impar hasta $n=21$, y
+\texttt{monotonia\_theta.py} (monotonía en $\Theta$, datos en \texttt{data/monotonia\_theta.csv}),
 \texttt{testigo\_limite.py} y \texttt{xi\_tunel.py} (problemas abiertos 2 y 3, datos en
 \texttt{data/testigo\_limite.csv} y \texttt{data/xi\_tunel.csv}),
 \texttt{neel\_bethe.py} y \texttt{neel\_bethe\_ajuste.py}, con los datos en
