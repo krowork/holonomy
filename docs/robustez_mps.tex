@@ -121,7 +121,9 @@ son:
   matriz de transferencia y $J$ el tamaño de su mayor bloque de Jordan (Teorema~\ref{teo:mps}). La demostración no pasa por el testigo: la cota inferior la
   da el MPS retorcido (el mismo MPS con la holonomía repartida entre sus enlaces virtuales) y la
   superior, el núcleo de $\sigma$. Una dilución con radio independiente de $n$
-  (Lema~\ref{lem:dilucionti}) evita perder un factor $n$.
+  (Lema~\ref{lem:dilucionti}) evita perder un factor $n$. Las dos cotas son un caso del teorema
+  puente (Teorema~\ref{teo:puente}), que separa toda cota de robustez en una primal y una dual de
+  tamaño finito, y reduce la extensión a datos que no son de MPS a dos cotas del testigo límite.
 \item Para AKLT la constante es explícita y la distancia entre datos y MPS retorcido tiene una
   fórmula cerrada (Proposición~\ref{prop:aklt}).
 \item Con carga semientera ese mecanismo no existe (Proposición~\ref{prop:lsm}), que es la versión
@@ -153,7 +155,8 @@ responde al flujo \cite{kohn,watanabe}. Un testigo crítico tiene \emph{rigidez}
 \cite{shastry} y da $1/n^2$, y el anillo impar con orden de Néel queda en medio, con $1/n^3$. La
 Sección~\ref{sec:conclusiones} separa lo demostrado de lo numérico.
 
-\paragraph{Organización.} La Sección~\ref{sec:marco} fija el problema y tres lemas. Las
+\paragraph{Organización.} La Sección~\ref{sec:marco} fija el problema, cuatro lemas y el teorema
+puente. Las
 Secciones~\ref{sec:teorema}--\ref{sec:aklt} demuestran el teorema MPS, la obstrucción con carga
 semientera y el caso AKLT; la última explora además MPS con $U(1)$ y $D=2$ y formula la
 Conjetura~\ref{conj:deficit}. La Sección~\ref{sec:neel} estudia el testigo de Néel: demuestra el signo de la dependencia en
@@ -187,28 +190,8 @@ arista, y una marginal de un estado es semidefinida positiva.
 Cuando vale este techo, llamamos \emph{déficit} a $1-p(n,\Theta)$ y \emph{sensibilidad} a
 $s=\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|$, que nunca supera el déficit máximo.
 
-\begin{lema}[dilución]\label{lem:dilucion}
-Sean $\Delta_j$ hermíticos de dos sitios, de traza nula y con reducciones compatibles,
-$\tr_1\Delta_{j-1}=\tr_2\Delta_j=:\delta_j$. Si $\|\Delta_j\|_1\le r/n$ con $r=1/(6d^2)$, existe un
-estado del anillo con marginales de arista exactamente $I/d^2+\Delta_j$.
-\end{lema}
-
-\begin{proof}
-Con $C_j=\Delta_j-\delta_j\otimes\tfrac Id-\tfrac Id\otimes\delta_{j+1}$, de reducciones nulas, sean
-\[
-  \omega_C=\frac1n\sum_j\Big(\frac I{d^2}+2nC_j\Big)_{j,j+1}\!\otimes\Big(\frac Id\Big)^{\otimes(n-2)},\qquad
-  \omega_\delta=\frac1n\sum_k\Big(\frac Id+2n\delta_k\Big)_k\otimes\Big(\frac Id\Big)^{\otimes(n-1)}.
-\]
-Como $C_j$ tiene reducciones nulas, el término $j$ de $\omega_C$ solo contribuye a la marginal de la
-arista $j$, y la de $\omega_C$ en esa arista es $I/d^2+2C_j$. La de $\omega_\delta$ es
-$I/d^2+2(\delta_j\otimes I/d+I/d\otimes\delta_{j+1})$. Así $\omega=\tfrac12(\omega_C+\omega_\delta)$
-tiene marginales $I/d^2+\Delta_j$, y es un estado si $\|C_j\|_\infty\le1/(2nd^2)$ y
-$\|\delta_k\|_\infty\le1/(2nd)$. Como la traza parcial no aumenta la norma traza,
-$\|\delta_k\|_1\le\|\Delta\|_1$ y $\|C_j\|_1\le3\|\Delta\|_1$, y basta $\|\Delta_j\|_1\le1/(6nd^2)$.
-\end{proof}
-
-El factor $n$ viene de repartir $n$ perturbaciones locales con peso $1/n$ y sobra cuando la
-perturbación es la misma en todas las aristas, que es el caso de los dos teoremas.
+La dilución siguiente convierte en un estado exacto una perturbación de $I/d^2$ que es la misma en
+todas las aristas, con un radio que no depende de $n$.
 
 \begin{lema}[dilución uniforme]\label{lem:dilucionti}
 Sea $n\ge3$ y $\Delta$ hermítico de dos sitios, de traza nula, con $\tr_1\Delta=\tr_2\Delta=:\delta$.
@@ -238,6 +221,96 @@ La construcción se comprueba numéricamente con $\Delta$ aleatorios en $d=2$, $
 $n=3,4,5$ (\texttt{scripts/dilucion\_uniforme.py}): $\omega$ es positivo y sus marginales coinciden
 con $I/d^2+\Delta$ a $10^{-16}$.
 
+Las cotas inferiores de este trabajo la usan siempre de la misma forma: un estado cuyas marginales
+están cerca de los datos se mezcla con un estado diluido que corrige la diferencia.
+
+\begin{lema}[estabilidad]\label{lem:estabilidad}
+Sean $n\ge3$ y $p_0>0$, y supongamos que, en el gauge uniforme, $\tr_1\tau_j=\tr_2\tau_j$. Si un
+estado del anillo tiene la misma marginal $\rho$ en todas sus aristas y
+$\|\rho-\rho_j(p_0)\|_1\le\varepsilon$, entonces
+$p(n,\Theta)\ge p_0/(1+\varepsilon/r')\ge p_0(1-\varepsilon/r')$, con el $r'$ del
+Lema~\ref{lem:dilucionti}.
+\end{lema}
+
+\begin{proof}
+En el gauge uniforme $\tau_j$ no depende de $j$. Sea $\Delta=\rho-\rho_j(p_0)$, hermítico y de traza
+nula. Como las aristas $(j{-}1,j)$ y $(j,j{+}1)$ comparten el sitio $j$ y tienen la misma marginal,
+$\tr_1\rho=\tr_2\rho$, y con la hipótesis sobre $\tau_j$, $\tr_1\Delta=\tr_2\Delta$. Si
+$\varepsilon=0$ no hay nada que probar. Si no, con $\eta=\varepsilon/(r'+\varepsilon)$, el
+Lema~\ref{lem:dilucionti} da un estado $\omega$ con marginales $I/d^2-\tfrac{1-\eta}\eta\Delta$, y la
+mezcla del estado dado, con peso $1-\eta$, y $\omega$, con peso $\eta$, tiene marginales
+$I/d^2+(1-\eta)p_0\tau_j$. Luego $p(n,\Theta)\ge(1-\eta)p_0=p_0/(1+\varepsilon/r')$.
+\end{proof}
+
+Las cotas superiores también tienen una forma común, la de un testigo, y juntas dan el esquema de
+todas las cotas de robustez de este trabajo. El teorema siguiente lo hace explícito y separa la
+pregunta en dos cotas de tamaño finito independientes, una para cada lado del SDP.
+
+\begin{teorema}[puente]\label{teo:puente}
+Sean $n\ge3$, $\Theta$ y $p^\ast>0$, y supongamos que, en el gauge uniforme,
+$\tr_1\tau_j=\tr_2\tau_j$. Supongamos además:
+\begin{itemize}
+\item[(P)] \emph{primal}: un estado del anillo tiene la misma marginal $\rho$ en todas sus aristas, con
+  $\|\rho-\rho_j(p^\ast)\|_1\le\varepsilon_P$;
+\item[(D)] \emph{dual}: hay operadores hermíticos de dos sitios $h_j$, uno por arista, con
+  $\sum_j\tr(h_j\tau_j)>0$ y
+  \[
+    \frac{\lambda_{\max}\big(\sum_jh_j\big)-\sum_j\tr h_j/d^2}{\sum_j\tr(h_j\tau_j)}\ \le\ p^\ast+\varepsilon_D .
+  \]
+\end{itemize}
+Entonces
+\[
+  p^\ast-\frac{p^\ast\varepsilon_P}{r'}\ \le\ \frac{p^\ast}{1+\varepsilon_P/r'}\ \le\ p(n,\Theta)\ \le\ p^\ast+\varepsilon_D,
+\]
+con el $r'=1/(19d^2)$ del Lema~\ref{lem:dilucionti}. Si (P) y (D) valen para toda $\Theta$ con el
+mismo $p^\ast$, y $\varepsilon_P$, $\varepsilon_D$ son sus supremos en $\Theta$, entonces
+\[
+  \sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|\ \le\ \varepsilon_D+\frac{p^\ast\varepsilon_P}{r'} .
+\]
+\end{teorema}
+
+\begin{proof}
+La cota inferior es el Lema~\ref{lem:estabilidad} con $p_0=p^\ast$. Para la superior, todo estado
+$\omega$ del anillo con marginales $\rho_j(p)$ cumple
+$\sum_j\tr h_j/d^2+p\sum_j\tr(h_j\tau_j)=\tr\big(\omega\sum_jh_j\big)\le\lambda_{\max}\big(\sum_jh_j\big)$,
+así que $p$ no supera el cociente de (D). La última afirmación sale de restar la cota inferior en
+$\Theta'$ de la superior en $\Theta$.
+\end{proof}
+
+\begin{observacion}[los dos casos de este trabajo]
+(i) \emph{Datos MPS} (Secciones~\ref{sec:teorema} y~\ref{sec:celda}). Con $p^\ast=1$, (P) la da el MPS
+retorcido, con $\varepsilon_P=\varepsilon_n=O(n^{J-1}\lambda^n)$, y (D) el \emph{testigo de techo}: si
+$\sigma\ket\chi=0$, $h_j=-(1\otimes V)\ket\chi\bra\chi(1\otimes V)^\dagger$ cumple
+$\tr h_j=-1$, $\tr(h_j\tau_j)=-\bra\chi\tau\ket\chi=1/d^2$ y $\sum_jh_j\le0$, así que el cociente es
+$\le1$ y $\varepsilon_D=0$. Es el Lema~\ref{lem:techo} escrito como testigo. (ii) \emph{Datos de Néel}
+(Sección~\ref{sec:neel}). Con $p^\ast=v_\infty$, (D) la da el XXZ alineado con $\Delta_\infty$, con
+$\varepsilon_D=4[e_n(\Delta_\infty,\Theta)-e_\infty(\Delta_\infty)]/(\Delta_\infty+2\kappa)$, y (P) su
+estado fundamental, con $\varepsilon_P$ la distancia de su marginal a los datos. Así, extender el
+Teorema~\ref{teo:mps} a esos datos es exactamente demostrar dos cotas de tamaño finito del XXZ con
+gap, las (E) y (M) del problema abierto~\ref{prob:nomps}. El teorema no exige que $p^\ast$ sea $1$
+ni que los datos tengan núcleo: el núcleo solo sirve para tener un testigo con $\varepsilon_D=0$.
+\end{observacion}
+
+El último lema del marco es sobre canales con simetría y se usa en las Secciones~\ref{sec:teorema},
+\ref{sec:aklt} y~\ref{sec:celda}.
+
+\begin{lema}[simetría de los puntos fijos]\label{lem:fijo}
+Sea $\mathcal T(X)=\sum_aK_aXK_a^\dagger$ completamente positivo en $M_D(\mathbb C)$, con radio
+espectral $r$ que es un autovalor simple, y sea $u$ unitario con $uK_au^\dagger=e^{i\theta_a}K_a$
+para todo $a$. Entonces $\Ad_u$ conmuta con $\mathcal T$ y con su adjunto $\mathcal T^\dagger$ (en
+el producto de Hilbert--Schmidt), y los autovectores de autovalor $r$ de $\mathcal T$ y de
+$\mathcal T^\dagger$ pueden tomarse $\ge0$ y conmutan con $u$.
+\end{lema}
+
+\begin{proof}
+$u\,\mathcal T(X)u^\dagger=\sum_a(uK_au^\dagger)(uXu^\dagger)(uK_au^\dagger)^\dagger=\mathcal T(uXu^\dagger)$,
+porque las fases se cancelan. Como $\Ad_u^\dagger=\Ad_{u^\dagger}$ y $u^\dagger$ cumple la misma
+hipótesis, también $\Ad_u\mathcal T^\dagger=\mathcal T^\dagger\Ad_u$. Por Perron--Frobenius para
+aplicaciones positivas, $\mathcal T$ tiene un autovector $R\ge0$, no nulo, de autovalor $r$. Entonces
+$uRu^\dagger$ también lo es, y por la simplicidad $uRu^\dagger=cR$; tomando trazas, $c=1$. Lo mismo
+vale para $\mathcal T^\dagger$, cuyo autovalor $r$ también es simple.
+\end{proof}
+
 %=====================================================================
 \section{El teorema}\label{sec:teorema}
 %=====================================================================
@@ -248,7 +321,7 @@ con $I/d^2+\Delta$ a $10^{-16}$.
   $M_D(\mathbb C)$ para todo $L\ge L_0$. En particular, el canal
   $\mathcal E(X)=\sum_sA^sXA^{s\dagger}$ puede normalizarse con $\mathcal E(I)=I$ (con el cambio de
   gauge $A^s\to R^{-1/2}A^sR^{1/2}$, donde $R>0$ es su punto fijo, que conmuta con el $u_t$ de (M2)
-  por el argumento de la demostración del Teorema~\ref{teo:mps}, así que (M2) se conserva), tiene un único
+  por el Lema~\ref{lem:fijo}, así que (M2) se conserva), tiene un único
   punto fijo dual $\Lambda>0$ con $\tr\Lambda=1$, y el resto de su espectro tiene módulo
   $\le\lambda<1$. Tomamos $\lambda$ igual al mayor de esos módulos, y $J$ el mayor tamaño de los
   bloques de Jordan de los autovalores de módulo $\lambda$ ($J=1$ si son semisimples, por ejemplo
@@ -284,9 +357,8 @@ los enlaces virtuales es una técnica estándar para leer respuestas a flujo y b
 $B^s$ son iguales y la traza es cíclica, $\psi_\Theta$ es invariante por traslación, así que todas
 sus marginales de arista coinciden y basta estudiar una.
 
-\emph{Transferencia.} Por (M2), $\Ad_u\circ\mathcal E=\mathcal E\circ\Ad_u$: en efecto,
-$u\,\mathcal E(X)u^\dagger=\sum_s(uA^su^\dagger)(uXu^\dagger)(uA^su^\dagger)^\dagger$ y las fases se
-cancelan. Como los puntos fijos son únicos, $\Ad_u$ fija $I$ y $\Lambda$. El canal retorcido es
+\emph{Transferencia.} Por (M2) y el Lema~\ref{lem:fijo}, $\Ad_u$ conmuta con $\mathcal E$ y fija
+$I$ y $\Lambda$. El canal retorcido es
 $\mathcal E_w=\mathcal E\circ\Ad_w$, y
 \[
   \mathcal E_w^{\,m}=\mathcal E^m\circ\Ad_{w^m}=\ket I(\Lambda|+\mathcal R_m\circ\Ad_{w^m},\qquad
@@ -305,25 +377,20 @@ anterior, la marginal normalizada es
 \]
 El término principal es exactamente el dato girado con $p=1$:
 $B^aB^b(B^cB^d)^\dagger=A^a\,(wA^bA^{d\dagger}w^\dagger)\,A^{c\dagger}=e^{-i\phi(q_b-q_d)}A^aA^bA^{d\dagger}A^{c\dagger}$,
-luego $(\Lambda|\Phi_{ab,cd}\ket I=[(1\otimes V)\sigma(1\otimes V)^\dagger]_{ab,cd}$. (El resto
-no puede escribirse como $(\Lambda|\Phi\,\mathcal R\cdots|I)$: $\mathcal R_m(I)=0$, porque
-$\mathcal E^m(I)=I$, y $\Ad_w$ fija $I$.) Como $|\tr(\Phi\,\mathcal X)|\le D^2\|\Phi\|\,\|\mathcal X\|$,
+luego $(\Lambda|\Phi_{ab,cd}\ket I=[(1\otimes V)\sigma(1\otimes V)^\dagger]_{ab,cd}$. (La corrección
+de tamaño finito sale de la traza: en la forma $(\Lambda|\Phi\,\mathcal R_m\Ad_{w^m}|I)$ sería nula,
+porque $\Ad_w$ fija $I$ y $\mathcal R_m(I)=0$.) Como $|\tr(\Phi\,\mathcal X)|\le D^2\|\Phi\|\,\|\mathcal X\|$,
 los dos restos están acotados por $K(n-2)^{J-1}\lambda^{n-2}$ y $D^2Kn^{J-1}\lambda^n$ veces
 constantes que solo dependen de los $A^s$. Por tanto
 $\varepsilon_n:=\|\rho^{(n)}-\rho_j(1)\|_1\le Cn^{J-1}\lambda^{n-2}$ para
 $n\ge n_0$, uniformemente en $\Theta$.
 
-\emph{Dilución.} Las marginales de $\psi_\Theta$ son $I/d^2+\tau_j+\Delta_j$ con
-$\|\Delta_j\|_1\le\varepsilon_n$. En el gauge uniforme $\tau_j$ no depende de $j$, y las marginales de
-$\psi_\Theta$ tampoco, por la invariancia por traslación. Así $\Delta_j=\Delta$ para todo $j$. $\Delta$ tiene
-traza nula y $\tr_1\Delta=\tr_2\Delta$, porque $\tau$ y las marginales de un estado global
-invariante por traslación cumplen lo mismo. Para $\tau_j$: la reducción de
-$\sigma$ sobre cualquiera de sus dos sitios es la marginal de un sitio del MPS, y conmuta con $Q$
-por (M2), así que $V\,(\tr_1\sigma)\,V^\dagger=\tr_2\sigma$. Con
-$\eta=\varepsilon_n/(r'+\varepsilon_n)$, el Lema~\ref{lem:dilucionti} da un estado $\omega$ con
-marginales $I/d^2-\tfrac{1-\eta}\eta\Delta$, y $(1-\eta)\ket{\psi_\Theta}\bra{\psi_\Theta}+\eta\,\omega$
-tiene marginales $I/d^2+(1-\eta)\tau_j$. Luego $p(n,\Theta)\ge1-\eta=1/(1+\varepsilon_n/r')\ge1-\varepsilon_n/r'$. La cota
-superior es el Lema~\ref{lem:techo}.
+\emph{Conclusión.} Por la invariancia por traslación, $\psi_\Theta$ tiene la misma marginal en todas
+las aristas, a distancia $\le\varepsilon_n$ de $\rho_j(1)$. Las dos reducciones de $\sigma$ son la
+marginal de un sitio del MPS, que conmuta con $Q$ por (M2); así $V\,(\tr_1\sigma)\,V^\dagger=\tr_2\sigma$,
+es decir, $\tr_1\tau_j=\tr_2\tau_j$. El Teorema~\ref{teo:puente} con $p^\ast=1$,
+$\varepsilon_P=\varepsilon_n$ y el testigo de techo ($\varepsilon_D=0$; Observación que sigue a ese
+teorema) da $1/(1+\varepsilon_n/r')\le p(n,\Theta)\le1$.
 \end{proof}
 
 \begin{observacion}
@@ -351,9 +418,8 @@ Si $e^{2\pi iQ}=-1$ (por ejemplo, $Q=S^z$ con espín semientero), no existen ten
 
 \begin{proof}
 Con $t=2\pi$, (M2) da $u_{2\pi}A^su_{2\pi}^\dagger=-A^s$ para todo $s$, así que la conjugación por
-$u_{2\pi}$ actúa como $(-1)^L$ sobre los productos de longitud $L$. Por (M1) los productos de
-longitud $L_0$ y $L_0+1$ generan ambos $M_D$, que contiene a $I$; luego $I=(-1)^{L_0}I=(-1)^{L_0+1}I$,
-contradicción.
+$u_{2\pi}$ cambia el signo de todo producto de longitud impar. Por (M1), con $L\ge L_0$ impar esos
+productos generan $M_D$, que contiene a $I$; luego $I=u_{2\pi}Iu_{2\pi}^\dagger=-I$, contradicción.
 \end{proof}
 
 Así, el mecanismo del Teorema~\ref{teo:mps} no está disponible para el anillo de qubits con datos
@@ -424,8 +490,9 @@ $[-1,1]$, así que las dos raíces no nulas tienen signos opuestos y su norma tr
 $\sqrt{288(245+44c-c^2)}/27$. Sumando sale $f$. Las dos partes crecen con $c$ en $[-1,1]$, así que
 el máximo está en $c=1$: $\max_\Theta f=f(\Theta{=}0)=16$.
 
-\emph{Cota.} El denominador es $\ge3^n-3$, luego $\varepsilon_n\le16/(3^n-3)$, y del
-Teorema~\ref{teo:mps}, con $r'=1/171$, $p\ge1-\eta=1/(1+171\,\varepsilon_n)$.
+\emph{Cota.} El denominador es $\ge3^n-3$, luego $\varepsilon_n\le16/(3^n-3)$, y el
+Lema~\ref{lem:estabilidad}, como en el Teorema~\ref{teo:mps}, con $r'=1/171$, da
+$p\ge1/(1+171\,\varepsilon_n)$.
 \end{proof}
 
 La fórmula de $\varepsilon_n$ es exacta para todo $n$ y no solo asintótica: el MPS retorcido tiene
@@ -523,7 +590,7 @@ basta diagonalizar bloques (magnetización, momento) de tamaño $\le142$. Se min
 suavizada (log-suma-exp) y, cuando el autovector superior es único, se pule con Newton la condición
 de estacionariedad, que equivale a que la marginal de ese autovector sea exactamente
 $I/9+p\,\tau_\Theta$. Ese autovector es entonces un estado primal factible, y la cota inferior
-(con el residuo corregido por el Lema~\ref{lem:dilucionti}) coincide con la superior a $10^{-10}$.
+(con el residuo corregido por el Lema~\ref{lem:estabilidad}) coincide con la superior a $10^{-10}$.
 En $n=6,7,8$ el autovector superior es único en los tres ángulos, con gap $\ge0{,}014$:
 \begin{center}\small
 \begin{tabular}{rcccc}
@@ -602,7 +669,7 @@ $f=\lambda_{\max}/n$, $H=\sum_jh_{j,j+1}$ tiene autovalor superior $E$ con autov
 $O_k=\sum_j(o_k)_{j,j+1}$ para la base $\{o_k\}$ de operadores de dos sitios en que se expande $h$. Se avanza en
 $\Theta$ girando el testigo óptimo anterior (Lema~\ref{lem:giro}, en la Sección~\ref{sec:neel}). En los 63 puntos ($n=6,\dots,12$
 y nueve $\Theta\in[0,\pi]$) la cota dual y la primal (el autovector superior, corregido con el
-Lema~\ref{lem:dilucionti}) distan $\le10^{-12}$, el máximo está en $M=0$ con gap, y $n=6,7,8$
+Lema~\ref{lem:estabilidad}) distan $\le10^{-12}$, el máximo está en $M=0$ con gap, y $n=6,7,8$
 reproducen la tabla anterior. Con $s=\max_\Theta p-\min_\Theta p$:
 \begin{center}\small
 \begin{tabular}{rcccc}
@@ -670,11 +737,11 @@ $p_{A'}(n,\Theta)=p_A(n,\Theta+n\alpha)$ para todo $n$ y toda $\Theta$.
 \begin{proof}
 Por (M2), $u_\alpha A^s=e^{-i\alpha q_s}A^su_\alpha$, así que $A'^{s_1}\cdots A'^{s_L}$ es una
 fase por $A^{s_1}\cdots A^{s_L}u_\alpha^L$, y se conserva la inyectividad. El canal es
-$\mathcal E'=\mathcal E\circ\Ad_{u_\alpha}$, con $\mathcal E'(I)=I$. Como $\Ad_{u_\alpha}$
-conmuta con $\mathcal E$, actúa en cada sector de carga $k$ de $\mathcal E$ como la fase
-$e^{-i\alpha k}$: el espectro de $\mathcal E'$ es el de $\mathcal E$ con esas fases, con los
-mismos módulos y bloques de Jordan. $\Lambda$ conmuta con $u_\alpha$, porque es el único punto
-fijo de $\mathcal E^*$, que conmuta con $\Ad_{u_\alpha}$; luego también es el punto fijo de
+$\mathcal E'=\mathcal E\circ\Ad_{u_\alpha}$, con $\mathcal E'(I)=I$. Por el Lema~\ref{lem:fijo},
+$\Ad_{u_\alpha}$ conmuta con $\mathcal E$, así que actúa en cada sector de carga $k$ de
+$\mathcal E$ como la fase $e^{-i\alpha k}$: el espectro de $\mathcal E'$ es el de $\mathcal E$ con
+esas fases, con los mismos módulos y bloques de Jordan. Por el mismo lema, $\Lambda$ conmuta con
+$u_\alpha$; luego también es el punto fijo de
 $\mathcal E'^*=\Ad_{u_\alpha}^*\circ\mathcal E^*$. En la marginal,
 $A'^bA'^{d\dagger}=A^bA^{d\dagger}$ y
 $u_\alpha A^bA^{d\dagger}u_\alpha^\dagger=e^{-i\alpha(q_b-q_d)}A^bA^{d\dagger}$, así que
@@ -789,23 +856,21 @@ $e_n(\Delta,\Phi)=-E_0/n$ su energía fundamental por enlace, cambiada de signo,
   v(n,\Theta)\le\inf_{\Delta,\Phi}\frac{4\,e_n(\Delta,\Phi)}{\Delta+2\kappa\cos\big((\Phi-\Theta)/n\big)}.
 \]
 Por la $U(1)$, el testigo óptimo puede tomarse invariante, y los términos de dos sitios invariantes
-son estos tres, la identidad y un campo $Z$, y el campo no mejora la cota (abajo): la cota es una
-igualdad.
+son estos tres, la identidad y un campo $Z$. El campo no mejora la cota, para ninguna $\Theta$. La
+composición antiunitaria $\theta=X^{\otimes n}K$, con $K$ la conjugación compleja en la base
+producto, fija $A$, $B$ y $C$ ($K$ y $X^{\otimes n}$ cambian cada uno el signo de $B$, que es
+imaginaria pura, y fijan $A$ y $C$) y cambia el signo de $Z$. Fija, pues, los datos, conmuta con la
+$U(1)$ y lleva testigos a testigos con el mismo espectro, la misma traza y el mismo denominador.
+Promediando un testigo óptimo con su imagen por $\theta$ y sobre las traslaciones, que también fijan
+los datos, la convexidad de $\lambda_{\max}$ da otro testigo óptimo, sin campo y con los mismos
+coeficientes en todas las aristas. Así la cota es una igualdad, con el testigo de Ising, sin término
+de salto, como límite $\Delta\to\infty$.
 Con $\kappa=1$ y $\Theta=0$ el ínfimo está en el punto isótropo $\Delta=1$, crítico (en
 $\Theta=\pi$, $\Delta^\ast$ va de $0{,}73$ en $n=8$ a $0{,}94$ en $n=18$); con $\kappa<1$ el testigo
-óptimo puede tener $\Delta>1$, en la fase de Néel. Dos detalles. El multiplicador de
-$\ev{Z_i}=0$, un campo en el testigo, no mejora la cota para ninguna $\Theta$. Promediando sobre
-las traslaciones, que fijan los datos en el gauge uniforme, el campo es uniforme,
-$\mu\sum_iZ_i$, y no cambia el denominador porque $\ev{Z_i}=0$. Conmuta con $H_{\rm XXZ}$, así que
-$\lambda_{\max}(-4H_{\rm XXZ}+\mu\sum_iZ_i)=\max_M\big[\lambda_M+\mu(2M-n)\big]$, con $\lambda_M$
-el mayor autovalor de $-4H_{\rm XXZ}$ en el sector de $M$ espines arriba: es una función convexa de
-$\mu$. La inversión $X^{\otimes n}$ lleva el sector $M$ al $n-M$ y $H_{\rm XXZ}(\Delta,\Phi)$ a
-$H_{\rm XXZ}(\Delta,-\Phi)$, que la conjugación compleja devuelve a $H_{\rm XXZ}(\Delta,\Phi)$ sin
-cambiar de sector; luego $\lambda_M=\lambda_{n-M}$, la función es par y su mínimo está en $\mu=0$.
-Para $n$
+óptimo puede tener $\Delta>1$, en la fase de Néel. Para $n$
 impar y $\kappa$ pequeño el ínfimo está en $\Delta\to\infty$: es el techo clásico del antiferromagneto
 de Ising frustrado, $v=(n-2)/n$, que no depende de $\Theta$ (en $n=5$ ya manda con $\kappa=0{,}6$ y $\Theta=\pi$, y
-con $\kappa\le0{,}4$ para toda $\Theta$). Con ambos detalles, el dual coincide con el SDP primal $U(1)$ en $n=4,5,6$,
+con $\kappa\le0{,}4$ para toda $\Theta$). Con el testigo de Ising incluido, el dual coincide con el SDP primal $U(1)$ en $n=4,5,6$,
 $\kappa\in\{1;\,0{,}6;\,0{,}3\}$ y $\Theta\in\{0,\pi/2,\pi\}$, con error $\le3\times10^{-8}$.
 
 \paragraph{El signo: giro del testigo y argumento de Marshall.} Antes de los números, el signo de
@@ -855,14 +920,14 @@ ella por una fase. Como $n\ge3$, un elemento fuera de la diagonal con fase no tr
 sola arista: la carga del sitio $j{+}1$ cambia, y por la conservación también la del sitio $j$, así
 que $s$ y $s'$ difieren exactamente en $\{j,j{+}1\}$. Los elementos con varias contribuciones
 difieren en un solo sitio, con su carga intacta, y tienen fase $1$. Lo mismo vale tras conjugar por
-$U$, que es diagonal. Sea
-$M_\Theta=U\big(\sum_jh_j^\Theta\big)U^\dagger+cI$, con $c$ tan grande que $M_0$ tenga todos sus
-elementos $\ge0$ y $M_\Theta$ sea semidefinida positiva para toda $\Theta$. Entonces
-$|(M_\Theta)_{ab}|\le(M_0)_{ab}$, por inducción $|(M_\Theta^k)_{ab}|\le(M_0^k)_{ab}$, y con la norma
-de Frobenius y la fórmula de Gelfand,
-$\lambda_{\max}(M_\Theta)=\lim_k\|M_\Theta^k\|_F^{1/k}\le\lim_k\|M_0^k\|_F^{1/k}=\lambda_{\max}(M_0)$:
-el radio espectral de una matriz semidefinida positiva es su mayor autovalor. Así $\lambda_{\max}(\sum_jh_j^\Theta)\le\lambda_{\max}(\sum_jh_j)$,
-y el Lema~\ref{lem:giro} concluye.
+$U$, que es diagonal. Así, con $\tilde H_\Theta=U\big(\sum_jh_j^\Theta\big)U^\dagger$, las diagonales
+de $\tilde H_\Theta$ y $\tilde H_0$ coinciden y $|(\tilde H_\Theta)_{ab}|=(\tilde H_0)_{ab}$ fuera de
+la diagonal. Para todo vector unitario $x$, con $|x|$ el vector de componentes $|x_a|$,
+\[
+  \bra x\tilde H_\Theta\ket x\le\sum_a(\tilde H_0)_{aa}|x_a|^2+\sum_{a\ne b}|x_a|\,(\tilde H_0)_{ab}\,|x_b|
+  =\bra{|x|}\tilde H_0\ket{|x|}\le\lambda_{\max}(\tilde H_0).
+\]
+Así $\lambda_{\max}(\sum_jh_j^\Theta)\le\lambda_{\max}(\sum_jh_j)$, y el Lema~\ref{lem:giro} concluye.
 \end{proof}
 
 Para aplicarla al testigo de esta sección hacen falta dos cosas: (a) que en $\Theta_0\in\{0,\pi\}$ haya
@@ -1116,7 +1181,9 @@ Para cada $\kappa>0$:
 \item[(iii)] $\Delta_\infty>0$ si $\kappa<\pi/2$, $\Delta_\infty=0$ si $\kappa=\pi/2$, con
   $v_\infty=4/\pi^2$, y $\Delta_\infty<0$ si $\kappa>\pi/2$;
 \item[(iv)] con $\kappa=5/4$, $\Delta_\infty=\tfrac12$ y $v_\infty=\tfrac12$;
-\item[(v)] $\Delta_\infty(\kappa)$ es estrictamente decreciente.
+\item[(v)] $\Delta_\infty(\kappa)$ es estrictamente decreciente;
+\item[(vi)] $\Delta_\infty(\kappa)\to\infty$ cuando $\kappa\to0$, y
+  $\Delta_\infty\kappa=1+\tfrac12\kappa^2-\tfrac34\kappa^4+O(\kappa^6)$.
 \end{enumerate}
 \end{proposicion}
 
@@ -1180,11 +1247,56 @@ $g(\Delta)>g(\Delta_\infty(\kappa))$, así que $\Delta$ no es el mínimo de $F_{
 $\Delta_\infty(\kappa')\le\Delta_\infty(\kappa)$. Si fueran iguales, a un valor $\Delta_0>-1$ (por
 la unicidad, el mínimo no está en $(-2\kappa,-1]$), la derivada de $\log F$ se anularía allí con
 $\kappa$ y con $\kappa'$, y $1/(\Delta_0+2\kappa)=1/(\Delta_0+2\kappa')$, contradicción.
+
+\emph{(vi).} Con $\kappa<1$, por (ii), $\Delta_\infty>1$, y la tangencia en el mínimo da
+$\kappa=\mathcal K(\Delta_\infty)$, con
+\[
+  \mathcal K(\Delta)=\frac{e_\infty-\Delta e_\infty'}{2e_\infty'}=\frac{g-\Delta g'}{\tfrac12+2g'},\qquad
+  g=e_\infty-\frac\Delta4 .
+\]
+El estado de Néel da $g\ge0$, y un estado de prueba que lo mezcla con pares de espines volteados,
+$g>0$; además $g'=-\ev{S^z_iS^z_{i+1}}-\tfrac14\le0$. En el mínimo,
+$\tfrac12+2g'=2e_\infty'=2e_\infty/(\Delta_\infty+2\kappa)>0$, así que
+$\kappa\ge2\big(g-\Delta g'\big)(\Delta_\infty)\ge2g(\Delta_\infty)$. Por (v), $\Delta_\infty$ crece
+cuando $\kappa\to0$; si tendiera a un $L\in(1,\infty)$, $\kappa$ quedaría acotado inferiormente por
+$2g(L)>0$, absurdo. Así que $\Delta_\infty\to\infty$. Para el desarrollo, con $q=e^{-\gamma}$ y
+$\Delta=\cosh\gamma=(q^{-1}+q)/2$, la fórmula de Yang--Yang \cite{yang-yang} se escribe
+\[
+  g=-\frac q2+\big(q^{-1}-q\big)\sum_{m\ge1}\frac{q^{2m}}{1+q^{2m}}=\frac q2-q^3+2q^5+O(q^7),
+\]
+analítica en $|q|<1$, y con ella $\mathcal K=2q+2q^3-18q^5+O(q^7)$. Como $\mathcal K'(0)=2$, se
+invierte: $q=\tfrac12\kappa-\tfrac18\kappa^3+O(\kappa^5)$, y $\Delta_\infty\kappa=\tfrac12(q^{-1}+q)\kappa$
+da la serie del enunciado.
 \end{proof}
 
+La serie es útil desde valores moderados: da $1{,}0652$ frente al exacto $1{,}0640$ con $\kappa=0{,}4$,
+y $1{,}0049261$ frente a $1{,}0049260$ con $\kappa=0{,}1$; con $\kappa\le0{,}1$ el resto es
+$\approx-2{,}3\,\kappa^8$ (\texttt{scripts/delta\_inf\_kappa.py}, que comprueba también la tangencia
+frente a la minimización directa de $F_\kappa$ hasta $\kappa=10^{-3}$, donde
+$\Delta_\infty=1000{,}0005$). Así, $\kappa$ pequeño equivale a $\Delta_\infty\approx1/\kappa$ grande:
+el testigo límite es una perturbación del antiferromagneto de Ising, con parámetro $\approx\kappa$.
+
 Así, con $\kappa<1$ el testigo límite está en la fase de Néel, con gap, y con $\kappa>1$ en la fase
-crítica. Como $|e_n(\Delta,\Phi)-e_\infty(\Delta)|\le(1+|\Delta|/2)/n$ (Lema~\ref{lem:tamfinito}, más
-abajo), las $e_n$ convexas convergen
+crítica. Para pasar de la cadena infinita al anillo basta una cota de tamaño finito uniforme en el
+flujo.
+
+\begin{lema}[tamaño finito, uniforme en el flujo]\label{lem:tamfinito}
+Para todo $n\ge3$, todo $\Delta$ real y todo $\Phi$,
+$|e_n(\Delta,\Phi)-e_\infty(\Delta)|\le2\|h\|/n=(1+|\Delta|/2)/n$, con
+$h=\tfrac12(S^+S^-+{\rm h.c.})+\Delta S^zS^z$ el término de enlace.
+\end{lema}
+
+\begin{proof}
+Sea $a_N$ la energía fundamental de la cadena abierta de $N$ sitios. Al unir dos cadenas se añade un
+enlace, que en el producto de sus fundamentales vale como mucho $\|h\|$ y como operador es
+$\ge-\|h\|$: $a_N+a_{N'}-\|h\|\le a_{N+N'}\le a_N+a_{N'}+\|h\|$. Así $a_N+\|h\|$ es subaditiva y
+$a_N-\|h\|$ superaditiva, y por el lema de Fekete, como $a_N/N\to-e_\infty$,
+$|a_N+Ne_\infty|\le\|h\|$. El anillo retorcido, con el flujo concentrado en un enlace por un cambio de
+gauge, es la cadena abierta de $n$ sitios más ese enlace, así que su energía fundamental dista de $a_n$
+como mucho $\|h\|$. Por último, $\|h\|=\tfrac12+|\Delta|/4$.
+\end{proof}
+
+Como $|e_n(\Delta,\Phi)-e_\infty(\Delta)|\le(1+|\Delta|/2)/n$, las $e_n$ convexas convergen
 uniformemente en compactos y el mínimo de la cadena infinita es único, $\Delta^\ast(n)\to\Delta_\infty$
 en las dos paridades. Numéricamente, con $n$
 par la convergencia es rápida ($\kappa=0{,}4$: $\Delta^\ast=2{,}66004$ desde $n=60$) y con $n$
@@ -1530,23 +1642,8 @@ $\log K(\Delta^\ast_0)$ y $\log K(\Delta^\ast_1)$, y el teorema del valor medio 
 $\log K(\Delta_\infty)$.
 \end{proof}
 
-La hipótesis sobre $\varepsilon_n'$ se cumple con una cota que sí se demuestra, aunque es floja.
-
-\begin{lema}[tamaño finito, uniforme en el flujo]\label{lem:tamfinito}
-Para todo $n\ge3$, todo $\Delta$ real y todo $\Phi$,
-$|e_n(\Delta,\Phi)-e_\infty(\Delta)|\le2\|h\|/n=(1+|\Delta|/2)/n$, con
-$h=\tfrac12(S^+S^-+{\rm h.c.})+\Delta S^zS^z$ el término de enlace.
-\end{lema}
-
-\begin{proof}
-Sea $a_N$ la energía fundamental de la cadena abierta de $N$ sitios. Al unir dos cadenas se añade un
-enlace, que en el producto de sus fundamentales vale como mucho $\|h\|$ y como operador es
-$\ge-\|h\|$: $a_N+a_{N'}-\|h\|\le a_{N+N'}\le a_N+a_{N'}+\|h\|$. Así $a_N+\|h\|$ es subaditiva y
-$a_N-\|h\|$ superaditiva, y por el lema de Fekete, como $a_N/N\to-e_\infty$,
-$|a_N+Ne_\infty|\le\|h\|$. El anillo retorcido, con el flujo concentrado en un enlace por un cambio de
-gauge, es la cadena abierta de $n$ sitios más ese enlace, así que su energía fundamental dista de $a_n$
-como mucho $\|h\|$. Por último, $\|h\|=\tfrac12+|\Delta|/4$.
-\end{proof}
+La hipótesis sobre $\varepsilon_n'$ se cumple con una cota que sí se demuestra, aunque es floja,
+a partir del Lema~\ref{lem:tamfinito}.
 
 \begin{lema}[de la energía a la derivada]\label{lem:convexa}
 $e_n(\cdot,\Phi)$ es convexa. Si $|e_n-e_\infty|\le\eta$ en $[\Delta-r,\Delta+r]$ y $|e_\infty''|\le M$
@@ -1771,8 +1868,9 @@ empieza en el tipo $i$,
 \]
 En el canal, ket y bra llevan los mismos índices y la fase se cancela: el canal retorcido es
 $\mathcal E_i\circ\Ad_{U_i}$. Componiendo (M2$_k$) a lo largo de la celda,
-$U\,\mathbb A_i^{\vec s}\,U^\dagger$ es $\mathbb A_i^{\vec s}$ por una fase. Así $\Ad_{U_i}$ conmuta
-con $\mathcal E_i$ y, por unicidad, fija $R_i$ y $L_i$.
+$U\,\mathbb A_i^{\vec s}\,U^\dagger$ es $\mathbb A_i^{\vec s}$ por una fase. Como el autovalor $1$ de
+$\mathcal E_i$ es simple, el Lema~\ref{lem:fijo} da que $\Ad_{U_i}$ conmuta con $\mathcal E_i$ y fija
+$R_i$ y $L_i$.
 
 \emph{Marginal de una arista de tipo $i$.} Se lee el anillo en celdas que empiezan en el tipo $i$.
 Sea $\Phi^{(i)}_{ab,cd}(X)=\sum_{s_2,\dots,s_{k-1}}\mathbb B^{ab\,s_2\cdots}X\,(\mathbb B^{cd\,s_2\cdots})^\dagger$,
@@ -1800,10 +1898,9 @@ $\tfrac1k\sum_i\rho^{(n)}_i=(1\otimes V)\sigma(1\otimes V)^\dagger+\Delta$, con 
 
 \emph{Dilución.} Hace falta que las reducciones de $\tau_j$ sean compatibles. Las dos reducciones
 de $\sigma$ son $\tfrac1k\sum_i\varrho_i$, la media de las marginales de un sitio, y conmutan con
-$Q$ por (M2$_k$). Luego $V(\tr_1\sigma)V^\dagger=\tr_2\sigma$. El resto es la dilución de la
-demostración del Teorema~\ref{teo:mps}, con $\omega_\Theta$ en lugar de $\psi_\Theta$ (sus marginales
-de arista son todas iguales, así que vale el Lema~\ref{lem:dilucionti}), y la cota
-superior es el Lema~\ref{lem:techo}, porque $\ker\sigma=\bigcap_i\ker\sigma_i$ al ser los $\sigma_i\ge0$.
+$Q$ por (M2$_k$). Luego $V(\tr_1\sigma)V^\dagger=\tr_2\sigma$, es decir, $\tr_1\tau_j=\tr_2\tau_j$.
+Como las marginales de arista de $\omega_\Theta$ son todas iguales, el Lema~\ref{lem:estabilidad} con
+$p_0=1$ da la cota inferior, y la cota superior es el Lema~\ref{lem:techo}, porque $\ker\sigma=\bigcap_i\ker\sigma_i$ al ser los $\sigma_i\ge0$.
 \end{proof}
 
 \begin{corolario}[LSM con celda]\label{cor:lsmk}
@@ -2104,8 +2201,10 @@ paridad de la Proposición~\ref{prop:neelclas} y de la Sección~\ref{sec:neel}.
 
 \paragraph{Demostrado.}
 \begin{itemize}
-\item El techo por rango y las dos diluciones (Lemas~\ref{lem:techo}, \ref{lem:dilucion}
-  y~\ref{lem:dilucionti}).
+\item El techo por rango, la dilución uniforme, la estabilidad del primal y la simetría de los
+  puntos fijos (Lemas~\ref{lem:techo}, \ref{lem:dilucionti}, \ref{lem:estabilidad}
+  y~\ref{lem:fijo}), y el teorema puente, que reduce toda cota de robustez a una primal y una dual
+  de tamaño finito (Teorema~\ref{teo:puente}).
 \item La robustez para marginales de MPS inyectivos con núcleo, con la cota
   $1-O(n^{J-1}\lambda^n)$ que da la dilución uniforme (Teorema~\ref{teo:mps}), y su versión con
   celda (Teorema~\ref{teo:celda}).
@@ -2120,7 +2219,9 @@ paridad de la Proposición~\ref{prop:neelclas} y de la Sección~\ref{sec:neel}.
   exacto y $p(n,\Theta)=1$ para $3\mid n$, $n\ge6$ (Proposiciones~\ref{prop:celda3}
   y~\ref{prop:celda3n}).
 \item La existencia, unicidad y monotonía en $\kappa$ del testigo límite $\Delta_\infty(\kappa)$,
-  con sus valores exactos en $\kappa=1$, $5/4$ y $\pi/2$ (Proposición~\ref{prop:limite}), y, con
+  con sus valores exactos en $\kappa=1$, $5/4$ y $\pi/2$ y el desarrollo
+  $\Delta_\infty\kappa=1+\tfrac12\kappa^2-\tfrac34\kappa^4+O(\kappa^6)$ cuando $\kappa\to0$
+  (Proposición~\ref{prop:limite}), y, con
   $\kappa=5/4$ y $n$ impar, la horquilla $\tfrac12-\tfrac3{2n^2}\le v(n,\pi)<\tfrac12$, tomando como
   dato el correlador de Stroganov (Proposición~\ref{prop:rs}; la distancia a $\tfrac12$ es numéricamente
   $\approx2{,}07/n^4$).
@@ -2230,15 +2331,16 @@ se demuestran el signo y una cota inferior de la caída (Corolario~\ref{cor:pari
     marginal de arista en el marco girado, $\rho_{n,\Theta}$, con
     $\delta_n:=\sup_\Theta\|\rho_{n,\Theta}-\rho_{v_\infty}\|_1\le C_M\,e^{-n/\xi}$.
   \end{itemize}
-  Con (E), el dual con el XXZ alineado ($\Phi=\Theta$) da $v(n,\Theta)\le4e_n(\Delta_\infty,\Theta)/(\Delta_\infty+2\kappa)
-  \le v_\infty+4C_Ee^{-n/\xi}/(\Delta_\infty+2\kappa)$; con (M), el Lema~\ref{lem:dilucionti}
-  aplicado a $\psi_{n,\Theta}$ da $v(n,\Theta)\ge v_\infty/(1+76\,\delta_n)\ge v_\infty-76\,v_\infty\delta_n$.
-  Por tanto
+  (E) es la hipótesis (D) del Teorema~\ref{teo:puente} con el XXZ alineado ($\Phi=\Theta$),
+  $p^\ast=v_\infty$ y $\varepsilon_D=4C_Ee^{-n/\xi}/(\Delta_\infty+2\kappa)$, porque su cociente es
+  $4e_n(\Delta_\infty,\Theta)/(\Delta_\infty+2\kappa)$ y $v_\infty=4e_\infty(\Delta_\infty)/(\Delta_\infty+2\kappa)$;
+  y (M) es la hipótesis (P), con $\psi_{n,\Theta}$ y $\varepsilon_P=\delta_n$. Con $d=2$, $1/r'=76$, y el
+  teorema da
   \[
     \sup_{\Theta,\Theta'}|v(n,\Theta)-v(n,\Theta')|\le\Big(\frac{4C_E}{\Delta_\infty+2\kappa}+76\,v_\infty C_M\Big)e^{-n/\xi}.
   \]
-  Es el Teorema~\ref{teo:mps} con $h_\infty$ en lugar del hamiltoniano padre: (E) sustituye a la
-  energía nula del testigo de techo y (M) a la cota $\varepsilon_n$ del MPS retorcido. Los
+  Es el Teorema~\ref{teo:mps} con $h_\infty$ en lugar del testigo de techo: (E) sustituye a su
+  $\varepsilon_D=0$ y (M) a la cota $\varepsilon_n$ del MPS retorcido. Los
   prefactores polinómicos no importan (los datos sugieren $C_En^{-3/2}$ y $C_Mn^{-1/2}$, abajo), y
   cualquier $\xi<\infty$ basta para la dicotomía. Con $n$ impar la misma cuenta solo da $O(1/n)$.
 
@@ -2292,6 +2394,20 @@ se demuestran el signo y una cota inferior de la caída (Corolario~\ref{cor:pari
   Es peor que la sensibilidad real en un factor polinómico, porque la dilución cuesta $\delta_n$ y
   no $\delta_n^2$, pero tiene el exponente correcto. Una versión débil de (E), con $O(1/n)$ en lugar de $O(e^{-n/\xi})$, está demostrada para todo $\Delta$ y todo $\Phi$ (Lema~\ref{lem:tamfinito}), y con ella la Observación~\ref{obs:paso} solo da sensibilidad $O(n^{-1/2})$. Con $n$ par, (E) uniforme en $\Theta$ equivale a su caso $\Theta=0$ (Lema~\ref{lem:phi0}) y se sigue, con $C_En^{-3/2}$, de la Conjetura~\ref{conj:sandwich} y de una cota exponencial del desdoblamiento $R_n$ (Corolario~\ref{cor:sandwich}). Lo que falta es demostrar (E) y (M), o solo (E) en la forma bilateral de arriba, para el XXZ
   con $\Delta>1$, con esa longitud.
+
+  \emph{Una vía rigurosa con $\kappa$ pequeño.} Para el Teorema~\ref{teo:puente} basta cualquier
+  $\xi<\infty$, y por la Proposición~\ref{prop:limite}(vi), con $\kappa$ pequeño el testigo límite
+  tiene $\Delta_\infty\approx1/\kappa$ grande. Tras el giro de Marshall, el XXZ es entonces el
+  antiferromagneto de Ising, con dos fundamentales de Néel con $n$ par, más un salto de tamaño relativo
+  $1/\Delta$. Para esas perturbaciones cuánticas de modelos clásicos hay desarrollos en clústeres
+  convergentes (Pirogov--Sinai cuántico y las transformaciones unitarias cuasi-locales de
+  Kennedy--Tasaki y de Yarotsky), y el flujo, que es un gauge salvo en un enlace, solo lo ven los
+  clústeres que dan la vuelta al anillo, de tamaño $\ge n/2$. Eso debería dar (E) en forma bilateral
+  y (M) con $\xi_0\sim2/\log(c\,\Delta_\infty)$, y con ellos un teorema: existe $\kappa_0>0$ tal que,
+  para $0<\kappa<\kappa_0$ y $n$ par, la sensibilidad es $O(e^{-n/\xi_0})$. No se ha hecho aquí, y
+  falta comprobar que esos resultados cubren el anillo retorcido con fundamental casi degenerado. En
+  el sector de una pared de dominio ($n$ impar), el mismo desarrollo daría un hamiltoniano efectivo de
+  una partícula con flujo $\Phi/2$, y con él la ley $1/n^3$.
 \item\label{prob:constantes} \emph{Las constantes de los tres regímenes.} El Bethe ansatz las da numéricamente; falta
   derivarlas. Con $n$ impar ya está derivada, sin rigor (Observación~\ref{obs:espinon}): la
   energía fundamental es la del mar más la del espinón con momento
@@ -2365,7 +2481,8 @@ $n=3001$ (Sección~\ref{sec:neel}), \texttt{neel\_bethe\_negativo.py} (con
 \texttt{umbrales\_pares.py} para $\Delta_\infty<0$, \texttt{doblete\_par.py} (Observación~\ref{obs:doblete},
 datos en \texttt{data/doblete\_par.csv}), \texttt{kohn\_paso.py} (Observación~\ref{obs:paso}), \texttt{cota\_derivada.py}
 (Lemas~\ref{lem:tamfinito} y~\ref{lem:convexa}), \texttt{mps\_celda.py} y
-\texttt{qubits\_celda3.py} (Sección~\ref{sec:celda}), \texttt{dilucion\_uniforme.py}
+\texttt{qubits\_celda3.py} (Sección~\ref{sec:celda}), \texttt{delta\_inf\_kappa.py}
+(Proposición~\ref{prop:limite}(vi), datos en \texttt{data/delta\_inf\_kappa.csv}), \texttt{dilucion\_uniforme.py}
 (Lema~\ref{lem:dilucionti}), y \texttt{figura\_sensibilidad.py}, \texttt{figura\_mps.py} y \texttt{figura\_monotonia.py}
 (Figuras~\ref{fig:sensibilidad}, \ref{fig:mps} y~\ref{fig:forma}). Requieren \texttt{numpy}, \texttt{scipy} y,
 para los SDP, \texttt{cvxpy} con \texttt{clarabel} o \texttt{scs}.
