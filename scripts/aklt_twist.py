@@ -183,6 +183,36 @@ check(np.all(np.diff(f_exacta(np.arccos(cs))) > 0) and np.isclose(f_exacta(0), 1
       and np.isclose(f_exacta(np.pi), 112 / 9),
       "f crece con cos Theta: máximo f(0) = 16, mínimo f(pi) = 112/9")
 
+# --- 4c: lo que depende de la holonomía (Corolario cor:aklt43) ----------------
+# d_n(Theta) = ||rho(Theta) - V rho(0) V^†||_1 = || G(Theta)/a - G(0)/b ||_1, con
+# a = 3^n + (-1)^n (1 + 2 cos Theta), b = 3^n + 3 (-1)^n, y
+#   ||G(Theta) - G(0)||_1 = g(Theta) = (4/9) sqrt(1-c) [2 sqrt(1-c) + sqrt(2 (485 + c))],
+# así que |d_n - g/a| <= 2 (1 - c) ||G(0)||_1 / (a b) = 32 (1 - c) / (a b) y
+# 3^n max_Theta d_n -> g(pi) = 64/3 = (4/3) f(0).
+
+
+def g_exacta(Theta):
+    c = np.cos(Theta)
+    return 4 / 9 * np.sqrt(1 - c) * (2 * np.sqrt(1 - c) + np.sqrt(2 * (485 + c)))
+
+
+exceso, en_pi = 0.0, True
+for n in range(3, 21):
+    r0 = marg_tm(n, 0.0)
+    ds = []
+    for Th in np.linspace(0, np.pi, 25):
+        V = np.kron(I3, Vphys(Th / n))
+        d = trnorm(marg_tm(n, Th) - V @ r0 @ V.conj().T)
+        ds.append(d)
+        a = 3 ** n + (-1) ** n * (1 + 2 * np.cos(Th))
+        b = 3 ** n + 3 * (-1) ** n
+        exceso = max(exceso, abs(d - g_exacta(Th) / a) - 32 * (1 - np.cos(Th)) / (a * b))
+    en_pi &= int(np.argmax(ds)) == len(ds) - 1
+check(exceso < 1e-14 and en_pi and np.isclose(g_exacta(np.pi), 64 / 3)
+      and np.all(np.diff(g_exacta(np.arccos(cs))) < 0),
+      f"||rho(Theta) - V rho(0) V^†||_1 = g(Theta)/a + O(9^-n), n = 3..20 (exceso {exceso:.1e}); "
+      "g decrece con cos Theta, máximo en pi: g(pi) = 64/3 = (4/3) f(0)")
+
 # --- 5: SDP exacto para n pequeño -------------------------------------------
 try:
     import cvxpy as cp

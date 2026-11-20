@@ -187,6 +187,28 @@ if __name__ == "__main__":
     print("      espectro de sigma:", np.round(np.linalg.eigvalsh(sigma), 6))
     print("      <Z> por sitio:", np.round(np.real(np.trace(np.kron(np.diag([1, -1]), np.eye(2)) @ sigma)), 6))
 
+    # Proposición celda3n: eps_n = (1 + sqrt13)/sqrt5 * x_m, x_m = lam^m/(1 + lam^m), sin
+    # dependencia en Theta (m >= 2); la marginal media tiene la diagonal de los datos y su
+    # coherencia es la de los datos por 1 + golden * x_m.
+    golden = (1 + 5 ** 0.5) / 2
+    lam3 = golden ** -4
+    err_eps = err_diag = err_coh = 0.0
+    for m in range(2, 16):
+        x = lam3 ** m / (1 + lam3 ** m)
+        for Theta in np.linspace(0, 2 * np.pi, 13):
+            phi = Theta / (k * m)
+            V = np.kron(np.eye(2), np.diag(np.exp(-1j * phi * Q_PRIME)))
+            B = mc.twisted(A, CHARGES, phi)
+            rho = [mc.edge_marginal_ring(B, i, m) for i in range(k)]
+            eps = max(mc.trnorm(rho[i] - V @ sig[i] @ V.conj().T) for i in range(k))
+            err_eps = max(err_eps, abs(eps - (1 + 13 ** 0.5) / 5 ** 0.5 * x))
+            avg, tgt = sum(rho) / k, V @ sigma @ V.conj().T
+            err_diag = max(err_diag, np.abs(np.diag(avg - tgt)).max())
+            err_coh = max(err_coh, abs(avg[1, 2] - (1 + golden * x) * tgt[1, 2]))
+    mc.check(max(err_eps, err_diag, err_coh) < 1e-14,
+             f"eps_n exacto, m = 2..15, 13 Theta (err {err_eps:.1e}); media: diagonal exacta "
+             f"(err {err_diag:.1e}) y coherencia (1 + phi x_m) por la de los datos (err {err_coh:.1e})")
+
     if "--sin-sdp" not in sys.argv:
         print("\n   n   Theta/pi   p(n, Theta) SDP   estado          cota del teorema")
         for n in range(4, 10):
