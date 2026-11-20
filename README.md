@@ -42,6 +42,7 @@ figuras en `figures/`.
 | `sdp` | SDP primal del pegado, completo y reducido por U(1) (anillo o grafo cualquiera con datos abelianos) |
 | `xxz` | Diagonalización exacta del anillo XXZ con flujo, por sectores de magnetización |
 | `bethe` | Ecuaciones de Bethe con flujo en los tres regímenes (Δ > 0), con derivada implícita en el flujo |
+| `bethe_p` | Ecuaciones de Bethe con flujo en variables de momento para −1 < Δ < 1, incluido Δ ≤ 0 (`MomentumSolver`, `eps`): continuación en Δ desde los fermiones libres con la rama del desfase seguida por continuidad; por debajo de cada umbral (π − γ_c = Φ/(4k) con n par, (π − Φ)/(4k + 1) con n impar, k = 1, 2, …) abre un par de raíces complejas conjugadas y conserva los ya formados (comprobado con hasta tres pares frente a la diagonalización exacta) |
 | `dual` | Objetivo dual (Prop. 4), fórmula de un parámetro, criterio de borde (Prop. 6), anchura de la ventana |
 | `ladder` | Escaleras de dos patas: aristas, flujos de plaqueta, dual reducido de la escalera periódica (SDP completo, y por generación de columnas con cotas certificadas para L ≥ 6, con bloques dispersos y Lanczos para L ≥ 8 y, opcionalmente, solo los bloques k ≤ L) |
 | `diamond` | Cadenas de diamantes K4−e (abiertas y cerradas): sitios, aristas, flujos de triángulo, gauge simétrico (abeliano) y de árbol (no abeliano), pares de holonomías relativas y dual reducido de la cadena cerrada `DiamondDual` (U(1), traslación de una celda, inversión temporal; 15 coeficientes) |
@@ -136,6 +137,43 @@ figuras en `figures/`.
 caché, así que `python scripts/baedge2.py --report` reproduce la tabla 3 sin
 recalcular. Para recalcular, borre la caché; se puede repartir entre procesos:
 `python scripts/baedge2.py 1024 1025 &  python scripts/baedge2.py 2048 &`.
+
+## Guiones de `docs/robustez_mps.tex`
+
+Artículo «Robustez MPS» (`docs/robustez_mps.tex`): secciones 2 Marco, 3 El teorema,
+5 AKLT, 6 Simetría rota (testigo de Néel y paridad de n), 7 Celda de k sitios y
+8 Estado de las afirmaciones y problemas abiertos. La columna «run_all» indica si
+`./run_all.sh` lo ejecuta (todos los incluidos están en la lista lenta); los demás
+se lanzan a mano. Los tiempos no se han medido, salvo el de `testigo_limite.py`.
+
+| Guion | Qué comprueba | Sección | Datos / figura | run_all |
+|---|---|---|---|---|
+| `dilucion_uniforme.py` | Lema de dilución uniforme (lem:dilucionti): con Δ aleatorios en el borde del radio 1/(19d²), el estado construido es positivo y tiene marginales I/d² + Δ exactas (d = 2, n = 3..7; d = 3, n = 3..5) | 2 | — | no |
+| `aklt_twist.py` | Teorema MPS con AKLT: simetría U(1) del MPS, marginales por fuerza bruta y por transferencia, peso nulo en J = 2, ε_n·3ⁿ acotado hasta n = 30, y p(n, Θ) del SDP completo (n = 4..6) dentro de [1 − s_n, 1] | 3, 5 | — | no |
+| `aklt_n4.py` | p(4, 0) = 40/41 exacto (prop:aklt4) en aritmética racional: primal ψ = 5X − 4D y testigo h = 81 P0 + 110 P1 | 5 | — | no |
+| `aklt_sdp_ti.py` | p(n, Θ) de AKLT hasta n = 8, con el dual por bloques (M, k) y un primal restringido corregido con la dilución: intervalo certificado | 5 | — | no |
+| `aklt_lanczos.py` | p(n, Θ) de AKLT hasta n = 12 con Lanczos, BFGS y Newton desde el testigo de techo, continuación en Θ (lem:giro); cotas superior e inferior certificadas (problema 4) | 5, 8 | `data/aklt_lanczos.csv` | sí |
+| `mps_aleatorio.py` | Déficit 1 − p(n, Θ) en Θ = 0, π de MPS aleatorios con U(1), d = 3 y D = 2: ¿es O(λ²ⁿ) propio de AKLT? | 5 | `data/mps_aleatorio.csv` | sí |
+| `mps_su2.py` | Sensibilidad en forma canónica real (lem:espiral): modos `canon` (los aleatorios, n ≤ 12) y `familia` (puntos (r, t) alrededor de AKLT, n ≤ 11); conj:deficit | 5 | `data/mps_su2_canon.csv`, `data/mps_su2_familia.csv` | sí |
+| `neel_u1.py` | Datos U(1) anisótropos (κ) y testigo de Néel: v(n, Θ) con el dual completo en (Δ, Φ) hasta n = 18; ¿la sensibilidad cae exponencialmente o como 1/n²? | 6 | `data/neel_u1.csv` | no |
+| `neel_impar.py` | n impar: v(n, 0), v(n, π), Δ*, cota del Corolario de paridad (cor:paridad) y escalado de la energía de giro, con los tres testigos del Lema de reducción. Uso: `neel_impar.py kappa n1 n2 …` | 6 | — | no |
+| `neel_bethe.py` | Sensibilidad por Bethe hasta n = 3001 en los tres regímenes (Néel débil, n impar, crítico), con controles frente a diagonalización exacta y `neel_u1.csv`, cota de Kohn por los dos lados y Δ*(n) → Δ_∞ (prop:limite) | 6 | `data/neel_bethe.csv` | no |
+| `neel_bethe_ajuste.py` | Leyes de la sensibilidad sobre `neel_bethe.csv`: n par con gap (A n^−β e^−n/ξ), n impar (un espinón, c/n²) y crítico (rigidez de Shastry–Sutherland) | 6 | `data/neel_bethe_ajuste.csv` | no |
+| `neel_bethe_negativo.py` | Caso crítico con κ > π/2 (Δ_∞ < 0) con `holonomy.bethe_p`: controles frente a `holonomy.bethe` (Δ > 0), la diagonalización exacta en todos los sectores (Δ ∈ [−0,97; −0,05], con cero a tres pares) y `neel_bethe.csv` (κ = 1,5); κ = 1,75, 2, 2,5, 3, 4, 5, 6, 8 (desde κ = 3 con pares complejos, hasta tres con κ = 8), n hasta 1001, ambas paridades: n R_n → π²D/2 y n²s → 2π²D/(Δ_∞ + 2κ) con diferencias ≤ 2·10⁻⁷, cota de Kohn por los dos lados (problema 3) | 6, 8 | `data/neel_bethe_negativo.csv` | sí |
+| `cota_derivada.py` | Cotas rigurosas (lem:tamfinito, lem:convexa, cor:velocidad): \|e_n(Δ,Φ) − e_∞(Δ)\| ≤ (1 + \|Δ\|/2)/n para todo Δ y Φ (subaditividad), la de la derivada por convexidad, O(n^{−1/2}), y la de \|Δ*_i − Δ_∞\|; las comprueba frente a la diagonalización exacta (n = 3..8), Bethe (n ≤ 201) y `neel_bethe.csv`, que F_∞''(Δ_∞) > 0 y el sándwich e_n(Δ,π) ≤ e_∞(Δ) ≤ e_n(Δ,0) con n par (conj:sandwich; 180 puntos, Δ de −0,9 a 10) (problemas 2 y 3) | 6, 8 | — | sí (rápido, ~1 min) |
+| `kohn_paso.py` | Paso de R_n a la caída s (prop:paso, obs:paso): con K(Δ) = 4[E0(Δ,Θ1) − E0(Δ,Θ0)]/(n(Δ + 2κ)), la cota de Kohn K(Δ*_0) ≤ s ≤ K(Δ*_1) y la velocidad de Δ*_i → Δ_∞ dan s/K(Δ_∞) − 1 exponencial (n par, gap), c₁/n (n impar) y c₂/n² (crítico); comprueba s = K((Δ*_0 + Δ*_1)/2) a 10⁻⁶, la pendiente n^{1/2}e^{−n/ξ} y los coeficientes c₁, c₂ en forma cerrada a 0,5 % sobre `neel_bethe.csv` (problema 3) | 6, 8 | — | sí (rápido, ~1 min) |
+| `doblete_par.py` | n par, κ < 1 (obs:doblete): desdoblamiento del doblete de Néel por un espinón en el canal espejo, R_n = π⁻¹ sinh γ K(k) √(2k'/(πn)) e^(−n/(2ξ_JKM)) (1 + O(1/n)); comprueba arccosh(1/k) = 1/(2ξ_JKM), la constante 2 del prefactor (Δ de 1,5 a 10, a 8·10⁻³), la forma 1 − cos(Φ/2) en el flujo y la sensibilidad de `neel_bethe.csv` frente a 4R_n/(n(Δ_∞ + 2κ)) (problema 3) | 6, 8 | `data/doblete_par.csv` | sí (rápido, ~20 s) |
+| `umbrales_pares.py` | Umbrales de los pares complejos con Δ < 0 (obs:umbrales): derivación por suma de las ecuaciones de Bethe de las j raíces que llegan al infinito, Φ = 2j(π − γ) (n par) y π − Φ = (2j + 1)(π − γ) (n impar); comprueba la alternancia (j impar: una raíz pasa a Im λ = π/2; j par: se forma un par, j = 1..5) y los umbrales de los dos primeros pares por bisección (10⁻⁹ y 2·10⁻⁷ en Δ) (problema 3) | 6, 8 | — | sí (rápido, ~30 s) |
+| `razumov_stroganov.py` | κ = 5/4, n impar (prop:rs): E0 = −3n/8 y el correlador de Stroganov con ED (n = 5..13) y Bethe (hasta n = 801); 1/2 − 3/(2n²) ≤ v(n, π) < 1/2 | 6 | — | no |
+| `monotonia_theta.py` | Monotonía de v(n, ·) en [Θ0, Θ0 + π] con el dual completo y Bethe; controles: Bethe = ED, `neel_u1.csv`, el campo no mejora el dual y fuerza bruta en n = 10 (problema 7) | 6, 8 | `data/monotonia_theta.csv` | sí |
+| `xi_tunel.py` | Longitud del desdoblamiento túnel R_n del doblete de Néel a Δ fijo: ξ = 2ξ_JKM frente a ξ_as = ¼e^{π²/(2γ)} (problema 3) | 6, 8 | `data/xi_tunel.csv` | sí |
+| `espinon_giro.py` | n impar (obs:espinon): E0(n, Φ) = −n e_∞ + E_sp(dist(Φ − π, 2πℤ)/(2n)) salvo O(n^−1/2 e^−n/ξ) para todo Φ, con ξ = 2ξ_JKM al 0,2 % (κ = 0,4, 0,6, 0,8; n impar hasta 1001), forma cerrada de c y n²R_n frente a la parábola; κ = 0,9 informativo (problema 3) | 6, 8 | `data/espinon_giro.csv` | sí |
+| `testigo_limite.py` | Vía del testigo límite (problema 2): cotas (E) de energía y (M) de marginales en norma traza con κ = 0,4, 0,6, 0,8 y n par hasta 1000, la horquilla de v(n, Θ) y la reducción δ_n ≤ 2η_n + c√η_n de (M) a (E). Tarda decenas de minutos, casi todo en κ = 0,8 | 8 | `data/testigo_limite.csv` | sí |
+| `mps_celda.py` | Teorema con celda de k sitios, k = 2: espín ½ y espín 3/2 con carga semientera por sitio; marginal retorcida = dato girado + O(λ^(m−1)) uniforme en Θ | 7 | — | no |
+| `qubits_celda3.py` | Ejemplo mínimo con qubits: celda de 3 sitios y llenado 1/3; peso nulo en \|↑↑⟩ y p(n, Θ) exacto por SDP (n = 4..9) frente a la cota del teorema | 7 | — | no |
+| `figura_sensibilidad.py` | Figura de la sensibilidad frente a n (AKLT, Néel, Werner; n ≤ 18 y Bethe hasta 3001) | 6 | `docs/sensibilidad.pdf` | no |
+| `figura_mps.py` | Figura del déficit y la sensibilidad de los MPS con U(1) y D = 2 frente a λ²ⁿ | 5 | `docs/mps_lambda.pdf` | no |
+| `figura_monotonia.py` | Figura de la forma de v(n, Θ) normalizada, n par e impar | 6 | `docs/forma_theta.pdf` | no |
 
 ## Convenciones
 

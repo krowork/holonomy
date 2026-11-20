@@ -1183,7 +1183,8 @@ $\kappa$ y con $\kappa'$, y $1/(\Delta_0+2\kappa)=1/(\Delta_0+2\kappa')$, contra
 \end{proof}
 
 Así, con $\kappa<1$ el testigo límite está en la fase de Néel, con gap, y con $\kappa>1$ en la fase
-crítica. Como $|e_n(\Delta,\pi)-e_n(\Delta,0)|=O(1/n)$, las $e_n$ convexas convergen
+crítica. Como $|e_n(\Delta,\Phi)-e_\infty(\Delta)|\le(1+|\Delta|/2)/n$ (Lema~\ref{lem:tamfinito}, más
+abajo), las $e_n$ convexas convergen
 uniformemente en compactos y el mínimo de la cadena infinita es único, $\Delta^\ast(n)\to\Delta_\infty$
 en las dos paridades. Numéricamente, con $n$
 par la convergencia es rápida ($\kappa=0{,}4$: $\Delta^\ast=2{,}66004$ desde $n=60$) y con $n$
@@ -1258,8 +1259,7 @@ holonomía óptima, pero se queda a una distancia $O(n^{-4})$, mucho menor que l
 es $\approx2{,}04/n^2$.
 
 Los resultados están en la Figura~\ref{fig:sensibilidad}b y en la tabla siguiente (con
-$\kappa>\pi/2$, $\Delta_\infty<0$ queda fuera del alcance del guion, y $\kappa=2$ solo tiene los datos
-de diagonalización exacta), con
+$\kappa>\pi/2$, $\Delta_\infty<0$, véase el párrafo «$\Delta_\infty<0$» más abajo), con
 $s(n)=v(n,\Theta_0)-v(n,\Theta_1)$; los ajustes son los de
 \texttt{scripts/neel\_bethe\_ajuste.py}, con los datos en \texttt{data/neel\_bethe\_ajuste.csv}:
 \begin{center}\small
@@ -1280,6 +1280,14 @@ $s\approx C/n^3$ & 0,6 & 1,850 & 1001--3001 & $n^3s\to45{,}09$ & $45{,}09$\\
 crítico & 1 & 1 & 1000--3001 & $n^2s\to1{,}650$ (par) / $1{,}647$ (impar) & $\pi^2/6=1{,}645$\\
 $s\approx C/n^2$ & 1,25 & $\tfrac12$ & 1000--3001 & $n^2s\to2{,}0405$ & $2{,}0405$\\
 & 1,5 & 0,0945 & 1000--3001 & $n^2s\to2{,}0287$ & $2{,}0287$\\
+& 1,75 & $-0{,}2022$ & 300--1001 & $n^2s\to1{,}89778$ & $1{,}89778$\\
+& 2 & $-0{,}4095$ & 300--1001 & $n^2s\to1{,}72062$ & $1{,}72062$\\
+& 2,5 & $-0{,}6533$ & 300--1001 & $n^2s\to1{,}37732$ & $1{,}37732$\\
+& 3 & $-0{,}7774$ & 300--1001 & $n^2s\to1{,}11516$ & $1{,}11516$\\
+& 4 & $-0{,}8882$ & 300--1001 & $n^2s\to0{,}78751$ & $0{,}78751$\\
+& 5 & $-0{,}9335$ & 300--1001 & $n^2s\to0{,}60252$ & $0{,}60252$\\
+& 6 & $-0{,}9560$ & 300--1001 & $n^2s\to0{,}48634$ & $0{,}48634$\\
+& 8 & $-0{,}9768$ & 300--1001 & $n^2s\to0{,}34999$ & $0{,}34999$\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1311,7 +1319,70 @@ $C=3\sqrt3\,\pi/8=2{,}04052$, y con $\kappa=\pi/2$, $\gamma=\pi/2$, $D=1/\pi$ y 
 $\kappa=1$, $D=\tfrac14$; por el operador marginal, la extrapolación se hace en $1/\ln n$, por
 separado con $n$ par y con $n$ impar.
 
-En los tres regímenes el mecanismo es el mismo: $s=4R_n/(n(\Delta_\infty+2\kappa))\,(1+o(1))$, con
+\paragraph{$\Delta_\infty<0$.} Con $\kappa>\pi/2$ el testigo límite tiene $\Delta_\infty<0$
+(Proposición~\ref{prop:limite}), y las ecuaciones en rapideces no sirven: con flujo $\pi$ una
+rapidez escapa a infinito en $\Delta=0$ y vuelve por la recta $\operatorname{Im}\lambda=\pi/2$.
+Escritas en los momentos, $u=\tanh\lambda=\tan(p/2)\tan(\gamma/2)$ recorre las dos rectas sin
+pasar por infinito, y $\theta=2\arctan\big(\cot\gamma\,t\sin\tfrac{p_1-p_2}2/(\cos\tfrac{p_1}2\cos\tfrac{p_2}2
+-t^2\sin\tfrac{p_1}2\sin\tfrac{p_2}2)\big)$, con $t=\tan(\gamma/2)$, es regular, aunque su rama hay que
+seguirla por continuidad (\texttt{holonomy/bethe\_p.py}). Se arranca de los fermiones libres,
+$\Delta=0$, donde $p_j=(2\pi I_j+\Phi)/n$ es exacto, y se continúa en $\Delta$. Coincide con la
+diagonalización exacta en todos los sectores de $S^z$ a $10^{-13}$ ($n=8,\dots,12$,
+$\Delta\in[-0{,}7;-0{,}05]$, $\Phi\in\{0,\pi/2,\pi\}$), con las ecuaciones en rapideces a
+$10^{-15}$ cuando $\Delta>0$, y reproduce los datos de $\kappa=1{,}5$ a $2\times10^{-14}$
+(\texttt{scripts/neel\_bethe\_negativo.py}).
+
+Con $\Delta<0$ y flujo aparecen además pares de raíces complejas. Al bajar $\Delta$, las raíces
+extremas del estado retorcido van llegando a $\lambda=\infty$ (en momentos, a $p=\pi-\gamma$), y los
+umbrales se derivan sin rigor de las propias ecuaciones.
+
+\begin{observacion}[umbrales de los pares]\label{obs:umbrales}
+Si $j$ raíces llegan a la vez a $\lambda=+\infty$, se suman sus ecuaciones: los desfases mutuos se
+cancelan, porque $\theta$ es impar, y en el infinito $p\to\pi-\gamma$ y
+$\theta(\infty-\lambda_k)\to\pi-2\gamma$ frente a las $M-j$ raíces finitas. Con $n$ par, las $j$
+superiores tienen $I=\tfrac{M-1}2,\tfrac{M-3}2,\dots$, de media $\tfrac{M-j}2$, y la suma dividida
+por $j$ da
+\[
+  n(\pi-\gamma)-(M-j)(\pi-2\gamma)=\pi(M-j)+\Phi
+  \quad\Longleftrightarrow\quad \Phi=2j(\pi-\gamma),
+\]
+porque $n=2M$ cancela todo lo demás; en particular, el umbral no depende de $n$. Con $n$ impar y la
+rama del fundamental, el grupo sale por $\lambda=-\infty$, con las $j$ inferiores, y la misma cuenta
+da $\pi-\Phi=(2j+1)(\pi-\gamma)$. Con $j$ impar, una raíz real pasa por el infinito a la recta
+$\operatorname{Im}\lambda=\pi/2$, un paso suave en momentos ($j=1$ con $n$ par y $\Phi=\pi$ es
+$\Delta=0$, donde las ecuaciones en rapideces dejan de servir). Con $j$ par, esa raíz y la siguiente
+real chocan y forman un par complejo conjugado, el par $k=j/2$:
+\[
+  \pi-\gamma_c^{(k)}=\frac{\Phi}{4k}\quad(n\ \text{par}),\qquad
+  \pi-\gamma_c^{(k)}=\frac{\pi-\Phi}{4k+1}\quad(n\ \text{impar}).
+\]
+Con $n$ par y $\Phi=\pi$, el primero es $\Delta_c=-1/\sqrt2$. Lo que no se demuestra es que el grupo
+sea el de las $j$ raíces extremas, que llegue entero a la vez y que $\theta$ tenga en el infinito
+la rama de su valor principal; la cuenta da solo una condición necesaria. Numéricamente
+(\texttt{scripts/umbrales\_pares.py}, $n=10$, $11$, $40$ y $41$, tres $\Phi$ por paridad), la
+alternancia se cumple en $j=1,\dots,5$, y la bisección del cambio en el número de pares da los
+umbrales de la fórmula a $10^{-9}$ en el primer par y a $2\times10^{-7}$ en el segundo. En el
+umbral, el grupo llega al infinito como $|\Delta-\Delta_c|^{1/j}$ (en $p$), y el primer par, que
+para $n$ grande queda pegado a $p=\pi-\gamma$, vuelve a él en el umbral del segundo.
+\end{observacion}
+
+Las ecuaciones son las mismas con momentos complejos. La continuación abre un par nuevo, con las
+dos reales más próximas, al cruzar cada umbral, conserva los ya formados y los cierra al volver.
+Con hasta tres pares, la energía coincide con el fundamental del sector a $5\times10^{-14}$
+($n=8,\dots,14$, cinco $\Phi$, $\Delta$ hasta $-0{,}995$, bajando y subiendo), salvo en un punto
+aislado ($n=11$, $\Phi=\pi/2$, $\Delta=-0{,}99$), donde dos pares casi chocan entre sí y la
+continuación desde $-0{,}97$ no pasa (sí bajando en pasos de $0{,}0025$). La parte imaginaria de
+los pares es pequeña y decrece con $n$ ($\approx6\times10^{-4}$ en $n=150$, $\Delta=-0{,}78$).
+
+Con $\kappa=1{,}75$, $2$, $2{,}5$, $3$, $4$, $5$, $6$ y $8$ ($\Delta_\infty$ de $-0{,}202$ a
+$-0{,}977$; desde $\kappa=3$ con pares, hasta tres con $\kappa=8$) y las dos paridades ($n$ hasta
+$1001$), las dos constantes del caso crítico salen como predicen la rigidez y el mecanismo de
+Kohn: la extrapolación en $1/n$ da $nR_n\to\pi^2D/2$ y $n^2s\to2\pi^2D/(\Delta_\infty+2\kappa)$
+con diferencias relativas de $2\times10^{-7}$ o menos, y la cota de Kohn~\eqref{eq:kohn2} y el
+signo del Corolario~\ref{cor:paridad} se cumplen en todos los puntos.
+
+En los tres regímenes el mecanismo es el mismo: $s=4R_n/(n(\Delta_\infty+2\kappa))\,(1+o(1))$
+(Proposición~\ref{prop:paso} y Observación~\ref{obs:paso}, más abajo), con
 $R_n=E_0(\Delta_\infty,\Theta_1)-E_0(\Delta_\infty,\Theta_0)$ la respuesta al giro del testigo
 límite; el cociente vale entre $0{,}993$ y $1{,}0003$ en el mayor $n$ de cada grupo, y con $n$
 impar se acerca a $1$ despacio, al ritmo de $\Delta^\ast(n)$. Lo que cambia
@@ -1319,7 +1390,8 @@ es $R_n$:
 \begin{itemize}
 \item con $n$ par y $\kappa<1$, $R_n$ es el desdoblamiento túnel del doblete de Néel, cuyos dos
   niveles se cruzan en $\Phi=\pi$, y va como $n^{-1/2}e^{-n/\xi}$ (exponente ajustado en
-  $\Delta_\infty$, $0{,}55$--$0{,}56$, dentro del intervalo de los ajustes a $\Delta$ fijo);
+  $\Delta_\infty$, $0{,}55$--$0{,}56$, dentro del intervalo de los ajustes a $\Delta$ fijo), con el
+  prefactor de la Observación~\ref{obs:doblete};
 \item con $n$ impar y $\kappa<1$, es la energía de giro de un solo espinón masivo, $c/n^2$, con
   $c=14{,}689$, $34{,}383$ y $162{,}08$ en $\kappa=0{,}4$, $0{,}6$ y $0{,}8$: la curvatura de su
   banda. Con la dispersión exacta del espinón del XXZ con $\Delta=\cosh\gamma>1$
@@ -1331,12 +1403,279 @@ es $R_n$:
   \end{equation}
   ($14{,}6889$, $34{,}3831$ y $162{,}082$). Es la parábola de la banda con el momento desplazado
   en $\pi/(2n)$ cuando el flujo pasa de $\Theta_0$ a $\Theta_0+\pi$, como corresponde a una
-  partícula de $S^z=\tfrac12$. Con $\kappa=0{,}9$ da $c=1277{,}9$, y el $c\approx1506$ de
-  $n\le3001$ aún no es asintótico;
+  partícula de $S^z=\tfrac12$ (derivación en la Observación~\ref{obs:espinon}). Con $\kappa=0{,}9$
+  da $c=1277{,}9$, y el $c\approx1506$ de $n\le3001$ aún no es asintótico: ahí
+  $2\xi_{\rm JKM}=617{,}5$, y con $n\le3001$ las correcciones exponenciales de la
+  Observación~\ref{obs:espinon} todavía no son pequeñas;
 \item en el caso crítico es la parábola de la rigidez, $nR_n\to\pi^2D/2$: $1{,}53039$ y
   $1{,}56946$ en $\kappa=1{,}25$ y $1{,}5$ (el primero es $9\sqrt3\,\pi/32=1{,}530393$), y $1{,}236$--$1{,}237$ en $\kappa=1$, frente a
   $\pi^2/8=1{,}2337$.
 \end{itemize}
+
+\begin{observacion}[derivación con $n$ impar]\label{obs:espinon}
+La ecuación~\eqref{eq:espinon} se deriva de las ecuaciones de Bethe, sin rigor, y lo que sale es
+más fuerte que la parábola: con $n$ impar, $\Delta=\cosh\gamma>1$ y todo $\Phi$,
+\begin{equation}\label{eq:espinonexacta}
+  E_0(\Delta,\Phi)=-n\,e_\infty(\Delta)+E_{\rm sp}\Big(\frac{\operatorname{dist}(\Phi-\pi,2\pi\mathbb Z)}{2n}\Big)
+  +O\big(n^{-1/2}e^{-n/\xi}\big),\qquad \xi=2\xi_{\rm JKM}.
+\end{equation}
+Las ecuaciones son $n\,p(\lambda_j)-\sum_k\theta(\lambda_j-\lambda_k)=2\pi I_j+\Phi$, con
+$p(\lambda)=2\arctan(\coth\tfrac\gamma2\tan\lambda)$ y $\theta(\lambda)=2\arctan(\coth\gamma\tan\lambda)$,
+y la función de conteo es $z_n(\lambda)=p(\lambda)-n^{-1}\sum_k\theta(\lambda-\lambda_k)-\Phi/n$, con
+$z_n(\lambda_j)=2\pi I_j/n$. Tres pasos.
+
+\emph{(a) Un hueco en un mar sin bordes.} El fundamental con $n$ impar está en $S^z=\pm\tfrac12$,
+con $M=(n-1)/2$ rapideces reales y $M+1$ vacantes: un hueco. En un periodo de la rapidez, $p$ y
+cada $\theta$ crecen en $2\pi$, así que $z_n$ crece en $2\pi(n-M)/n=2\pi(M+1)/n$: las vacantes
+llenan el periodo entero, sin puntos de Fermi. Las sumas sobre ellas de funciones analíticas y
+periódicas son entonces reglas del trapecio en la variable $z_n$, con error exponencialmente
+pequeño, y la energía es la del mar más la vestida del hueco,
+$E_0=-n\,e_\infty+E_{\rm sp}(\vartheta)$, con $\vartheta$ el momento vestido del hueco y $E_{\rm sp}$
+la dispersión de \cite{des-cloizeaux-gaudin,jkm}. A diferencia del caso crítico, no hay
+correcciones en potencias de $1/n$: $n$ y $\Phi$ solo entran por la cuantización de $\vartheta$.
+
+\emph{(b) Carga $\tfrac12$.} Al variar $\Phi$ con los números cuánticos fijos, las rapideces se
+mueven, $\delta\lambda_k=-\delta z_n(\lambda_k)/z_n'(\lambda_k)$, y por (a)
+$(1+K)\,\delta z_n=-\delta\Phi/n$, con $K$ la convolución con $\theta'/(2\pi)$ en el periodo. Como
+$\theta$ crece en $2\pi$ por periodo, $K1=1$ y $\delta z_n=-\delta\Phi/(2n)$: el mar apantalla
+la mitad del flujo, y el hueco lo ve con la carga de su $S^z$, $\tfrac12$. Es la ecuación de
+Bethe--Yang de una sola partícula, sin desfases de dispersión porque no hay otra:
+$n\vartheta\in2\pi\mathbb Z+\Phi/2+\alpha$, con $\alpha$ independiente de $\Phi$ y de $n$.
+
+\emph{(c) El desfase.} $E_{\rm sp}$ es par y de periodo $\pi$ en $\vartheta$, y $n$ es impar, así
+que los $\vartheta$ permitidos módulo $\pi$ son $(\Phi/2+\alpha+\pi\mathbb Z)/n$. Con $n$ impar,
+$H_{\rm XXZ}(\Delta,\pi)$ es estocástico tras un unitario diagonal, y el argumento de la
+Proposición~\ref{prop:marshall} da $E_0(\Delta,\Phi)\ge E_0(\Delta,\pi)$ para todo $\Phi$: en
+$\Phi=\pi$ el hueco está en el mínimo de la banda, $\vartheta=0$. Por tanto
+$\alpha\equiv-\pi/2$ módulo $\pi$, y el $\vartheta$ permitido más cercano al mínimo es
+$\operatorname{dist}(\Phi-\pi,2\pi\mathbb Z)/(2n)$, que es~\eqref{eq:espinonexacta}.
+
+En particular, $R_n=E_0(\Delta,0)-E_0(\Delta,\pi)=E_{\rm sp}(\pi/(2n))-E_{\rm sp}(0)$ salvo
+términos exponenciales, que es $c/n^2+O(n^{-4})$ con el $c$ de~\eqref{eq:espinon}. Numéricamente
+(\texttt{scripts/espinon\_giro.py}, en $\Delta_\infty$ con $\kappa=0{,}4$, $0{,}6$ y $0{,}8$, nueve
+$\Phi\in[0,\pi]$), el residuo de~\eqref{eq:espinonexacta}, maximizado en $\Phi$, baja de
+$1$--$3\times10^{-2}$ en $n=11$ o $21$ a $1{,}6\times10^{-13}$ ($n=131$), $5{,}2\times10^{-13}$ ($n=331$) y
+$3{,}1\times10^{-9}$ ($n=1001$), y el ajuste $\log(\sqrt n\,r_n)=a-n/\xi$ da $\xi=2\xi_{\rm JKM}$ al
+$0{,}2$\,\% o menos: la corrección es el mismo efecto túnel que el desdoblamiento con $n$ par. Para
+una demostración faltan los pasos (a) y (b) con cotas, que son los del problema
+abierto~\ref{prob:nomps} (cota (E)), y la identificación del autovector de Bethe con el
+fundamental.
+\end{observacion}
+
+\begin{observacion}[derivación con $n$ par: el doblete]\label{obs:doblete}
+Con $n$ par y $\Delta=\cosh\gamma>1$ hay dos vacíos de Néel, y los conecta un solo espinón virtual
+que da la vuelta al anillo: al pasar, la pared de dominio intercambia las dos subredes. Su amplitud
+es la de una partícula del canal espejo, en el que se intercambian los papeles de energía y momento
+($E\to i\tilde p$, $\vartheta\to i\tilde E$). Con la dispersión de la
+ecuación~\eqref{eq:espinon}, $E_{\rm sp}(\vartheta)=\mathcal A\sqrt{1-k^2\cos^2\vartheta}$,
+$\mathcal A=\pi^{-1}\sinh\gamma\,K(k)$, la energía espejo es
+$\tilde E(\tilde p)=\operatorname{arccosh}\big(k^{-1}\sqrt{1+\tilde p^2/\mathcal A^2}\big)$, mínima en
+$\tilde E_0=\operatorname{arccosh}(1/k)=1/(2\xi_{\rm JKM})$, con curvatura $1/(\mathcal A^2k')$ en
+$\tilde p=0$, y el punto de silla da
+\[
+  I_n=\int\frac{d\tilde p}{2\pi}\,e^{-n\tilde E(\tilde p)}\simeq\mathcal A\sqrt{\frac{k'}{2\pi n}}\,
+  e^{-n/(2\xi_{\rm JKM})}.
+\]
+El espinón tiene $S^z=\pm\tfrac12$: las dos especies recogen las fases $e^{\pm i\Phi/2}$, el
+elemento entre los dos vacíos es $t(\Phi)=2I_n\cos(\Phi/2)$ y los niveles son $\bar E\mp|t(\Phi)|$.
+Por tanto, para $\Phi\in[0,\pi]$,
+\begin{equation}\label{eq:doblete}
+  E_0(\Phi)-E_0(0)=R_n\big(1-\cos\tfrac\Phi2\big),\qquad
+  R_n=2I_n=\frac{\sinh\gamma\,K(k)}\pi\sqrt{\frac{2k'}{\pi n}}\;e^{-n/(2\xi_{\rm JKM})}\big(1+O(1/n)\big).
+\end{equation}
+Es el término de Lüscher de un espinón virtual que rodea el cilindro; la normalización
+$d\tilde p/(2\pi)$ por especie se toma de ahí y no se deriva. La tasa explica $\xi=2\xi_{\rm JKM}$:
+la longitud de correlación es la del umbral de dos espinones, $2\tilde E_0$, y el desdoblamiento la
+de uno; la identidad $\operatorname{arccosh}(1/k)=1/(2\xi_{\rm JKM})$ se cumple a la precisión de
+la máquina en $1{,}2\le\Delta\le10$. Numéricamente (\texttt{scripts/doblete\_par.py}), la constante
+$\lim R_n\sqrt n\,e^{n\tilde E_0}/(\mathcal A\sqrt{k'/(2\pi)})$, extrapolada en $1/n$, vale $2$ a
+$8\times10^{-3}$ o mejor con $\Delta=1{,}5$, $2$, $2{,}66$, $4$, $6$ y $10$; la forma en $\Phi$ es
+$1-\cos(\Phi/2)$ con una desviación que cae con la misma longitud ($10^{-6}$ en $n=60$,
+$\Delta=2{,}66$); y la sensibilidad de la tabla, frente a $4R_n/(n(\Delta_\infty+2\kappa))$ con
+esta $R_n$, da un cociente $1+b/n$ que tiende a $1$ a $1{,}2\times10^{-3}$ ($\kappa=0{,}4$, $0{,}6$ y
+$0{,}8$), con $b$ que crece con $\xi$. El mismo espinón espejo explica la corrección
+$O(n^{-1/2}e^{-n/\xi})$ de la Observación~\ref{obs:espinon} con $n$ impar. Falta derivarlo de las
+propias ecuaciones de Bethe del doblete, con la normalización, y la corrección $O(1/n)$.
+\end{observacion}
+
+Queda el paso de $R_n$ a la caída. Sean $F_{n,i}(\Delta)=4e_n(\Delta,\Theta_i)/(\Delta+2\kappa)$, para
+$i=0,1$, los cocientes del Lema~\ref{lem:reduccion}, $\Delta^\ast_i$ sus puntos de mínimo y
+\[
+  K(\Delta)=F_{n,0}(\Delta)-F_{n,1}(\Delta)=\frac{4\big[E_0(\Delta,\Theta_1)-E_0(\Delta,\Theta_0)\big]}{n(\Delta+2\kappa)},
+\]
+que en $\Delta_\infty$ es $4R_n/(n(\Delta_\infty+2\kappa))$.
+
+\begin{proposicion}[de $R_n$ a la caída]\label{prop:paso}
+Supongamos que en $\Theta_0$ y $\Theta_1$ el valor lo dan los testigos alineados (no el de Ising).
+\begin{enumerate}
+\item[(i)] $K(\Delta^\ast_0)\le v(n,\Theta_0)-v(n,\Theta_1)\le K(\Delta^\ast_1)$.
+\item[(ii)] Supongamos además que $F_\infty$ es de clase $C^2$ cerca de $\Delta_\infty$, con
+  $F_\infty''(\Delta_\infty)=a>0$; que $U$ es un entorno de $\Delta_\infty$ en el que
+  $F_\infty'(\Delta)(\Delta-\Delta_\infty)\ge\tfrac a2(\Delta-\Delta_\infty)^2$, que contiene a
+  $\Delta^\ast_0$ y $\Delta^\ast_1$, y en el que $K>0$ es derivable; y que las derivadas laterales
+  cumplen $|F_{n,i}'-F_\infty'|\le\varepsilon_n'$ en $U$. Entonces
+  $|\Delta^\ast_i-\Delta_\infty|\le2\varepsilon_n'/a$ y
+  \[
+    \Big|\log\frac{v(n,\Theta_0)-v(n,\Theta_1)}{K(\Delta_\infty)}\Big|\le\frac{2\varepsilon_n'}a\,
+    \sup_{|\Delta-\Delta_\infty|\le2\varepsilon_n'/a}\big|\partial_\Delta\log K\big|.
+  \]
+\end{enumerate}
+\end{proposicion}
+
+\begin{proof}
+(i) es la cota~\eqref{eq:kohn2}. (ii) En un punto de mínimo interior, $0$ está entre las derivadas
+laterales de $F_{n,i}$, así que $|F_\infty'(\Delta^\ast_i)|\le\varepsilon_n'$, y la condición sobre
+$U$ da $\tfrac a2|\Delta^\ast_i-\Delta_\infty|\le\varepsilon_n'$. Por (i), $\log s$ está entre
+$\log K(\Delta^\ast_0)$ y $\log K(\Delta^\ast_1)$, y el teorema del valor medio acota cada uno frente a
+$\log K(\Delta_\infty)$.
+\end{proof}
+
+La hipótesis sobre $\varepsilon_n'$ se cumple con una cota que sí se demuestra, aunque es floja.
+
+\begin{lema}[tamaño finito, uniforme en el flujo]\label{lem:tamfinito}
+Para todo $n\ge3$, todo $\Delta$ real y todo $\Phi$,
+$|e_n(\Delta,\Phi)-e_\infty(\Delta)|\le2\|h\|/n=(1+|\Delta|/2)/n$, con
+$h=\tfrac12(S^+S^-+{\rm h.c.})+\Delta S^zS^z$ el término de enlace.
+\end{lema}
+
+\begin{proof}
+Sea $a_N$ la energía fundamental de la cadena abierta de $N$ sitios. Al unir dos cadenas se añade un
+enlace, que en el producto de sus fundamentales vale como mucho $\|h\|$ y como operador es
+$\ge-\|h\|$: $a_N+a_{N'}-\|h\|\le a_{N+N'}\le a_N+a_{N'}+\|h\|$. Así $a_N+\|h\|$ es subaditiva y
+$a_N-\|h\|$ superaditiva, y por el lema de Fekete, como $a_N/N\to-e_\infty$,
+$|a_N+Ne_\infty|\le\|h\|$. El anillo retorcido, con el flujo concentrado en un enlace por un cambio de
+gauge, es la cadena abierta de $n$ sitios más ese enlace, así que su energía fundamental dista de $a_n$
+como mucho $\|h\|$. Por último, $\|h\|=\tfrac12+|\Delta|/4$.
+\end{proof}
+
+\begin{lema}[de la energía a la derivada]\label{lem:convexa}
+$e_n(\cdot,\Phi)$ es convexa. Si $|e_n-e_\infty|\le\eta$ en $[\Delta-r,\Delta+r]$ y $|e_\infty''|\le M$
+allí, todo subgradiente $g$ de $e_n$ en $\Delta$ cumple $|g-e_\infty'(\Delta)|\le Mt/2+2\eta/t$ para todo
+$t\in(0,r]$; en particular, $|g-e_\infty'(\Delta)|\le2\sqrt{M\eta}$ si $2\sqrt{\eta/M}\le r$.
+\end{lema}
+
+\begin{proof}
+$e_n$ es el máximo de las funciones afines $\Delta\mapsto-\langle\psi|H_{\rm XXZ}(\Delta,\Phi)|\psi\rangle/n$.
+Por convexidad, $gt\le e_n(\Delta+t)-e_n(\Delta)\le e_\infty(\Delta+t)-e_\infty(\Delta)+2\eta\le
+e_\infty'(\Delta)t+Mt^2/2+2\eta$ para $0<t\le r$, y lo mismo con $-t$.
+\end{proof}
+
+\begin{corolario}[velocidad del testigo óptimo]\label{cor:velocidad}
+Sea $\kappa>0$ con $\Delta_\infty\ne\pm1$ y $a=F_\infty''(\Delta_\infty)>0$. Entonces la hipótesis de la
+Proposición~\ref{prop:paso}(ii) se cumple con $\varepsilon_n'=O(n^{-1/2})$, y
+$|\Delta^\ast_i(n)-\Delta_\infty|=O(n^{-1/2})$ con las dos paridades. En consecuencia,
+$s=K(\Delta_\infty)(1+o(1))$ siempre que $\partial_\Delta\log K=o(n^{1/2})$ en
+$|\Delta-\Delta_\infty|=O(n^{-1/2})$, que es una condición sobre la respuesta al giro sola.
+\end{corolario}
+
+\begin{proof}
+$e_\infty$ es analítica cerca de $\Delta_\infty\ne\pm1$. Los Lemas~\ref{lem:tamfinito}
+y~\ref{lem:convexa}, con $\eta=O(1/n)$ y $M$ el máximo de $|e_\infty''|$ en un entorno fijo, dan
+$|e_n'-e_\infty'|=O(n^{-1/2})$ para todo subgradiente, y
+$F'=4e'/(\Delta+2\kappa)-4e/(\Delta+2\kappa)^2$ hereda la cota. Como $\Delta^\ast_i\to\Delta_\infty$
+(párrafo tras la Proposición~\ref{prop:limite}), para $n$ grande están en el entorno $U$ de la
+Proposición~\ref{prop:paso}, que da el resto.
+\end{proof}
+
+La positividad de $a$ no está demostrada: con la $e_\infty$ exacta vale entre $0{,}024$ y $0{,}077$ en
+los $\kappa$ calculados. Las cotas son flojas: en $n=3000$, la de $|e_n'-e_\infty'|$ es
+$\approx10^{-2}$, frente a valores reales entre $10^{-4}$ y $10^{-8}$, y la de $|\Delta^\ast-\Delta_\infty|$,
+$\approx0{,}4$ (\texttt{scripts/cota\_derivada.py}); la tasa real es $1/n$ con $n$ impar, $1/n^2$
+en el caso crítico y exponencial con $n$ par y gap. Pero bastan para lo cualitativo en dos de los tres
+regímenes: con $n$ impar y en el caso crítico, $\partial_\Delta\log K=O(1)$ según las derivaciones
+de arriba, y el Corolario~\ref{cor:velocidad} da $s\sim K(\Delta_\infty)$ sin más cotas de tamaño
+finito. Con $n$ par y gap, $\partial_\Delta\log K\sim n/\xi$ por la tasa del doblete, y hace falta
+$\varepsilon_n'=o(1/n)$: una cota exponencial del tipo (E).
+
+Con $n$ par, la cota (E) se reduce a un enunciado sobre el anillo sin giro y, si se acepta una
+conjetura con buen apoyo numérico, a otro sobre el doblete.
+
+\begin{lema}[reducción a $\Phi=0$]\label{lem:phi0}
+Con $n$ par, $e_n(\Delta,\Phi)\le e_n(\Delta,0)$ para todo $\Delta$ y todo $\Phi$. En particular, la
+cota (E) del problema abierto~\ref{prob:nomps}, uniforme en $\Theta$, equivale a
+$e_n(\Delta_\infty,0)-e_\infty(\Delta_\infty)\le C_Ee^{-n/\xi}$.
+\end{lema}
+
+\begin{proof}
+Con $n$ par y $\Phi=0$, $H_{\rm XXZ}$ es estocástico tras el giro de Marshall para todo $\Delta$
+(párrafo anterior al Corolario~\ref{cor:paridad}), y el argumento de la
+Proposición~\ref{prop:marshall} aplicado a $-H_{\rm XXZ}$ da
+$\lambda_{\max}(-H_{\rm XXZ}(\Delta,\Phi))\le\lambda_{\max}(-H_{\rm XXZ}(\Delta,0))$.
+\end{proof}
+
+\begin{conjetura}[sándwich]\label{conj:sandwich}
+Con $n$ par y $\Delta>-1$, $e_n(\Delta,\pi)\le e_\infty(\Delta)\le e_n(\Delta,0)$.
+\end{conjetura}
+
+Numéricamente se cumple en los $180$ puntos calculados ($\Delta$ de $-0{,}9$ a $10$, $n$ par de $4$ a
+$200$, con la diagonalización exacta en todos los sectores para $n\le12$;
+\texttt{scripts/cota\_derivada.py}), y las dos sucesiones convergen monótonamente. En el caso crítico es
+el signo de las correcciones de teoría de campos: $e_n(\Delta,\Phi)-e_\infty\simeq(\pi v/6-D\Phi^2/2)/n^2$,
+positiva en $\Phi=0$ y negativa en $\Phi=\pi$ porque $3\pi D/v=3\pi/(2(\pi-\gamma))>1$; con gap, es la
+imagen de dos niveles de la Observación~\ref{obs:doblete}, con $\bar E$ a una distancia de $-ne_\infty$
+mucho menor que $I_n$. No sé demostrarla: las dos desigualdades piden cotas inferiores de energías de
+anillos, y pegar cadenas (como en el Lema~\ref{lem:tamfinito}) solo da $O(1/n)$.
+
+\begin{corolario}[(E) a partir del doblete]\label{cor:sandwich}
+Si se cumple la Conjetura~\ref{conj:sandwich}, con $n$ par, todo $\Delta>-1$ y todo $\Phi$,
+\[
+  e_n(\Delta,\Phi)-e_\infty(\Delta)\le\frac{R_n(\Delta)}n,\qquad
+  |e_n(\Delta,\Theta)-e_\infty(\Delta)|\le\frac{R_n(\Delta)}n\quad(\Theta\in\{0,\pi\}),
+\]
+con $R_n(\Delta)=E_0(\Delta,\pi)-E_0(\Delta,0)$. Con la ley~\eqref{eq:doblete}, la cota (E) se cumple
+con $C_En^{-3/2}e^{-n/\xi}$, el prefactor que se ve numéricamente, y el Lema~\ref{lem:convexa} da
+$\varepsilon_n'=O(e^{-n/(2\xi)})$ en $\Theta\in\{0,\pi\}$, que basta para la
+Proposición~\ref{prop:paso} también con $n$ par y gap.
+\end{corolario}
+
+\begin{proof}
+Por el Lema~\ref{lem:phi0} y la conjetura,
+$e_n(\Delta,\Phi)-e_\infty\le e_n(\Delta,0)-e_n(\Delta,\pi)=R_n/n$, y en $\Theta\in\{0,\pi\}$ la
+conjetura da también la otra cota. El resto es el Lema~\ref{lem:convexa} con $\eta=\sup R_n/n$ en un
+entorno fijo de $\Delta_\infty$.
+\end{proof}
+
+Así, con $n$ par, la cota (E) queda reducida a dos enunciados sobre el doblete de Néel: la
+Conjetura~\ref{conj:sandwich} y una cota $R_n\le Ce^{-n/\xi}$ del desdoblamiento túnel, uniforme en
+un entorno de $\Delta_\infty$. El segundo es el que la Observación~\ref{obs:doblete} deriva sin rigor;
+para $\Delta$ grande debería poder demostrarse con un desarrollo perturbativo convergente alrededor del
+límite de Ising, en el que el desdoblamiento aparece a orden $n/2$ en $1/\Delta$, pero aquí no se hace.
+
+\begin{observacion}[los tres regímenes]\label{obs:paso}
+La Proposición~\ref{prop:paso} reduce el paso a dos órdenes de magnitud: el de $\varepsilon_n'$,
+la corrección de tamaño finito de la derivada en $\Delta$ de $F_{n,i}$, y el de $\partial_\Delta\log K$.
+Con las correcciones derivadas arriba: con $n$ par y gap, $F_{n,i}-F_\infty=O(n^{-3/2}e^{-n/\xi})$, así
+que $\varepsilon_n'=O(n^{-1/2}e^{-n/\xi})$, y $\partial_\Delta\log K=O(n)$ por la tasa de
+$R_n$~\eqref{eq:doblete}: el error relativo es $O(n^{1/2}e^{-n/\xi})$. Con $n$ impar y gap,
+$F_{n,i}-F_\infty=-4E_{\rm sp}(\vartheta_i)/(n(\Delta+2\kappa))$ (Observación~\ref{obs:espinon}):
+$\varepsilon_n'=O(1/n)$, $\partial_\Delta\log K=O(1)$ y el error es $O(1/n)$. En el caso crítico,
+$e_n=e_\infty+\pi v/(6n^2)-D\Phi^2/(2n^2)+o(n^{-2})$, con $v=\pi\sin\gamma/(2\gamma)$ y $|\Phi|\le\pi$:
+$\varepsilon_n'=O(1/n^2)$ y el error es $O(1/n^2)$, con logaritmos en $\kappa=1$ por el operador
+marginal. A segundo orden hay más: desarrollando $F_{n,i}$ alrededor de $\Delta_\infty$, la caída es
+$K(\bar\Delta^\ast)$, con $\bar\Delta^\ast=\tfrac12(\Delta^\ast_0+\Delta^\ast_1)$, y
+$\bar\Delta^\ast-\Delta_\infty=-\tfrac12(F_{n,0}-F_\infty+F_{n,1}-F_\infty)'(\Delta_\infty)/a$, lo que da
+los coeficientes en forma cerrada:
+\[
+  n\Big(\frac s{K(\Delta_\infty)}-1\Big)\to\frac1a\,\partial_\Delta\Big[\frac{4E_{\rm gap}}{\Delta+2\kappa}\Big]\,
+  \partial_\Delta\log\frac c{\Delta+2\kappa}\quad(n\text{ impar, gap}),
+\]
+\[
+  n^2\Big(\frac s{K(\Delta_\infty)}-1\Big)\to-\frac1a\,\partial_\Delta\Big[\frac{4(\pi v/6-\pi^2D/4)}{\Delta+2\kappa}\Big]\,
+  \partial_\Delta\log\frac D{\Delta+2\kappa}\quad(\text{crítico}, n\text{ par}),
+\]
+en $\Delta_\infty$, con $E_{\rm gap}=E_{\rm sp}(0)$ y el $c$ de~\eqref{eq:espinon}. Numéricamente
+(\texttt{scripts/kohn\_paso.py}, sobre los datos de Bethe hasta $n=3001$): $s=K(\bar\Delta^\ast)$ a
+$10^{-6}$ o mejor, frente a $4\times10^{-3}$ con $K(\Delta_\infty)$ y $n$ impar; con $n$ par y gap,
+$s/K(\Delta_\infty)-1$ cae con pendiente $1/\xi-1/(2n)$ ($0{,}184$ frente a $0{,}188$ con
+$\kappa=0{,}4$, y $0{,}0690$ frente a $0{,}0676$ con $\kappa=0{,}6$); con $n$ impar, el primer
+coeficiente predicho es $-12{,}594$ y $-13{,}998$ ($\kappa=0{,}4$ y $0{,}6$), frente a $-12{,}586$ y
+$-13{,}998$ extrapolados; y en el caso crítico, el segundo es $4{,}0926$ y $2{,}8740$
+($\kappa=1{,}25$ y $1{,}5$), frente a $4{,}0931$ y $2{,}8865$ en $n=3000$. Así, el paso de $R_n$ a la caída
+es una consecuencia de~\eqref{eq:kohn2} y de cotas de tamaño finito para $\partial_\Delta e_n$ cerca
+de $\Delta_\infty$; la cota $O(n^{-1/2})$ del Corolario~\ref{cor:velocidad} está demostrada, y con $n$
+par y gap hace falta una exponencial, la misma clase de enunciado que la cota (E) del problema
+abierto~\ref{prob:nomps}, ahora para la derivada.
+\end{observacion}
 Esto explica las tendencias de la tabla con $n\le18$. En Néel débil, mientras $n\lesssim\xi$,
 $n^2s$ cambia despacio ($\kappa=0{,}9$: de $1{,}71$ a $1{,}40$ entre $n=16$ y $88$) e imita el caso
 crítico; la caída exponencial empieza en $n\sim\xi$, que diverge como $e^{\pi^2/(2\gamma_\infty)}$
@@ -1811,7 +2150,9 @@ paridad de la Proposición~\ref{prop:neelclas} y de la Sección~\ref{sec:neel}.
   todos los puntos: caída exponencial con $n$ par y $\kappa<1$, con la longitud $2\xi_{\rm JKM}$ del
   desdoblamiento túnel del testigo límite (también comprobada a $\Delta$ fijo, $2\le\Delta\le10$);
   $1/n^3$ con $n$ impar y $\kappa<1$, con la curvatura de la banda de un espinón que da la
-  ecuación~\eqref{eq:espinon}; y $1/n^2$ con $\kappa\ge1$, con la rigidez de Shastry--Sutherland.
+  ecuación~\eqref{eq:espinon}; y $1/n^2$ con $\kappa\ge1$, con la rigidez de Shastry--Sutherland,
+  también con $\Delta_\infty<0$ ($\kappa=1{,}75$ a $8$, $n\le1001$, con las ecuaciones en
+  momentos y, por debajo de $\Delta_c$, hasta tres pares de raíces complejas).
 \item \emph{Monotonía.} La de $v(n,\cdot)$ en $[\Theta_0,\Theta_0+\pi]$, con el dual completo,
   $\kappa\le1{,}25$ y $n\le129$.
 \item \emph{Testigo límite.} Las dos hipótesis de la vía del problema abierto~\ref{prob:nomps},
@@ -1857,8 +2198,10 @@ se demuestran el signo y una cota inferior de la caída (Corolario~\ref{cor:pari
   sigue de la unicidad del mínimo de la cadena infinita (Proposición~\ref{prop:limite}).
   Con $n$ impar y $\kappa<1$ la condición es falsa, pero no es un caso de la recíproca, porque el
   testigo límite tiene gap: la diferencia es la energía de giro de un solo espinón masivo, $c/n^2$,
-  y la caída, numéricamente, $4c/(n^3(\Delta_\infty+2\kappa))$; demostrar ese orden $n^{-3}$ es parte
-  del problema~\ref{prob:constantes}. Fuera de estos datos falta el caso de testigos que no
+  y la caída, numéricamente, $4c/(n^3(\Delta_\infty+2\kappa))$; la energía de giro está derivada
+  (Observación~\ref{obs:espinon}), el paso a la caída se reduce a cotas de tamaño finito
+  (Proposición~\ref{prop:paso}), y demostrar ese orden $n^{-3}$ es parte del
+  problema~\ref{prob:constantes}. Fuera de estos datos falta el caso de testigos que no
   sean estocásticos.
 \item\label{prob:nomps} \emph{Datos que no son marginales de un MPS.} Con $0<\kappa\le1$, el $\sigma$ de la
   Sección~\ref{sec:neel} (el dato con $v=1$) tiene en el núcleo $\ket{\uparrow\uparrow}$ y
@@ -1871,38 +2214,111 @@ se demuestran el signo y una cota inferior de la caída (Corolario~\ref{cor:pari
   núcleo común, o una versión del Teorema~\ref{teo:celda} con datos de rango completo. Una vía es
   cambiar el testigo de techo por el testigo límite $h_\infty$ (aquí, el XXZ con $\Delta_\infty$).
   Por la estacionariedad del mínimo que define $\Delta_\infty$ (Proposición~\ref{prop:limite}), las marginales del
-  fundamental de la cadena infinita son exactamente los datos con $v_\infty$. Si, para $n$ par y
-  uniformemente en $\Theta$, (i) la energía fundamental por enlace del anillo retorcido difiere de la
-  de la cadena infinita en $O(e^{-n/\xi})$ y (ii) las marginales de su fundamental difieren de los
-  datos en $O(e^{-n/\xi})$, entonces el dual con $h_\infty$ girado da
-  $v(n,\Theta)\le v_\infty+O(e^{-n/\xi})$, el Lema~\ref{lem:dilucionti} da
-  $v(n,\Theta)\ge v_\infty-O(e^{-n/\xi})$, y la sensibilidad es $O(e^{-n/\xi})$. Es el
-  Teorema~\ref{teo:mps} con $h_\infty$ en lugar del hamiltoniano padre, y reduce el caso a dos
-  enunciados de tamaño finito del XXZ con gap. Con $n$ impar, la misma cuenta solo da $O(1/n)$.
-  Numéricamente (i) y (ii) se cumplen (\texttt{scripts/testigo\_limite.py}, con $\kappa=0{,}4$,
+  fundamental de la cadena infinita son exactamente los datos con $v_\infty$. El hueco entre los
+  datos MPS y estos datos se cierra, pues, con \emph{dos cotas de tamaño finito del XXZ con gap}, en
+  el punto fijo $\Delta=\Delta_\infty(\kappa)>1$, con $n$ par y uniformes en $\Theta\in[0,\pi]$ (que
+  cubre todo $\Theta$ por la periodicidad y la paridad de $E_0$ en el flujo). Sean
+  $\xi=2\xi_{\rm JKM}(\Delta_\infty)$ la longitud del desdoblamiento túnel
+  (problema~\ref{prob:constantes}) y $\rho_{v}=I/4+v\,\tau$ el dato de arista en el marco girado.
+  Existen $C_E$, $C_M$ y $n_0$ tales que, para todo $n\ge n_0$ par y todo $\Theta$:
+  \begin{itemize}
+  \item[(E)] \emph{energía por enlace}: $e_n(\Delta_\infty,\Theta)-e_\infty(\Delta_\infty)\le C_E\,e^{-n/\xi}$,
+    con $e_n$ la del espectro completo de $H_{\rm XXZ}(\Delta_\infty,\Theta)$ (solo hace falta
+    este sentido);
+  \item[(M)] \emph{marginales en norma traza}: algún fundamental $\psi_{n,\Theta}$ de
+    $H_{\rm XXZ}(\Delta_\infty,\Theta)$ en el sector $S^z=0$, invariante por traslación, tiene una
+    marginal de arista en el marco girado, $\rho_{n,\Theta}$, con
+    $\delta_n:=\sup_\Theta\|\rho_{n,\Theta}-\rho_{v_\infty}\|_1\le C_M\,e^{-n/\xi}$.
+  \end{itemize}
+  Con (E), el dual con el XXZ alineado ($\Phi=\Theta$) da $v(n,\Theta)\le4e_n(\Delta_\infty,\Theta)/(\Delta_\infty+2\kappa)
+  \le v_\infty+4C_Ee^{-n/\xi}/(\Delta_\infty+2\kappa)$; con (M), el Lema~\ref{lem:dilucionti}
+  aplicado a $\psi_{n,\Theta}$ da $v(n,\Theta)\ge v_\infty/(1+76\,\delta_n)\ge v_\infty-76\,v_\infty\delta_n$.
+  Por tanto
+  \[
+    \sup_{\Theta,\Theta'}|v(n,\Theta)-v(n,\Theta')|\le\Big(\frac{4C_E}{\Delta_\infty+2\kappa}+76\,v_\infty C_M\Big)e^{-n/\xi}.
+  \]
+  Es el Teorema~\ref{teo:mps} con $h_\infty$ en lugar del hamiltoniano padre: (E) sustituye a la
+  energía nula del testigo de techo y (M) a la cota $\varepsilon_n$ del MPS retorcido. Los
+  prefactores polinómicos no importan (los datos sugieren $C_En^{-3/2}$ y $C_Mn^{-1/2}$, abajo), y
+  cualquier $\xi<\infty$ basta para la dicotomía. Con $n$ impar la misma cuenta solo da $O(1/n)$.
+
+  \emph{(M) se sigue de (E) con la mitad del exponente.} Sea $\varepsilon^0_n(\Delta,\Theta)$ la
+  energía por enlace del fundamental del sector $S^z=0$, la que da Bethe, y supongamos (E) en forma
+  bilateral para ella en un entorno, $\eta_n:=\sup_{|\Delta-\Delta_\infty|\le r,\,\Theta}
+  |\varepsilon^0_n(\Delta,\Theta)+e_\infty(\Delta)|$. Sea $\psi$ un fundamental del sector en
+  $(\Delta_\infty,\Theta)$, invariante por traslación, con $zz=\ev{S^z_iS^z_{i+1}}_\psi$ y
+  $g=e^{i\Theta/n}\ev{S^+_iS^-_{i+1}}_\psi$. Como $H_{\rm XXZ}$ es afín en $\Delta$, el principio
+  variacional da $\varepsilon^0_n(\Delta_\infty+s,\Theta)\le\varepsilon^0_n(\Delta_\infty,\Theta)+s\,zz$ para
+  todo $s$ real; con $K=\max_{|\Delta-\Delta_\infty|\le r}|e_\infty''|$, finito porque $e_\infty$ es
+  analítica en $\Delta>1$, y $zz_\infty=-e_\infty'(\Delta_\infty)$, sale
+  $s\,(zz-zz_\infty)\ge-2\eta_n-Ks^2/2$ con los dos signos de $s$, y con $|s|=2\sqrt{\eta_n/K}$,
+  $|zz-zz_\infty|\le2\sqrt{K\eta_n}$. En el flujo, $\|\partial_\Phi^2H_{\rm XXZ}\|\le1/(2n)$, así que
+  $E_0(\Theta+t)\le E_0(\Theta)+t\,J+t^2/(4n)$, con $J=\ev{\partial_\Phi H_{\rm XXZ}}_\psi=-\operatorname{Im}g$;
+  como la oscilación de $E_0$ en el flujo es $\le2n\eta_n$, con $|t|=2n\sqrt{2\eta_n}$ sale
+  $|\operatorname{Im}g|\le\sqrt{2\eta_n}$. Por último,
+  $\operatorname{Re}g=\varepsilon^0_n-\Delta_\infty zz$ difiere de su valor límite en
+  $\le\eta_n+2\Delta_\infty\sqrt{K\eta_n}$. Como $\|\rho-\rho_{v_\infty}\|_1=2|\delta zz|+2\max(|\delta zz|,|\delta g|)$
+  (bloque diagonal y bloque $\{\uparrow\downarrow,\downarrow\uparrow\}$),
+  \[
+    \delta_n\le2\eta_n+\big(2\sqrt2+4(1+\Delta_\infty)\sqrt K\big)\sqrt{\eta_n}.
+  \]
+  Numéricamente (\texttt{scripts/testigo\_limite.py}, con $R=r=0{,}2$, $K$ en una malla del entorno
+  y $\eta_n$ por punto fijo hasta que acota $|\varepsilon^0_n+e_\infty|$ en $\Delta_\infty$ y en
+  $\Delta_\infty\pm s$) la desigualdad se cumple en todos los $n$ par con $s\le R$, desde $n=22$, $32$
+  y $38$ para $\kappa=0{,}4$, $0{,}6$ y $0{,}8$; el cociente $\delta_n/(2\eta_n+c\sqrt{\eta_n})$ es
+  como mucho $0{,}039$, $0{,}074$ y $0{,}21$, en el primero de esos $n$, y cae por debajo de
+  $6\times10^{-4}$ en el mayor, como corresponde a la pérdida de la mitad del exponente.
+  Así, todo el puente descansa en \emph{un} enunciado de energía: la corrección de tamaño finito del
+  XXZ retorcido con gap es $O(e^{-n/\xi})$, uniforme en el flujo y localmente uniforme en $\Delta$,
+  más la cota unilateral (E) para el espectro completo, que coincide con la del sector si el
+  fundamental está en $S^z=0$: con diagonalización exacta ($n=8,\dots,14$, nueve $\Theta\in[0,\pi]$,
+  los tres $\Delta_\infty$) lo está, con una separación de los demás sectores de al menos $1{,}21$,
+  $0{,}65$ y $0{,}44$ ($\kappa=0{,}4$, $0{,}6$ y $0{,}8$), pero falta demostrarlo con $\Theta\neq0$. Esa vía da la sensibilidad $O(e^{-n/(2\xi)})$, exponencial pero con la mitad del
+  exponente; el exponente completo pide (M) directamente o (E) en una banda compleja de
+  $(\Delta,\Phi)$, donde las estimaciones de Cauchy dan las derivadas sin pérdida.
+
+  Numéricamente (E) y (M) se cumplen (\texttt{scripts/testigo\_limite.py}, con $\kappa=0{,}4$,
   $0{,}6$ y $0{,}8$, $n$ par hasta $1000$ y el máximo sobre nueve $\Theta\in[0,\pi]$). La marginal
   del fundamental retorcido sale de Bethe: $\ev{S^z_iS^z_{i+1}}=\partial_\Delta E_0/n$, la
   corriente es $\partial_\Phi E_0$ y el salto, el resto de $E_0/n$; coincide con la del autovector de
   diagonalización exacta a $2\times10^{-11}$ ($n\le14$, $\Theta<\pi$). Las dos diferencias caen con
   la longitud del desdoblamiento túnel, $\xi=2\xi_{\rm JKM}$ (problema~\ref{prob:constantes}): la de energía como
   $n^{-3/2}e^{-n/\xi}$ y la de marginales, en norma traza, como $n^{-1/2}e^{-n/\xi}$, con $\xi$
-  ajustada igual a $2\xi_{\rm JKM}$ a $0{,}4$\,\% o menos. Con $\delta_n$ la diferencia de (ii) en
+  ajustada igual a $2\xi_{\rm JKM}$ a $0{,}4$\,\% o menos. Con el $\delta_n$ de (M), en
   norma traza, maximizada en $\Theta$, la horquilla resultante,
   $v_\infty/(1+76\,\delta_n)\le v(n,\Theta)\le4e_n(\Delta_\infty,\Theta)/(\Delta_\infty+2\kappa)$,
   deja una sensibilidad de como mucho $3{,}4\times10^{-10}$ ($\kappa=0{,}4$, $n=120$),
   $1{,}4\times10^{-9}$ ($\kappa=0{,}6$, $n=320$) y $3{,}8\times10^{-7}$ ($\kappa=0{,}8$, $n=1000$).
   Es peor que la sensibilidad real en un factor polinómico, porque la dilución cuesta $\delta_n$ y
-  no $\delta_n^2$, pero tiene el exponente correcto. Lo que falta es demostrar (i) y (ii) para el XXZ
+  no $\delta_n^2$, pero tiene el exponente correcto. Una versión débil de (E), con $O(1/n)$ en lugar de $O(e^{-n/\xi})$, está demostrada para todo $\Delta$ y todo $\Phi$ (Lema~\ref{lem:tamfinito}), y con ella la Observación~\ref{obs:paso} solo da sensibilidad $O(n^{-1/2})$. Con $n$ par, (E) uniforme en $\Theta$ equivale a su caso $\Theta=0$ (Lema~\ref{lem:phi0}) y se sigue, con $C_En^{-3/2}$, de la Conjetura~\ref{conj:sandwich} y de una cota exponencial del desdoblamiento $R_n$ (Corolario~\ref{cor:sandwich}). Lo que falta es demostrar (E) y (M), o solo (E) en la forma bilateral de arriba, para el XXZ
   con $\Delta>1$, con esa longitud.
 \item\label{prob:constantes} \emph{Las constantes de los tres regímenes.} El Bethe ansatz las da numéricamente; falta
-  derivarlas. Con $n$ impar, la constante sale de la dispersión exacta del espinón,
-  ecuación~\eqref{eq:espinon}, que reproduce los valores de Bethe a cinco o seis cifras; falta
-  demostrar que la energía de giro es la de la parábola de la banda. Con $n$ par y $\kappa<1$, el
+  derivarlas. Con $n$ impar ya está derivada, sin rigor (Observación~\ref{obs:espinon}): la
+  energía fundamental es la del mar más la del espinón con momento
+  $\operatorname{dist}(\Phi-\pi,2\pi\mathbb Z)/(2n)$, ecuación~\eqref{eq:espinonexacta}, salvo
+  $O(n^{-1/2}e^{-n/\xi})$ con el mismo $\xi=2\xi_{\rm JKM}$ del caso par, y de ahí sale
+  la ecuación~\eqref{eq:espinon}. Falta convertir los pasos (a) y (b) en cotas. El paso de $R_n$
+  a la caída, $s=4R_n/(n(\Delta_\infty+2\kappa))(1+o(1))$, común a los tres regímenes, queda
+  reducido por la Proposición~\ref{prop:paso} a cotas de tamaño finito de $\partial_\Delta e_n$ cerca
+  de $\Delta_\infty$, con el orden del error y sus coeficientes derivados en la
+  Observación~\ref{obs:paso}. La cota $O(n^{-1/2})$ está demostrada (Lemas~\ref{lem:tamfinito}
+  y~\ref{lem:convexa}, Corolario~\ref{cor:velocidad}) salvo la positividad de $F_\infty''(\Delta_\infty)$,
+  y basta con $n$ impar y en el caso crítico si $\partial_\Delta\log R_n=o(n^{1/2})$; con $n$ par y
+  gap hace falta una exponencial. Con $n$ par y $\kappa<1$, el
   desdoblamiento del doblete va como $n^{-1/2}e^{-n/\xi}$ con $\xi=2\xi_{\rm JKM}$, el doble de la
   longitud de correlación de Johnson--Krinsky--McCoy: los ajustes a $\Delta$ fijo lo dan al
   $0{,}03$\,\% en $2\le\Delta\le10$ y descartan $\tfrac14e^{\pi^2/(2\gamma)}$, que se desvía hasta
-  un $5$\,\%. Falta derivar la ley y su prefactor de las ecuaciones de Bethe del doblete, y cubrir
-  $\kappa>\pi/2$, donde $\Delta_\infty<0$ y el guion de Bethe no llega.
+  un $5$\,\%. La ley y su prefactor están derivados sin rigor (Observación~\ref{obs:doblete}):
+  $R_n=\pi^{-1}\sinh\gamma\,K(k)\sqrt{2k'/(\pi n)}\,e^{-n/(2\xi_{\rm JKM})}(1+O(1/n))$, el término de
+  un espinón en el canal espejo, con la normalización de Lüscher tomada como dato; falta derivarla
+  de las ecuaciones de Bethe del doblete. El caso
+  $\kappa>\pi/2$, con $\Delta_\infty<0$, está cubierto numéricamente hasta $\kappa=8$ con las
+  ecuaciones en momentos (párrafo «$\Delta_\infty<0$» de la Sección~\ref{sec:neel}), que siguen
+  los pares de raíces complejas que aparecen por debajo de cada umbral; cuando $\kappa\to\infty$,
+  $\Delta_\infty\to-1$ y el número de pares crece sin cota. Los umbrales,
+  $\pi-\gamma_c^{(k)}=\Phi/(4k)$ y $(\pi-\Phi)/(4k+1)$, están derivados sin rigor
+  (Observación~\ref{obs:umbrales}); falta demostrar que el grupo que llega al infinito es el de las
+  raíces extremas y que lo hace entero a la vez.
 \item \emph{El déficit y la sensibilidad de AKLT.} Con valores certificados hasta $n=12$
   (Sección~\ref{sec:aklt}), $9^n[1-p(n,\Theta)]$ oscila con la paridad sin tendencia (en $n=12$,
   $\approx151{,}6+19{,}6\cos\Theta+2{,}0\cos2\Theta$), y la sensibilidad es
@@ -1925,8 +2341,9 @@ se demuestran el signo y una cota inferior de la caída (Corolario~\ref{cor:pari
   $[\Theta_0,\Theta_0+\pi]$, sin lo cual $v(n,\Theta_0)-v(n,\Theta_0+\pi)$ es solo una cota inferior
   de la sensibilidad. Numéricamente lo es en todos los casos calculados ($\kappa\le1{,}25$,
   $n\le129$; Sección~\ref{sec:neel}), y en el caso crítico, donde el flujo óptimo se queda en la
-  cúspide, la monotonía se reduce casi a la del denominador. También quedan los datos con $\kappa=2$, que solo tienen diagonalización
-  exacta; y una versión del argumento de Marshall con $d>2$.
+  cúspide, la monotonía se reduce casi a la del denominador. Con $\kappa=2$ hay ya Bethe en $\Theta\in\{0,\pi\}$ hasta $n=1001$, pero la monotonía en
+  $\Theta$ solo se ha comprobado con $\kappa\le1{,}25$. Falta también una versión del argumento de
+  Marshall con $d>2$.
 \end{enumerate}
 
 \begin{sloppypar}
@@ -1939,11 +2356,15 @@ datos en \texttt{data/mps\_aleatorio.csv}, \texttt{data/mps\_su2\_canon.csv} y
 \texttt{data/mps\_su2\_familia.csv}),
 \texttt{monotonia\_theta.py} (monotonía en $\Theta$, datos en \texttt{data/monotonia\_theta.csv}),
 \texttt{razumov\_stroganov.py} (Proposición~\ref{prop:rs}),
-\texttt{testigo\_limite.py} y \texttt{xi\_tunel.py} (problemas abiertos~\ref{prob:nomps} y~\ref{prob:constantes}, datos en
-\texttt{data/testigo\_limite.csv} y \texttt{data/xi\_tunel.csv}),
+\texttt{testigo\_limite.py}, \texttt{xi\_tunel.py} y \texttt{espinon\_giro.py} (problemas abiertos~\ref{prob:nomps} y~\ref{prob:constantes} y Observación~\ref{obs:espinon}, datos en
+\texttt{data/testigo\_limite.csv}, \texttt{data/xi\_tunel.csv} y \texttt{data/espinon\_giro.csv}),
 \texttt{neel\_bethe.py} y \texttt{neel\_bethe\_ajuste.py}, con los datos en
 \texttt{data/neel\_bethe.csv} y \texttt{data/neel\_bethe\_ajuste.csv}, para el Bethe ansatz hasta
-$n=3001$ (Sección~\ref{sec:neel}), \texttt{mps\_celda.py} y
+$n=3001$ (Sección~\ref{sec:neel}), \texttt{neel\_bethe\_negativo.py} (con
+\texttt{holonomy/bethe\_p.py}, datos en \texttt{data/neel\_bethe\_negativo.csv}) y
+\texttt{umbrales\_pares.py} para $\Delta_\infty<0$, \texttt{doblete\_par.py} (Observación~\ref{obs:doblete},
+datos en \texttt{data/doblete\_par.csv}), \texttt{kohn\_paso.py} (Observación~\ref{obs:paso}), \texttt{cota\_derivada.py}
+(Lemas~\ref{lem:tamfinito} y~\ref{lem:convexa}), \texttt{mps\_celda.py} y
 \texttt{qubits\_celda3.py} (Sección~\ref{sec:celda}), \texttt{dilucion\_uniforme.py}
 (Lema~\ref{lem:dilucionti}), y \texttt{figura\_sensibilidad.py}, \texttt{figura\_mps.py} y \texttt{figura\_monotonia.py}
 (Figuras~\ref{fig:sensibilidad}, \ref{fig:mps} y~\ref{fig:forma}). Requieren \texttt{numpy}, \texttt{scipy} y,

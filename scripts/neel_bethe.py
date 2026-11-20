@@ -31,7 +31,7 @@ D Phi^2 / (2 n) en |Phi| <= pi,  n^2 s -> 2 pi^2 D / (Delta_inf + 2 kappa). Con
 kappa = 1, Delta_inf = 1 y el límite es pi^2/6 (con correcciones logarítmicas).
 
 Con kappa >~ 1,55, Delta_inf < 0, fuera del alcance de holonomy.bethe: esos kappa se
-omiten.
+omiten aquí y los cubre scripts/neel_bethe_negativo.py (holonomy.bethe_p, hasta kappa = 2,5).
 
 Salida: data/neel_bethe.csv (columnas paridad, kappa, n, ...) y una tabla por
 pantalla. El barrido de cada (kappa, paridad) se detiene cuando s < S_FLOOR o en nmax.

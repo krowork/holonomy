@@ -4,9 +4,9 @@ Datos U(1) del anillo de qubits con kappa < 1 y n par. El testigo límite es el
 XXZ con Delta_inf(kappa) (Proposición prop:limite). Se comprueban numéricamente
 las dos hipótesis de la vía:
 
-  (i)  la energía por enlace del anillo retorcido, eps_n(Delta_inf, Theta),
+  (E)  la energía por enlace del anillo retorcido, eps_n(Delta_inf, Theta),
        converge a eps_inf(Delta_inf) exponencialmente, uniformemente en Theta;
-  (ii) la marginal de arista del fundamental del anillo retorcido, en el marco
+  (M)  la marginal de arista del fundamental del anillo retorcido, en el marco
        girado de la arista, converge a los datos con v_inf.
 
 Con ellas, para todo Theta,
@@ -25,10 +25,32 @@ v son zz = -v/4 y g = -kappa v / 2. Con dzz y dg las diferencias,
 La estacionariedad del mínimo que define Delta_inf hace que la cadena infinita
 reproduzca exactamente los datos: zz_inf = -eps_inf', g_inf = -2 kappa eps_inf'.
 
-Control: con diagonalización exacta (n <= 16) se calcula la marginal del
-autovector y se compara con la reconstruida desde Bethe.
+Reducción (M) <= (E) (problema 2): con eta_n la corrección de tamaño finito
+|E0/n + e_inf| del sector S^z = 0, uniforme en Theta y en Delta_inf y Delta_inf +- s,
+    delta_n <= 2 eta_n + (2 sqrt2 + 4 (1 + Delta_inf) sqrt K) sqrt(eta_n),
+con K = max |e_inf''| en [Delta_inf - R, Delta_inf + R] y s = 2 sqrt(eta_n / K) <= R.
+Se elige eta_n por punto fijo: se parte de eta en Delta_inf, se evalúa en
+Delta_inf +- s y, si allí |f| supera eta, se toma eta = 1,01 |f| y se repite.
+Los n en que s > R (los pequeños) se omiten (eta = cota_red = nan en el CSV).
 
-Salida: data/testigo_limite.csv y una tabla por pantalla.
+Control: con diagonalización exacta (n = 8..14, Theta < pi) se calcula la
+marginal del autovector y se compara con la reconstruida desde Bethe.
+
+Resultados con las opciones por defecto (kappa = 0,4, 0,6, 0,8; nueve Theta en
+[0, pi]; suelo 3e-11, que corta en n = 120, 320 y 1000):
+
+  kappa  Delta_inf     v_inf      K       c      error Bethe-ED  sens. (n final)
+  0,4    2,6600374602  0,8736054  0,02660  5,216  1,7e-12         3,4e-10 (120)
+  0,6    1,8501723949  0,7709179  0,05582  5,522  2,4e-11         1,4e-9  (320)
+  0,8    1,4001744953  0,6750233  0,06093  5,198  2,0e-11         3,8e-7  (1000)
+
+  Reducción (M) <= (E): se cumple en todos los n con s <= R, desde n = 22, 32 y
+  38; el cociente delta_n / (2 eta_n + c sqrt(eta_n)) es como mucho 0,039, 0,074
+  y 0,21 (en ese primer n) y baja a 4,8e-6, 2,6e-5 y 5,2e-4 en el n final: la
+  cota cae como e^{-n/(2 xi)} y delta_n como e^{-n/xi}.
+
+Salida: data/testigo_limite.csv (columnas de la vía más eta, s_red y cota_red)
+y una tabla por pantalla. Tarda decenas de minutos, casi todo en kappa = 0,8.
 """
 import argparse
 import csv
@@ -55,6 +77,41 @@ def check(cond, msg):
     OK &= bool(cond)
 
 
+R_RED = 0.2     # semianchura del entorno de Delta_inf en la reducción (M) <= (E)
+
+
+def e_mp(D):
+    """eps_inf(Delta) con mpmath, Delta > 1."""
+    g = mp.acosh(D)
+    return mp.sinh(g) * (mpf(1) / 2 + 2 * mp.nsum(
+        lambda m: mp.exp(-2 * m * g) / (1 + mp.exp(-2 * m * g)), [1, mp.inf])) - D / 4
+
+
+def curvatura(Dinf, R=R_RED, k=41):
+    """K = max |eps_inf''| en [Dinf - R, Dinf + R] (malla de k puntos, con margen del 5 %)."""
+    mp.dps = 30
+    return 1.05 * max(abs(float(mp.diff(e_mp, mpf(D), 2))) for D in np.linspace(Dinf - R, Dinf + R, k))
+
+
+def reduccion(n, Dinf, K, thetas, eta0, R=R_RED, it=6):
+    """Punto fijo de eta_n para la reducción (M) <= (E). Devuelve (eta, s) o (nan, nan) si s > R."""
+    S = bethe.solver(n)
+    b = S.ground_branch()
+    eta = eta0
+    for _ in range(it):
+        s = 2 * np.sqrt(eta / K)
+        if s > R:
+            return np.nan, np.nan
+        es = max(abs(S.energy(Dinf + sg * s, T, b) / n + eps_inf(Dinf + sg * s))
+                 for T in thetas for sg in (1, -1))
+        for T in thetas:  # arranque en caliente de vuelta al punto central
+            S.solve(Dinf, T, b)
+        if es <= eta:  # consistente: eta acota |f| en Delta_inf y en Delta_inf +- s(eta)
+            return eta, s
+        eta = 1.01 * es  # holgura del 1 %: la iteración converge en pocas vueltas
+    return np.nan, np.nan
+
+
 def limit_mp(kappa):
     """Delta_inf, v_inf, eps_inf y eps_inf' con 30 cifras (serie exacta, Delta > 1).
 
@@ -62,8 +119,7 @@ def limit_mp(kappa):
     Delta_inf resuelve eps' (Delta + 2 kappa) = eps (estacionariedad del cociente).
     """
     mp.dps = 30
-    e = lambda D: mp.sinh(mp.acosh(D)) * (mpf(1) / 2 + 2 * mp.nsum(
-        lambda m: mp.exp(-2 * m * mp.acosh(D)) / (1 + mp.exp(-2 * m * mp.acosh(D))), [1, mp.inf])) - D / 4
+    e = e_mp
     D0, _ = limit(kappa)
     Dinf = mp.findroot(lambda D: mp.diff(e, D) * (D + 2 * kappa) - e(D), mpf(D0))
     ei, de = e(Dinf), mp.diff(e, Dinf)
@@ -110,7 +166,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--kappas", type=float, nargs="+", default=[0.4, 0.6, 0.8])
     ap.add_argument("--nmax", type=int, default=1000)
-    ap.add_argument("--floor", type=float, default=1e-10)
+    ap.add_argument("--floor", type=float, default=3e-11)
     ap.add_argument("--out", type=Path, default=ROOT / "data" / "testigo_limite.csv")
     args = ap.parse_args()
     thetas = np.linspace(0, np.pi, 9)
@@ -134,8 +190,12 @@ if __name__ == "__main__":
                 ee, ze, ge = ed_marginal(n, Dinf, T)
                 err = max(err, abs(eb - ee), abs(zb - ze), abs(gb - ge))
         check(err < 1e-8, f"marginal desde Bethe = marginal del autovector, n = 8..14, Theta < pi (error {err:.1e})")
+        K = curvatura(Dinf)
+        c_red = 2 * np.sqrt(2) + 4 * (1 + Dinf) * np.sqrt(K)
+        print(f"    reducción (M) <= (E): K = {K:.6f}, c = {c_red:.6f}")
+        ok_red, n_red = True, 0
         print("    n   max_T|eps_n-eps_inf|  max_T delta_n   max_T U_n - v_inf   v_inf - min_T L_n   "
-              "max U - min L    xi_e     xi_delta")
+              "max U - min L    xi_e     xi_delta   eta_n      cota_red   delta/cota")
         prev = None
         for n in sizes(args.nmax):
             de_n, dl_n, U, L = [], [], [], []
@@ -150,16 +210,25 @@ if __name__ == "__main__":
             r = dict(kappa=kappa, n=n, Dinf=Dinf, vinf=vinf, de=max(de_n), delta=max(dl_n),
                      Umax=max(U) - vinf, Lmin=vinf - min(L), sens=max(U) - min(L),
                      delta_T0=dl_n[0], delta_Tpi=dl_n[-1], de_T0=de_n[0], de_Tpi=de_n[-1])
+            eta, s_red = reduccion(n, Dinf, K, thetas, r["de"])
+            cota = 2 * eta + c_red * np.sqrt(eta)
+            r.update(eta=eta, s_red=s_red, cota_red=cota)
+            if np.isfinite(cota):
+                n_red += 1
+                ok_red &= r["delta"] <= cota
             xe = xd = np.nan
             if prev is not None:
                 xe = -(n - prev["n"]) / np.log(r["de"] / prev["de"])
                 xd = -(n - prev["n"]) / np.log(r["delta"] / prev["delta"])
             print(f" {n:4d}   {r['de']:.3e}           {r['delta']:.3e}      {r['Umax']:+.3e}         "
-                  f"{r['Lmin']:.3e}           {r['sens']:.3e}    {xe:7.2f}  {xd:7.2f}", flush=True)
+                  f"{r['Lmin']:.3e}           {r['sens']:.3e}    {xe:7.2f}  {xd:7.2f}   {eta:.3e}  {cota:.3e}  "
+                  f"{r['delta'] / cota:.3e}", flush=True)
             rows.append(r)
             prev = r
             if r["delta"] < args.floor and r["de"] < args.floor:
                 break
+        check(ok_red and n_red > 0, f"reducción (M) <= (E): delta_n <= 2 eta_n + c sqrt(eta_n) "
+                                    f"en los {n_red} tamaños con s <= {R_RED}")
     keys = list(rows[0].keys())
     with open(args.out, "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=keys)

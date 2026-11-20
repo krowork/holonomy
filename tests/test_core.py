@@ -211,3 +211,39 @@ def test_periodic_validaciones():
     with pytest.raises(ValueError, match="arista"):
         check_translation(n, [(j, i) if kd == "r" else (i, j) for (i, j), kd in zip(edges, kinds)]
                           [:-1] + [edges[-1]], kinds, perm, L)
+
+
+@pytest.mark.parametrize("n,Delta,Phi", [(8, -0.4, 0.0), (8, -0.65, np.pi), (9, -0.4, np.pi),
+                                         (10, -0.2, np.pi / 2), (11, -0.6, 0.0), (12, -0.7, np.pi),
+                                         # con el par complejo: por debajo de Delta_c(Phi)
+                                         (10, -0.8, np.pi), (12, -0.9, np.pi), (10, -0.95, np.pi / 2),
+                                         (11, -0.88, 0.0)])
+def test_bethe_p_igual_a_diagonalizacion(n, Delta, Phi):
+    # Delta < 0: fuera del alcance de holonomy.bethe; frente a todos los sectores de S^z.
+    from holonomy import bethe_p
+    assert bethe_p.eps(n, Delta, Phi) == pytest.approx(xxz.eps_full(n, Delta, Phi), abs=1e-12)
+
+
+@pytest.mark.parametrize("n", [30, 31])
+def test_bethe_p_igual_a_bethe(n):
+    from holonomy import bethe_p
+    for Delta in (0.3, 0.8):
+        for Phi in (0.0, 1.0, np.pi):
+            assert bethe_p.eps(n, Delta, Phi) == pytest.approx(bethe.eps(n, Delta, Phi), abs=1e-13)
+
+
+@pytest.mark.parametrize("n,Delta,Phi,pares", [(10, -0.95, np.pi, 2), (12, -0.97, np.pi, 3),
+                                               (13, -0.96, 0.0, 2), (14, -0.995, np.pi, 3)])
+def test_bethe_p_varios_pares(n, Delta, Phi, pares):
+    # Por debajo de pi - gamma = Phi/(4k) (n par) o (pi - Phi)/(4k + 1) (impar) hay k pares
+    # complejos; se compara con el fundamental del mismo sector de S^z (cerca de Delta = -1 el
+    # ferromagnético puede ser el fundamental global y taparía un error).
+    from holonomy import bethe_p
+    S = bethe_p.MomentumSolver(n)
+    b = 0 if n % 2 == 0 else -1
+    for D in np.arange(-0.6, Delta - 1e-9, -0.05).tolist() + [Delta]:
+        S.solve(D, Phi, b)
+    p = S.solve(Delta, Phi, b)
+    assert len(S._pares(p.astype(complex))) == pares
+    E = np.linalg.eigvalsh(xxz.hamiltonian(n, n // 2, Delta, Phi).toarray())[0]
+    assert S.energy(Delta, Phi, b) == pytest.approx(E, abs=1e-11)
