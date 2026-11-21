@@ -16,7 +16,9 @@ de Yang-Yang:
      con C_k los números de Catalan, a menos de un 0,1 % con epsilon = 1/160 (n <= 10) y 1/80 (n = 12).
   6. la cota del Teorema de la energía con sus constantes, |E0(n,0) + n e_inf| <= 1,14 n (45/Delta)^{n/2-1},
      con Delta = 50, 100 y 200 y n = 4..14 par, la constante de contracción K(45) <= 1/2 del Lema de
-     contracción y K'(54) <= 1/2 del de contracción con flujo.
+     contracción, K'(54) <= 1/2 del de contracción con flujo, y las constantes del Lema de polímeros:
+     M_2 = 85 e^{4 theta} ~ 232 (theta = 64/255), B' ~ 6,3e3, C = 16 (B' + 3,5) ~ 1,0e5, las cotas
+     de rho_inf del Lema del límite y kappa_0 = 4,3e-3 < kappa(Delta_inf = 232).
   7. marginales retorcidas (Teorema del estado de prueba): la distancia en norma traza
      delta_n(Theta) = 2|dzz| + 2 max(|dzz|, |dg|) entre la marginal del fundamental del sector S^z = 0
      de H_n(Delta, Theta) (gauge uniforme) y la girada de la cadena infinita (zz = -e_inf',
@@ -115,6 +117,41 @@ def Kflujo(M):
 
 check(Kflujo(54) <= 0.5 < Kflujo(53),
       f"contracción con flujo: K'(54) = {Kflujo(54):.4f} <= 1/2 < K'(53) = {Kflujo(53):.4f}")
+
+
+def M2(Mb):
+    return Mb * np.exp(4 * 64 / (3 * Mb))
+
+
+th = 64 / (3 * 85)
+Bp = 128 * np.exp(10 * th) / th
+check(Kflujo(85) <= 0.5 and abs(M2(85) - 232) < 0.5 and M2(85) <= min(M2(m) for m in range(54, 400)),
+      f"polímeros: M_2(85) = {M2(85):.2f} (mínimo entero de M e^(256/(3M))), K'(85) = {Kflujo(85):.3f}")
+C2 = 16 * (Bp + 3.5)
+check(abs(Bp / 6.3e3 - 1) < 0.01 and abs(C2 / 1.0e5 - 1) < 0.01,
+      f"B' = {Bp:.0f} ~ 6,3e3, C = 16 (B' + 3,5) = {C2:.3g} ~ 1,0e5")
+# Lema del límite (i): |e^KT + 1| <= B(45)/2 en |eps| < 1/45; Cauchy en |eps| <= 1/232.
+dKT = B(45) / 2 / (1 / 45 - 1 / 232)
+zmax, tmax = (1 + B(45) / 2 + dKT / 232) / 4, dKT / 4
+check(B(45) / 2 <= 0.0506 and dKT <= 2.83 and zmax <= 0.266 and tmax <= 0.71
+      and 1 + 4 * zmax + 2 * tmax <= 3.5,
+      f"rho_inf: |e_KT'| <= {dKT:.3f}, |z| <= {zmax:.4f}, |t| <= {tmax:.3f}, suma <= {1 + 4*zmax + 2*tmax:.3f}")
+
+
+# kappa_0: Delta_inf(kappa) = 232 por la tangencia de Yang--Yang (forma estable de delta_inf_kappa.py).
+def g_dg(D):
+    qq = 1 / (D + np.sqrt(D * D - 1))
+    MS = np.arange(1, int(40 / -np.log(qq)) + 2)
+    t = qq ** (2 * MS)
+    S = np.sum(t / (1 + t))
+    dS = np.sum(2 * MS * qq ** (2 * MS - 1) / (1 + t) ** 2)
+    g = -qq / 2 + (1 / qq - qq) * S
+    return g, (-0.5 + (-1 / qq ** 2 - 1) * S + (1 / qq - qq) * dS) / ((1 - 1 / qq ** 2) / 2)
+
+
+gg, dg = g_dg(232.0)
+k232 = (gg - 232.0 * dg) / (0.5 + 2 * dg)
+check(k232 > 4.3e-3, f"kappa(Delta_inf = 232) = {k232:.6e} > kappa_0 = 4,3e-3")
 peor = 0.0
 for D in [50.0, 100.0, 200.0]:
     for n in range(4, 15, 2):

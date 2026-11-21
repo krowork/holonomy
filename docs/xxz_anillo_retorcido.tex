@@ -23,13 +23,10 @@
 \newcommand{\ket}[1]{|#1\rangle}
 \newcommand{\bra}[1]{\langle #1|}
 \newcommand{\ev}[1]{\langle #1\rangle}
-% Marca visible de lo que falta por demostrar o escribir (borrador).
-\newcommand{\pendiente}[1]{\par\noindent\fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{%
-  \small\color{red!60!black}\textbf{Pendiente.} #1}}\par}
 
 \title{El anillo XXZ de tipo Ising con flujo:\\ correcciones de tamaño finito exponenciales y uniformes en el flujo}
 \author{Alejandro Gama}
-\date{Borrador, 20 de noviembre de 2026}
+\date{21 de noviembre de 2026}
 
 \begin{document}
 \maketitle
@@ -38,15 +35,16 @@
 Para el anillo XXZ antiferromagnético de espín $\tfrac12$ con anisotropía $\Delta$ grande y un flujo
 $\Phi$ que lo atraviesa, se demuestran dos cotas de tamaño finito exponencialmente pequeñas en el
 número $n$ de sitios, con $n$ par. La primera es bilateral para la energía fundamental sin flujo,
-$|E_0(n,0)+n\,e_\infty(\Delta)|\le C\,n\,(M/\Delta)^{n/2-1}$. La segunda es uniforme en el flujo y no
+$|E_0(n,0)+n\,e_\infty(\Delta)|\le1{,}14\,n\,(45/\Delta)^{n/2-1}$ para $\Delta>45$. La segunda es uniforme en el flujo y no
 pasa por el estado fundamental: el desarrollo de Kirkwood--Thomas de la cadena infinita con flujo
 uniforme, truncado en el anillo, da un estado cuyas marginales de dos sitios están a distancia
-exponencialmente pequeña de las de la cadena infinita giradas. Ambas extienden el método de
+exponencialmente pequeña de las de la cadena infinita giradas, para $\Delta>232$. Ambas extienden el método de
 Datta y Kennedy \cite{dk-kink,dk-quasi}. Juntas resuelven, para $\Delta$ grande, el problema que
 deja abierto el trabajo sobre la robustez del pegado frente a la holonomía \cite{robustez}: los
 datos de Néel con parámetro $\kappa$ pequeño, que no son marginales de ningún estado producto de
-matrices, tienen sensibilidad a la holonomía exponencialmente pequeña con $n$ par. Con $n$ impar
-se formula, y se comprueba numéricamente, la carga $\tfrac12$ de la pared de dominio frente al flujo.
+matrices, tienen sensibilidad a la holonomía exponencialmente pequeña con $n$ par, para
+$\kappa<4{,}3\times10^{-3}$. El caso de $n$ impar, con una pared de dominio de carga $\tfrac12$ frente al
+flujo, queda como problema abierto.
 \end{abstract}
 
 %=====================================================================
@@ -85,20 +83,18 @@ degenerado para trabajo futuro.
 
 \paragraph{Resultados.}
 \begin{enumerate}
-\item \emph{Energía sin flujo} (Teorema~\ref{teo:energia}): con $n$ par y $\Delta>M$,
-  $|E_0(n,0)+n\,e_\infty(\Delta)|\le C\,n\,(M/\Delta)^{n/2-1}$. Es la versión demostrada del esbozo
+\item \emph{Energía sin flujo} (Teorema~\ref{teo:energia}): con $n$ par y $\Delta>M\ge45$,
+  $|E_0(n,0)+n\,e_\infty(\Delta)|\le1{,}14\,n\,(M/\Delta)^{n/2-1}$. Es la versión demostrada del esbozo
   de \cite{dk-quasi}, por una vía distinta: analiticidad en $\epsilon$, localidad de los coeficientes
   de Taylor y el lema de Schwarz.
 \item \emph{Estado de prueba retorcido} (Teorema~\ref{teo:prueba}): para todo flujo por enlace
   $|\phi|\le\pi/n$, que basta, un estado del anillo con las marginales de la cadena infinita giradas,
-  salvo $C\,(M'/\Delta)^{n/2-2}$.
-\item \emph{Robustez} (Corolario~\ref{cor:robustez}): existe $\kappa_0>0$ tal que, para
-  $0<\kappa<\kappa_0$ y $n$ par, la sensibilidad a la holonomía de los datos de Néel de
+  salvo $C\,(M/\Delta)^{n/2-1}$, con $\Delta>M\ge232$.
+\item \emph{Robustez} (Corolario~\ref{cor:robustez}): para $0<\kappa<4{,}3\times10^{-3}$ y $n$ par, la sensibilidad a la holonomía de los datos de Néel de
   \cite{robustez} es $O(e^{-n/\xi_0})$.
-\item \emph{Pared de dominio con flujo} ($n$ impar, Sección~\ref{sec:impar}): la pared ve la mitad
-  del flujo, y la energía de giro es $c/n^2$ con la curvatura de su banda (programa y comprobación
-  numérica).
 \end{enumerate}
+Con $n$ impar las condiciones periódicas fuerzan una pared de dominio, que ve la mitad del flujo; ese
+caso queda abierto (Sección~\ref{sec:impar}).
 La observación que hace posible el punto 2 es que en el gauge uniforme el anillo con flujo $\Phi$
 es, localmente, la cadena infinita con flujo $\phi=\Phi/n$ por enlace, que es un gauge puro. No hace
 falta controlar el fundamental del anillo retorcido, cuyo flujo rompe la simetría de inversión de
@@ -109,8 +105,7 @@ porque con $n$ par el flujo solo sube la energía fundamental \cite[Lema~23]{rob
 \section{Planteamiento}\label{sec:planteamiento}
 %=====================================================================
 
-\paragraph{Hamiltoniano.} En el anillo $\mathbb Z_n$, con $n$ par salvo en la
-Sección~\ref{sec:impar},
+\paragraph{Hamiltoniano.} En el anillo $\mathbb Z_n$, con $n$ par,
 \[
   H_n(\Delta,\Phi)=\sum_{j=1}^n\Big[\tfrac12\big(e^{i\phi}S^+_jS^-_{j+1}+{\rm h.c.}\big)+\Delta\,S^z_jS^z_{j+1}\Big],
   \qquad\phi=\frac\Phi n,
@@ -161,7 +156,7 @@ $\psi(\sigma^{(A)})/\psi(\sigma)=\exp[\sum_{X:|X\cap A|\ \rm impar}g(X)\sigma(X)
 $H\psi=E\psi$ es
 \begin{multline}\label{eq:kt}
   -\sum_je^{G_{j,j+1}(\sigma)}+\epsilon\cos\phi\sum_j\sigma_j\sigma_{j+1}\big(1+e^{G_{j,j+1}(\sigma)}\big)
-  -i\epsilon\sin\phi\sum_js_j\sigma_j\sigma_{j+1}\big(e^{G_j(\sigma)}+e^{G_{j+1}(\sigma)}\big)=E,
+  -i\epsilon\sin\phi\sum_js_j\sigma_j\sigma_{j+1}\big(e^{G_{\{j\}}(\sigma)}+e^{G_{\{j+1\}}(\sigma)}\big)=E,
 \end{multline}
 con $G_A(\sigma)=\sum_{X:|X\cap A|\ \rm impar}g(X)\sigma(X)$. Igualando los coeficientes de cada
 $\sigma(X)$ tras desarrollar las exponenciales, el término lineal del primer sumando da
@@ -186,30 +181,34 @@ Para $n\ge4$ par, $M\ge45$ y $0<\epsilon=1/\Delta<1/M$,
 \end{teorema}
 
 \begin{teorema}[estado de prueba retorcido]\label{teo:prueba}
-Existen $M'$ y $C$ tales que, para $n\ge4$ par, $0<\epsilon<1/M'$ y $|\phi|\le\pi/n$, hay un estado
+Sean $M\ge M_2\approx232$ y $C=16(B'+3{,}5)\approx1{,}0\times10^5$, con $M_2$ y $B'$ los del
+Lema~\ref{lem:polimeros}. Para $n\ge4$
+par, $0<\epsilon<1/M$ y $|\phi|\le\pi/n$, hay un estado
 $\omega_{n,\phi}$ del anillo de $n$ sitios, con la misma marginal $\rho^{(n)}_\phi$ en todas sus aristas,
 que cumple
 \[
-  \big\|\rho^{(n)}_\phi-(1\otimes V_\phi)\,\rho_\infty\,(1\otimes V_\phi)^\dagger\big\|_1\ \le\ C\,(M'\epsilon)^{n/2-2},
+  \big\|\rho^{(n)}_\phi-(1\otimes V_\phi)\,\rho_\infty\,(1\otimes V_\phi)^\dagger\big\|_1\ \le\ C\,(M\epsilon)^{n/2-1},
   \qquad V_\phi=e^{-i\phi S^z},
 \]
-con $\rho_\infty$ la marginal de dos sitios del fundamental invariante por traslación de la cadena
-infinita sin flujo (Lema~\ref{lem:rhoinf}).
+con $\rho_\infty$ la marginal de dos sitios de la cadena infinita sin flujo (Lema~\ref{lem:rhoinf}).
 \end{teorema}
 
 \begin{corolario}[robustez de los datos de Néel con $\kappa$ pequeño]\label{cor:robustez}
-Para los datos de Néel de \cite[Sec.~6]{robustez}, existen $\kappa_0>0$ y, para cada
-$0<\kappa<\kappa_0$, constantes $C$ y $\xi_0$ tales que, para todo $n$ par,
+Para los datos de Néel de \cite[Sec.~6]{robustez} y cada $0<\kappa<\kappa_0:=4{,}3\times10^{-3}$, existen
+constantes $C$ y $\xi_0$ tales que, para todo $n\ge4$ par,
 \[
   \sup_{\Theta,\Theta'}|v(n,\Theta)-v(n,\Theta')|\ \le\ C\,e^{-n/\xi_0}.
 \]
 \end{corolario}
 
 \begin{proof}[Demostración, a partir de los Teoremas~\ref{teo:energia} y~\ref{teo:prueba}]
-Por \cite[Prop.~17(vi)]{robustez}, $\Delta_\infty(\kappa)\to\infty$ cuando $\kappa\to0$; sea
-$\kappa_0$ tal que $\epsilon=1/\Delta_\infty(\kappa)$ cumple las hipótesis de los
-Teoremas~\ref{teo:energia} y~\ref{teo:prueba} para $\kappa<\kappa_0$. Se aplica el
-Teorema puente \cite[Teorema~4]{robustez} con $p^\ast=v_\infty$.
+Por \cite[Prop.~17(v)]{robustez}, $\Delta_\infty$ es decreciente en $\kappa$, y con la fórmula de
+Yang--Yang la condición de tangencia da $\Delta_\infty=232$ en $\kappa=4{,}3104\times10^{-3}>\kappa_0$
+(\texttt{scripts/xxz\_ising\_tamfinito.py}; es el valor que predice
+$\Delta_\infty\kappa=1+\kappa^2/2+\dots$ de \cite[Prop.~17(vi)]{robustez}). Así $\Delta_\infty(\kappa)>232$
+para $\kappa<\kappa_0$, y $\epsilon=1/\Delta_\infty(\kappa)$ cumple las hipótesis de los
+Teoremas~\ref{teo:energia} y~\ref{teo:prueba}. Se aplica el Teorema puente \cite[Teorema~4]{robustez}
+con $p^\ast=v_\infty$; su hipótesis $\tr_1\tau_j=\tr_2\tau_j$ se cumple porque $\ev{Z_i}=0$.
 
 \emph{(D).} El testigo es el XXZ alineado con $\Delta_\infty$ y flujo $\Theta$, con cociente
 $4e_n(\Delta_\infty,\Theta)/(\Delta_\infty+2\kappa)$. Con $n$ par,
@@ -218,13 +217,14 @@ Teorema~\ref{teo:energia}, $e_n(\Delta_\infty,0)-e_\infty(\Delta_\infty)\le C(M\
 $v_\infty=4e_\infty(\Delta_\infty)/(\Delta_\infty+2\kappa)$, (D) vale con
 $\varepsilon_D=4C(M\epsilon)^{n/2-1}/(\Delta_\infty+2\kappa)$, uniformemente en $\Theta$.
 
-\emph{(P).} Por la periodicidad en $\Theta$ (Sección~\ref{sec:prueba}), basta $|\Theta|\le\pi$. En el gauge uniforme el dato de cada arista es $(1\otimes V)\rho_{v_\infty}(1\otimes V)^\dagger$
-con $V=e^{-i\Theta S^z/n}=V_\phi$, $\phi=\Theta/n$. Por la estacionariedad del mínimo que define
-$\Delta_\infty$ \cite[problema abierto~2]{robustez}, la marginal $\rho_\infty$ de la cadena infinita con
-$\Delta_\infty$ es $\rho_{v_\infty}$ (Lema~\ref{lem:rhoinf}). El Teorema~\ref{teo:prueba} da (P) con
-$\varepsilon_P=C(M'\epsilon)^{n/2-2}$, uniformemente en $\Theta$.
+\emph{(P).} Por la periodicidad en $\Theta$ (Sección~\ref{sec:prueba}), basta $|\Theta|\le\pi$. En el gauge uniforme el dato de cada arista es $(1\otimes V_\phi)\rho_{v_\infty}(1\otimes V_\phi)^\dagger$
+con $\phi=-\Theta/n$: el giro $V_\phi$ da $\ev{XY-YX}=-2\kappa v\sin\phi$, y los datos piden
+$+2\kappa v\sin(\Theta/n)$. Por la estacionariedad del mínimo que define $\Delta_\infty$
+\cite[Prop.~17]{robustez}, la marginal $\rho_\infty$ de la cadena infinita con $\Delta_\infty$ es
+$\rho_{v_\infty}$ (Lema~\ref{lem:rhoinf}). El Teorema~\ref{teo:prueba}, que vale para los dos signos de
+$\phi$, da (P) con $\varepsilon_P=C(M\epsilon)^{n/2-1}$, uniformemente en $\Theta$.
 
-El Teorema puente da entonces la cota, con $\varepsilon_D+v_\infty\varepsilon_P/r'$.
+El Teorema puente da entonces la cota, con $\varepsilon_D+v_\infty\varepsilon_P/r'$ y $1/r'=19d^2=76$.
 \end{proof}
 
 %=====================================================================
@@ -238,7 +238,7 @@ una cota exponencial. No hace falta comparar los coeficientes $g$ del anillo y d
 ninguna norma.
 
 \paragraph{La ecuación sin flujo.} Con $\phi=0$, \eqref{eq:H} es invariante por traslación y conserva
-la paridad $P=\prod_j\sigma^z_j$, porque solo invierte pares. Con $G_j=\sum_{X:\,j}g(X)\sigma(X)$,
+la paridad $P=\prod_j\sigma^z_j$, porque solo invierte pares. Con $G_j=G_{\{j,j+1\}}=\sum_{X:\,j}g(X)\sigma(X)$,
 donde $X:j$ significa que el enlace $b_j=\langle j,j{+}1\rangle$ está en $\partial X$, y
 $\sum_jG_j=\sum_X|\partial X|\,g(X)\sigma(X)$, la ecuación~\eqref{eq:kt} se escribe
 \begin{equation}\label{eq:kt0}
@@ -323,8 +323,8 @@ En el anillo, los productos con $\triangle=\Lambda$ no entran en $F_n$ y solo pu
 Sea $D=\{\epsilon\in\mathbb C:|\epsilon|<1/M\}$, con $M\ge45$ fijo.
 
 \begin{lema}[analiticidad]\label{lem:analitico}
-Los puntos fijos $g_n(\epsilon)$ y $g_\infty(\epsilon)$ son funciones analíticas de $\epsilon\in D$ con
-valores en el espacio de Banach de la norma, nulas en $\epsilon=0$. $E_\pm(n,\epsilon)/n$ y
+Las coordenadas $g_n(\epsilon)(X)$ y $g_\infty(\epsilon)(X)$ de los puntos fijos son funciones analíticas de
+$\epsilon\in D$, nulas en $\epsilon=0$, con $|g(X)|\le\tfrac\delta2(M|\epsilon|)^{w(X)}$. $E_\pm(n,\epsilon)/n$ y
 $e^{\rm KT}(\epsilon)$ son analíticas en $D$, valen $-1$ en $\epsilon=0$ y, en $D$,
 \[
   \big|E_\pm(n,\epsilon)/n-e^{\rm KT}(\epsilon)\big|\le B:=2\Big[\big(e^{4/M}-1-\tfrac4M\big)+\frac{1+e^{4/M}}M\Big].
@@ -332,9 +332,12 @@ $e^{\rm KT}(\epsilon)$ son analíticas en $D$, valen $-1$ en $\epsilon=0$ y, en 
 \end{lema}
 
 \begin{proof}
-Las iteradas $F^k(0)$ son analíticas en $\epsilon$, porque $F$ es una serie convergente en $\epsilon$
-y en los $g(X)$, y convergen uniformemente en $D$ al punto fijo, por la contracción; un límite
-uniforme de funciones analíticas es analítico. Con $\epsilon=0$, $F(0)=0$ y el punto fijo es $0$. Para
+La norma $\|\cdot\|_M$ depende de $|\epsilon|$, así que se razona coordenada a coordenada. Las coordenadas
+de las iteradas $F^k(0)$ son analíticas en $\epsilon$, porque $F$ es una serie convergente en $\epsilon$ y
+en los $g(X)$, y por la contracción
+$|F^{k+1}(0)(X)-F^k(0)(X)|\le\tfrac12(M|\epsilon|)^{w(X)}\|F^{k+1}(0)-F^k(0)\|_M\le2^{-k}\delta$, así que
+convergen uniformemente en $D$; un límite uniforme de funciones analíticas es analítico. La cota de
+$|g(X)|$ sale de $|\partial X|\ge2$ y $\|g\|_M\le\delta$. Con $\epsilon=0$, $F(0)=0$ y el punto fijo es $0$. Para
 la cota, $s:=\sum_{X:\,j}|g(X)|\le\tfrac12\|g\|_M\le\delta/2=4/M$, porque $(M|\epsilon|)^{w}\le1$ y
 $|\partial X|\ge2$. La suma de los valores absolutos de todos los coeficientes de la contribución de
 un enlace a $\mathcal N$ es como mucho $(e^s-1-s)+|\epsilon|(1+e^s)$, y $\widehat{\mathcal N}(\emptyset)$ y
@@ -487,13 +490,14 @@ contracción de constante $\tfrac12$ en ella.
 \end{lema}
 
 \begin{proof}
-Sean $G_k=\sum_{X:\,k}g(X)\sigma(X)$ (enlace $b_k$ en $\partial X$) y $H_k=\sum_{X\ni k}g(X)\sigma(X)$.
+Sean $G_k=G_{\{k,k+1\}}=\sum_{X:\,k}g(X)\sigma(X)$ (enlace $b_k$ en $\partial X$) y
+$G_{\{k\}}=\sum_{X\ni k}g(X)\sigma(X)$.
 Por~\eqref{eq:kt}, $\mathcal N_\phi=\mathcal A+\mathcal S+\mathcal B_c+\mathcal B_s$, con $\mathcal A$ como en el
 Lema~\ref{lem:dk},
 \[
   \mathcal S=2\epsilon\sum_ke^{-is_k\phi}\sigma(b_k),\quad
   \mathcal B_c=\epsilon\cos\phi\sum_k\sigma(b_k)\sum_{p\ge1}\frac{G_k^p}{p!},\quad
-  \mathcal B_s=-i\epsilon\sin\phi\sum_ks_k\sigma(b_k)\sum_{p\ge1}\frac{H_k^p+H_{k+1}^p}{p!}.
+  \mathcal B_s=-i\epsilon\sin\phi\sum_ks_k\sigma(b_k)\sum_{p\ge1}\frac{G_{\{k\}}^p+G_{\{k+1\}}^p}{p!}.
 \]
 Se usan tres hechos, análogos a los del Lema~\ref{lem:dk}.
 (a$'$) Si $s\in Y=\triangle_iX_i$ (o $b_k\triangle\triangle_iX_i$), entonces $s\in X_i$ para algún $i$
@@ -518,7 +522,7 @@ costa de un factor $p$, y se desarrolla la diferencia de productos):
 \item $\mathcal B_s$, con $s\in X_1$: el factor de $X_1$ es $\tfrac n2$ por (c$'$), y los demás
   $\tfrac12$. Cada término de la diferencia vale $\tfrac n2(\delta/2)^{p-1}$, y la suma es
   $\frac{\pi}{nM}\cdot2\cdot\frac n2\sum_{p\ge1}\frac{p^2}{p!}(\delta/2)^{p-1}=\frac\pi M(1+\tfrac\delta2)e^{\delta/2}$,
-  con el $2$ de las dos series $H_k$ y $H_{k+1}$.
+  con el $2$ de las dos series $G_{\{k\}}$ y $G_{\{k+1\}}$.
 \item $\mathcal B_s$, con $s\in b_k$: dos valores de $k$, dos series y
   $\sum_{p\ge1}\frac p{p!}(\delta/2)^{p-1}\tfrac12=\tfrac12e^{\delta/2}$, en total
   $\frac{2\pi}{nM}e^{\delta/2}\le\frac\pi{2M}e^{\delta/2}$ con $n\ge4$.
@@ -553,8 +557,9 @@ acoplamientos complejos $-\tfrac12(g_{n,\phi}+\tilde g)(X)$, de norma pequeña, 
 función local salvo colas exponenciales.
 
 \begin{lema}[polímeros]\label{lem:polimeros}
-Sea $M_2=e^4M_1\approx2950$. Existe $B'$ tal que, para $M\ge M_2$, en el disco $|\epsilon|<1/M$ el denominador de
-$m_O$ no se anula y $|m_O(\epsilon)|\le B'\|O\|$ para todo operador $O$ de dos sitios, uniformemente
+Sean $\bar M=85$, $\theta=64/(3\bar M)$, $M_2=e^{4\theta}\bar M\approx232$ y
+$B'=128\,e^{10\theta}/\theta\approx6{,}3\times10^3$. Para $M\ge M_2$, en el disco $|\epsilon|<1/M$ el denominador
+de $m_O$ no se anula y $|m_O(\epsilon)|\le B'\|O\|$ para todo operador $O$ de dos sitios, uniformemente
 en $n$ y en $|\phi|\le\pi/n$. Además, el coeficiente de orden $m$ de $m_O$ depende solo de los
 coeficientes de orden $\le m$ de $g$ en conjuntos a distancia $\le2m$ de la arista de $O$.
 \end{lema}
@@ -563,8 +568,8 @@ La demostración usa dos herramientas generales: una cota de árboles para colec
 de conjuntos y el criterio de Kotecký--Preiss.
 
 \begin{lema}[árboles]\label{lem:arboles}
-Sean $u_X\ge0$, para los subconjuntos finitos no vacíos $X$ del anillo o de $\mathbb Z$, con
-$\eta:=\sup_s\sum_{X\ni s}u_Xe^{|X|}\le1$. Una colección finita de conjuntos distintos es
+Sean $\theta>0$ y $u_X\ge0$, para los subconjuntos finitos no vacíos $X$ del anillo o de $\mathbb Z$,
+con $\eta:=\sup_s\sum_{X\ni s}u_Xe^{\theta|X|}\le\theta$. Una colección finita de conjuntos distintos es
 \emph{conexa} si el grafo que une dos de ellos cuando se cortan es conexo. Entonces, para todo sitio
 $s$,
 \[
@@ -580,9 +585,9 @@ con raíz cuyos vértices son conjuntos (permitiendo repeticiones, lo que solo l
 cada hijo corta a su padre. Sea $W_D(R)$ la suma de los pesos de esos árboles de profundidad $\le D$
 con raíz $R$. Como los hijos de $R$ forman un conjunto no ordenado,
 $W_D(R)\le u_R\exp\big(\sum_{C\cap R\ne\emptyset}W_{D-1}(C)\big)$. Por inducción en $D$,
-$W_D(R)\le u_Re^{|R|}$: si vale en $D-1$,
-$\sum_{C\cap R\ne\emptyset}u_Ce^{|C|}\le|R|\,\eta\le|R|$. Así la suma es como mucho
-$\sum_{R\ni s}u_Re^{|R|}\le\eta$.
+$W_D(R)\le u_Re^{\theta|R|}$: si vale en $D-1$,
+$\sum_{C\cap R\ne\emptyset}u_Ce^{\theta|C|}\le|R|\,\eta\le\theta|R|$. Así la suma es como mucho
+$\sum_{R\ni s}u_Re^{\theta|R|}\le\eta$.
 \end{proof}
 
 \begin{lema}[Kotecký--Preiss \cite{kp}; véase también {\cite[cap.~5]{fv}}]\label{lem:kp}
@@ -596,8 +601,8 @@ absolutamente, y $\sum_{\mathcal C\not\sim\gamma}|\Phi^T(\mathcal C)|\le a(\gamm
 
 \begin{proof}[Demostración del Lema~\ref{lem:polimeros}]
 Sean $g=g_{n,\phi}(\epsilon)$ y $\tilde g(X)=\overline{g_{n,\phi}(\bar\epsilon)(X)}$, ambos en la bola
-$\{\|\cdot\|_\sharp\le\delta'\}$ del Lema~\ref{lem:dkflujo} con $M_1$, y $|\epsilon|<1/M_2$ con
-$M_2=e^4M_1$.
+$\{\|\cdot\|_\sharp\le\delta'\}$ del Lema~\ref{lem:dkflujo} con $M=\bar M\ge M_1$ y $\delta'=8/\bar M$, y
+$|\epsilon|<1/M_2$.
 
 \emph{Paso 1: representación de alta temperatura.} Para acoplamientos $h(X)\in\mathbb C$ pequeños,
 $Z_h:=\sum_\sigma e^{-\sum_Xh(X)\sigma(X)}=2^n\prod_X\cosh h(X)\sum_{\mathcal X}\prod_{X\in\mathcal X}(-t_X)$,
@@ -608,25 +613,31 @@ polímeros: los polímeros son las colecciones conexas $\gamma$ con $\triangle\g
 actividad $w(\gamma)=\prod_{X\in\gamma}(-t_X)$, y dos son incompatibles si sus soportes
 $\bigcup\gamma$ se cortan. El denominador de $m_O$ es $Z_h$ con $h=\tfrac12(g+\tilde g)$.
 
-\emph{Paso 2: el criterio.} Sea $a(\gamma)=|\bigcup\gamma|$. Como
-$|\bigcup\gamma|\le\sum_{X\in\gamma}|X|$, el Lema~\ref{lem:arboles} con $u_X=|t_X|e^{|X|}$ da
+\emph{Paso 2: el criterio.} Para acoplamientos $h$, sea
+$\hat\eta_h:=\sup_s\sum_{X\ni s}|h(X)|e^{2\theta|X|}$, y supóngase $\hat\eta_h\le\theta/2$. Entonces
+$|h(X)|\le\tfrac12$ y $|t_X|\le2|h(X)|$. Sea $a(\gamma)=\theta|\bigcup\gamma|$. Como
+$|\bigcup\gamma|\le\sum_{X\in\gamma}|X|$, el Lema~\ref{lem:arboles} con $u_X=|t_X|e^{\theta|X|}$, cuyo $\eta$
+es como mucho $2\hat\eta_h\le\theta$, da
 \[
-  \sum_{\gamma'\not\sim\gamma}|w(\gamma')|e^{a(\gamma')}\le|{\textstyle\bigcup}\gamma|\,\sup_s\sum_{\gamma'\ni s}\prod_{X\in\gamma'}|t_X|e^{|X|}
-  \le a(\gamma)\,\eta_h,\qquad \eta_h:=\sup_s\sum_{X\ni s}|t_X|e^{2|X|},
+  \sum_{\gamma'\not\sim\gamma}|w(\gamma')|e^{a(\gamma')}\le|{\textstyle\bigcup}\gamma|\,\sup_s\sum_{\gamma'\ni s}\prod_{X\in\gamma'}|t_X|e^{\theta|X|}
+  \le|{\textstyle\bigcup}\gamma|\,\theta=a(\gamma).
 \]
-y basta $\eta_h\le1$. Como $|X|\le2w(X)$ y $M_2|\epsilon|\le1$,
-$e^{2|X|}\le e^{4w(X)}\le(M_1|\epsilon|)^{-w(X)}$, y con $|t_X|\le2|h(X)|$ y $|\partial X|\ge2$,
-$\eta_h\le\|g\|_\sharp+\|\tilde g\|_\sharp\le2\delta'\le1$ si $M_1$ es grande. Lo mismo vale, con
-$\eta\le4\delta'+\tfrac14$, para los acoplamientos modificados de los pasos 3 y 4.
+Como $|X|\le2w(X)$ y $M_2|\epsilon|\le1$, $e^{2\theta|X|}\le e^{4\theta w(X)}\le(\bar M|\epsilon|)^{-w(X)}$, y con
+$|\partial X|\ge2$, $\sum_{X\ni s}|g(X)|e^{2\theta|X|}\le\tfrac12\|g\|_\sharp\le\delta'/2=4/\bar M$, y lo mismo
+para $\tilde g$. Así $\hat\eta_h\le4/\bar M$ para $h=\tfrac12(g+\tilde g)$, y $\hat\eta\le8/\bar M+|\lambda|e^{4\theta}$
+para los acoplamientos de los pasos 3 y 4, que cambian $h$ en $-g$ en algunos conjuntos y en $\lambda$ en
+uno de como mucho dos sitios. Con $8/\bar M=3\theta/8$ y $|\lambda|\le\lambda_0:=\theta e^{-4\theta}/8$, todos
+cumplen $\hat\eta\le\theta/2$.
 
-\emph{Paso 3: perturbaciones locales.} Sea $A$ un conjunto de sitios y $h'$ con $\eta_{h'}\le1$ que
-difiere de $h$ solo en conjuntos que cortan a $A$. En $\log Z_{h'}-\log Z_h$ se cancelan los términos
-$\log\cosh$ de los conjuntos que no cortan a $A$ y los clústeres que no contienen ningún polímero con
-uno de esos conjuntos, porque sus actividades coinciden. Los clústeres que quedan son incompatibles con
-un polímero ficticio de soporte $A$ y actividad nula, al que el criterio se extiende con
-$a=|A|$ por la misma cuenta. El Lema~\ref{lem:kp} da
+\emph{Paso 3: perturbaciones locales.} Sea $A$ un conjunto de sitios y $h'$ con $\hat\eta_{h'}\le\theta/2$
+que difiere de $h$ solo en conjuntos que cortan a $A$. En $\log Z_{h'}-\log Z_h$ se cancelan los
+términos $\log\cosh$ de los conjuntos que no cortan a $A$ y los clústeres que no contienen ningún
+polímero con uno de esos conjuntos, porque sus actividades coinciden. Los clústeres que quedan son
+incompatibles con un polímero ficticio de soporte $A$ y actividad nula, al que el criterio se extiende
+con $a=\theta|A|$ por la misma cuenta. El Lema~\ref{lem:kp}, junto con $|\log\cosh z|\le|z|$ para
+$|z|\le\tfrac12$ y $\sum_{X\cap A\ne\emptyset}|h(X)|\le|A|\hat\eta_h$, da
 \[
-  |\log Z_{h'}-\log Z_h|\ \le\ 2|A|+\sum_{X\cap A\ne\emptyset}\big(|\log\cosh h'(X)|+|\log\cosh h(X)|\big)\ \le\ 3|A| ,
+  |\log Z_{h'}-\log Z_h|\ \le\ 2\theta|A|+\sum_{X\cap A\ne\emptyset}\big(|\log\cosh h'(X)|+|\log\cosh h(X)|\big)\ \le\ 3\theta|A| ,
 \]
 uniformemente en $n$. En particular $Z_h\ne0$.
 
@@ -641,9 +652,9 @@ $(F_{A'}\psi)/\psi=\exp\big(\sum_{|X\cap A'|\,\rm impar}g(X)\sigma(X)\big)$,
   h^{A'}=h-g\,1_{|X\cap A'|\ \rm impar}.
 \]
 Sea $h^{A'}_\lambda=h^{A'}+\lambda1_{X=B}$. Cada cociente es $-\partial_\lambda(Z_{h^{A'}_\lambda}/Z_h)$ en
-$\lambda=0$. Con $|\lambda|\le\lambda_0=e^{-4}/8$ se tiene $\eta\le1$, y por el Paso 3,
-$|Z_{h^{A'}_\lambda}/Z_h|\le e^{6}$. Por la desigualdad de Cauchy, cada derivada está acotada por
-$e^6/\lambda_0$, así que $|m_O|\le16\,e^{6}\lambda_0^{-1}\|O\|=:B'\|O\|$.
+$\lambda=0$ (con $B=\emptyset$ no hace falta derivar). Con $|\lambda|\le\lambda_0$, por los pasos 2 y 3
+con $|A|=2$, $|Z_{h^{A'}_\lambda}/Z_h|\le e^{6\theta}$. Por la desigualdad de Cauchy, cada derivada está
+acotada por $e^{6\theta}/\lambda_0$, así que $|m_O|\le16\,e^{6\theta}\lambda_0^{-1}\|O\|=128\,e^{10\theta}\theta^{-1}\|O\|=B'\|O\|$.
 
 \emph{Localidad.} Desarrollando en $\epsilon$, $g^{(m)}(X)\ne0$ solo si $w(X)\le m$, y lo mismo
 $\tilde g$; así $t_X$ es de orden al menos $\epsilon^{w(X)}$. En la diferencia
@@ -656,11 +667,12 @@ $\mathbb Z$, con los coeficientes de $g$ periodizados.
 
 \paragraph{Localidad.} Por los Lemas~\ref{lem:dkflujo} y~\ref{lem:polimeros}, $m_O$ es holomorfa y
 acotada en el disco. Sus coeficientes de Taylor en el anillo de $n$ sitios con flujo $\phi$ por enlace
-coinciden, hasta el orden $n/2-2$, con los coeficientes formales de la misma cantidad en $\mathbb Z$ con
-flujo $\phi$ por enlace. Es la periodización del Lema~\ref{lem:periodizacion}, ahora con el patrón
-$s_k$, que tiene periodo $2$ y es compatible con $n$ par, y con el Lema~\ref{lem:polimeros} para pasar de
-$g$ a $m_O$. Ese orden lo limitan los términos de un sitio, que añaden un sitio a la unión de
-recubrimientos. Los coeficientes formales en $\mathbb Z$ existen orden a orden aunque $F_{\infty,\phi}$ no
+coinciden, hasta el orden $n/2-2$ incluido, con los coeficientes formales de la misma cantidad en
+$\mathbb Z$ con flujo $\phi$ por enlace. Los de $g$ coinciden hasta el orden $n/2-1$ por la periodización
+del Lema~\ref{lem:periodizacion}, que vale igual con flujo: el término de $\sin\phi$ añade el enlace
+$b_k$, como el de $\cos\phi$, y el patrón $s_k$ tiene periodo $2$, compatible con $n$ par. El
+Lema~\ref{lem:polimeros} pasa de $g$ a $m_O$ con la condición $2m+2<n$, que limita el orden por la
+arista de $O$. Los coeficientes formales en $\mathbb Z$ existen orden a orden aunque $F_{\infty,\phi}$ no
 sea una contracción: cada orden es una suma finita.
 
 \paragraph{Covariancia gauge.} Sean $\rho^{(m)}_{\infty,\phi}$ los coeficientes formales en $\mathbb Z$ de
@@ -680,7 +692,8 @@ los dos niveles más bajos de $H_N(0)$ forman un grupo aislado por un gap de ord
 $P_0$, y el de $H_N(2\pi k)$ es $P=GP_0G^\dagger$.
 
 El punto fijo $g_{N,\phi}$ existe y es analítico en un disco pequeño, aunque $N|\sin\phi|$ no esté
-acotado: basta tomar $M$ de orden $N$ en el Lema~\ref{lem:dkflujo}. Por~\eqref{eq:cuasimodo},
+acotado: basta tomar $M$ de orden $N$ en el Lema~\ref{lem:dkflujo}, donde el factor de $\mathcal B_s$
+pasa a ser $N|\sin\phi|/M$, y rehacer con él el Lema~\ref{lem:polimeros}, con $\theta$ de orden $1/N$. Por~\eqref{eq:cuasimodo},
 $\|(1-P)\Psi_{N,\phi}\|\le|r|\,\|\Psi\|/\mathrm{gap}=O(\epsilon^{N/2})$. El rango de $P$ lo generan $G\Psi_\pm$,
 con $\Psi_\pm$ los autovectores de los sectores par e impar de flujo nulo, que tienen $S^z$ total nulo
 y momentos $0$ y $\pi$. Para un vector $\Phi$ de $S^z$ total nulo, cada marginal de arista conmuta con
@@ -689,65 +702,98 @@ e^{-i(j+1)\phi S^z}$, y el factor común $e^{-ij\phi(S^z\otimes1+1\otimes S^z)}$
 $\rho_j(G\Phi)=(1\otimes V_\phi)\rho_j(\Phi)(1\otimes V_\phi)^\dagger$ para todo $j$; también en
 $\langle N,1\rangle$, donde los factores son $e^{-iN\phi S^z}=e^{-2\pi ikS^z}=\pm1$ y $e^{-i\phi S^z}$. Para $\Phi=\alpha\Psi_++\beta\Psi_-$, la media sobre
 $j$ de $\rho_j(\Phi)$ es $|\alpha|^2\bar\rho_++|\beta|^2\bar\rho_-$, porque el término cruzado cambia de
-signo con cada traslación y su media es nula con $N$ par. Por último,
-$\bar\rho_\pm=\rho_\infty+O(\epsilon^{N/2})$ (la localidad con flujo nulo, como en el
-Teorema~\ref{teo:energia}). Juntando todo, la marginal media del cuasi-modo con flujo $\phi$ es la
+signo con cada traslación y su media es nula con $N$ par. Por último, $\bar\rho_\pm$ se obtiene de
+$E_\pm/N$ por Hellmann--Feynman igual que $\rho_\infty$ de $e^{\rm KT}$ (Lema~\ref{lem:rhoinf}, que vale
+también para $\Psi_-$), y como $E_\pm/N-e^{\rm KT}=O(\epsilon^{N/2-1})$ en un disco
+(Lemas~\ref{lem:analitico} y~\ref{lem:periodizacion}), la desigualdad de Cauchy da
+$\bar\rho_\pm=\rho_\infty+O(\epsilon^{N/2-2})$. Juntando todo, la marginal media del cuasi-modo con flujo $\phi$ es la
 girada de $\rho_\infty$ salvo $O(\epsilon^{N/2-2})$, y por la localidad sus coeficientes de orden
 $m<N/2-2$ son los formales de $\mathbb Z$.
 \end{proof}
 
 \begin{lema}[el límite]\label{lem:rhoinf}
-$\rho_\infty=\lim_n\bar\rho_+^{(n)}$ es invariante por la $U(1)$, con $\ev{Z}=0$, y está determinada
-por $\ev{S^z_iS^z_{i+1}}=-e_\infty'(\Delta)$ y por $\ev{S^+_iS^-_{i+1}}=-e_\infty(\Delta)+\Delta e_\infty'(\Delta)$.
-En particular, con $\Delta=\Delta_\infty(\kappa)$, $\rho_\infty=\rho_{v_\infty}$, el dato de
-\cite[problema abierto~2]{robustez}.
+Para $|\epsilon|<1/45$ sean $z=\tfrac14\big(e^{\rm KT}-\epsilon\,e^{{\rm KT}\prime}\big)$ y
+$t=\tfrac14e^{{\rm KT}\prime}$, y
+\[
+  \rho_\infty(\epsilon)=\tfrac14\,1+4z\,S^z\otimes S^z+t\,\big(S^+\otimes S^-+S^-\otimes S^+\big).
+\]
+\begin{enumerate}
+\item[(i)] $\rho_\infty$ es holomorfa, y $|\tr[O\rho_\infty(\epsilon)]|\le3{,}5\,\|O\|$ para $|\epsilon|\le1/232$.
+\item[(ii)] Para $\epsilon$ real, $\rho_\infty=\lim_n\bar\rho_+^{(n)}$, con $\ev{S^z_iS^z_{i+1}}=z=-e_\infty'(\Delta)$ y
+  $\ev{S^+_iS^-_{i+1}}=t=-e_\infty(\Delta)+\Delta e_\infty'(\Delta)$, y sus coeficientes de Taylor son los
+  formales $\rho^{(m)}_\infty$ en $\mathbb Z$.
+\item[(iii)] Con $\Delta=\Delta_\infty(\kappa)$, $\rho_\infty=\rho_{v_\infty}$.
+\end{enumerate}
 \end{lema}
 
 \begin{proof}
-Por Hellmann--Feynman en el anillo, $\ev{S^z_iS^z_{i+1}}=\partial_\Delta E_+/n$, y por la convergencia
-uniforme de $E_+/n$ en un disco (Teorema~\ref{teo:energia}, en su forma analítica), las derivadas
-convergen: $\partial_\Delta(-e_\infty)$. El salto es la energía por enlace menos $\Delta\ev{S^zS^z}$. Una
-marginal de dos qubits invariante por la $U(1)$, con $\ev Z=0$ y salto real, queda determinada por
-esos dos números; la identificación con $\rho_{v_\infty}$ es la estacionariedad de
-\cite{robustez}.
+(i) Por el Lema~\ref{lem:analitico} con $M=45$, $|e^{\rm KT}+1|\le B(45)/2=0{,}0506$ en $|\epsilon|<1/45$.
+La desigualdad de Cauchy en discos de radio $1/45-1/232$ da $|e^{{\rm KT}\prime}|\le2{,}83$ en
+$|\epsilon|\le1/232$, así que $|z|\le0{,}266$ y $|t|\le0{,}71$. Las entradas de $\rho_\infty$ son
+$\tfrac14\pm z$ y $t$, con suma de módulos $\le1+4|z|+2|t|\le3{,}5$, y $|O_{ab}|\le\|O\|$.
+
+(ii) En el anillo de $n$ sitios, con flujo nulo y $\epsilon$ real, $\Psi_+$ es real, es el fundamental no
+degenerado de su sector (de $S^z$ total nulo y momento $0$) y es par bajo la inversión global de espín.
+Por tanto su marginal media $\bar\rho_+^{(n)}$ es invariante por la $U(1)$, con $\ev Z=0$ y salto real, y
+queda determinada por $\ev{S^z_iS^z_{i+1}}$ y $\ev{S^+_iS^-_{i+1}}$. Por Hellmann--Feynman, y con
+$E_0(H_n)=\tfrac\Delta4E_+$, esas dos cantidades son las mismas expresiones $z$ y $t$ con $E_+/n$ en lugar de
+$e^{\rm KT}$. Las dos partes son holomorfas, así que la identidad vale en todo el disco. Como
+$E_+/n-e^{\rm KT}$ tiene un cero de orden $n/2-1$ y está acotada por $B$, la desigualdad de Cauchy da
+$\bar\rho^{(n)}_+\to\rho_\infty$, con coeficientes de Taylor que coinciden hasta el orden $n/2-3$. Los de
+$\bar\rho^{(n)}_+$ son los formales de $\mathbb Z$ hasta el orden $n/2-2$, por la localidad (con flujo
+nulo, $\bar\rho_+^{(n)}$ es la media de los $m_O$); con $n\to\infty$ se obtiene (ii). Las fórmulas
+con $e_\infty$ salen de $e^{\rm KT}(\epsilon)=-4\epsilon\,e_\infty(1/\epsilon)$.
+
+(iii) Los datos de \cite[Sec.~6]{robustez} son $\ev{ZZ}=-v$ y $\ev{XX+YY}=-2\kappa v$ en flujo nulo, es decir,
+$z=-v/4$ y $t=-\kappa v/2$. Con $z=-e_\infty'$ y $t=-e_\infty+\Delta e_\infty'$, son la condición de
+estacionariedad $e_\infty'(\Delta)(\Delta+2\kappa)=e_\infty(\Delta)$ del mínimo de
+$F_\kappa=4e_\infty/(\Delta+2\kappa)$ \cite[Prop.~17]{robustez}, con $v=v_\infty=4e_\infty'(\Delta_\infty)$.
 \end{proof}
 
 \begin{proof}[Demostración del Teorema~\ref{teo:prueba}]
-Para un operador $O$ de dos sitios, sea
-$f(\epsilon)=m_O(\epsilon)-\tr\big[O\,(1\otimes V_\phi)\rho_\infty(\epsilon)(1\otimes V_\phi)^\dagger\big]$. Por los
-Lemas~\ref{lem:polimeros} y~\ref{lem:rhoinf}, $f$ es holomorfa y acotada por $2B'\|O\|$ en
-$|\epsilon|<1/M$. Por la localidad y el Lema~\ref{lem:covariancia}, sus coeficientes de orden
-$<n/2-2$ son nulos. Por el lema de Schwarz, $|f(\epsilon)|\le2B'\|O\|(M|\epsilon|)^{n/2-2}$. La norma
-traza en dimensión $4$ se acota por los elementos de matriz, lo que da el teorema con $M'=M_2$ y
-$C=32B'$.
+Para un operador $O$ de dos sitios, sea $\bar m_O=\frac1n\sum_jm_{O_j}$, con $O_j$ la
+copia de $O$ en la arista $\langle j,j{+}1\rangle$, que es el elemento de matriz de $\rho^{(n)}_\phi$, y sea
+$f(\epsilon)=\bar m_O(\epsilon)-\tr\big[O\,(1\otimes V_\phi)\rho_\infty(\epsilon)(1\otimes V_\phi)^\dagger\big]$. Por los
+Lemas~\ref{lem:polimeros} y~\ref{lem:rhoinf}(i), $f$ es holomorfa y acotada por $(B'+3{,}5)\|O\|$ en
+$|\epsilon|<1/M$. Por la localidad, sus coeficientes de orden $m\le n/2-2$ son los formales de $\mathbb Z$ de
+la marginal media con flujo $\phi$ menos los de $\rho_\infty$ girada, y estos coinciden por los
+Lemas~\ref{lem:covariancia} y~\ref{lem:rhoinf}(ii). Por el lema de Schwarz,
+$|f(\epsilon)|\le(B'+3{,}5)\|O\|(M|\epsilon|)^{n/2-1}$. Con $O$ las $16$ unidades matriciales, de norma
+$1$, y $\|Y\|_1\le\sum_{ab}|Y_{ab}|$, sale el teorema con $C=16(B'+3{,}5)$.
 \end{proof}
 
 \begin{observacion}[alcance del Teorema~\ref{teo:prueba}]
-$M'=e^4\cdot54\approx2950$ es muy holgado: el factor $e^4$ sale de pedir $e^{2|X|}$ en el criterio de
-Kotecký--Preiss, con $|X|\le2w(X)$. Con un peso $e^{\theta|X|}$ en el Lema~\ref{lem:arboles} (la misma
-demostración da la cota si $\sup_s\sum_{X\ni s}u_Xe^{\theta|X|}\le\theta$) y $a(\gamma)=\theta|\bigcup\gamma|$, se
-puede bajar a $M'\approx M_1e^{96/M_1}$, cuyo mínimo es $96e\approx260$ con $M_1=96$. Los números de la
-Sección~\ref{sec:numeros} indican que la tasa verdadera es $(2/\Delta)^{n/2}$. Tal como está, el
-Corolario~\ref{cor:robustez} vale para $\kappa<1/2950\approx3{,}4\times10^{-4}$.
+La elección de $\bar M$ minimiza $M_2(\bar M)=\bar Me^{256/(3\bar M)}$, cuyo mínimo es $\tfrac{256}3e\approx232$; el
+factor $e^{4\theta}$ sale de pedir $e^{2\theta|X|}$ en el criterio de Kotecký--Preiss, con $|X|\le2w(X)$. Los
+números de la Sección~\ref{sec:numeros} indican que la tasa verdadera es $(2/\Delta)^{n/2}$, así que
+$M_2$ y $C$ están muy lejos de los óptimos. Con ellos, el Corolario~\ref{cor:robustez} vale para
+$\kappa<4{,}3\times10^{-3}$ (la parte dual, del Teorema~\ref{teo:energia}, para
+$\kappa<0{,}0222$).
 \end{observacion}
 
 %=====================================================================
-\section{Anillos impares: la pared de dominio con flujo}\label{sec:impar}
+\section{Anillos impares: un problema abierto}\label{sec:impar}
 %=====================================================================
 
 Con $n$ impar, $U$ deja un enlace con signo cambiado ($J_n=-1$ en \cite[ec.~(125)]{dk-kink}) y las
-condiciones periódicas fuerzan una pared de dominio. \cite[Teorema~2]{dk-kink} da su dispersión,
-$E(k)=n\,e_0+\sum_s\varepsilon_se^{iks}$ con $|\varepsilon_s|\le(c\epsilon)^{\lceil|s|/2\rceil}$. Con flujo,
-la previsión de \cite[Sec.~6, derivación con $n$ impar]{robustez} es
+condiciones periódicas fuerzan una pared de dominio. Sin flujo, \cite[Teorema~2]{dk-kink} da su
+dispersión, $E(k)=n\,e_0+\sum_s\varepsilon_se^{iks}$ con $|\varepsilon_s|\le(c\epsilon)^{\lceil|s|/2\rceil}$. La
+derivación de \cite[Sec.~6, $n$ impar]{robustez} sugiere lo siguiente.
+
+\begin{conjetura}\label{conj:impar}
+Para $\Delta$ grande y $n$ impar,
 \[
   E_0(n,\Phi)=-n\,e_\infty(\Delta)+E_{\rm sp}\Big(\frac{\operatorname{dist}(\Phi-\pi,2\pi\mathbb Z)}{2n}\Big)
-  +O\big(n^{-1/2}e^{-n/\xi}\big):
+  +O\big(n^{-1/2}e^{-n/\xi}\big),
 \]
-la pared tiene $S^z=\pm\tfrac12$ y ve la mitad del flujo. De ahí, la energía de giro
-$E_0(n,0)-E_0(n,\pi)=c/n^2+O(n^{-4})$ y la sensibilidad $1/n^3$ de \cite{robustez}.
+con $E_{\rm sp}$ la banda de la pared: la pared tiene $S^z=\pm\tfrac12$ y ve la mitad del flujo.
+\end{conjetura}
 
-\pendiente{Extender \cite[Teorema~2]{dk-kink} con flujo: en el sector de momento $k$, el flujo
-debería entrar como $k\to k+\Phi/(2n)$ salvo términos que dan la vuelta. Programa, no resultado.}
+De ella saldrían la energía de giro $E_0(n,0)-E_0(n,\pi)=c/n^2+O(n^{-4})$ y la sensibilidad $1/n^3$
+de \cite{robustez}. Una demostración debería extender \cite[Teorema~2]{dk-kink} con flujo: en el sector
+de momento $k$, el flujo debería entrar como $k\to k+\Phi/(2n)$ salvo términos que dan la vuelta. El
+argumento de este artículo no basta, porque con una pared no hay un estado de referencia
+invariante por traslación con el que comparar orden a orden.
 
 %=====================================================================
 \section{Comprobaciones numéricas}\label{sec:numeros}
@@ -802,14 +848,16 @@ un $2$\,\%. Con $\Theta=\pi$ la distancia es menor, pero depende de la combinaci
 degenerado que devuelve el diagonalizador.
 
 %=====================================================================
-\section{Qué falta}\label{sec:falta}
+\section{Problemas abiertos}\label{sec:abiertos}
 %=====================================================================
 
 \begin{enumerate}
-\item Mejorar las constantes: el Teorema~\ref{teo:energia} vale con $\Delta>45$ y el
-  Teorema~\ref{teo:prueba} con $\Delta>2950$ (unos $260$ optimizando el lema de árboles), frente a una tasa
-  verdadera $(2/\Delta)^{n/2}$. El Corolario~\ref{cor:robustez} cubre ahora $\kappa<3{,}4\times10^{-4}$.
-\item La extensión con flujo del Teorema~2 de \cite{dk-kink} ($n$ impar).
+\item \emph{Constantes.} Los teoremas valen con $\Delta>45$ (energía) y $\Delta>232$ (estado de prueba),
+  frente a una tasa verdadera $(2/\Delta)^{n/2}$ que sugiere que basta $\Delta$ de orden unidad
+  por encima de $1$. Acercarse a ella requiere otra técnica, no un ajuste de estas cotas.
+\item \emph{El coeficiente de Catalan} de la Observación de la Sección~\ref{sec:energia}, como
+  recuento de caminos entre los dos estados de Néel.
+\item \emph{Anillos impares} (Conjetura~\ref{conj:impar}).
 \end{enumerate}
 
 \begin{thebibliography}{99}
