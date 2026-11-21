@@ -164,8 +164,15 @@ $|\partial X|\,g(X)$, con $|\partial X|$ el número de enlaces con un extremo en
 toma la forma de punto fijo $g=F_\phi(g)$ de \cite{dk-kink}, con dos fuentes de orden $\epsilon$ en
 lugar de una.
 
-\paragraph{Norma.} Para $X$ en el anillo o en $\mathbb Z$, sea $w(X)$ el menor número de enlaces de
-un conjunto conexo de enlaces que cubre $X$ \cite{dk-kink}, y
+\paragraph{Norma.} Sean $b_k=\langle k,k{+}1\rangle$ los enlaces. Dos enlaces $b_k$ y $b_l$ son
+\emph{vecinos} si $|k-l|\le2$ (módulo $n$ en el anillo), es decir, si comparten un extremo o están
+separados por un solo enlace. Un conjunto $B$ de enlaces es \emph{conexo} si lo es el grafo de esa
+vecindad, y \emph{cubre} $X$ si $X\subset\bigcup_{b\in B}b$. Para $X$ en el anillo o en $\mathbb Z$, sea
+$w(X)$ el menor cardinal de un conjunto conexo de enlaces que cubre $X$ (adaptado de \cite{dk-kink}). La conexión
+debe ser esta y no la de enlaces que comparten un extremo: $g(\{1,2,3,4\})$ aparece ya en orden
+$\epsilon^2$, del producto $g(b_1)g(b_3)$ a través de $b_2$, y tiene $w=2$, con el recubrimiento
+$\{b_1,b_3\}$. Así, un conjunto conexo de $w$ enlaces abarca como mucho $2w$ sitios consecutivos, y
+cubrir el anillo exige al menos $n/2$ enlaces. Sea
 $\|g\|_M=\sup_b\sum_{X:\,b}|g(X)|\,|\partial X|\,(M|\epsilon|)^{-w(X)}$, con la suma sobre los $X$
 con $b\in\partial X$ (Sección~\ref{sec:energia}).
 
@@ -260,12 +267,13 @@ En $\mathbb Z$ se define igual $F_\infty$, sobre los conjuntos finitos no vacío
 enlace $e^{\rm KT}(\epsilon)=-1+\widehat{\mathcal N}_{b}(\emptyset)$, con $\widehat{\mathcal N}_b$ la
 contribución del enlace $b$ (no depende de $b$, por la invariancia por traslación).
 
-\paragraph{Norma.} Con $w(X)$ el menor cardinal de un conjunto de enlaces conexo que cubre $X$
-(dos enlaces son vecinos si comparten un extremo o están a distancia $1$) \cite{dk-kink},
+\paragraph{Norma.} Con $w(X)$ como en la Sección~\ref{sec:planteamiento} (enlaces vecinos si
+$|k-l|\le2$),
 \[
   \|g\|_M=\sup_b\sum_{X:\,b}|g(X)|\,|\partial X|\,(M|\epsilon|)^{-w(X)} .
 \]
-Un conjunto conexo de $w$ enlaces abarca como mucho $2w$ sitios consecutivos.
+Un conjunto conexo de $w$ enlaces abarca como mucho $2w$ sitios consecutivos, y todo enlace que
+contiene a $j$ o a $j{+}1$ es $b_{j-1}$, $b_j$ o $b_{j+1}$, vecino de $b_j$ y de los otros dos.
 
 \begin{lema}[contracción, después de Datta--Kennedy]\label{lem:dk}
 Sean $M\ge45$, $\delta=8/M$ y $\epsilon\in\mathbb C$ con $M|\epsilon|\le1$. Para todo $n\ge4$ par,
@@ -286,7 +294,7 @@ Se usan tres hechos.
 (a) Si $b\in\partial(Y_1\triangle\cdots\triangle Y_k)$, entonces $b\in\partial Y_i$ para algún $i$, porque
 la pertenencia de cada extremo de $b$ se suma módulo $2$.
 (b) Si $X_i:j$ para todo $i$, la unión de recubrimientos conexos de los $X_i$ y de $b_j$ es conexa,
-porque cada recubrimiento toca $j$ o $j{+}1$. Por tanto $w(\triangle_iX_i)\le\sum_iw(X_i)$ y
+porque cada recubrimiento contiene un enlace con extremo $j$ o $j{+}1$, vecino de $b_j$. Por tanto $w(\triangle_iX_i)\le\sum_iw(X_i)$ y
 $w(b_j\triangle\triangle_iX_i)\le1+\sum_iw(X_i)$, y como $M|\epsilon|\le1$, el peso
 $(M|\epsilon|)^{-w}$ del resultado está acotado por el producto de los pesos, con un factor
 $(M|\epsilon|)^{-1}$ más en $\mathcal B$, que el $\epsilon$ convierte en $1/M$.
