@@ -24,6 +24,8 @@ de Yang-Yang:
      de H_n(Delta, Theta) (gauge uniforme) y la girada de la cadena infinita (zz = -e_inf',
      g = -e_inf + Delta e_inf') cumple delta_n <= 2 (2/Delta)^{n/2} desde n = 10, con Theta = 0, pi/2
      y pi, y delta_n(pi/2)/delta_n(0) difiere de 1 en menos de un 3 % (uniformidad en Theta).
+  8. periodización con flujo: con n = 8 y phi = 0,37, los coeficientes g^(m) del anillo son la suma de
+     los de Z (anillo de 24 sitios) sobre los levantamientos hasta m = n/2 - 1 = 3, y no en m = 4.
 Escribe data/xxz_ising_tamfinito.csv.
 """
 import csv
@@ -180,6 +182,67 @@ for D in [5.0, 8.0, 12.0]:
         check(max(dl.values()) <= cota and abs(dl[np.pi / 2] / dl[0.0] - 1) < 0.03,
               f"Delta = {D}, n = {n}: delta_n = {dl[0.0]:.2e}, {dl[np.pi / 2]:.2e}, {dl[np.pi]:.2e} "
               f"<= 2 (2/Delta)^(n/2) = {cota:.2e}")
+
+# --- 8: periodización con flujo (Lema de periodización con flujo) --------------------
+def kt_coefs(n, MMAX, phi):
+    """Coeficientes de Taylor g^(m) del punto fijo de F_{n,phi} en el anillo de n sitios."""
+    bond = [frozenset({k, (k + 1) % n}) for k in range(n)]
+    Lam = frozenset(range(n))
+    sgn = [(-1) ** k for k in range(n)]
+    c, sn = np.cos(phi), np.sin(phi)
+
+    def mul(A, B):
+        C = {}
+        for x, a in A.items():
+            for y, b in B.items():
+                C[x ^ y] = C.get(x ^ y, 0) + a * b
+        return C
+
+    def add(A, B, f=1):
+        C = dict(A)
+        for k, v in B.items():
+            C[k] = C.get(k, 0) + f * v
+        return C
+
+    g = [dict() for _ in range(MMAX + 1)]
+    selB = lambda l, j: {X: v for X, v in g[l].items() if len(X & bond[j]) == 1}
+    selS = lambda l, j: {X: v for X, v in g[l].items() if j in X}
+    QB = [[{frozenset(): 1}] for _ in range(n)]
+    QS = [[{frozenset(): 1}] for _ in range(n)]
+
+    def nextQ(Q, sel, j, m, upto):
+        R = {}
+        for l in range(1, upto + 1):
+            R = add(R, mul(sel(l, j), Q[j][m - l]), l / m)
+        return R
+
+    for m in range(1, MMAX + 1):
+        N = {}
+        for j in range(n):
+            N = add(N, nextQ(QB, selB, j, m, m - 1), -1)
+            N = add(N, mul({bond[j]: c}, add(QB[j][m - 1], {frozenset(): 1} if m == 1 else {})))
+            N = add(N, mul({bond[j]: -1j * sn * sgn[j]}, add(QS[j][m - 1], QS[(j + 1) % n][m - 1])))
+        g[m] = {X: v / sum(len(b & X) == 1 for b in bond)
+                for X, v in N.items() if X and X != Lam and abs(v) > 1e-14}
+        for j in range(n):
+            QB[j].append(nextQ(QB, selB, j, m, m))
+            QS[j].append(nextQ(QS, selS, j, m, m))
+    return g
+
+
+print()
+nper, phiper = 8, 0.37
+gn, gN = kt_coefs(nper, 4, phiper), kt_coefs(3 * nper, 4, phiper)
+for m in range(1, 5):
+    lift = {}
+    for Y, v in gN[m].items():
+        X = frozenset(y % nper for y in Y)
+        if len(X) == len(Y):
+            lift[X] = lift.get(X, 0) + v / 3
+    err = max(abs(gn[m].get(X, 0) - lift.get(X, 0)) for X in set(lift) | set(gn[m]))
+    esperado = err < 1e-12 if m <= nper // 2 - 1 else err > 0.1
+    check(esperado, f"periodización con flujo, n = {nper}, phi = {phiper}, m = {m}: "
+          f"max |g_n - suma de levantamientos| = {err:.2e} ({'cumple' if m < nper // 2 else 'falla, como debe'})")
 
 out = ROOT / "data" / "xxz_ising_tamfinito.csv"
 with open(out, "w", newline="") as fh:

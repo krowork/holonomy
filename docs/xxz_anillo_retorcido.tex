@@ -673,12 +673,76 @@ $2m+2$ sitios alrededor de $A$. Si $2m+2<n$ no da la vuelta, y la cuenta es la m
 $\mathbb Z$, con los coeficientes de $g$ periodizados.
 \end{proof}
 
+\paragraph{Periodización con flujo.} Sea $\phi$ fijo y $g=\sum_{m\ge1}\epsilon^mg^{(m)}$. En $\mathbb Z$ se
+usa el mismo patrón $s_k=(-1)^{k+1}$, que es compatible con la proyección $\pi:\mathbb Z\to\mathbb Z_n$
+porque $n$ es par. Con $Q^{B}_{j,l}$ y $Q^{S}_{k,l}$ los coeficientes de orden $l$ de $e^{G_j}$ y de
+$e^{G_{\{k\}}}$ (con $Q_{\cdot,0}=1$), igualar coeficientes en $g=F_{n,\phi}(g)$ da
+\begin{multline}\label{eq:recurrenciaflujo}
+  |\partial X|\,g^{(m)}(X)=\Big[-\sum_j\big(Q^B_{j,m}-G_j^{(m)}\big)
+  +\cos\phi\sum_j\sigma(b_j)\big(1_{m=1}+Q^B_{j,m-1}\big)\\
+  -i\sin\phi\sum_ks_k\,\sigma(b_k)\big(Q^S_{k,m-1}+Q^S_{k+1,m-1}\big)\Big]^\wedge(X),
+\end{multline}
+con $X\ne\emptyset,\Lambda$ en el anillo. $Q^B_{j,m}-G^{(m)}_j$ solo contiene productos de al menos dos
+$g^{(m_i)}(X_i)$ con $X_i:j$ y $\sum_im_i=m$, y $Q^S_{k,m-1}$ productos de $g^{(m_i)}(X_i)$ con $X_i\ni k$ y
+$\sum_im_i=m-1$. Por (b$'$) del Lema~\ref{lem:dkflujo} y por inducción, $g^{(m)}(X)\ne0$ solo si
+$w(X)\le m$, también con flujo: el término de $\sin\phi$ añade el enlace $b_k$, vecino de los
+recubrimientos de los $X_i\ni k$ o $X_i\ni k{+}1$, igual que el de $\cos\phi$ añade $b_j$.
+
+\begin{lema}[periodización con flujo]\label{lem:periodizacionflujo}
+Sea $n\ge4$ par y $\phi\in\mathbb R$. Para $1\le m\le n/2-1$ y todo $X\subset\mathbb Z_n$ con $X\ne\emptyset,\Lambda$,
+\[
+  g_{n,\phi}^{(m)}(X)=\sum_{[Y]}g_{\infty,\phi}^{(m)}(Y),
+\]
+suma sobre los levantamientos de $X$, con $g_{\infty,\phi}^{(m)}$ los coeficientes formales en $\mathbb Z$.
+\end{lema}
+
+\begin{proof}
+Por inducción en $m$, con~\eqref{eq:recurrenciaflujo} en el anillo y en $\mathbb Z$, como en el
+Lema~\ref{lem:periodizacion}. Un término del anillo de orden $m$ consta de un \emph{ancla}, que es el
+enlace $b_j$ en los términos de $\cos\phi$ y en los no lineales, o el par $(b_k,s)$ con $s\in\{k,k{+}1\}$
+en los de $\sin\phi$, y de conjuntos $X_1,\dots,X_p$ con $X_i:j$, o con $X_i\ni s$. Por la hipótesis de
+inducción, cada $g_{n,\phi}^{(m_i)}(X_i)$ es la suma sobre los levantamientos $[Y_i]$ de $X_i$, con
+$w(Y_i)\le m_i$, así que $Y_i$ abarca como mucho $2m_i\le n-2$ sitios.
+
+Se fija un levantamiento del ancla: $b'$, o $(b',s')$ con $s'$ el extremo de $b'$ que se proyecta en
+$s$. Cada clase $[Y_i]$ tiene exactamente un representante anclado, es decir, con $b'\in\partial Y_i$ o con
+$s'\in Y_i$. Hay uno porque $X_i$ está anclado y $\pi$ es biyectiva de $Y_i$ en $X_i$. No hay dos: si
+$Y_i$ y $Y_i+tn$, con $t\ne0$, estuvieran anclados, $Y_i$ contendría $s'$ y $s'-tn$ (o un extremo de $b'$ y
+uno de $b'-tn$), y abarcaría al menos $n-1$ sitios.
+
+Con esos representantes, cada recubrimiento de un $Y_i$ contiene un enlace con extremo en $b'$, es decir,
+$b'-1$, $b'$ o $b'+1$, que es vecino de $b'$. La unión de los recubrimientos y de $b'$ es conexa, de
+como mucho $\sum_im_i+1$ enlaces. En los términos lineales en $\epsilon$ eso es como mucho $m$ enlaces,
+que abarcan como mucho $2m\le n-2$ sitios. En los no lineales, sin $\epsilon$, la unión de los
+recubrimientos tiene como mucho $m$ enlaces, y $b'$ añade como mucho un sitio, así que abarca como mucho
+$2m+1\le n-1$ sitios. En los dos casos $\pi$ es inyectiva en la ventana, así que
+$\pi(\triangle_iY_i)=\triangle_iX_i$ (y lo mismo con $b'\triangle$). Además, $Y=\triangle_iY_i$ cabe en una
+ventana de como mucho $n-1$ sitios consecutivos y tiene $|\partial Y|=|\partial\pi(Y)|$: los enlaces que la
+tocan se proyectan de forma inyectiva, y el único sitio exterior que podría coincidir con uno interior al
+proyectar es el que cierra la vuelta, que no está en $\pi(Y)$. Los coeficientes $\cos\phi$, $\sin\phi$ y
+$s_{k'}=s_k$, con $k'$ el levantamiento de $k$, son los mismos en los dos lados, y la fuente
+$2\epsilon e^{-is_k\phi}\sigma(b_k)$ también.
+
+Así, los términos del anillo, junto con la elección de los representantes anclados, están en biyección
+con las clases módulo $n\mathbb Z$ de los términos de $\mathbb Z$. Sumando sobre las anclas del anillo y
+agrupando por el levantamiento $[Y]$ del resultado,
+$|\partial X|\,g_{n,\phi}^{(m)}(X)=\sum_{[Y]}|\partial Y|\,g_{\infty,\phi}^{(m)}(Y)$, y como
+$|\partial Y|=|\partial X|$, sale la fórmula. Un término con $\triangle=\Lambda$, que el anillo descarta,
+necesitaría una unión que cubra el anillo, de al menos $n/2$ enlaces, y no aparece con
+$m\le n/2-1$.
+\end{proof}
+
+\begin{observacion}
+El orden $n/2-1$ es óptimo: con $n=8$ y $\phi=0{,}37$, la recurrencia~\eqref{eq:recurrenciaflujo}
+resuelta en el anillo de $8$ sitios y en el de $24$, que coincide con $\mathbb Z$ en esos órdenes, cumple
+la fórmula hasta $m=3$ a precisión de máquina y la viola en $m=4$ (\texttt{scripts/xxz\_ising\_tamfinito.py}).
+\end{observacion}
+
 \paragraph{Localidad.} Por los Lemas~\ref{lem:dkflujo} y~\ref{lem:polimeros}, $m_O$ es holomorfa y
 acotada en el disco. Sus coeficientes de Taylor en el anillo de $n$ sitios con flujo $\phi$ por enlace
 coinciden, hasta el orden $n/2-2$ incluido, con los coeficientes formales de la misma cantidad en
-$\mathbb Z$ con flujo $\phi$ por enlace. Los de $g$ coinciden hasta el orden $n/2-1$ por la periodización
-del Lema~\ref{lem:periodizacion}, que vale igual con flujo: el término de $\sin\phi$ añade el enlace
-$b_k$, como el de $\cos\phi$, y el patrón $s_k$ tiene periodo $2$, compatible con $n$ par. El
+$\mathbb Z$ con flujo $\phi$ por enlace. Los de $g$ coinciden hasta el orden $n/2-1$, por el
+Lema~\ref{lem:periodizacionflujo}. El
 Lema~\ref{lem:polimeros} pasa de $g$ a $m_O$ con la condición $2m+2<n$, que limita el orden por la
 arista de $O$. Los coeficientes formales en $\mathbb Z$ existen orden a orden aunque $F_{\infty,\phi}$ no
 sea una contracción: cada orden es una suma finita.
