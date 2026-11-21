@@ -776,9 +776,11 @@ del Paso~4 de la demostración del Lema~\ref{lem:polimeros}: cada cociente es $-
   +\sum_{\mathcal C\not\sim A}\Phi^T(\mathcal C)\Big(\prod_{\gamma\in\mathcal C}w'(\gamma)-\prod_{\gamma\in\mathcal C}w(\gamma)\Big),
 \]
 $h'=h^{A'}_\lambda$, y la segunda suma sobre los clústeres de polímeros de $\mathbb Z$ que tocan $A$. Es un
-elemento de $\mathbb C[[\epsilon,\lambda]]$ sin término constante: $t_X$ tiene orden al menos $w(X)\ge1$ en
-$\epsilon$ salvo $t_B$, que tiene orden $1$ en $\lambda$, y un polímero no puede constar solo de $B$, porque
-$\triangle\gamma=\emptyset$. En cada orden $\epsilon^m\lambda^k$, con $k\le1$, solo contribuyen finitos clústeres,
+elemento de $\mathbb C[[\epsilon,\lambda]]$ sin término constante, porque todas las actividades se anulan en
+$(\epsilon,\lambda)=(0,0)$: $t_X$ tiene orden al menos $w(X)\ge1$ en $\epsilon$, salvo $t_B$, que tiene orden $1$
+en $\lambda$. Como un polímero no puede constar solo de $B$ ($\triangle\gamma=\emptyset$), cada polímero lleva un
+conjunto distinto de $B$, de orden $\ge1$ en $\epsilon$, y en cada orden $\epsilon^m\lambda^k$, con $k\le1$, solo
+contribuyen finitos clústeres,
 así que $\exp L$ y su coeficiente lineal en $\lambda$ están bien definidos; no hace falta la desigualdad de
 Cauchy, porque la derivada es formal. Como el patrón $s_k$ tiene periodo $2$, $m^\infty_{O}$ solo
 depende de la paridad de la arista, y $\rho^{(m)}_{\infty,\phi}$ es la media de los coeficientes de las dos.
@@ -793,10 +795,13 @@ $j$; por tanto, los de la marginal media son los $\rho^{(m)}_{\infty,\phi}$.
 \end{lema}
 
 \begin{proof}
-En el anillo, $Z_h$ es una suma finita y el desarrollo de los Pasos 1 a 4 de la demostración del
-Lema~\ref{lem:polimeros} vale como identidad entre series formales en $(\epsilon,\lambda)$, por la misma
-razón que en $\mathbb Z$, así que la serie de Taylor de $m_{O_j}$ es la del anillo con la fórmula de arriba.
-Basta comparar, para cada $m\le n/2-2$, los términos de orden $\epsilon^m$ en el anillo y en $\mathbb Z$.
+En el anillo, $Z_h/(2^n\prod_X\cosh h(X))$ es un polinomio en las actividades con término constante $1$,
+y el desarrollo en clústeres de su logaritmo es su desarrollo formal \cite[cap.~5]{fv}; como las
+actividades son series sin término constante en $(\epsilon,\lambda)$, se puede componer. Así, los Pasos 1
+a 4 de la demostración del Lema~\ref{lem:polimeros} valen como identidades entre series formales, y la
+serie de Taylor de $m_{O_j}$ es la del anillo con la fórmula de arriba. Como $\exp$ es la misma serie
+formal en los dos lados, basta comparar, para cada $m\le n/2-2$, los coeficientes de
+$\epsilon^m\lambda^0$ y $\epsilon^m\lambda^1$ de $L$ en el anillo y en $\mathbb Z$, que son sumas sobre clústeres.
 
 \emph{Órdenes y ventana.} Un término de orden $m$ viene de un clúster que toca $A$, cuyos conjuntos
 $X_1,\dots,X_p$ (con repetición) cumplen $\sum_iw(X_i)\le m$, salvo $B\subset A$. La familia formada por
@@ -810,13 +815,18 @@ cortes con raíz $A$. Por el Lema~\ref{lem:periodizacionflujo}, y como los coefi
 los conjugados, $h_n(X)=\sum_{[Y]}h_\infty(Y)$ hasta el orden $n/2-1$. Dos levantamientos distintos $Y$ e
 $Y'$ de un mismo $X$, con $|X|\ge2$, abarcan entre los dos al menos $n+|X|\ge n+2$ sitios: un levantamiento
 de anchura menor que $n$ elige qué hueco de $X$ en el anillo se corta, y su anchura es $n$ menos ese hueco.
-Así $w(Y)+w(Y')\ge n/2+1>m$, y hasta el orden $m$ se tiene $t_X=\sum_{[Y]}t_Y$ y lo mismo para
-$\log\cosh$: los términos cruzados son de orden mayor. Se desarrollan los productos, eligiendo en cada
+Así $w(Y)+w(Y')\ge n/2+1>m$, también si alguno abarca $n$ sitios o más, porque entonces su $w$ ya es
+$\ge n/2$. Hasta el orden $m$ se tiene, pues, $t_X=\sum_{[Y]}t_Y$, y lo mismo para $\log\cosh$: los
+términos cruzados son de orden mayor. Lo mismo vale para $h'$. En el anillo, la modificación
+$-g\,1_{|X\cap A|\ \rm impar}$ y el desplazamiento $\lambda$ en $B$ afectan a $X$ entero; en $\mathbb Z$ afectan al
+levantamiento según su posición. Pero el representante anclado cae en la ventana, donde
+$|Y\cap A'|=|X\cap A|$ y $A'+tn$, con $t\ne0$, queda fuera; y los términos cruzados entre $\lambda$ y los demás
+levantamientos de $B$ tienen orden en $\epsilon$ al menos $n/2>m$. Se desarrollan los productos, eligiendo en cada
 conjunto una clase de levantamiento, y se toma, a lo largo del árbol, el único representante de cada
 clase que corta al levantamiento ya fijado $\tilde P$ de su padre. Existe porque $X$ corta a la proyección
 de $\tilde P$. Es único: si $Y$ e $Y+tn$, con $t\ne0$, cortan a $\tilde P$ en $a$ y en $b$, entonces $\tilde P$
 abarca al menos $|a-b|+1$ sitios e $Y$ al menos $|a-b+tn|+1$, con suma mayor que $n$, mientras que
-$2w(P)+2w(Y)\le2m<n$.
+$2w(P)+2w(Y)\le2m<n$, o, si el padre es la raíz $A$, que abarca $2$ sitios, $2+2w(Y)\le2m+2<n$.
 
 \emph{Biyección.} Todos los conjuntos levantados caen en una ventana de como mucho $2m+2<n$ sitios
 alrededor de $A'$, en la que $\pi$ es inyectiva. Así, dos conjuntos levantados se cortan si y solo si sus
@@ -830,7 +840,11 @@ pesos. La última afirmación sale de promediar sobre $j$.
 \end{proof}
 
 Los coeficientes de $g$ que usa la demostración son de orden $\le m\le n/2-2$, dentro del alcance del
-Lema~\ref{lem:periodizacionflujo}. El orden lo limita la arista de $O$, que añade un enlace a la ventana.
+Lema~\ref{lem:periodizacionflujo}. En la demostración, el orden lo limita la arista de $O$, que añade un
+enlace a la ventana. El orden $n/2-2$ basta para el Teorema~\ref{teo:prueba} y no se afirma que sea
+óptimo: numéricamente, con $n\le10$, los coeficientes de la marginal media coinciden con los de anillos
+mayores hasta órdenes más altos, probablemente por cancelaciones entre los dos sectores que el lema
+no usa.
 
 \paragraph{Anillos auxiliares.} La identificación del límite usa anillos de $N$ sitios con flujo total
 $N\phi\in2\pi\mathbb Z$, en los que $|\phi|$ no es $O(1/N)$ y el factor $N|\sin\phi|$ del
@@ -1086,7 +1100,7 @@ Proposición~\ref{prop:limiteA}, que necesita la solución exacta, se indica qu�
 
 \paragraph{Marco.} Anillo $\mathbb Z_n$ de qubits ($d=2$), con la carga $Q=S^z$. Sea $\sigma$ un
 estado de dos sitios invariante bajo $e^{-itS^z}\otimes e^{-itS^z}$ y $\tau=\sigma-I/4$. Con holonomía
-$\Theta$ y en el gauge uniforme $V=e^{-i\Theta S^z/n}$, la arista $j\to j{+}1$ lleva el dato
+$\Theta$ y en el gauge uniforme $V=e^{i\Theta S^z/n}$, la arista $j\to j{+}1$ lleva el dato
 \[
   \rho_j(p)=\frac I4+p\,\tau_j,\qquad\tau_j=(1\otimes V)\,\tau\,(1\otimes V)^\dagger,
 \]
@@ -1096,7 +1110,9 @@ Los \emph{datos de Néel} con parámetro $\kappa>0$ son, con $A=-(XX+YY)$, $B=XY
   \ev{A_e}=2\kappa v\cos\phi,\quad\ev{B_e}=2\kappa v\sin\phi,\quad\ev{C_e}=v,\quad\ev{Z_i}=0,\qquad\phi=\Theta/n,
 \]
 es decir, $I/4+v\tau_j$, con $\tau$ el dato con $v=1$; $v(n,\Theta)$ denota el $p(n,\Theta)$ de estos datos.
-Como $\ev{Z_i}=0$, $\tr_1\tau_j=\tr_2\tau_j=0$.
+Como $\ev{Z_i}=0$, $\tr_1\tau_j=\tr_2\tau_j=0$. Con el giro $V$ elegido así, $\ev{B_e}$ tiene el signo de
+$\sin\phi$; en \cite{robustez} aparece $V=e^{-i\Theta Q/n}$, que equivale a cambiar $\Theta$ por $-\Theta$ y no
+afecta a la sensibilidad, que es un supremo sobre todas las $\Theta$.
 
 \begin{lema}[dilución uniforme, {\cite[Lema~2]{robustez}}]\label{lem:dilucionA}
 Sean $n\ge3$ y $\Delta$ hermítico de dos sitios, de traza nula, con $\tr_1\Delta=\tr_2\Delta$. Si
@@ -1108,7 +1124,7 @@ aristas.
 Sea $\delta=\tr_1\Delta$. Se mezclan a partes iguales el producto $(I/d+2\delta)^{\otimes n}$, que da las
 reducciones, y la media sobre traslaciones de un producto de estados de par $I/d^2+\alpha\tilde C$, con
 $\tilde C=\Delta-\delta\otimes\tfrac Id-\tfrac Id\otimes\delta-2\delta\otimes\delta$, que tiene reducciones nulas
-y da las correlaciones ($\alpha=4$ con $n$ par). Las dos piezas son estados si
+y da las correlaciones ($\alpha=4$ con $n$ par y $\alpha=4n/(n-1)\le6$ con $n$ impar). Las dos piezas son estados si
 $\|\delta\|_\infty\le1/(2d)$ y $6\|\tilde C\|_\infty\le1/d^2$, lo que se cumple con
 $\|\Delta\|_1\le1/(19d^2)$; los detalles están en \cite[Lema~2]{robustez}.
 \end{proof}
@@ -1129,7 +1145,8 @@ $\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|\le\varepsilon_D+p^\ast\varepsil
 \begin{proof}
 \emph{Cota inferior.} Sea $\Delta=\rho-\rho_j(p^\ast)$, con $\|\Delta\|_1\le\varepsilon_P$. Las aristas
 $(j{-}1,j)$ y $(j,j{+}1)$ comparten el sitio $j$ y tienen la misma marginal, así que $\tr_1\rho=\tr_2\rho$,
-y con la hipótesis sobre $\tau_j$, $\tr_1\Delta=\tr_2\Delta$. Con $\eta=\varepsilon_P/(r'+\varepsilon_P)$, el
+y con la hipótesis sobre $\tau_j$, $\tr_1\Delta=\tr_2\Delta$. Si $\varepsilon_P=0$, el estado de (P) ya tiene las
+marginales $\rho_j(p^\ast)$. Si no, con $\eta=\varepsilon_P/(r'+\varepsilon_P)$, el
 Lema~\ref{lem:dilucionA} da un estado con marginales $I/d^2-\frac{1-\eta}\eta\Delta$, cuya norma es
 $\le r'$. Mezclado con peso $\eta$ con el estado de (P), que lleva peso $1-\eta$, da marginales
 $I/d^2+(1-\eta)p^\ast\tau_j$, así que $p(n,\Theta)\ge(1-\eta)p^\ast\ge p^\ast(1-\varepsilon_P/r')$.
