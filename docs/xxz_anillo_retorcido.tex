@@ -294,7 +294,9 @@ Se usan tres hechos.
 (a) Si $b\in\partial(Y_1\triangle\cdots\triangle Y_k)$, entonces $b\in\partial Y_i$ para algún $i$, porque
 la pertenencia de cada extremo de $b$ se suma módulo $2$.
 (b) Si $X_i:j$ para todo $i$, la unión de recubrimientos conexos de los $X_i$ y de $b_j$ es conexa,
-porque cada recubrimiento contiene un enlace con extremo $j$ o $j{+}1$, vecino de $b_j$. Por tanto $w(\triangle_iX_i)\le\sum_iw(X_i)$ y
+porque cada recubrimiento contiene un enlace con extremo $j$ o $j{+}1$, es decir, $b_{j-1}$, $b_j$ o
+$b_{j+1}$, que son vecinos de $b_j$ y entre sí; por lo segundo, la unión de los recubrimientos de los
+$X_i$ ya es conexa sin $b_j$. Por tanto $w(\triangle_iX_i)\le\sum_iw(X_i)$ y
 $w(b_j\triangle\triangle_iX_i)\le1+\sum_iw(X_i)$, y como $M|\epsilon|\le1$, el peso
 $(M|\epsilon|)^{-w}$ del resultado está acotado por el producto de los pesos, con un factor
 $(M|\epsilon|)^{-1}$ más en $\mathcal B$, que el $\epsilon$ convierte en $1/M$.
@@ -385,11 +387,14 @@ término del anillo de orden $m$: un enlace $b_j$ y conjuntos $X_1,\dots,X_k$ co
 hipótesis de inducción, cada $g_n^{(m_i)}(X_i)$ es la suma sobre los levantamientos $[Y_i]$ de $X_i$,
 con $w(Y_i)\le m_i$, así que $Y_i$ abarca como mucho $2m_i\le n-2$ sitios. Se fija un levantamiento
 $b'$ de $b_j$. Cada clase $[Y_i]$ tiene exactamente un representante con $b'\in\partial Y_i$: si
-hubiera dos, $\partial Y_i$ contendría $b'$ y $b'+n$, y $Y_i$ abarcaría al menos $n-1$ sitios. Con esos
-representantes, la unión de los recubrimientos de los $Y_i$ y de $b'$ es conexa, de como mucho $m$
-enlaces, y abarca como mucho $2m\le n-2$ sitios, así que $\pi$ es inyectiva en ella. Por tanto
-$\pi(\triangle_iY_i)=\triangle_iX_i$ (y lo mismo con $b'\triangle$), y si $Y=\triangle_iY_i$, que
-también abarca como mucho $n-2$ sitios, $|\partial Y|=|\partial\pi(Y)|$. Esto da una biyección entre
+hubiera dos, $Y_i$ contendría un extremo de $b'$ y uno de $b'+tn$, $t\ne0$, y abarcaría al menos $n$
+sitios. Con esos representantes, la unión de los recubrimientos de los $Y_i$ es conexa (sus enlaces con
+extremo en $b'$ son $b'-1$, $b'$ o $b'+1$, vecinos dos a dos), de como mucho $m$ enlaces, y abarca como
+mucho $2m$ sitios; $b'$ añade como mucho un sitio, así que el total abarca como mucho $2m+1\le n-1$
+sitios, y $\pi$ es inyectiva en esa ventana. Por tanto $\pi(\triangle_iY_i)=\triangle_iX_i$ (y lo mismo con
+$b'\triangle$), y si $Y=\triangle_iY_i$, $|\partial Y|=|\partial\pi(Y)|$: los enlaces que tocan la ventana se
+proyectan de forma inyectiva, y el único sitio exterior que podría coincidir con uno interior al
+proyectar es el que cierra la vuelta, que no está en $\pi(Y)$. Esto da una biyección entre
 los términos del anillo, con la elección de levantamientos, y las clases módulo $n\mathbb Z$ de los
 términos de $\mathbb Z$. Sumando sobre $j\in\mathbb Z_n$ y agrupando por el levantamiento $[Y]$ del
 resultado,
@@ -510,7 +515,8 @@ Lema~\ref{lem:dk},
 Se usan tres hechos, análogos a los del Lema~\ref{lem:dk}.
 (a$'$) Si $s\in Y=\triangle_iX_i$ (o $b_k\triangle\triangle_iX_i$), entonces $s\in X_i$ para algún $i$
 (o $s\in b_k$).
-(b$'$) Si todos los $X_i$ tienen $b_k$ en el borde, o todos contienen a $k$, la unión de sus
+(b$'$) Si todos los $X_i$ tienen $b_k$ en el borde, o todos contienen el mismo extremo $s\in\{k,k{+}1\}$
+de $b_k$, la unión de sus
 recubrimientos y de $b_k$ es conexa, y $w(Y)\le\sum_iw(X_i)$ en $\mathcal A$ y $\le1+\sum_iw(X_i)$ en
 $\mathcal B_c$ y $\mathcal B_s$, donde el factor $(M|\epsilon|)^{-1}$ de más se combina con $|\epsilon\cos\phi|$
 en $1/M$, y con $|\epsilon\sin\phi|\le|\epsilon|\pi/n$ en $\pi/(nM)$.
@@ -568,8 +574,7 @@ función local salvo colas exponenciales.
 Sean $\bar M=85$, $\theta=64/(3\bar M)$, $M_2=e^{4\theta}\bar M\approx232$ y
 $B'=128\,e^{10\theta}/\theta\approx6{,}3\times10^3$. Para $M\ge M_2$, en el disco $|\epsilon|<1/M$ el denominador
 de $m_O$ no se anula y $|m_O(\epsilon)|\le B'\|O\|$ para todo operador $O$ de dos sitios, uniformemente
-en $n$ y en $|\phi|\le\pi/n$. Además, el coeficiente de orden $m$ de $m_O$ depende solo de los
-coeficientes de orden $\le m$ de $g$ en conjuntos a distancia $\le2m$ de la arista de $O$.
+en $n$ y en $|\phi|\le\pi/n$.
 \end{lema}
 
 La demostración usa dos herramientas generales: una cota de árboles para colecciones conexas
@@ -663,14 +668,6 @@ Sea $h^{A'}_\lambda=h^{A'}+\lambda1_{X=B}$. Cada cociente es $-\partial_\lambda(
 $\lambda=0$ (con $B=\emptyset$ no hace falta derivar). Con $|\lambda|\le\lambda_0$, por los pasos 2 y 3
 con $|A|=2$, $|Z_{h^{A'}_\lambda}/Z_h|\le e^{6\theta}$. Por la desigualdad de Cauchy, cada derivada está
 acotada por $e^{6\theta}/\lambda_0$, así que $|m_O|\le16\,e^{6\theta}\lambda_0^{-1}\|O\|=128\,e^{10\theta}\theta^{-1}\|O\|=B'\|O\|$.
-
-\emph{Localidad.} Desarrollando en $\epsilon$, $g^{(m)}(X)\ne0$ solo si $w(X)\le m$, y lo mismo
-$\tilde g$; así $t_X$ es de orden al menos $\epsilon^{w(X)}$. En la diferencia
-$\log Z_{h'}-\log Z_h$ y en sus derivadas en $\lambda$ solo entran clústeres que tocan $A$, y uno con
-conjuntos $X_1,\dots,X_k$ contribuye a partir del orden $\sum_iw(X_i)$. Hasta el orden $m$, esos
-conjuntos y $A$ caben en un conjunto conexo de como mucho $m+1$ enlaces, que abarca como mucho
-$2m+2$ sitios alrededor de $A$. Si $2m+2<n$ no da la vuelta, y la cuenta es la misma en el anillo y en
-$\mathbb Z$, con los coeficientes de $g$ periodizados.
 \end{proof}
 
 \paragraph{Periodización con flujo.} Sea $\phi$ fijo y $g=\sum_{m\ge1}\epsilon^mg^{(m)}$. En $\mathbb Z$ se
@@ -708,7 +705,7 @@ Se fija un levantamiento del ancla: $b'$, o $(b',s')$ con $s'$ el extremo de $b'
 $s$. Cada clase $[Y_i]$ tiene exactamente un representante anclado, es decir, con $b'\in\partial Y_i$ o con
 $s'\in Y_i$. Hay uno porque $X_i$ está anclado y $\pi$ es biyectiva de $Y_i$ en $X_i$. No hay dos: si
 $Y_i$ y $Y_i+tn$, con $t\ne0$, estuvieran anclados, $Y_i$ contendría $s'$ y $s'-tn$ (o un extremo de $b'$ y
-uno de $b'-tn$), y abarcaría al menos $n-1$ sitios.
+uno de $b'-tn$), y abarcaría al menos $n$ sitios.
 
 Con esos representantes, cada recubrimiento de un $Y_i$ contiene un enlace con extremo en $b'$, es decir,
 $b'-1$, $b'$ o $b'+1$, que es vecino de $b'$. La unión de los recubrimientos y de $b'$ es conexa, de
@@ -739,13 +736,75 @@ la fórmula hasta $m=3$ a precisión de máquina y la viola en $m=4$ (\texttt{sc
 \end{observacion}
 
 \paragraph{Localidad.} Por los Lemas~\ref{lem:dkflujo} y~\ref{lem:polimeros}, $m_O$ es holomorfa y
-acotada en el disco. Sus coeficientes de Taylor en el anillo de $n$ sitios con flujo $\phi$ por enlace
-coinciden, hasta el orden $n/2-2$ incluido, con los coeficientes formales de la misma cantidad en
-$\mathbb Z$ con flujo $\phi$ por enlace. Los de $g$ coinciden hasta el orden $n/2-1$, por el
-Lema~\ref{lem:periodizacionflujo}. El
-Lema~\ref{lem:polimeros} pasa de $g$ a $m_O$ con la condición $2m+2<n$, que limita el orden por la
-arista de $O$. Los coeficientes formales en $\mathbb Z$ existen orden a orden aunque $F_{\infty,\phi}$ no
-sea una contracción: cada orden es una suma finita.
+acotada en el disco. Falta comparar sus coeficientes de Taylor con los de $\mathbb Z$, que hay que
+definir, porque en $\mathbb Z$ no hay punto fijo ni marginal, solo series formales.
+
+\emph{Coeficientes formales en $\mathbb Z$.} Sean $g_{\infty,\phi}$ la solución formal
+de~\eqref{eq:recurrenciaflujo} en $\mathbb Z$ (cada coeficiente es una suma finita), $\tilde g_{\infty,\phi}$ la
+serie con coeficientes $\overline{g^{(m)}_{\infty,\phi}}$ y $h=\tfrac12(g_{\infty,\phi}+\tilde g_{\infty,\phi})$. Para
+una arista $A$ de $\mathbb Z$ y un operador $O$ de $A$ se define $m^\infty_O\in\mathbb C[[\epsilon]]$ por la fórmula
+del Paso~4 de la demostración del Lema~\ref{lem:polimeros}: cada cociente es $-\partial_\lambda$ en $\lambda=0$
+(o el valor en $\lambda=0$ si $B=\emptyset$) de $\exp L$, con
+\[
+  L=\sum_{X\cap A\ne\emptyset}\big(\log\cosh h'(X)-\log\cosh h(X)\big)
+  +\sum_{\mathcal C\not\sim A}\Phi^T(\mathcal C)\Big(\prod_{\gamma\in\mathcal C}w'(\gamma)-\prod_{\gamma\in\mathcal C}w(\gamma)\Big),
+\]
+$h'=h^{A'}_\lambda$, y la segunda suma sobre los clústeres de polímeros de $\mathbb Z$ que tocan $A$. Es un
+elemento de $\mathbb C[[\epsilon,\lambda]]$ sin término constante: $t_X$ tiene orden al menos $w(X)\ge1$ en
+$\epsilon$ salvo $t_B$, que tiene orden $1$ en $\lambda$, y un polímero no puede constar solo de $B$, porque
+$\triangle\gamma=\emptyset$. En cada orden $\epsilon^m\lambda^k$, con $k\le1$, solo contribuyen finitos clústeres,
+así que $\exp L$ y su coeficiente lineal en $\lambda$ están bien definidos; no hace falta la desigualdad de
+Cauchy, porque la derivada es formal. Como el patrón $s_k$ tiene periodo $2$, $m^\infty_{O}$ solo
+depende de la paridad de la arista, y $\rho^{(m)}_{\infty,\phi}$ es la media de los coeficientes de las dos.
+Con $\phi$ real, los $g^{(m)}_{\infty,\phi}$ son polinomios en $\cos\phi$ y $\sin\phi$, y por tanto también los
+$\rho^{(m)}_{\infty,\phi}$.
+
+\begin{lema}[localidad de la marginal]\label{lem:localidad}
+Sean $n\ge4$ par, $\phi$ real y $g_{n,\phi}$ una solución de $g=F_{n,\phi}(g)$, holomorfa cerca de $0$, cuyos
+coeficientes de Taylor son los de~\eqref{eq:recurrenciaflujo}. Para $m\le n/2-2$, el coeficiente de
+orden $m$ de $m_{O_j}$ en el anillo es el de $m^\infty_{O_{j'}}$ en $\mathbb Z$, con $j'$ un levantamiento de
+$j$; por tanto, los de la marginal media son los $\rho^{(m)}_{\infty,\phi}$.
+\end{lema}
+
+\begin{proof}
+En el anillo, $Z_h$ es una suma finita y el desarrollo de los Pasos 1 a 4 de la demostración del
+Lema~\ref{lem:polimeros} vale como identidad entre series formales en $(\epsilon,\lambda)$, por la misma
+razón que en $\mathbb Z$, así que la serie de Taylor de $m_{O_j}$ es la del anillo con la fórmula de arriba.
+Basta comparar, para cada $m\le n/2-2$, los términos de orden $\epsilon^m$ en el anillo y en $\mathbb Z$.
+
+\emph{Órdenes y ventana.} Un término de orden $m$ viene de un clúster que toca $A$, cuyos conjuntos
+$X_1,\dots,X_p$ (con repetición) cumplen $\sum_iw(X_i)\le m$, salvo $B\subset A$. La familia formada por
+$A$ y los $X_i$ es conexa en el grafo de cortes, y cada recubrimiento de un $X_i$ que corta a otro
+conjunto contiene un enlace vecino de alguno del recubrimiento de ese otro conjunto. Así, la unión de
+los recubrimientos y de $A$ es un conjunto conexo de como mucho $m+1$ enlaces, que abarca como mucho
+$2m+2<n$ sitios.
+
+\emph{Levantamiento anclado.} Se fija el levantamiento $A'$ de $A$ y un árbol generador del grafo de
+cortes con raíz $A$. Por el Lema~\ref{lem:periodizacionflujo}, y como los coeficientes de $\tilde g$ son
+los conjugados, $h_n(X)=\sum_{[Y]}h_\infty(Y)$ hasta el orden $n/2-1$. Dos levantamientos distintos $Y$ e
+$Y'$ de un mismo $X$, con $|X|\ge2$, abarcan entre los dos al menos $n+|X|\ge n+2$ sitios: un levantamiento
+de anchura menor que $n$ elige qué hueco de $X$ en el anillo se corta, y su anchura es $n$ menos ese hueco.
+Así $w(Y)+w(Y')\ge n/2+1>m$, y hasta el orden $m$ se tiene $t_X=\sum_{[Y]}t_Y$ y lo mismo para
+$\log\cosh$: los términos cruzados son de orden mayor. Se desarrollan los productos, eligiendo en cada
+conjunto una clase de levantamiento, y se toma, a lo largo del árbol, el único representante de cada
+clase que corta al levantamiento ya fijado $\tilde P$ de su padre. Existe porque $X$ corta a la proyección
+de $\tilde P$. Es único: si $Y$ e $Y+tn$, con $t\ne0$, cortan a $\tilde P$ en $a$ y en $b$, entonces $\tilde P$
+abarca al menos $|a-b|+1$ sitios e $Y$ al menos $|a-b+tn|+1$, con suma mayor que $n$, mientras que
+$2w(P)+2w(Y)\le2m<n$.
+
+\emph{Biyección.} Todos los conjuntos levantados caen en una ventana de como mucho $2m+2<n$ sitios
+alrededor de $A'$, en la que $\pi$ es inyectiva. Así, dos conjuntos levantados se cortan si y solo si sus
+proyecciones se cortan, $\triangle$ conmuta con $\pi$ y los conjuntos levantados son distintos si y solo si lo
+son sus proyecciones. Por tanto, los polímeros, la compatibilidad, el grafo del clúster y su
+coeficiente de Ursell $\Phi^T$ coinciden en los dos lados, y también la condición $|X\cap A'|$ impar
+que define $h^{A'}$ y el conjunto $B$. Recíprocamente, un clúster de $\mathbb Z$ de orden $m$ que toca $A'$
+cae en esa ventana y se proyecta en un clúster del anillo con la elección de levantamientos de la que
+procede. Esto da una biyección entre los términos de orden $m$ en los dos lados, con los mismos
+pesos. La última afirmación sale de promediar sobre $j$.
+\end{proof}
+
+Los coeficientes de $g$ que usa la demostración son de orden $\le m\le n/2-2$, dentro del alcance del
+Lema~\ref{lem:periodizacionflujo}. El orden lo limita la arista de $O$, que añade un enlace a la ventana.
 
 \paragraph{Anillos auxiliares.} La identificación del límite usa anillos de $N$ sitios con flujo total
 $N\phi\in2\pi\mathbb Z$, en los que $|\phi|$ no es $O(1/N)$ y el factor $N|\sin\phi|$ del
@@ -778,27 +837,24 @@ tiene una unión de recubrimientos conexa de como mucho $m$ enlaces que cubre el
 $m\ge N/2$.
 
 (iii) Con $\epsilon=0$, $\psi=\tilde\psi=1$ y el denominador de $m_O$ vale $2^N\ne0$, así que $\bar m_O$ es
-holomorfa cerca de $0$; reduciendo $\epsilon_N$, en todo el disco. Para los coeficientes de Taylor, el
-desarrollo en polímeros de la demostración del Lema~\ref{lem:polimeros} es una identidad entre series
-formales en $\epsilon$, sin necesidad de convergencia: cada $t_X$ tiene orden al menos $w(X)\ge1$, así
-que $\log Z$ y sus derivadas en $\lambda$ son series formales en las actividades sin término
-constante, y cada orden en $\epsilon$ es una suma finita. El párrafo de localidad de esa demostración
-solo usa los órdenes, y da que el coeficiente de orden $m$ de $\bar m_O$ depende solo de los
-coeficientes de orden $\le m$ de $g$ en conjuntos a distancia $\le2m$ de cada arista. Con $2m+2<N$, es
-decir, $m\le N/2-2$, no dan la vuelta, y por (i) y el Lema~\ref{lem:periodizacionflujo} son los de
-$\mathbb Z$.
+holomorfa cerca de $0$; reduciendo $\epsilon_N$, en todo el disco. Por (i), el Lema~\ref{lem:localidad}
+se aplica a $g_{N,\phi}$, que no usa ninguna cota uniforme, y da que sus coeficientes de orden
+$m\le N/2-2$ son los $\rho^{(m)}_{\infty,\phi}$.
 \end{proof}
 
 \paragraph{Covariancia gauge.} Sean $\rho^{(m)}_{\infty,\phi}$ los coeficientes formales en $\mathbb Z$ de
-la marginal media con flujo $\phi$ y $\rho^{(m)}_\infty$ los de flujo nulo.
+la marginal media con flujo $\phi$, definidos antes del Lema~\ref{lem:localidad}, y $\rho^{(m)}_\infty$ los de
+flujo nulo.
 
 \begin{lema}[covariancia, orden a orden]\label{lem:covariancia}
 Para todo $m$ y todo $\phi$, $\rho^{(m)}_{\infty,\phi}=(1\otimes V_\phi)\,\rho^{(m)}_\infty\,(1\otimes V_\phi)^\dagger$.
 \end{lema}
 
 \begin{proof}
-Los dos lados son polinomios trigonométricos en $\phi$, así que basta $\phi/2\pi$ racional. Sea $N$
-par, múltiplo del denominador y mayor que $2m+4$, de modo que $N\phi=2\pi k$. En el anillo de $N$ sitios,
+Los dos lados son polinomios trigonométricos en $\phi$: el izquierdo por la definición, con
+$\tilde g^{(m)}=\overline{g^{(m)}}$ para $\phi$ real, y el derecho por la forma de $V_\phi$. Así basta
+$\phi/2\pi$ racional. Sea $N$ par, múltiplo del denominador y mayor que $2m+2$, de modo que
+$N\phi=2\pi k$. En el anillo de $N$ sitios,
 $H_N(2\pi k)=G\,H_N(0)\,G^\dagger$ exactamente, con $G=\exp(-i\phi\sum_{j=1}^NjS^z_j)$, porque
 $G\,S^+_jS^-_{j+1}G^\dagger=e^{i\phi}S^+_jS^-_{j+1}$, y el enlace $\langle N,1\rangle$ recibe la fase
 $e^{-i(N-1)\phi}=e^{i\phi}$. Para $\epsilon$ pequeño, que puede depender de $N$,
@@ -806,7 +862,7 @@ los dos niveles más bajos de $H_N(0)$ forman un grupo aislado por un gap de ord
 $P_0$, y el de $H_N(2\pi k)$ es $P=GP_0G^\dagger$.
 
 Sea $\Psi_{N,\phi}$ el cuasi-modo construido con la solución $g_{N,\phi}$ del Lema~\ref{lem:auxiliar},
-con $\epsilon$ real. Por~\eqref{eq:cuasimodo}, $\|(H-E)\Psi_{N,\phi}\|=|r|\,\|\Psi_{N,\phi}\|$, con
+con $\epsilon$ real, devuelto al marco original con $(UR)^{-1}$, donde viven $H=H_N(2\pi k)$ y $P$. Por~\eqref{eq:cuasimodo}, $\|(H-E)\Psi_{N,\phi}\|=|r|\,\|\Psi_{N,\phi}\|$, con
 $E(\epsilon)\to-N$ cuando $\epsilon\to0$, que está dentro del gap. Así
 $\|(1-P)\Psi_{N,\phi}\|\le|r|\,\|\Psi\|/\operatorname{dist}\big(E,\operatorname{spec}(H|_{(1-P)})\big)=O(\epsilon^{N/2})$, por el
 Lema~\ref{lem:auxiliar}(ii). El rango de $P$ lo generan $G\Psi_\pm$,
@@ -818,17 +874,19 @@ $\rho_j(G\Phi)=(1\otimes V_\phi)\rho_j(\Phi)(1\otimes V_\phi)^\dagger$ para todo
 $\langle N,1\rangle$, donde los factores son $e^{-iN\phi S^z}=e^{-2\pi ikS^z}=\pm1$ y $e^{-i\phi S^z}$. Para $\Phi=\alpha\Psi_++\beta\Psi_-$, la media sobre
 $j$ de $\rho_j(\Phi)$ es $|\alpha|^2\bar\rho_++|\beta|^2\bar\rho_-$, porque el término cruzado cambia de
 signo con cada traslación y su media es nula con $N$ par. Por último, $\bar\rho_\pm$ se obtiene de
-$E_\pm/N$ por Hellmann--Feynman igual que $\rho_\infty$ de $e^{\rm KT}$ (Lema~\ref{lem:rhoinf}, que vale
-también para $\Psi_-$), y como $E_\pm/N-e^{\rm KT}=O(\epsilon^{N/2-1})$ en un disco
+$E_\pm/N$ por Hellmann--Feynman igual que $\rho_\infty$ de $e^{\rm KT}$, como en la demostración del
+Lema~\ref{lem:rhoinf}(ii). Para $\Psi_-$, que es impar bajo la inversión global y tiene momento $\pi$, la
+marginal media sigue siendo invariante por la $U(1)$, con $\ev Z=0$ (por ser autovector de la
+inversión) y salto real. Como $E_\pm/N-e^{\rm KT}$ tiene un cero de orden $N/2$ en un disco
 (Lemas~\ref{lem:analitico} y~\ref{lem:periodizacion}), la desigualdad de Cauchy da
-$\bar\rho_\pm=\rho_\infty+O(\epsilon^{N/2-2})$.
+$\bar\rho_\pm=\rho_\infty+O(\epsilon^{N/2-1})$.
 
 Juntando todo, para $\epsilon>0$ real y pequeño, la marginal media del cuasi-modo con flujo $\phi$, que es
 $\bar m_O$ (para $\epsilon$ real, $\tilde\psi=\bar\psi$), cumple
-$\bar m_O(\epsilon)-\tr\big[O(1\otimes V_\phi)\rho_\infty(\epsilon)(1\otimes V_\phi)^\dagger\big]=O(\epsilon^{N/2-2})$.
+$\bar m_O(\epsilon)-\tr\big[O(1\otimes V_\phi)\rho_\infty(\epsilon)(1\otimes V_\phi)^\dagger\big]=O(\epsilon^{N/2-1})$.
 Los dos términos son holomorfos cerca de $0$ (Lemas~\ref{lem:auxiliar}(iii) y~\ref{lem:rhoinf}(i)), y una
 función holomorfa que es $O(\epsilon^K)$ en un segmento real que llega a $0$ tiene un cero de orden al
-menos $K$. Así, los coeficientes de Taylor de orden $m<N/2-2$ de $\bar m_O$ son los de $\rho_\infty$
+menos $K$. Así, los coeficientes de Taylor de orden $m\le N/2-2$ de $\bar m_O$ son los de $\rho_\infty$
 girada. Por el Lema~\ref{lem:auxiliar}(iii), son también los formales de $\mathbb Z$ con flujo $\phi$, y por
 el Lema~\ref{lem:rhoinf}(ii), los de $\rho_\infty$ son los $\rho_\infty^{(m)}$.
 \end{proof}
@@ -859,11 +917,19 @@ degenerado de su sector (de $S^z$ total nulo y momento $0$) y es par bajo la inv
 Por tanto su marginal media $\bar\rho_+^{(n)}$ es invariante por la $U(1)$, con $\ev Z=0$ y salto real, y
 queda determinada por $\ev{S^z_iS^z_{i+1}}$ y $\ev{S^+_iS^-_{i+1}}$. Por Hellmann--Feynman, y con
 $E_0(H_n)=\tfrac\Delta4E_+$, esas dos cantidades son las mismas expresiones $z$ y $t$ con $E_+/n$ en lugar de
-$e^{\rm KT}$. Las dos partes son holomorfas, así que la identidad vale en todo el disco. Como
-$E_+/n-e^{\rm KT}$ tiene un cero de orden $n/2-1$ y está acotada por $B$, la desigualdad de Cauchy da
-$\bar\rho^{(n)}_+\to\rho_\infty$, con coeficientes de Taylor que coinciden hasta el orden $n/2-3$. Los de
-$\bar\rho^{(n)}_+$ son los formales de $\mathbb Z$ hasta el orden $n/2-2$, por la localidad (con flujo
-nulo, $\bar\rho_+^{(n)}$ es la media de los $m_O$); con $n\to\infty$ se obtiene (ii). Las fórmulas
+$e^{\rm KT}$; con esas fórmulas, $\bar\rho_+^{(n)}$ se extiende de forma holomorfa al disco. Como
+$E_+/n-e^{\rm KT}$ tiene un cero de orden $n/2$ (Lema~\ref{lem:periodizacion}) y está acotada por $B$, la
+desigualdad de Cauchy da $\bar\rho^{(n)}_+\to\rho_\infty$, con coeficientes de Taylor que coinciden hasta el
+orden $n/2-2$. Falta compararlos con los formales. La marginal media holomorfa $\bar m_O$ del
+Lema~\ref{lem:localidad}, con $\phi=0$, usa la $\psi$ completa, que tiene componentes $\psi_\pm$ en los dos
+sectores. Para $\epsilon$ real, $\bar m_O$ es la media de $\bar\rho_+$ y $\bar\rho_-$ con pesos
+$\|\Psi_\pm\|^2/\|\Psi\|^2$, porque los términos cruzados se anulan al promediar sobre $j$ (momentos $0$ y
+$\pi$, con $n$ par). Como $E_+-E_-=2\widehat{\mathcal N}(\Lambda)$ tiene un cero de orden $n/2$, Hellmann--Feynman
+da $\bar\rho_+-\bar\rho_-=O(\epsilon^{n/2-1})$. Así $\bar m_O-\bar\rho_+=O(\epsilon^{n/2-1})$ en el eje real, y
+como las dos son holomorfas, sus coeficientes coinciden hasta el orden $n/2-2$. Por el
+Lema~\ref{lem:localidad}, los de $\bar m_O$ son los $\rho^{(m)}_\infty$. Juntando las dos
+comparaciones, los coeficientes de $\rho_\infty$ de orden $\le n/2-2$ son los $\rho^{(m)}_\infty$, para todo
+$n$ par, y se obtiene (ii). Las fórmulas
 con $e_\infty$ salen de $e^{\rm KT}(\epsilon)=-4\epsilon\,e_\infty(1/\epsilon)$.
 
 (iii) Los datos de \cite[Sec.~6]{robustez} son $\ev{ZZ}=-v$ y $\ev{XX+YY}=-2\kappa v$ en flujo nulo, es decir,
@@ -877,7 +943,7 @@ Para un operador $O$ de dos sitios, sea $\bar m_O=\frac1n\sum_jm_{O_j}$, con $O_
 copia de $O$ en la arista $\langle j,j{+}1\rangle$, que es el elemento de matriz de $\rho^{(n)}_\phi$, y sea
 $f(\epsilon)=\bar m_O(\epsilon)-\tr\big[O\,(1\otimes V_\phi)\rho_\infty(\epsilon)(1\otimes V_\phi)^\dagger\big]$. Por los
 Lemas~\ref{lem:polimeros} y~\ref{lem:rhoinf}(i), $f$ es holomorfa y acotada por $(B'+3{,}5)\|O\|$ en
-$|\epsilon|<1/M$. Por la localidad, sus coeficientes de orden $m\le n/2-2$ son los formales de $\mathbb Z$ de
+$|\epsilon|<1/M$. Por el Lema~\ref{lem:localidad}, sus coeficientes de orden $m\le n/2-2$ son los formales de $\mathbb Z$ de
 la marginal media con flujo $\phi$ menos los de $\rho_\infty$ girada, y estos coinciden por los
 Lemas~\ref{lem:covariancia} y~\ref{lem:rhoinf}(ii). Por el lema de Schwarz,
 $|f(\epsilon)|\le(B'+3{,}5)\|O\|(M|\epsilon|)^{n/2-1}$. Con $O$ las $16$ unidades matriciales, de norma
