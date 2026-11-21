@@ -99,7 +99,7 @@ La observación que hace posible el punto 2 es que en el gauge uniforme el anill
 es, localmente, la cadena infinita con flujo $\phi=\Phi/n$ por enlace, que es un gauge puro. No hace
 falta controlar el fundamental del anillo retorcido, cuyo flujo rompe la simetría de inversión de
 espín que usan \cite{dk-quasi,dk-kink}: basta un estado de prueba. Y el punto 1 basta sin flujo,
-porque con $n$ par el flujo solo sube la energía fundamental \cite[Lema~23]{robustez}.
+porque con $n$ par el flujo solo sube la energía fundamental (Lema~\ref{lem:flujoA}).
 
 %=====================================================================
 \section{Planteamiento}\label{sec:planteamiento}
@@ -209,17 +209,19 @@ constantes $C$ y $\xi_0$ tales que, para todo $n\ge4$ par,
 \end{corolario}
 
 \begin{proof}[Demostración, a partir de los Teoremas~\ref{teo:energia} y~\ref{teo:prueba}]
-Por \cite[Prop.~17(v)]{robustez}, $\Delta_\infty$ es decreciente en $\kappa$, y con la fórmula de
+Los enunciados de \cite{robustez} que se usan están en el Apéndice~\ref{ap:robustez}. Por la
+Proposición~\ref{prop:limiteA}(v), $\Delta_\infty$ es decreciente en $\kappa$, y con la fórmula de
 Yang--Yang la condición de tangencia da $\Delta_\infty=232$ en $\kappa=4{,}3104\times10^{-3}>\kappa_0$
 (\texttt{scripts/xxz\_ising\_tamfinito.py}; es el valor que predice
 $\Delta_\infty\kappa=1+\kappa^2/2+\dots$ de \cite[Prop.~17(vi)]{robustez}). Así $\Delta_\infty(\kappa)>232$
 para $\kappa<\kappa_0$, y $\epsilon=1/\Delta_\infty(\kappa)$ cumple las hipótesis de los
-Teoremas~\ref{teo:energia} y~\ref{teo:prueba}. Se aplica el Teorema puente \cite[Teorema~4]{robustez}
-con $p^\ast=v_\infty$; su hipótesis $\tr_1\tau_j=\tr_2\tau_j$ se cumple porque $\ev{Z_i}=0$.
+Teoremas~\ref{teo:energia} y~\ref{teo:prueba}. Se aplica el Teorema puente
+(Teorema~\ref{teo:puenteA}) con $p^\ast=v_\infty$; su hipótesis $\tr_1\tau_j=\tr_2\tau_j$ se cumple porque $\ev{Z_i}=0$.
 
-\emph{(D).} El testigo es el XXZ alineado con $\Delta_\infty$ y flujo $\Theta$, con cociente
+\emph{(D).} El testigo es el XXZ alineado con $\Delta_\infty$ y flujo $\Theta$ (Observación del
+Apéndice~\ref{ap:robustez}), con cociente
 $4e_n(\Delta_\infty,\Theta)/(\Delta_\infty+2\kappa)$. Con $n$ par,
-$e_n(\Delta,\Theta)\le e_n(\Delta,0)$ \cite[Lema~23]{robustez}, y por el
+$e_n(\Delta,\Theta)\le e_n(\Delta,0)$ (Lema~\ref{lem:flujoA}), y por el
 Teorema~\ref{teo:energia}, $e_n(\Delta_\infty,0)-e_\infty(\Delta_\infty)\le C(M\epsilon)^{n/2-1}$. Como
 $v_\infty=4e_\infty(\Delta_\infty)/(\Delta_\infty+2\kappa)$, (D) vale con
 $\varepsilon_D=4C(M\epsilon)^{n/2-1}/(\Delta_\infty+2\kappa)$, uniformemente en $\Theta$.
@@ -227,11 +229,12 @@ $\varepsilon_D=4C(M\epsilon)^{n/2-1}/(\Delta_\infty+2\kappa)$, uniformemente en 
 \emph{(P).} Por la periodicidad en $\Theta$ (Sección~\ref{sec:prueba}), basta $|\Theta|\le\pi$. En el gauge uniforme el dato de cada arista es $(1\otimes V_\phi)\rho_{v_\infty}(1\otimes V_\phi)^\dagger$
 con $\phi=-\Theta/n$: el giro $V_\phi$ da $\ev{XY-YX}=-2\kappa v\sin\phi$, y los datos piden
 $+2\kappa v\sin(\Theta/n)$. Por la estacionariedad del mínimo que define $\Delta_\infty$
-\cite[Prop.~17]{robustez}, la marginal $\rho_\infty$ de la cadena infinita con $\Delta_\infty$ es
+(Proposición~\ref{prop:limiteA}), la marginal $\rho_\infty$ de la cadena infinita con $\Delta_\infty$ es
 $\rho_{v_\infty}$ (Lema~\ref{lem:rhoinf}). El Teorema~\ref{teo:prueba}, que vale para los dos signos de
 $\phi$, da (P) con $\varepsilon_P=C(M\epsilon)^{n/2-1}$, uniformemente en $\Theta$.
 
-El Teorema puente da entonces la cota, con $\varepsilon_D+v_\infty\varepsilon_P/r'$ y $1/r'=19d^2=76$.
+El Teorema~\ref{teo:puenteA} da entonces la cota, con $\varepsilon_D+v_\infty\varepsilon_P/r'$ y
+$1/r'=19d^2=76$.
 \end{proof}
 
 %=====================================================================
@@ -465,6 +468,29 @@ estado de prueba. Las inversiones de un sitio obligan a cambiar de norma, y el f
 aparecen se compensa con $|\sin\phi|\le\pi/n$. Y hace falta un argumento de covariancia gauge para
 identificar el límite, que se hace orden a orden con anillos auxiliares de flujo total en
 $2\pi\mathbb Z$.
+
+\paragraph{Esquema.} La demostración tiene dos ramas: una cuantitativa (cotas uniformes en $n$, en un
+disco fijo) y otra formal (igualdad de coeficientes de Taylor). La primera solo sirve al anillo
+principal, con $|\phi|\le\pi/n$; la segunda sirve también a los anillos auxiliares.
+\begin{center}\small
+\begin{tabular}{lll}
+\toprule
+Resultado & Usa & Da\\
+\midrule
+Lema~\ref{lem:dkflujo} (contracción con flujo) & Lema~\ref{lem:dk} & punto fijo $g_{n,\phi}$ holomorfo\\
+Lema~\ref{lem:polimeros} (polímeros) & Lemas~\ref{lem:dkflujo}, \ref{lem:arboles}, \ref{lem:kp} & $|\bar m_O|\le B'\|O\|$\\
+Lema~\ref{lem:periodizacionflujo} (periodización) & recurrencia~\eqref{eq:recurrenciaflujo} & coeficientes de $g$, orden $\le n/2-1$\\
+Lema~\ref{lem:localidad} (localidad) & Lema~\ref{lem:periodizacionflujo} & coeficientes de $\bar m_O$, orden $\le n/2-2$\\
+Lema~\ref{lem:auxiliar} (anillo auxiliar) & Lema~\ref{lem:localidad}, función implícita & lo mismo, con $N$ fijo y $\phi$ libre\\
+Lema~\ref{lem:rhoinf} (el límite) & Lemas~\ref{lem:analitico}, \ref{lem:periodizacion}, \ref{lem:localidad} & $\rho_\infty$ holomorfa, sus coeficientes\\
+Lema~\ref{lem:covariancia} (covariancia) & Lemas~\ref{lem:auxiliar}, \ref{lem:rhoinf} & $\rho^{(m)}_{\infty,\phi}$ $=$ girada de $\rho^{(m)}_\infty$\\
+Teorema~\ref{teo:prueba} & todo lo anterior y Schwarz & la cota\\
+\bottomrule
+\end{tabular}
+\end{center}
+No hay circularidad. El Lema~\ref{lem:rhoinf} se enuncia después del Lema~\ref{lem:covariancia}, que lo
+usa, pero solo trata el flujo nulo y no usa ni la covariancia ni los anillos auxiliares; el
+Lema~\ref{lem:covariancia} es el único que usa estos últimos.
 
 \paragraph{Reducción a $|\phi|\le\pi/n$.} Los datos con holonomía $\Theta$ y $\Theta+2\pi$ son
 equivalentes: la transformación gauge $\prod_je^{-2\pi ijS^z_j/n}$ lleva el gauge uniforme de
@@ -935,7 +961,7 @@ con $e_\infty$ salen de $e^{\rm KT}(\epsilon)=-4\epsilon\,e_\infty(1/\epsilon)$.
 (iii) Los datos de \cite[Sec.~6]{robustez} son $\ev{ZZ}=-v$ y $\ev{XX+YY}=-2\kappa v$ en flujo nulo, es decir,
 $z=-v/4$ y $t=-\kappa v/2$. Con $z=-e_\infty'$ y $t=-e_\infty+\Delta e_\infty'$, son la condición de
 estacionariedad $e_\infty'(\Delta)(\Delta+2\kappa)=e_\infty(\Delta)$ del mínimo de
-$F_\kappa=4e_\infty/(\Delta+2\kappa)$ \cite[Prop.~17]{robustez}, con $v=v_\infty=4e_\infty'(\Delta_\infty)$.
+$F_\kappa=4e_\infty/(\Delta+2\kappa)$ (Proposición~\ref{prop:limiteA}), con $v=v_\infty=4e_\infty'(\Delta_\infty)$.
 \end{proof}
 
 \begin{proof}[Demostración del Teorema~\ref{teo:prueba}]
@@ -1047,6 +1073,114 @@ degenerado que devuelve el diagonalizador.
   recuento de caminos entre los dos estados de Néel.
 \item \emph{Anillos impares} (Conjetura~\ref{conj:impar}).
 \end{enumerate}
+
+\appendix
+
+%=====================================================================
+\section{Lo que se usa de \cite{robustez}}\label{ap:robustez}
+%=====================================================================
+
+Este apéndice recoge, con sus hipótesis, los enunciados de \cite{robustez} que usa el
+Corolario~\ref{cor:robustez}. Los que tienen demostración corta la llevan aquí; para la
+Proposición~\ref{prop:limiteA}, que necesita la solución exacta, se indica qué se usa.
+
+\paragraph{Marco.} Anillo $\mathbb Z_n$ de qubits ($d=2$), con la carga $Q=S^z$. Sea $\sigma$ un
+estado de dos sitios invariante bajo $e^{-itS^z}\otimes e^{-itS^z}$ y $\tau=\sigma-I/4$. Con holonomía
+$\Theta$ y en el gauge uniforme $V=e^{-i\Theta S^z/n}$, la arista $j\to j{+}1$ lleva el dato
+\[
+  \rho_j(p)=\frac I4+p\,\tau_j,\qquad\tau_j=(1\otimes V)\,\tau\,(1\otimes V)^\dagger,
+\]
+y $p(n,\Theta)$ es el mayor $p$ para el que existe un estado del anillo con esas marginales de arista.
+Los \emph{datos de Néel} con parámetro $\kappa>0$ son, con $A=-(XX+YY)$, $B=XY-YX$ y $C=-ZZ$,
+\[
+  \ev{A_e}=2\kappa v\cos\phi,\quad\ev{B_e}=2\kappa v\sin\phi,\quad\ev{C_e}=v,\quad\ev{Z_i}=0,\qquad\phi=\Theta/n,
+\]
+es decir, $I/4+v\tau_j$, con $\tau$ el dato con $v=1$; $v(n,\Theta)$ denota el $p(n,\Theta)$ de estos datos.
+Como $\ev{Z_i}=0$, $\tr_1\tau_j=\tr_2\tau_j=0$.
+
+\begin{lema}[dilución uniforme, {\cite[Lema~2]{robustez}}]\label{lem:dilucionA}
+Sean $n\ge3$ y $\Delta$ hermítico de dos sitios, de traza nula, con $\tr_1\Delta=\tr_2\Delta$. Si
+$\|\Delta\|_1\le r':=1/(19d^2)$, existe un estado del anillo con marginal $I/d^2+\Delta$ en todas sus
+aristas.
+\end{lema}
+
+\begin{proof}[Idea]
+Sea $\delta=\tr_1\Delta$. Se mezclan a partes iguales el producto $(I/d+2\delta)^{\otimes n}$, que da las
+reducciones, y la media sobre traslaciones de un producto de estados de par $I/d^2+\alpha\tilde C$, con
+$\tilde C=\Delta-\delta\otimes\tfrac Id-\tfrac Id\otimes\delta-2\delta\otimes\delta$, que tiene reducciones nulas
+y da las correlaciones ($\alpha=4$ con $n$ par). Las dos piezas son estados si
+$\|\delta\|_\infty\le1/(2d)$ y $6\|\tilde C\|_\infty\le1/d^2$, lo que se cumple con
+$\|\Delta\|_1\le1/(19d^2)$; los detalles están en \cite[Lema~2]{robustez}.
+\end{proof}
+
+\begin{teorema}[puente, {\cite[Teorema~4]{robustez}}]\label{teo:puenteA}
+Sean $n\ge3$, $\Theta$ y $p^\ast>0$, con $\tr_1\tau_j=\tr_2\tau_j$ en el gauge uniforme. Supóngase:
+\begin{itemize}
+\item[(P)] un estado del anillo tiene la misma marginal $\rho$ en todas sus aristas, con
+  $\|\rho-\rho_j(p^\ast)\|_1\le\varepsilon_P$;
+\item[(D)] hay operadores hermíticos de dos sitios $h_j$ con $\sum_j\tr(h_j\tau_j)>0$ y
+  $\big(\lambda_{\max}(\sum_jh_j)-\sum_j\tr h_j/d^2\big)/\sum_j\tr(h_j\tau_j)\le p^\ast+\varepsilon_D$.
+\end{itemize}
+Entonces $p^\ast(1-\varepsilon_P/r')\le p(n,\Theta)\le p^\ast+\varepsilon_D$. Si (P) y (D) valen para toda
+$\Theta$ con el mismo $p^\ast$, y $\varepsilon_P$, $\varepsilon_D$ son sus supremos, entonces
+$\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|\le\varepsilon_D+p^\ast\varepsilon_P/r'$.
+\end{teorema}
+
+\begin{proof}
+\emph{Cota inferior.} Sea $\Delta=\rho-\rho_j(p^\ast)$, con $\|\Delta\|_1\le\varepsilon_P$. Las aristas
+$(j{-}1,j)$ y $(j,j{+}1)$ comparten el sitio $j$ y tienen la misma marginal, así que $\tr_1\rho=\tr_2\rho$,
+y con la hipótesis sobre $\tau_j$, $\tr_1\Delta=\tr_2\Delta$. Con $\eta=\varepsilon_P/(r'+\varepsilon_P)$, el
+Lema~\ref{lem:dilucionA} da un estado con marginales $I/d^2-\frac{1-\eta}\eta\Delta$, cuya norma es
+$\le r'$. Mezclado con peso $\eta$ con el estado de (P), que lleva peso $1-\eta$, da marginales
+$I/d^2+(1-\eta)p^\ast\tau_j$, así que $p(n,\Theta)\ge(1-\eta)p^\ast\ge p^\ast(1-\varepsilon_P/r')$.
+
+\emph{Cota superior.} Todo estado $\omega$ con marginales $\rho_j(p)$ cumple
+$\sum_j\tr h_j/d^2+p\sum_j\tr(h_j\tau_j)=\tr\big(\omega\sum_jh_j\big)\le\lambda_{\max}\big(\sum_jh_j\big)$, y
+por (D), $p\le p^\ast+\varepsilon_D$.
+
+La última afirmación sale de que $p(n,\Theta)$ queda en $[p^\ast-p^\ast\varepsilon_P/r',\,p^\ast+\varepsilon_D]$
+para toda $\Theta$.
+\end{proof}
+
+\begin{observacion}[el testigo XXZ]
+Con $h_e=\cos\vartheta\,A_e+\sin\vartheta\,B_e+\Delta\,C_e$, de traza nula, y $S=\vec\sigma/2$, se tiene
+$\cos\vartheta\,A+\sin\vartheta\,B=-2(e^{-i\vartheta}S^+S^-+{\rm h.c.})$ y $C=-4S^zS^z$, así que
+$\sum_eh_e=-4H_{\rm XXZ}$, con flujo $\Phi=\pm n\vartheta$ según la convención (el signo no cambia el
+espectro), y $\sum_e\tr(h_e\tau_e)=n(\Delta+2\kappa\cos(\vartheta-\phi))$. Con $\vartheta=\phi$, el cociente de
+(D) es $4e_n(\Delta,\Theta)/(\Delta+2\kappa)$, con $e_n=-E_0/n$.
+\end{observacion}
+
+\begin{lema}[el flujo sube la energía con $n$ par, {\cite[Lema~23]{robustez}}]\label{lem:flujoA}
+Con $n$ par, $e_n(\Delta,\Phi)\le e_n(\Delta,0)$ para todo $\Delta$ y todo $\Phi$.
+\end{lema}
+
+\begin{proof}
+Con $n$ par, el giro de Marshall $\prod_{j\ \rm impar}e^{i\pi S^z_j}$ cambia el signo de todos los
+términos de salto, también del enlace $\langle n,1\rangle$. Tras él, en la base producto de $S^z$, $-H_n(\Delta,\Phi)$
+y $-H_n(\Delta,0)$ tienen la misma diagonal, y sus elementos fuera de la diagonal son
+$\tfrac12e^{\pm i\phi}$ y $\tfrac12$, del mismo módulo, con los del segundo no negativos. Para un vector
+unitario $\psi$, $\langle\psi|-H_n(\Delta,\Phi)|\psi\rangle\le\langle|\psi|\,|-H_n(\Delta,0)|\,|\psi|\rangle\le\lambda_{\max}(-H_n(\Delta,0))$, con
+$|\psi|$ el vector de los módulos. Así
+$\lambda_{\max}(-H_n(\Delta,\Phi))\le\lambda_{\max}(-H_n(\Delta,0))$, y $e_n=\lambda_{\max}(-H_n)/n$.
+\end{proof}
+
+\begin{proposicion}[testigo límite, {\cite[Prop.~17]{robustez}}]\label{prop:limiteA}
+Sea $F_\kappa(\Delta)=4e_\infty(\Delta)/(\Delta+2\kappa)$ en $\Delta>-2\kappa$. Para cada $\kappa>0$:
+\begin{enumerate}
+\item[(i)] $F_\kappa$ tiene un único punto de mínimo $\Delta_\infty(\kappa)$, con $v_\infty=F_\kappa(\Delta_\infty)<1$, y
+  como $e_\infty$ es derivable, cumple la condición de estacionariedad
+  $e_\infty'(\Delta_\infty)(\Delta_\infty+2\kappa)=e_\infty(\Delta_\infty)$;
+\item[(v)] $\Delta_\infty(\kappa)$ es estrictamente decreciente;
+\item[(vi)] $\Delta_\infty\to\infty$ cuando $\kappa\to0$, y $\Delta_\infty\kappa=1+\tfrac12\kappa^2-\tfrac34\kappa^4+O(\kappa^6)$.
+\end{enumerate}
+\end{proposicion}
+
+La demostración de \cite{robustez} usa la convexidad de $e_\infty$, que es límite de las $e_n$, que son
+máximos de funciones afines de $\Delta$, y la solución de Yang--Yang \cite{yang-yang}, que da su
+derivabilidad y su serie en $q=e^{-\operatorname{arccosh}\Delta}$ para $\Delta>1$. Aquí se usan (i), para
+identificar $\rho_\infty$ con $\rho_{v_\infty}$ (Lema~\ref{lem:rhoinf}(iii)), y (v), junto con el valor
+$\kappa(232)=4{,}3104\times10^{-3}$ que da la condición de tangencia, para el umbral $\kappa_0$ del
+Corolario~\ref{cor:robustez}; (vi) solo explica ese valor.
 
 \begin{thebibliography}{99}
 
