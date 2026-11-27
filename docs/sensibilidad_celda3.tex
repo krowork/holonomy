@@ -57,7 +57,7 @@ sensibilidad de $p$ es exactamente la de la energía, de orden $\eps^n$ con el c
 (iv) La prueba de (iii) es un Newton--Kantorovich graduado en una familia de Hellmann--Feynman, con
 analiticidad por Bauer--Fike, un lema de soporte ponderado y series en $\eps$ con colas de Cauchy;
 queda certificada, con constantes explícitas calculadas en coma flotante validada, para
-$0<\eps\le8{,}7\cdot10^{-5}$ ($n=6$), $1{,}18\cdot10^{-2}$ ($n=9$), $4{,}1\cdot10^{-3}$ ($n=12$),
+$0<\eps\le8{,}7\cdot10^{-5}$ ($n=6$), $1{,}18\cdot10^{-2}$ ($n=9$), $5{,}2\cdot10^{-3}$ ($n=12$),
 $6{,}9\cdot10^{-8}$ ($n=15$) y $5{,}0\cdot10^{-6}$ ($n=18$). Separamos con cuidado lo demostrado
 analíticamente de lo comprobado o certificado numéricamente, y damos los guiones que reproducen cada
 número.
@@ -415,7 +415,7 @@ $n$ & $6$ & $9$ & $12$ & $15$ & $18$\\
 \midrule
 $j$ ($K=2j+1$), valores de $\Theta$ & $8$, $8$ & $12$, $8$ & $12$, $8$ & $10$, $4$ & $8$, $2$\\
 $\eps_F(n)$ certificado & $3{,}08\cdot10^{-2}$ & $1{,}83\cdot10^{-2}$ & $8{,}8\cdot10^{-3}$ & $2{,}1\cdot10^{-3}$ & $4{,}5\cdot10^{-5}$\\
-$\eps_n$ del Teorema~\ref{teo:principal} & $8{,}7\cdot10^{-5}$ & $1{,}18\cdot10^{-2}$ & $4{,}1\cdot10^{-3}$ & $6{,}9\cdot10^{-8}$ & $5{,}0\cdot10^{-6}$\\
+$\eps_n$ del Teorema~\ref{teo:principal} & $8{,}7\cdot10^{-5}$ & $1{,}18\cdot10^{-2}$ & $5{,}2\cdot10^{-3}$ & $6{,}9\cdot10^{-8}$ & $5{,}0\cdot10^{-6}$\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -720,10 +720,10 @@ $O(\eps^{2n-8})$ para $n=15,18$. Los radios son
 \toprule
 $n$ & $6$ & $9$ & $12$ & $15$ & $18$\\
 \midrule
-$\eps_n$ & $8{,}7\cdot10^{-5}$ & $1{,}18\cdot10^{-2}$ & $4{,}1\cdot10^{-3}$ & $6{,}9\cdot10^{-8}$ & $5{,}0\cdot10^{-6}$\\
-cota de $\delta_n$ en el borde & $8\cdot10^{-28}$ & $8\cdot10^{-21}$ & $10^{-29}$ & $5\cdot10^{-108}$ & $6\cdot10^{-86}$\\
-término principal en el borde & $7\cdot10^{-24}$ & $2\cdot10^{-16}$ & $3\cdot10^{-27}$ & $2\cdot10^{-105}$ & $6\cdot10^{-93}$\\
-$\eps_n^*$ ($\delta_n<$ mitad del principal) & $\eps_n$ & $\eps_n$ & $\eps_n$ & $\eps_n$ & $1{,}1\cdot10^{-6}$\\
+$\eps_n$ & $8{,}7\cdot10^{-5}$ & $1{,}18\cdot10^{-2}$ & $5{,}2\cdot10^{-3}$ & $6{,}9\cdot10^{-8}$ & $5{,}0\cdot10^{-6}$\\
+cota de $\delta_n$ en el borde & $8\cdot10^{-28}$ & $8\cdot10^{-21}$ & $1{,}6\cdot10^{-23}$ & $5\cdot10^{-108}$ & $6\cdot10^{-86}$\\
+término principal en el borde & $7\cdot10^{-24}$ & $2\cdot10^{-16}$ & $5\cdot10^{-26}$ & $2\cdot10^{-105}$ & $6\cdot10^{-93}$\\
+$\eps_n^*$ ($\delta_n<$ mitad del principal) & $\eps_n$ & $\eps_n$ & $4{,}6\cdot10^{-3}$ & $\eps_n$ & $1{,}1\cdot10^{-6}$\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -746,8 +746,10 @@ Sección~\ref{sec:prueba}. La naturaleza de los radios es la de un certificado a
 \paragraph{Dónde se ve el término principal.} El teorema encierra $p$ en $[\pE-\delta_n,\pE]$, así que la
 variación en $\Theta$ de $p$ solo queda determinada por la de $\pE$ si la cota de $\delta_n$ es menor que el
 rango de $\pE$, $\approx4|b_0|\eps^n/(n(\bar e-e_R))$ (con $\bar e-e_R\approx2/3$). En el borde, el término principal
-supera a la cota de $\delta_n$ en $n=6,9,12,15$ (por factores de $9\cdot10^3$, $2\cdot10^4$, $300$ y $300$),
-pero no en $n=18$. Allí la cota de $\delta_n$ va como $\eps^{2n-8}$ y el término principal como $\eps^n$, así
+supera a la cota de $\delta_n$ en $n=6,9,15$ (por factores de $9\cdot10^3$, $2\cdot10^4$ y $300$),
+pero no en $n=12$ ni en $n=18$. En $n=12$ la serie de $\partial^4$ lleva Kantorovich hasta $5{,}2\cdot10^{-3}$, donde
+la cota de $\delta_{12}$ es $300$ veces el principal; la sensibilidad queda identificada para
+$\eps\le\eps_{12}^*=4{,}6\cdot10^{-3}$ (Sección~\ref{sec:limites}). En $n=18$ la cota de $\delta_n$ va como $\eps^{2n-8}$ y el término principal como $\eps^n$, así
 que el cociente cae como $\eps^{10}$, y la sensibilidad queda identificada solo para
 $\eps\le\eps_{18}^*=1{,}1\cdot10^{-6}$ (\scr{z23\_kantorovich.py} con $4|b_0|$ de \scr{b0\_flotante.py}). En
 $(\eps_{18}^*,\eps_{18}]$ el teorema sigue valiendo como desigualdad, pero no ve $\Theta$.
@@ -977,7 +979,7 @@ potencia de $\eps$ se evalúa en el extremo que la maximiza, de modo que se cubr
   más $|p-1||\tau_W|$, con $|p-1|\le|\Delta E/n|/0{,}6$.
 \item $\|\partial^3\hat F(0)\|$ y $\|\partial^4\hat F(0)\|$: serie más parte de $\Theta$ más cola
   $c_{\rm sim}A/(\prod R_i\,\eps_a^k)$, con $c_{\rm sim}=\prod m_i!$ según los índices repetidos.
-\item $L=\|\partial^3\hat F(0)\|+2\eta\|\partial^4\hat F(0)\|+2C_5\eta^2$ (para $n=12$, sin la serie de
+\item $L=\|\partial^3\hat F(0)\|+2\eta\|\partial^4\hat F(0)\|+2C_5\eta^2$ (sin la serie de
   $\partial^4$: $L=\|\partial^3\hat F(0)\|+2C_4\eta$).
 \end{itemize}
 Se pide $h_{\rm K}=\beta L\eta\le\frac12$ con $\beta=1/\lambda_{\min}(\hat J)$, y el déficit es~\eqref{eq:deficit}.
@@ -994,7 +996,7 @@ $n$ & $(\eps_a,R_h,R_m,R_s)$, $(w_m,w_s)$ & rango certificado & $h_{\rm K}$ en e
 \midrule
 $6$ & $(0{,}015,\,10^{-4},\,8\cdot10^{-3},\,0{,}4)$, $(1,1)$, con $\partial^4$ & $0<\eps\le8{,}7\cdot10^{-5}$ & $0{,}49$ & $\le8\cdot10^{-28}$\\
 $9$ & $(0{,}03,\,10^{-4},\,4\cdot10^{-3},\,0{,}1)$, $(1,1)$, con $\partial^4$ & $0<\eps\le1{,}18\cdot10^{-2}$ & $0{,}34$ & $\le8\cdot10^{-21}$\\
-$12$ & $(0{,}02,\,2\cdot10^{-5},\,10^{-3},\,0{,}1)$, $(0{,}3,0{,}3)$ & $0<\eps\le4{,}1\cdot10^{-3}$ & $0{,}50$ & $\le10^{-29}$\\
+$12$ & $(0{,}02,\,2\cdot10^{-5},\,10^{-3},\,0{,}1)$, $(1,1)$, con $\partial^4$ & $0<\eps\le5{,}2\cdot10^{-3}$ & $0{,}40$ & $\le1{,}6\cdot10^{-23}$\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1033,6 +1035,14 @@ término principal ($2\cdot10^{-80}$ frente a $\sim10^{-92}$ en $n=21$, con $4|b
 \item $n=9$: el corte es abrupto ($h_{\rm K}$ salta de $0{,}34$ a más de $\frac12$ en un intervalo): con
   $\eps/\eps_a\approx0{,}4$ la cola de Cauchy de $d$ hace crecer $\eta$, la bola de radio $2\eta$ se
   acerca al borde del polidisco y $C_5\propto\varrho^{-5}$ explota. Sin $\partial^4$, $5{,}1\cdot10^{-3}$.
+\item $n=12$: con $\partial^4$ en serie el radio pasa de $4{,}1\cdot10^{-3}$ a $5{,}2\cdot10^{-3}$ (falla por
+  $h_{\rm K}$; en el borde $L_0\approx3{,}8\cdot10^4$ frente a un término de variación $\approx5{,}5\cdot10^7$).
+  Pero en ese borde la cota del déficit ($1{,}6\cdot10^{-23}$) ya supera al término principal
+  ($5\cdot10^{-26}$), como en $n=18$: $\delta_{12}$ queda por debajo de la mitad del principal solo para
+  $\eps\le\eps_{12}^*=4{,}6\cdot10^{-3}$ (con los pesos $(1,1)$ o $(0{,}3,0{,}3)$), que aun así mejora el
+  $4{,}1\cdot10^{-3}$ anterior. La serie cuártica de $n=12$ ($N=73789$, $K=30$, $8$ valores de $\Theta$) se
+  calcula por pares de índices sin guardar todas las correcciones de segundo orden: $48$~min y
+  $\sim1{,}4$~GB.
 \item En general, acercarse a la ED pediría un dominio de analiticidad mayor que el de Bauer--Fike
   ($\eps_a\sim1/(3n)$). Ese dominio existe: el test de la raíz sobre la serie de Rayleigh--Schrödinger de
   $\lambda_0(\eps)$ hasta orden $120$ (\scr{radio\_convergencia.py}) da un radio de convergencia
@@ -1089,12 +1099,13 @@ O(\eps^{5n/3-4})$, menor que $\eps^n$ para $n\ge9$. La cota explícita que usamo
   |\Delta x|\le\frac{\beta}{1-2h_{\rm K}}\big(|\Delta d|+2\eta\|\Delta\hat J\|+|\Delta p|\,|\tau|\big),
 \]
 con $\|\Delta\hat J\|$ en la bola acotada por Taylor: la parte de $\Theta$ de la tercera derivada en $0$, por su
-serie; para $n=9$, también la parte de $\Theta$ de la cuarta en $0$, por su serie, y el resto por la cota de Cauchy
-de la quinta en la bola, $C_5(2\eta)^3/3$; para $n=12$, sin serie de la cuarta, el resto es $C_4(2\eta)^2$. Este
-resto no depende de $\Theta$ ni se anula al restar. Para $n=9$ deja un suelo: el cociente
-$|\Delta\delta|/\text{principal}$ crece al bajar $\eps$, y la cota vale solo en una ventana. Para $n=12$ el
-cociente baja como potencia de $\eps$, y la ventana solo la corta por abajo el desbordamiento de coma flotante
-del principal, $\sim\eps^{12}$. (Una versión anterior acotaba ese resto por $2\eta(L-L_0)$. En coma flotante
+serie; también la parte de $\Theta$ de la cuarta en $0$, por su serie, y el resto por la cota de Cauchy
+de la quinta en la bola, $C_5(2\eta)^3/3$. Este resto no depende de $\Theta$ ni se anula al restar. Para $n=9$
+deja un suelo: el cociente $|\Delta\delta|/\text{principal}$ crece al bajar $\eps$, y la cota vale solo en una
+ventana. Para $n=12$ no aparece en el rango de la doble precisión: el cociente baja hasta $\sim10^{-50}$, y la
+ventana solo la corta por abajo el desbordamiento de coma flotante de la propia cota. (Sin la serie de la
+cuarta, con el resto $C_4(2\eta)^2$, las ventanas de $n=12$ acababan en $2{,}1\cdot10^{-4}$ con $\sigma_{15}$
+y en $1{,}45\cdot10^{-21}$ con $\sigma_\infty$.) (Una versión anterior acotaba ese resto por $2\eta(L-L_0)$. En coma flotante
 $L-L_0$ daba $0$, porque el término es $\lesssim10^{-50}$ frente a $L_0\sim1$, y los radios de sensibilidad
 salían demasiado grandes.)
 
@@ -1110,14 +1121,15 @@ $n$ & datos & Kantorovich & déficit (borde) & $|\Delta\delta|<\frac12$ principa
 \midrule
 $9$ & $\sigma_{12}$ & $\eps\le7{,}83\cdot10^{-5}$ & $\le5{,}2\cdot10^{-28}$ & $[9{,}2\cdot10^{-11},\,6{,}0\cdot10^{-7}]$\\
 $9$ & $\sigma_\infty$ & $\eps\le3{,}33\cdot10^{-8}$ & $\le1{,}5\cdot10^{-41}$ & ninguna\\
-$12$ & $\sigma_{15}$ & $\eps\le1{,}87\cdot10^{-3}$ & $\le2{,}0\cdot10^{-26}$ & $[3{,}8\cdot10^{-25\,*},\,2{,}1\cdot10^{-4}]$\\
-$12$ & $\sigma_\infty$ & $\eps\le7{,}35\cdot10^{-9}$ & $\le4{,}1\cdot10^{-48}$ & $[2{,}9\cdot10^{-26\,*},\,1{,}45\cdot10^{-21}]$\\
+$12$ & $\sigma_{15}$ (A) & $\eps\le4{,}19\cdot10^{-3}$ & $\le2{,}9\cdot10^{-22}$ & $[2{,}3\cdot10^{-23\,*},\,9{,}6\cdot10^{-4}]$\\
+$12$ & $\sigma_{15}$ (B) & $\eps\le2{,}57\cdot10^{-3}$ & $\le1{,}3\cdot10^{-22}$ & $[2{,}4\cdot10^{-23\,*},\,1{,}28\cdot10^{-3}]$\\
+$12$ & $\sigma_\infty$ & $\eps\le3{,}11\cdot10^{-8}$ & $\le7{,}1\cdot10^{-42}$ & $[9{,}2\cdot10^{-24\,*},\,2{,}76\cdot10^{-15}]$\\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \noindent
-${}^*$Corte por desbordamiento de coma flotante del principal, no por fallo de la cota.
+${}^*$Corte por desbordamiento de coma flotante de la cota, no por fallo: el cociente es ahí $\sim10^{-50}$.
 Parámetros, redondeados (los exactos, en las notas, 9.28):
 
 \begin{center}
@@ -1127,19 +1139,22 @@ $n$ & datos & $\eps_a$ & $R_h$ & $R_m$ & $R_s$ & $w_m$ & $w_s$\\
 \midrule
 $9$ & $\sigma_{12}$ & $0{,}0123$ & $1{,}47\cdot10^{-4}$ & $5{,}76\cdot10^{-3}$ & $0{,}467$ & $1$ & $1$\\
 $9$ & $\sigma_\infty$ & $0{,}0129$ & $9{,}17\cdot10^{-5}$ & $7{,}06\cdot10^{-3}$ & $0{,}439$ & $1$ & $1$\\
-$12$ & $\sigma_{15}$ & $0{,}0112$ & $7{,}07\cdot10^{-5}$ & $4{,}52\cdot10^{-3}$ & $0{,}397$ & $0{,}866$ & $0{,}876$\\
-$12$ & $\sigma_\infty$ & $0{,}0125$ & $1{,}40\cdot10^{-4}$ & $4{,}25\cdot10^{-3}$ & $0{,}353$ & $0{,}863$ & $0{,}891$\\
+$12$ & $\sigma_{15}$ (A) & $0{,}0203$ & $3{,}16\cdot10^{-4}$ & $4{,}44\cdot10^{-3}$ & $0{,}130$ & $0{,}333$ & $0{,}198$\\
+$12$ & $\sigma_{15}$ (B) & $0{,}0116$ & $8{,}89\cdot10^{-5}$ & $4{,}54\cdot10^{-3}$ & $0{,}381$ & $0{,}887$ & $0{,}863$\\
+$12$ & $\sigma_\infty$ & $0{,}00971$ & $9{,}31\cdot10^{-5}$ & $4{,}58\cdot10^{-3}$ & $0{,}447$ & $0{,}889$ & $0{,}857$\\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \noindent
 El optimizador es Nelder--Mead en el logaritmo de los parámetros, desde varios puntos de partida, sobre el borde
-de Kantorovich o el superior de la ventana de sensibilidad. Salvo en $n=12$ con $\sigma_\infty$ (donde gana el
-segundo), los dos objetivos dan prácticamente el mismo óptimo. Frente a los parámetros de la
-Sección~\ref{sec:prueba}, los bordes de Kantorovich crecen un factor entre $1{,}6$ y $5{,}9$: los radios dependen
-bastante de esa elección. Para $n=9$ se usa la serie de $\partial^4$, como en la Sección~\ref{sec:prueba}; para
-$n=12$, en el extremo superior de la ventana manda el resto $C_4(2\eta)^2$, no el término cruzado. Para $\sigma_\infty$ (con $n=9$ y $12$) se usan los coeficientes de $\sigma_{15}$
+de Kantorovich o el superior de la ventana de sensibilidad. Para $n=9$ los dos objetivos dan prácticamente el
+mismo óptimo; para $n=12$ con $\sigma_\infty$ el segundo da además mejor borde de Kantorovich; para $n=12$ con
+$\sigma_{15}$ difieren, y se dan los dos: (A) el de Kantorovich y (B) el de la ventana. Frente a los parámetros
+de la Sección~\ref{sec:prueba}, los bordes de Kantorovich crecen un factor entre $1{,}6$ y $25$: los radios
+dependen bastante de esa elección. Las dos filas usan la serie de $\partial^4$; la de $n=12$ ($K=30$, ocho
+valores de $\Theta$) mejora también $L$, y con ella los bordes de $n=12$ pasan de $1{,}87\cdot10^{-3}$ y
+$7{,}35\cdot10^{-9}$ a $4{,}19\cdot10^{-3}$ y $3{,}11\cdot10^{-8}$. Para $\sigma_\infty$ (con $n=9$ y $12$) se usan los coeficientes de $\sigma_{15}$
 hasta el orden $k_0=\lceil15/2\rceil-2=6$, universales por el Corolario~\ref{cor:universal}, y una cola uniforme
 en $N$ que viene de la analiticidad uniforme del cuaderno de trabajo (Z26, \texttt{celda\_k\_notas.md}, 9.22):
 $|{\rm coef}_k(\nabla e_\infty)|\le(2\bar W/t')\eps_u^{-k}$ y $|{\rm coef}_k(e_\infty)|\le\bar W\eps_u^{-k}$, con
@@ -1195,16 +1210,20 @@ $n$ & datos & (F$_x$) certificada en & peor error/hueco\\
 \midrule
 $9$ & $\sigma_{12}$ & $\eps\le7{,}83\cdot10^{-5}$ & $1\cdot10^{-2}$\\
 $9$ & $\sigma_\infty$ & $\eps\le3{,}33\cdot10^{-8}$ & $4\cdot10^{-3}$\\
-$12$ & $\sigma_{15}$ & $\eps\le1{,}87\cdot10^{-3}$ & $0{,}28$\\
-$12$ & $\sigma_\infty$ & $\eps\le7{,}35\cdot10^{-9}$ & $8\cdot10^{-5}$\\
+$12$ & $\sigma_{15}$ (A) & $\eps\le2{,}42\cdot10^{-3}$ & $<1$\\
+$12$ & $\sigma_{15}$ (B) & $\eps\le2{,}42\cdot10^{-3}$ & $<1$\\
+$12$ & $\sigma_\infty$ & $\eps\le3{,}11\cdot10^{-8}$ & $6\cdot10^{-3}$\\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \noindent
 Cada rango es todo el de Kantorovich con los mismos parámetros que la fila correspondiente de la tabla
-anterior. Así, (F$_x$) vale en todos los rangos certificados, y la sensibilidad de la tabla
-anterior es incondicional (en sus ventanas). Fuera del multiplete basta Weyl: hueco $1$ y perturbación $\ll1/2$.
+anterior, salvo en $n=12$ con $\sigma_{15}$: allí (F$_x$) falla a partir de $\eps=2{,}42\cdot10^{-3}$ con las dos
+elecciones de parámetros (cociente $1{,}10$ y $1{,}11$ con $|x|\le10^{-5}$). El fallo no viene de $x$, sino de la parte
+$\eps|T|$ del mayorante frente al hueco $\propto\eps^8$. El rango demostrado de esa fila es, pues,
+$\eps\le2{,}42\cdot10^{-3}$, que sigue conteniendo las ventanas de sensibilidad. Así, (F$_x$) vale en todos los
+rangos de sensibilidad, y la sensibilidad de la tabla anterior es incondicional (en sus ventanas). Fuera del multiplete basta Weyl: hueco $1$ y perturbación $\ll1/2$.
 
 \paragraph{Lo que falta.} Radios razonables para $\sigma_\infty$, que piden más órdenes universales y un dominio
 uniforme mayor. Para $n=15$ y $18$ no cabe la serie de $N=18$, y sin graduar la parte demostrada de la cola de
@@ -1243,7 +1262,7 @@ doble precisión validados (ED, racionales exactos, regla de corrientes); cotas 
 intervalos con la derivada de la serie; sin aritmética de intervalos.\\
 Lema~\ref{lem:testigo} & Demostrado, bajo (F$_x$).\\
 (F$_x$) & Certificado asistido por ordenador en todos los rangos de la Sección~\ref{sec:datos_ext} (complemento de Schur con mayorante); ED para $n=9$, $\eps=0{,}05$--$0{,}12$.\\
-Datos $\sigma_N$, $\sigma_\infty$ (Sección~\ref{sec:datos_ext}) & Horquilla y sensibilidad: certificado asistido por ordenador, como en $n\le12$. $\sigma_\infty$: además, Z26 del cuaderno.\\
+Datos $\sigma_N$, $\sigma_\infty$ (Sección~\ref{sec:datos_ext}) & Horquilla y sensibilidad en ventanas: certificado asistido por ordenador, como en $n\le12$. $\sigma_\infty$: además, Z26 del cuaderno.\\
 Uniformidad en $n$ del Teorema~\ref{teo:principal} & No cubierta aquí (véase abajo).\\
 \bottomrule
 \end{tabular}
@@ -1342,8 +1361,8 @@ python scripts/serie_respuesta.py 6 36 sr6q.npz 16 cubica cuarta
 python scripts/kantorovich_series.py sr6q.npz
 python scripts/serie_respuesta.py 9 40 sr9q.npz 12 cubica cuarta
 python scripts/kantorovich_series.py sr9q.npz
-python scripts/serie_respuesta.py 12 30 sr12.npz 8 cubica
-python scripts/kantorovich_series.py sr12.npz
+python scripts/serie_respuesta.py 12 30 sr12q.npz 8 cubica cuarta
+python scripts/kantorovich_series.py sr12q.npz
 \end{verbatim}
 
 \paragraph{Reproducción de $\eps_F(n)$} (argumentos: $n$, $j$ y número de valores de $\Theta$; menos de un

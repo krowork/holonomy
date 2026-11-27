@@ -162,42 +162,43 @@ def serie(n, K, th, cubica=True, cuarta=False, verbose=False):
     if cuarta:
         # zeta_cd = R (O_c - <O_c>) xi_d ;  T_abcd = -1/2 <xi_a|O_b - <O_b>|zeta_cd + zeta_dc> - E2_ab <xi_c|xi_d>
         # d^4 E = sum sobre las 24 permutaciones de T  (Wigner 2n+1; verificado en un juguete con mpmath)
+        # Por pares c <= d, sin guardar los zeta (para n = 12 no caben en memoria).
         ex = n * grad
-        Z = np.zeros((nb, nb, K + 1, N), complex)
+        X2c = X2.conj()
+        conv1 = lambda G: np.array([sum(G[:, i, m - i] for i in range(m + 1)) for m in range(K + 1)]).T
+
+        def zeta(c, d):
+            OX = (Os[c] @ Xi[d].T).T
+            rhs_s = OX - np.array([sum(ex[c, k] * Xi[d][m - k] for k in range(m + 1)) for m in range(K + 1)])
+            pr = mul(braket(Psi, rhs_s), iN)
+            rhs_s = rhs_s - np.array([sum(pr[k] * Psi[m - k] for k in range(m + 1)) for m in range(K + 1)])
+            z = []
+            for m in range(K + 1):
+                rhs = rhs_s[m].copy()
+                if m >= 1:
+                    rhs -= T @ z[m - 1]
+                for k in range(1, m + 1):
+                    rhs += E[k] * z[m - k]
+                if np.abs(rhs[P]).max() > 1e-8 * (1 + np.abs(rhs).max()):
+                    raise RuntimeError(f"cuarta: incompatibilidad en el patrón (orden {m})")
+                x = -rhs / den
+                x[P] = 0.0
+                if m >= 1:
+                    x[P] = -sum(np.vdot(Psi[i], z[m - i]) for i in range(1, m + 1)) / len(P)
+                z.append(x)
+            return np.array(z)
+
+        U = np.zeros((nb, nb, nb, nb, K + 1), complex)
         for c in range(nb):
-            OX = np.array([(Os[c] @ Xi[d].T).T for d in range(nb)])          # nb x (K+1) x N
-            for d in range(nb):
-                rhs_s = OX[d] - np.array([sum(ex[c, k] * Xi[d][m - k] for k in range(m + 1)) for m in range(K + 1)])
-                pr = mul(braket(Psi, rhs_s), iN)
-                rhs_s = rhs_s - np.array([sum(pr[k] * Psi[m - k] for k in range(m + 1)) for m in range(K + 1)])
-                z = []
-                for m in range(K + 1):
-                    rhs = rhs_s[m].copy()
-                    if m >= 1:
-                        rhs -= T @ z[m - 1]
-                    for k in range(1, m + 1):
-                        rhs += E[k] * z[m - k]
-                    if np.abs(rhs[P]).max() > 1e-8 * (1 + np.abs(rhs).max()):
-                        raise RuntimeError(f"cuarta: incompatibilidad en el patrón (orden {m})")
-                    x = -rhs / den
-                    x[P] = 0.0
-                    if m >= 1:
-                        x[P] = -sum(np.vdot(Psi[i], z[m - i]) for i in range(1, m + 1)) / len(P)
-                    z.append(x)
-                Z[c, d] = np.array(z)
+            for d in range(c, nb):
+                zs = 2 * zeta(c, c) if d == c else zeta(c, d) + zeta(d, c)          # zeta_cd + zeta_dc
+                xz = conv1((X2c @ zs.T).reshape(nb, K + 1, K + 1))
+                for b in range(nb):
+                    Gb = conv1((X2c @ (Os[b] @ zs.T)).reshape(nb, K + 1, K + 1)) - mul(xz, ex[b])
+                    U[:, b, c, d] = Gb
+                    U[:, b, d, c] = Gb
             if verbose:
-                print("  cuarta: zeta c =", c, flush=True)
-        Zs = Z + Z.transpose(1, 0, 2, 3)                                    # zeta_cd + zeta_dc
-        Z2 = Zs.reshape(nb * nb * (K + 1), N)
-        conv4 = lambda G: np.array([sum(G[:, i, :, m - i] for i in range(m + 1)) for m in range(K + 1)]
-                                   ).transpose(1, 2, 0)
-        XZ = conv4((X2.conj() @ Z2.T).reshape(nb, K + 1, nb * nb, K + 1))    # nb x nb^2 x (K+1)
-        U = np.zeros((nb, nb, nb * nb, K + 1), complex)
-        for b in range(nb):
-            Y = (Os[b] @ Z2.T).T
-            Gb = conv4((X2.conj() @ Y.T).reshape(nb, K + 1, nb * nb, K + 1))
-            U[:, b] = Gb - mul(XZ, ex[b])
-        U = U.reshape(nb, nb, nb, nb, K + 1)
+                print("  cuarta: c =", c, flush=True)
         E2 = n * hess / 2
         Tq = mul(-0.5 * U - mul(E2[:, :, None, None, :], XX[None, None, :, :, :]), iN)
         import itertools
