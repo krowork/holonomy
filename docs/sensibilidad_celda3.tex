@@ -1042,6 +1042,147 @@ término principal ($2\cdot10^{-80}$ frente a $\sim10^{-92}$ en $n=21$, con $4|b
 \end{itemize}
 
 %=====================================================================
+\section{Datos de otro anillo y de volumen infinito}\label{sec:datos_ext}
+%=====================================================================
+
+Aquí los datos son $\sigma=\sigma_N$, la marginal del fundamental del anillo $N>n$ a $\Theta=0$, o $\sigma_\infty$, con
+$e_R=\tr(h\sigma)$. La cota superior $p\le\pE$ (Proposición~\ref{prop:energia}) vale para cualquier $\sigma$. Para la
+inferior, el Newton graduado de la Sección~\ref{sec:prueba} solo cambia en el término independiente,
+\[
+  d=\big[\nabla e_n(\Theta)-\nabla e_n(0)\big]+d_{\rm fs}+(p-1)\tau_W,\qquad d_{\rm fs}=\nabla e_n(0)-\sigma_W ,
+\]
+donde $d_{\rm fs}$, la corrección de tamaño finito, no depende de $\Theta$, y $|p-1|\le|e_n(\Theta)-e_R|/|\tau_h|$.
+
+\paragraph{La corrección de tamaño finito.} Por el Corolario~\ref{cor:universal}, los coeficientes de $d_{\rm fs}$
+se anulan hasta el orden $\lceil n/2\rceil-2$. Numéricamente se anulan hasta $2n/3-2$ (relativo $\le6\cdot10^{-16}$
+para $n=9$ frente a $N=12$, y $\le3\cdot10^{-15}$ para $n=12$ frente a $N=15$; \scr{serie\_datos.py}), y la ED da
+$\|\sigma_n-\sigma_\infty\|=O(\eps^{2n/3-1})$ (problema abierto~3). En las variables graduadas,
+$|d_{\rm fs}|=O(\eps^{2n/3-2})$, así que $h_{\rm K}=O(\eps^{2n/3-4})$: el método vale para $n\ge9$ y no para
+$n=6$.
+
+\begin{lema}[testigo]\label{lem:testigo}
+Sea $(x^*,p^*)$ la solución de~\eqref{eq:sistema} con datos $\sigma$, y supóngase
+\textbf{(F$_x$)}: el nivel de momento $0$ de $H_{x^*}(\Theta)=H_n(\Theta)+\sum_ax^*_aO_a(\Theta)$ es su fundamental.
+Entonces $p(n,\Theta)=p^*$.
+\end{lema}
+
+\begin{proof}
+Sea $w^*=h+\sum_ax^*_ao_a$. Por la covariancia gauge, todo estado $\omega$ con marginales $\rho(p;\Theta)$ cumple
+$\tr(\omega H_{x^*}(\Theta))=n(c+p\,s)$, con $c$ independiente de $p$ y $s=\tr(w^*\tau)=\tau_h+x^*\!\cdot\tau_W<0$
+($|x^*|$ pequeño, $\tau_h\approx-2/3$). Por (F$_x$), $\tr(\omega H_{x^*})\ge\lambda_0(H_{x^*})=n(c+p^*s)$, porque
+$\psi_{x^*}$ tiene marginal $\rho(p^*;\Theta)$. Así $(p-p^*)s\ge0$, es decir, $p\le p^*$. La otra desigualdad la da
+el propio $\psi_{x^*}$.
+\end{proof}
+
+\noindent
+El lema vale igual con datos autoconsistentes: el $\delta_n$ del Teorema~\ref{teo:principal} es entonces el
+déficit exacto. Es imprescindible aquí. Sin él, solo se tiene la horquilla $[\pE-\delta,\pE]$, de anchura
+$\delta=O(\eps^{4n/3-4})$, que no es menor que $\eps^n$ para $n\le12$. Con él,
+\[
+  p(n,\Theta)-p(n,0)=\big[\pE(n,\Theta)-\pE(n,0)\big]-\big[\delta(\Theta)-\delta(0)\big],\qquad
+  \delta=\frac{e_n(0)-e(x^*)+x^*\!\cdot\nabla e(x^*)}{|\tau_h|},
+\]
+y la variación de $\delta$ es un término cruzado, $O(|d_{\rm fs}|\,|\Delta d|)=O(\eps^{2n/3-2}\eps^{n-2})=
+O(\eps^{5n/3-4})$, menor que $\eps^n$ para $n\ge9$. La cota explícita que usamos es
+\[
+  |\Delta\delta|\le\frac{(\|\hat J\|+2\eta L)\,2\eta\,|\Delta x|+\tfrac12(2\eta)^2\|\Delta\hat J\|}{|\tau_h|},\qquad
+  |\Delta x|\le\frac{\beta}{1-2h_{\rm K}}\big(|\Delta d|+2\eta\|\Delta\hat J\|+|\Delta p|\,|\tau|\big),
+\]
+con $\|\Delta\hat J\|$ en la bola acotada por Taylor: la parte de $\Theta$ de la tercera derivada en $0$, por su
+serie, y la cuarta por $L-L_0$.
+
+\paragraph{Resultados} (\scr{kantorovich\_datos.py}, con los parámetros de la Sección~\ref{sec:prueba} e
+intervalos de razón $1{,}01$ desde $10^{-30}$; la última columna es el rango en que la cota de $|\Delta\delta|$ es
+menor que la mitad de $4|b_0|\eps^n/(0{,}7\,n)$, el término principal):
+
+\begin{center}
+\begin{tabular}{cccccc}
+\toprule
+$n$ & datos & Kantorovich & déficit (borde) & $|\Delta\delta|<\frac12$ principal\\
+\midrule
+$9$ & $\sigma_{12}$ & $\eps\le3{,}60\cdot10^{-5}$ & $\le1{,}0\cdot10^{-30}$ & $\eps\le1{,}9\cdot10^{-7}$\\
+$9$ & $\sigma_\infty$ & $\eps\le2{,}03\cdot10^{-8}$ & $\le1{,}1\cdot10^{-43}$ & ninguno ($\ge10^{-30}$)\\
+$12$ & $\sigma_{15}$ & $\eps\le4{,}88\cdot10^{-4}$ & $\le1{,}8\cdot10^{-33}$ & $\eps\le4{,}7\cdot10^{-5}$\\
+$12$ & $\sigma_\infty$ & $\eps\le1{,}25\cdot10^{-9}$ & $\le7{,}7\cdot10^{-56}$ & $\eps\le7{,}0\cdot10^{-17}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Para $n=9$ se usa la serie de $\partial^4$, como en la Sección~\ref{sec:prueba}. Para $n=12$ con $\sigma_{15}$, la cota de $|\Delta\delta|$ escala como $\eps^{16}=\eps^{5n/3-4}$ entre $10^{-6}$ y
+$10^{-4}$: es el término cruzado, no un artefacto. Para $\sigma_\infty$ (con $n=9$ y $12$) se usan los coeficientes de $\sigma_{15}$
+hasta el orden $k_0=\lceil15/2\rceil-2=6$, universales por el Corolario~\ref{cor:universal}, y una cola uniforme
+en $N$ que viene de la analiticidad uniforme del cuaderno de trabajo (Z26, \texttt{celda\_k\_notas.md}, 9.22):
+$|{\rm coef}_k(\nabla e_\infty)|\le(2\bar W/t')\eps_u^{-k}$ y $|{\rm coef}_k(e_\infty)|\le\bar W\eps_u^{-k}$, con
+$\eps_u=7\cdot10^{-3}$, $\bar W=4{,}1\cdot10^{-4}$ y $t'=3\cdot10^{-3}$. Esa cola es tan gruesa que los radios
+son diminutos. Con los de $\sigma_{12}$ ($k_0=4$), $n=9$ no tiene rango.
+
+\paragraph{Comprobación por ED} (\scr{newton\_datos\_ed.py}, $n=9$ y datos $\sigma_{12}$; las $15$ ecuaciones,
+resueltas por Newton con ED, residuo $\le10^{-14}$):
+
+\begin{center}
+\begin{tabular}{ccccccc}
+\toprule
+$\eps$ & $\pE(\pi)-\pE(0)$ & $p^*(\pi)-p^*(0)$ & $\Delta\delta$ & $\Delta\delta/\Delta\pE$ & $\delta(0)$ & $|x^*|_{\max}$\\
+\midrule
+$0{,}05$ & $8{,}20\cdot10^{-11}$ & $5{,}96\cdot10^{-11}$ & $2{,}24\cdot10^{-11}$ & $0{,}27$ & $3{,}4\cdot10^{-8}$ & $0{,}54$\\
+$0{,}08$ & $6{,}19\cdot10^{-9}$ & $3{,}32\cdot10^{-9}$ & $2{,}87\cdot10^{-9}$ & $0{,}46$ & $1{,}2\cdot10^{-6}$ & $1{,}25$\\
+$0{,}12$ & $2{,}91\cdot10^{-7}$ & $1{,}09\cdot10^{-7}$ & $1{,}82\cdot10^{-7}$ & $0{,}63$ & $2{,}1\cdot10^{-5}$ & $2{,}4$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+(F$_x$) se cumple en los tres casos: el nivel de momento $0$ de $H_{x^*}$ es el más bajo, y el cuarto nivel
+está a $\ge1{,}5$. $\delta(0)$ va como $\eps^{7{,}2\text{--}7{,}5}$, cerca del $\eps^{4n/3-4}=\eps^8$ esperado. A $\eps$
+moderado, la sensibilidad de $p$ con datos $\sigma_{12}$ es claramente menor que la de la energía (el $73$, $54$ y
+$37$\,\%). El cociente $\Delta\delta/\Delta\pE$ baja con $\eps$ más o menos como $\eps$, más despacio que el $\eps^2$
+del recuento. La identificación con la energía es asintótica, y lenta en $n=9$.
+
+\paragraph{Certificación de (F$_x$).} La cota de Weyl no basta: $\|\sum x^*_aO_a\|$ llega a $\sim10^{-7}$,
+frente a un desdoblamiento $\sim10^{-24}$. Se usa en cambio el complemento de Schur sobre el espacio $P$ de los tres
+patrones. Sea $V_d$ la parte diagonal de $\sum_ax^*_aO_a$ y $V=\eps T+V_o$ la no diagonal. Entonces
+\[
+  H_{\rm ef}(E)=P(H_0+V_d)P+\sum_{j\ge2}PV\big(R(E)V\big)^{j-1}P,\qquad R(E)=Q(E-H_0-V_d)^{-1}Q,
+\]
+con $R$ diagonal, y los tres niveles del multiplete son las raíces de $E=\lambda_k(E)$, con $\lambda_k$ los autovalores
+de $H_{\rm ef}(E)$. Como $H_{x^*}$ conmuta con la traslación, $H_{\rm ef}$ es circulante:
+$\lambda_k=c_0+c_1\omega^k+c_2\omega^{2k}$, con $\omega=e^{2\pi i/3}$ y $k=0$ el de momento $0$. Si
+$\lambda_k(E)>\lambda_0(E)$ en toda la ventana de $E$, entonces $E_k>E_0$, porque $E-\lambda_k(E)$ es creciente. El término
+principal son los caminos de orden $D=2n/3$ con $x=0$ y $E=E_0$, calculados exactamente: el hueco es
+$244{,}148\,\eps^6$ para $n=9$ (la ED da $244{,}39$ a $\eps=0{,}01$) y $1654{,}34\,\eps^8$ para $n=12$. No depende de
+$\Theta$: el módulo del término principal coincide con su mayorante, así que todos los caminos mínimos tienen la misma
+fase, y eso a $\Theta=\pi/4$ obliga a corriente neta nula en cada camino. El resto se acota entrada a entrada por el
+mayorante con $A=\eps|T|+\sum_o|x_o||O_o|$ y denominadores rebajados en $\delta=2\|V_d\|+\|A\|$ (desplazamiento de $E$
+y de $H_0+V_d$ en la ventana), hasta el orden $D+12$, más una cola por normas. Las cotas de $x^*$ salen de la bola de
+Kantorovich: $|u_i|\le2\eta W_i$, $y=S^{-1}u$, $x=B(\eps)y$. En las direcciones blandas, $y\sim u/\eps^2$, que sigue
+siendo $\lesssim10^{-5}$ en el borde. El resultado (\scr{certifica\_Fx.py}, intervalos de razón $1{,}01$ desde
+$10^{-30}$):
+
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+$n$ & datos & (F$_x$) certificada en & peor error/hueco\\
+\midrule
+$9$ & $\sigma_{12}$ & $\eps\le4{,}3\cdot10^{-5}$ & $4\cdot10^{-3}$\\
+$9$ & $\sigma_\infty$ & $\eps\le1{,}9\cdot10^{-8}$ & $7\cdot10^{-4}$\\
+$12$ & $\sigma_{15}$ & $\eps\le1{,}26\cdot10^{-3}$ & $0{,}18$\\
+$12$ & $\sigma_\infty$ & $\eps\le4{,}4\cdot10^{-9}$ & $2\cdot10^{-5}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Cada rango es el de Kantorovich con los parámetros del polidisco que elige la rejilla del guion de certificación, y
+contiene el de la tabla anterior (estos bordes son mayores que los de la tabla, y la diferencia está por aclarar; la
+tabla anterior se mantiene). Así, (F$_x$) vale en todos los rangos certificados, y la sensibilidad de la tabla
+anterior es incondicional. Fuera del multiplete basta Weyl: hueco $1$ y perturbación $\ll1/2$.
+
+\paragraph{Lo que falta.} Radios razonables para $\sigma_\infty$, que piden más órdenes universales y un dominio
+uniforme mayor. Para $n=15$ y $18$ no cabe la serie de $N=18$, y sin graduar la parte demostrada de la cola de
+$d_{\rm fs}$ no basta frente a $\beta\sim\eps^{-4}$.
+
+%=====================================================================
 \section{Estado de las afirmaciones}\label{sec:estado}
 %=====================================================================
 
@@ -1072,6 +1213,9 @@ Radios del Teorema~\ref{teo:principal} ($n=15,18$) & Rejilla de $\eps$ (no inter
 Radios del Teorema~\ref{teo:principal} ($n=6,9,12$) & Certificado asistido por ordenador: coeficientes de serie en
 doble precisión validados (ED, racionales exactos, regla de corrientes); cotas de $\lambda_{\min}$ por
 intervalos con la derivada de la serie; sin aritmética de intervalos.\\
+Lema~\ref{lem:testigo} & Demostrado, bajo (F$_x$).\\
+(F$_x$) & Certificado asistido por ordenador en todos los rangos de la Sección~\ref{sec:datos_ext} (complemento de Schur con mayorante); ED para $n=9$, $\eps=0{,}05$--$0{,}12$.\\
+Datos $\sigma_N$, $\sigma_\infty$ (Sección~\ref{sec:datos_ext}) & Horquilla y sensibilidad: certificado asistido por ordenador, como en $n\le12$. $\sigma_\infty$: además, Z26 del cuaderno.\\
 Uniformidad en $n$ del Teorema~\ref{teo:principal} & No cubierta aquí (véase abajo).\\
 \bottomrule
 \end{tabular}
@@ -1082,8 +1226,8 @@ Uniformidad en $n$ del Teorema~\ref{teo:principal} & No cubierta aquí (véase a
 \item \emph{Uniformidad en $n$.} Todas las constantes de este trabajo vienen de Bauer--Fike con $n$
   fijo, cuyo radio decrece como $1/n$. Hay tres piezas:
   \begin{itemize}
-  \item \emph{analiticidad uniforme} del multiplete y de $H+tO$. En el cuaderno de trabajo
-    (\texttt{celda\_k\_notas.md}, 9.5--9.13 y 9.22) hay una expansión en contornos en espacio-tiempo,
+  \item \emph{analiticidad uniforme} del multiplete y de $H+tO$. En las secciones 9.5--9.13 y 9.22
+    del cuaderno de trabajo hay una expansión en contornos en espacio-tiempo,
     certificada con intervalos, con radio $\approx8\cdot10^{-3}$ uniforme en $n$. Con ella,
     Newton--Kantorovich sin graduar vale para todo $n\ge21$ hasta $\eps\approx1{,}2\cdot10^{-5}$, que es el
     radio de positividad de $\chi$: el desplazamiento $D\sim\nu^{n-2}$ mejora con $n$. No la incluimos aquí;
@@ -1117,8 +1261,10 @@ Uniformidad en $n$ del Teorema~\ref{teo:principal} & No cubierta aquí (véase a
   esquema cuadrático vale, la parte del déficit que no depende de $\Theta$ es $O(\eps^{4n/3-4})$ y no afecta a
   la sensibilidad, y la que depende es un término cruzado $O(\eps^{2n/3-2}\cdot\eps^{n-2})=O(\eps^{5n/3-4})$,
   menor que $\eps^n$ para $n\ge9$. Se esperaría, pues, la misma sensibilidad de orden $\eps^n$ con el
-  coeficiente de $b_0$. Falta la prueba: con $\sigma_\infty$, $p(n,0)\ne1$ y el punto de partida del Newton ya
-  no es el fundamental exacto.
+  coeficiente de $b_0$. La Sección~\ref{sec:datos_ext} lo lleva a cabo para $n=9,12$ con datos $\sigma_N$ y, con
+  radios diminutos, con $\sigma_\infty$, incluida la hipótesis (F$_x$). Quedan radios razonables para
+  $\sigma_\infty$ y los $n\ge15$. La ED muestra además que, a $\eps$ moderado, la sensibilidad de $p$ es
+  bastante menor que la de la energía.
 \end{enumerate}
 
 %=====================================================================
@@ -1153,6 +1299,10 @@ Guion & Qué hace\\
 \texttt{b0\_flotante.py} & $B(c_0\to c_d)$ y $4|b_0|$ en coma flotante ($n=18$).\\
 \texttt{marginal\_tamano.py} & Corrección de tamaño finito $\sigma_n-\sigma_{n'}$ de la marginal por ED (problema abierto 3).\\
 \texttt{radio\_convergencia.py} & Radio de convergencia de la serie de $\lambda_0(\eps)$ por el test de la raíz (problema abierto 2).\\
+\texttt{serie\_datos.py} & Serie de los datos $\sigma_N$ (energía y marginal) sin vectores de respuesta; cabe $N=15$.\\
+\texttt{kantorovich\_datos.py} & Newton graduado con datos $\sigma_N$ o $\sigma_\infty$, y cota de la variación del déficit (Sección~\ref{sec:datos_ext}).\\
+\texttt{newton\_datos\_ed.py} & Newton con datos $\sigma_N$ por ED: $p^*(\Theta)$, $\delta$ y la hipótesis (F$_x$).\\
+\texttt{certifica\_Fx.py} & Certificación de (F$_x$) por el complemento de Schur sobre los patrones (Sección~\ref{sec:datos_ext}).\\
 \bottomrule
 \end{tabular}
 \end{center}

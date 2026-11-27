@@ -5454,6 +5454,99 @@ con signo fijo, por ejemplo con el gas de eventos de Z17.
 carga). Los sectores cargados tienen hueco 2, y `radio_F.py` ya no exige ε ≤ 1/(4√2n): basta ε < 1/(2√2n).
 Con eso, n = 6 pasa de 2,9·10⁻² (tope) a **3,08·10⁻²** (limitado por la serie). Los demás ε_F no cambian.
 
+**9.28 Datos de otro anillo y de volumen infinito** (`scripts/serie_datos.py`, `scripts/kantorovich_datos.py`,
+`scripts/newton_datos_ed.py`, `scripts/certifica_Fx.py`; problema abierto 3).
+
+*Planteamiento.* Datos σ = σ_N (marginal del fundamental del anillo N > n, Θ = 0) o σ_∞, e_R = tr(hσ). La cota
+superior p ≤ p_E (9.17) vale para cualquier σ. Para la inferior, el Newton graduado de 9.25–9.26 solo cambia en
+el término independiente:
+
+  `d = [grad_n(Θ) − grad_n(0)] + d_fs + (p − 1)τ_W`,   `d_fs = grad_n(0) − σ_W`,
+
+con d_fs independiente de Θ y |p − 1| ≤ |e_n(Θ) − e_R|/|τ_h|. d_fs sale de la serie de σ_N
+(`serie_datos.py`: RS sin vectores de respuesta, la marginal por traslación; reproduce grad[0] de
+`serie_respuesta.py` a 4·10⁻¹⁶ relativo; cabe N = 15).
+
+*Estructura de d_fs.* Sus coeficientes son nulos hasta el orden 2n/3 − 2 (n = 9 frente a 12: ≤ 6·10⁻¹⁶;
+n = 12 frente a 15: ≤ 3·10⁻¹⁵), como la ED de 9.27. Demostrado: hasta ⌈n/2⌉ − 2 (Corolario de universalidad);
+solo esos se ponen a cero en la certificación.
+
+*Lema del testigo.* Sea x* la solución del Newton y supóngase **(F_x)**: el nivel de momento 0 de
+`H_{x*}(Θ) = H(Θ) + Σ x*_a O_a(Θ)` es su fundamental. Entonces **p(n,Θ) = p*(Θ) exactamente**. Prueba: con el
+testigo `w* = h + Σ x*_a o_a`, por la covariancia gauge, todo ω admisible cumple
+`tr(ω H_{x*}) = n(c + p·s)`, con `s = tr(w*τ) = τ_h + x*·τ_W < 0`, y `tr(ω H_{x*}) ≥ λ₀(H_{x*}) = n(c + p*s)`;
+así p ≤ p*. ∎ (Vale igual con datos autoconsistentes: el δ_n del Teorema principal es el déficit exacto.)
+
+*Consecuencia.* p(Θ) − p(0) = [p_E(Θ) − p_E(0)] − [δ(Θ) − δ(0)], con δ = Ψ(x*)/|τ_h|,
+`Ψ(x) = e(0) − e(x) + x·∇e(x)`. La variación se acota por
+`|Δδ| ≤ [(|Ĵ| + 2ηL)·2η·|Δx| + (2η)²|ΔĴ|/2]/|τ_h|`, `|Δx| ≤ β/(1 − 2h)·(|Δd| + 2η|ΔĴ| + |Δp||τ|)`, con |ΔĴ| en
+la bola por Taylor (parte de Θ de la tercera en 0, cuarta por la cota de L − L₀). Escala: término cruzado
+`|d_fs|·|Δd| ~ ε^{2n/3−2}·ε^{n−2} = ε^{5n/3−4}`, menor que ε^n desde n = 9. Sin el lema, la horquilla
+[p_E − δ, p_E] tiene anchura ε^{4n/3−4}, que no es menor que ε^n para n ≤ 12: **el lema es imprescindible**.
+
+*n = 6 queda fuera:* h ~ ε^{2n/3−4} = ε⁰.
+
+*Resultados* (`kantorovich_datos.py`, parámetros del .tex; Kantorovich en intervalos de razón 1,01 desde 10⁻³⁰):
+
+| n | datos | Kantorovich vale en | déficit en el borde | Δδ < principal/2 hasta |
+|---|---|---|---|---|
+| 12 | σ₁₅ | ε ≤ 4,88·10⁻⁴ | ≤ 1,8·10⁻³³ | **ε ≤ 4,7·10⁻⁵** |
+| 12 | σ_∞ | ε ≤ 1,25·10⁻⁹ | ≤ 7,7·10⁻⁵⁶ | ε ≤ 7,0·10⁻¹⁷ |
+| 9 | σ₁₂ | ε ≤ 3,60·10⁻⁵ (con ∂⁴ en serie) | ≤ 1,0·10⁻³⁰ | **ε ≤ 1,9·10⁻⁷** |
+| 9 | σ_∞ (de N = 15, k₀ = 6) | ε ≤ 2,03·10⁻⁸ | ≤ 1,1·10⁻⁴³ | ninguno (≥ 10⁻³⁰) |
+| 9 | σ_∞ (de N = 12, k₀ = 4) | sin rango | — | — |
+
+Para n = 12 con σ₁₅, la cota de Δδ escala como ε¹⁶ = ε^{5n/3−4} (comprobado entre 10⁻⁶ y 10⁻⁴): es el término
+cruzado, no un artefacto.
+
+*σ_∞.* Se toman los coeficientes de σ₁₅ hasta k₀ = ⌈15/2⌉ − 2 = 6 (universales por el Corolario) y una cola
+uniforme en N de Z26 (9.22): `|coef_k(grad_∞)| ≤ (2W̄/t′)/ε_u^k`, `|coef_k(e_∞)| ≤ W̄/ε_u^k`, ε_u = 7·10⁻³,
+W̄ = 4,1·10⁻⁴, t′ = 3·10⁻³. Es riguroso módulo Z26 (certificado con intervalos), pero la cola (ε/7·10⁻³)⁷ es tan
+gruesa que los radios son ridículos. Mejorarlos pide más órdenes universales (un anillo mayor, o demostrar la
+universalidad hasta el orden del túnel, 2N/3 − 2 = 8) y un dominio uniforme mayor.
+
+*ED* (`newton_datos_ed.py 9 12`, Newton de 15 ecuaciones resuelto por ED, residuo ≤ 10⁻¹⁴):
+
+| ε | p_E(π) − p_E(0) | p*(π) − p*(0) | Δδ | Δδ/Δp_E | δ(0) | |x*|_max |
+|---|---|---|---|---|---|---|
+| 0,05 | 8,20·10⁻¹¹ | 5,96·10⁻¹¹ | 2,24·10⁻¹¹ | 0,27 | 3,4·10⁻⁸ | 0,54 |
+| 0,08 | 6,19·10⁻⁹ | 3,32·10⁻⁹ | 2,87·10⁻⁹ | 0,46 | 1,2·10⁻⁶ | 1,25 |
+| 0,12 | 2,91·10⁻⁷ | 1,09·10⁻⁷ | 1,82·10⁻⁷ | 0,63 | 2,1·10⁻⁵ | 2,4 |
+
+(F_x) se cumple en todos (el nivel de momento 0 es el más bajo; el cuarto nivel está a ≥ 1,5). δ(0) escala como
+ε^{7,2–7,5}, cerca del ε^{4n/3−4} = ε⁸ esperado. **A ε moderado la sensibilidad de p con datos σ₁₂ es claramente
+menor que la de la energía** (73 %, 54 % y 37 % de ella): Δδ/Δp_E decrece al bajar ε, aproximadamente como ε,
+más despacio que el ε² del recuento. La identificación con la energía es asintótica y lenta en n = 9.
+
+*Certificación de (F_x)* (`certifica_Fx.py`). Weyl no basta (‖Σx*O‖ ~ 10⁻⁷ frente a ~10⁻²⁴). Complemento de
+Schur sobre P = span(patrones), con V_d = parte diagonal de Σx*O (al resolvente, que sigue diagonal) y
+V = εT + V_o la no diagonal: `H_ef(E) = P(H₀+V_d)P + Σ_{j≥2} PV(R(E)V)^{j−1}P`, `R(E) = Q(E − H₀ − V_d)⁻¹Q`.
+Por traslación H_ef es circulante, λ_k = c₀ + c₁ω^k + c₂ω^{2k}; los niveles son las raíces de E = λ_k(E), y si
+λ_k > λ₀ en toda la ventana, E_k > E₀ (E − λ_k(E) creciente). Principal: caminos de orden D = 2n/3 con x = 0,
+E = E₀, exactos: hueco **244,148 ε⁶** (n = 9; ED: 244,39 a ε = 0,01) y **1654,34 ε⁸** (n = 12). Independiente de
+Θ: |principal| = su mayorante (misma fase en todos los caminos mínimos), y a Θ = π/4 eso fuerza corriente neta
+nula. Resto: mayorante entrada a entrada con A = ε|T| + Σ|x_o||O_o|, denominadores rebajados en
+δ = 2‖V_d‖ + ‖A‖, hasta orden D + 12, más cola por normas. Cotas de x* de la bola de Kantorovich:
+|u_i| ≤ 2ηW_i, y = S⁻¹u, x = B(ε)y (las blandas, y ~ u/ε², quedan ≲ 10⁻⁵ en el borde).
+
+| n | datos | (F_x) certificada en | peor error/hueco |
+|---|---|---|---|
+| 9 | σ₁₂ | ε ≤ 4,3·10⁻⁵ | 4·10⁻³ |
+| 9 | σ_∞ | ε ≤ 1,9·10⁻⁸ | 7·10⁻⁴ |
+| 12 | σ₁₅ | ε ≤ 1,26·10⁻³ | 0,18 |
+| 12 | σ_∞ | ε ≤ 4,4·10⁻⁹ | 2·10⁻⁵ |
+
+Cada rango es el de Kantorovich con los parámetros que elige la rejilla del guion, y contiene el de la tabla
+de resultados. Estos bordes son mayores que los de esa tabla (4,3e-5 frente a 3,60e-5, 1,26e-3 frente a 4,88e-4, 4,4e-9
+frente a 1,25e-9): **diferencia por aclarar**; la tabla se mantiene. Con esto, **la sensibilidad de la tabla es
+incondicional** (módulo Z26 para σ_∞). Fuera del multiplete basta Weyl. No comprobado en el guion: la monotonía
+de E − λ_k(E) (inmediata, |λ_k'| = O(‖V‖²)).
+
+*Qué falta.*
+- **σ_∞ con radios razonables:** universalidad hasta el orden del túnel y un dominio uniforme mayor.
+- **n = 15, 18:** no cabe la serie de N = 18; sin graduar, la cola de d_fs solo es O(ν^{⌈n/2⌉−1}) demostrada,
+  insuficiente frente al β ~ ε⁻⁴.
+
 #### Balance para la carga entera
 
 **Teorema Z″ (carga entera, k | n; corregido en el paso 8).** Por los pasos 1–6 y 8, existen ε_0 > 0
