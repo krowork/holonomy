@@ -5455,7 +5455,7 @@ carga). Los sectores cargados tienen hueco 2, y `radio_F.py` ya no exige ε ≤ 
 Con eso, n = 6 pasa de 2,9·10⁻² (tope) a **3,08·10⁻²** (limitado por la serie). Los demás ε_F no cambian.
 
 **9.28 Datos de otro anillo y de volumen infinito** (`scripts/serie_datos.py`, `scripts/kantorovich_datos.py`,
-`scripts/newton_datos_ed.py`, `scripts/certifica_Fx.py`; problema abierto 3).
+`scripts/newton_datos_ed.py`, `scripts/certifica_Fx.py`, `scripts/optimiza_parametros.py`; problema abierto 3).
 
 *Planteamiento.* Datos σ = σ_N (marginal del fundamental del anillo N > n, Θ = 0) o σ_∞, e_R = tr(hσ). La cota
 superior p ≤ p_E (9.17) vale para cualquier σ. Para la inferior, el Newton graduado de 9.25–9.26 solo cambia en
@@ -5480,31 +5480,47 @@ así p ≤ p*. ∎ (Vale igual con datos autoconsistentes: el δ_n del Teorema p
 *Consecuencia.* p(Θ) − p(0) = [p_E(Θ) − p_E(0)] − [δ(Θ) − δ(0)], con δ = Ψ(x*)/|τ_h|,
 `Ψ(x) = e(0) − e(x) + x·∇e(x)`. La variación se acota por
 `|Δδ| ≤ [(|Ĵ| + 2ηL)·2η·|Δx| + (2η)²|ΔĴ|/2]/|τ_h|`, `|Δx| ≤ β/(1 − 2h)·(|Δd| + 2η|ΔĴ| + |Δp||τ|)`, con |ΔĴ| en
-la bola por Taylor (parte de Θ de la tercera en 0, cuarta por la cota de L − L₀). Escala: término cruzado
+la bola por Taylor: parte de Θ de la tercera en 0 por su serie; para n = 9 también la parte de Θ de la cuarta en 0
+por su serie, y el resto por Cauchy de la quinta en la bola, C₅(2η)³/3; para n = 12 (sin serie de ∂⁴) el resto
+C₄(2η)². Ese resto no depende de Θ y no se cancela: para n = 9 deja un **suelo**, y la cota vale solo en una
+**ventana** de ε; para n = 12 el cociente Δδ/principal baja como potencia de ε, y la ventana solo la corta por
+abajo el desbordamiento de coma flotante del principal (~ε¹²).
+
+**Corrección (2026-11-27).** La versión anterior acotaba ese resto por 2η(L − L₀) = 2C₄(2η)² (o 2Q₄(2η)² + C₅(2η)³).
+En coma flotante L − L₀ daba exactamente 0 (el término es ≲ 10⁻⁵⁰ frente a L₀ ~ 1), así que el resto
+desaparecía y **la columna de sensibilidad anterior (2,3·10⁻⁷, 1,3·10⁻⁴, 5,5·10⁻¹⁶) era demasiado optimista**.
+También era falsa la observación de que para n = 12 con σ₁₅ la cota escala como el término cruzado ε¹⁶: en el
+extremo superior manda C₄(2η)². Escala: término cruzado
 `|d_fs|·|Δd| ~ ε^{2n/3−2}·ε^{n−2} = ε^{5n/3−4}`, menor que ε^n desde n = 9. Sin el lema, la horquilla
 [p_E − δ, p_E] tiene anchura ε^{4n/3−4}, que no es menor que ε^n para n ≤ 12: **el lema es imprescindible**.
 
 *n = 6 queda fuera:* h ~ ε^{2n/3−4} = ε⁰.
 
-*Resultados* (`kantorovich_datos.py`; en cada fila, los mejores parámetros del polidisco entre los del .tex y los de la rejilla gruesa del guion; Kantorovich en intervalos de razón 1,01 desde 10⁻³⁰):
+*Resultados* (`kantorovich_datos.py`, intervalos de razón 1,01 desde 10⁻³⁰; parámetros optimizados fila por fila
+con `optimiza_parametros.py`):
 
-| n | datos | Kantorovich vale en | déficit en el borde | Δδ < principal/2 hasta |
+| n | datos | Kantorovich vale en | déficit en el borde | ventana Δδ < principal/2 |
 |---|---|---|---|---|
-| 12 | σ₁₅ | ε ≤ 1,26·10⁻³ | ≤ 1,6·10⁻²⁸ | **ε ≤ 1,3·10⁻⁴** |
-| 12 | σ_∞ | ε ≤ 4,42·10⁻⁹ | ≤ 2,5·10⁻⁵⁰ | ε ≤ 5,5·10⁻¹⁶ |
-| 9 | σ₁₂ | ε ≤ 4,31·10⁻⁵ (con ∂⁴ en serie) | ≤ 4,3·10⁻³⁰ | **ε ≤ 2,3·10⁻⁷** |
-| 9 | σ_∞ (de N = 15, k₀ = 6) | ε ≤ 2,03·10⁻⁸ | ≤ 1,1·10⁻⁴³ | ninguno (≥ 10⁻³⁰) |
+| 12 | σ₁₅ | ε ≤ 1,87·10⁻³ | ≤ 2,0·10⁻²⁶ | **[3,8·10⁻²⁵*, 2,1·10⁻⁴]** |
+| 12 | σ_∞ | ε ≤ 7,35·10⁻⁹ | ≤ 4,1·10⁻⁴⁸ | [2,9·10⁻²⁶*, 1,45·10⁻²¹] |
+| 9 | σ₁₂ | ε ≤ 7,83·10⁻⁵ (con ∂⁴ en serie) | ≤ 5,2·10⁻²⁸ | **[9,2·10⁻¹¹, 6,0·10⁻⁷]** |
+| 9 | σ_∞ (de N = 15, k₀ = 6) | ε ≤ 3,33·10⁻⁸ | ≤ 1,5·10⁻⁴¹ | ninguna |
 | 9 | σ_∞ (de N = 12, k₀ = 4) | sin rango | — | — |
 
-*Parámetros* (ε_a, R_h, R_m, R_s, w_m, w_s): (0,0225; 10⁻⁴; 4·10⁻³; 0,15; 1; 1) para n = 9 con σ₁₂;
-(0,03; 10⁻⁴; 4·10⁻³; 0,1; 1; 1), los del .tex, para n = 9 con σ_∞ (la rejilla da 1,87·10⁻⁸: elige por el borde
-grueso); (0,015; 4·10⁻⁵; 2·10⁻³; 0,15; 0,9; 0,9) para n = 12. Con los del .tex para todos (como en la primera
-versión) los bordes eran 3,60·10⁻⁵, 4,88·10⁻⁴ y 1,25·10⁻⁹, y la última columna 1,9·10⁻⁷, 4,7·10⁻⁵ y
-7,0·10⁻¹⁷: **la diferencia era solo la elección de parámetros** (las primeras ejecuciones los fijaban a mano; sin
-argumentos el guion recorre la rejilla). Los radios dependen bastante de ella y la rejilla no optimiza.
+\* desbordamiento de coma flotante del principal, no fallo de la cota (el cociente sigue bajando como potencia de ε).
 
-Para n = 12 con σ₁₅, la cota de Δδ escala como ε¹⁶ = ε^{5n/3−4} (comprobado entre 10⁻⁶ y 10⁻⁴): es el término
-cruzado, no un artefacto.
+*Parámetros* (ε_a, R_h, R_m, R_s, w_m, w_s), exactos (los que imprime `optimiza_parametros.py`, línea PARAMS):
+- n = 9, σ₁₂: 0.0123312 0.000146835 0.00575707 0.466993 1.00103 1.0014
+- n = 9, σ_∞: 0.01293 9.16822e-05 0.00706438 0.43884 1.00105 1.00118
+- n = 12, σ₁₅: 0.0111772 7.07446e-05 0.00451966 0.397073 0.865969 0.875662
+- n = 12, σ_∞: 0.012483 0.000140393 0.00425153 0.353244 0.86251 0.891433
+
+Optimizador: Nelder–Mead en log de los parámetros, desde 2–3 puntos de partida (los del .tex y de la rejilla),
+con objetivo el borde de Kantorovich o el extremo superior de la ventana de sensibilidad (bisección en log ε). Los
+dos objetivos dan prácticamente el mismo óptimo, salvo en n = 12 con σ_∞, donde el de sensibilidad da además
+mejor Kantorovich (7,35 frente a 7,28·10⁻⁹); se usa ese. Frente a los parámetros del .tex (§ prueba), los bordes
+de Kantorovich crecen ×2,2, ×1,6, ×3,8 y ×5,9 (antes: 3,60·10⁻⁵, 2,03·10⁻⁸, 4,88·10⁻⁴, 1,25·10⁻⁹). Las
+diferencias de bordes entre ejecuciones anteriores eran solo de parámetros (fijados a mano frente a la rejilla).
 
 *σ_∞.* Se toman los coeficientes de σ₁₅ hasta k₀ = ⌈15/2⌉ − 2 = 6 (universales por el Corolario) y una cola
 uniforme en N de Z26 (9.22): `|coef_k(grad_∞)| ≤ (2W̄/t′)/ε_u^k`, `|coef_k(e_∞)| ≤ W̄/ε_u^k`, ε_u = 7·10⁻³,
@@ -5538,13 +5554,13 @@ nula. Resto: mayorante entrada a entrada con A = ε|T| + Σ|x_o||O_o|, denominad
 
 | n | datos | (F_x) certificada en | peor error/hueco |
 |---|---|---|---|
-| 9 | σ₁₂ | ε ≤ 4,3·10⁻⁵ | 4·10⁻³ |
-| 9 | σ_∞ | ε ≤ 2,03·10⁻⁸ | 8·10⁻⁴ |
-| 12 | σ₁₅ | ε ≤ 1,26·10⁻³ | 0,18 |
-| 12 | σ_∞ | ε ≤ 4,4·10⁻⁹ | 2·10⁻⁵ |
+| 9 | σ₁₂ | ε ≤ 7,83·10⁻⁵ | 1·10⁻² |
+| 9 | σ_∞ | ε ≤ 3,33·10⁻⁸ | 4·10⁻³ |
+| 12 | σ₁₅ | ε ≤ 1,87·10⁻³ | 0,28 |
+| 12 | σ_∞ | ε ≤ 7,35·10⁻⁹ | 8·10⁻⁵ |
 
-Cada rango es todo el de Kantorovich con los parámetros de la fila correspondiente de la tabla de resultados. Con esto, **la sensibilidad de la tabla es
-incondicional** (módulo Z26 para σ_∞). Fuera del multiplete basta Weyl. No comprobado en el guion: la monotonía
+Cada rango es todo el de Kantorovich con los parámetros de la fila correspondiente de la tabla de resultados. Con esto, **las ventanas de sensibilidad de la tabla son
+incondicionales** (módulo Z26 para σ_∞). Fuera del multiplete basta Weyl. No comprobado en el guion: la monotonía
 de E − λ_k(E) (inmediata, |λ_k'| = O(‖V‖²)).
 
 *Qué falta.*

@@ -145,9 +145,11 @@ def cotas(S, P, D, el, er, eps_a, R, wv):
         p4 = k[(None,) * 4] - e4[..., None]
         Q = ((np.abs(P['q0']) + P['qt']) * KS.sup_pot(el, er, p4)).sum(-1)
         Rprod = KS.suma_ind(np.log(Rv), 4)
-        Q = Q + P['m4'] * A * np.exp(-Rprod) * cola * KS.sup_pot(el, er, -e4)
+        colaQ = P['m4'] * A * np.exp(-Rprod) * cola * KS.sup_pot(el, er, -e4)
+        Q = Q + colaQ
         W4 = np.exp(KS.suma_ind(np.log(W), 4))
         Q4 = np.linalg.norm(W4 * Q)
+        Q4th = np.linalg.norm(W4 * ((P['qt'] * KS.sup_pot(el, er, p4)).sum(-1) + 2 * colaQ))   # parte de Theta
         C5 = 120 * 4 * A * lam_s ** 4 / tau_c ** 5 * (er / el) ** 4
         L = L0 + Q4 * 2 * eta + C5 * (2 * eta) ** 2 / 2
     h = beta * L * eta
@@ -158,8 +160,12 @@ def cotas(S, P, D, el, er, eps_a, R, wv):
     # --- paso 2: variación en Theta del déficit (requiere h < 1/2 estricto)
     if h < 0.5:
         bp = beta / (1 - 2 * h)
-        # |Ĵ_Theta - Ĵ_0| en la bola: Taylor con la parte de Theta de la tercera en 0 y la cuarta (L - L0 >= u sup|F4|)
-        dJb = dJth + u * T3th + 2 * u * (L - L0)
+        # |Ĵ_Theta - Ĵ_0| en la bola: Taylor con las partes de Theta de la tercera y (si hay serie) la cuarta en 0;
+        # el resto, por el sup de la derivada siguiente en la bola en Theta y en 0 (no depende de Theta)
+        if 'q0' in P:
+            dJb = dJth + u * T3th + 0.5 * u ** 2 * Q4th + C5 * u ** 3 / 3
+        else:
+            dJb = dJth + u * T3th + C4 * u ** 2
         Jb = normJ + L * u
         dpE = dEth / KS.TAUH
         ntau = np.linalg.norm(W * taug)
@@ -169,24 +175,32 @@ def cotas(S, P, D, el, er, eps_a, R, wv):
             dx = bp * G
             ddel = (Jb * u * dx + 0.5 * u ** 2 * dJb) / KS.TAUH
         out['ddelta'] = ddel
+        out['dbg'] = dict(dJth=dJth, uT3th=u * T3th, dJb=dJb, q4=0.5 * u ** 2 * Q4th if 'q0' in P else 0.0, c5=C5 * u ** 3 / 3 if 'q0' in P else 0.0, u=u, Jb=Jb, bp=bp, dth=np.linalg.norm(W * dth),
+                          dpE=dpE, ntau=ntau, G=G)
         if n in B4:
             out['principal'] = B4[n] * el ** n / (n * 0.7)  # ebar - e_R = 2/3 + O(eps^2) <= 0,7
     return out
 
 
 def rango(S, P, D, par, e0=1e-30, e1=0.2, paso=1.01, sens=False):
+    """Kantorovich en [e0, borde] por intervalos; la sensibilidad (|Delta delta| < principal/2) da una ventana:
+    se devuelve la última tanda contigua de intervalos en que vale, (lo, hi). Donde el principal o la cota
+    desbordan por debajo en coma flotante (= 0) no se decide, y la tanda se corta."""
     eps_a, R, wv = par[0], par[1:4], np.array([1, par[4], par[5]])
-    el, ult, sens_ok = e0, None, None
+    el, ult, ini, ven = e0, None, None, None
     while el < e1:
         er = el * paso
         c = cotas(S, P, D, el, er, eps_a, R, wv)
         if c is None or c['h'] > 0.5:
-            return el, ult, c, sens_ok
-        if 'principal' in c and c['ddelta'] < 0.5 * c['principal']:
-            sens_ok = er
+            return el, ult, c, ven
+        if 'principal' in c and c['principal'] > 0 and 0 < c['ddelta'] < 0.5 * c['principal']:
+            ini = el if ini is None else ini
+            ven = (ini, er)
+        else:
+            ini = None
         ult = c
         el = er
-    return el, ult, None, sens_ok
+    return el, ult, None, ven
 
 
 if __name__ == "__main__":
@@ -235,5 +249,5 @@ if __name__ == "__main__":
           f"falla por {fallo['motivo'] if fallo else '-'}")
     if 'principal' in ult:
         print(f"  paso 2: en el borde |delta(Theta) - delta(0)| <= {ult['ddelta']:.1e}, principal >= {ult['principal']:.1e}; "
-              f"la variación del déficit queda por debajo de la mitad del principal hasta eps = "
-              f"{sens if sens else 0:.3e}")
+              f"la variación del déficit queda por debajo de la mitad del principal en "
+              f"{'[%.3e, %.3e]' % sens if sens else 'ningún intervalo'}")

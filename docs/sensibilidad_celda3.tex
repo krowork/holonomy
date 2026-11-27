@@ -1089,35 +1089,57 @@ O(\eps^{5n/3-4})$, menor que $\eps^n$ para $n\ge9$. La cota explícita que usamo
   |\Delta x|\le\frac{\beta}{1-2h_{\rm K}}\big(|\Delta d|+2\eta\|\Delta\hat J\|+|\Delta p|\,|\tau|\big),
 \]
 con $\|\Delta\hat J\|$ en la bola acotada por Taylor: la parte de $\Theta$ de la tercera derivada en $0$, por su
-serie, y la cuarta por $L-L_0$.
+serie; para $n=9$, también la parte de $\Theta$ de la cuarta en $0$, por su serie, y el resto por la cota de Cauchy
+de la quinta en la bola, $C_5(2\eta)^3/3$; para $n=12$, sin serie de la cuarta, el resto es $C_4(2\eta)^2$. Este
+resto no depende de $\Theta$ ni se anula al restar. Para $n=9$ deja un suelo: el cociente
+$|\Delta\delta|/\text{principal}$ crece al bajar $\eps$, y la cota vale solo en una ventana. Para $n=12$ el
+cociente baja como potencia de $\eps$, y la ventana solo la corta por abajo el desbordamiento de coma flotante
+del principal, $\sim\eps^{12}$. (Una versión anterior acotaba ese resto por $2\eta(L-L_0)$. En coma flotante
+$L-L_0$ daba $0$, porque el término es $\lesssim10^{-50}$ frente a $L_0\sim1$, y los radios de sensibilidad
+salían demasiado grandes.)
 
-\paragraph{Resultados} (\scr{kantorovich\_datos.py}; los parámetros del polidisco
-son, en cada fila, los mejores entre los de la Sección~\ref{sec:prueba} y los que elige
-la rejilla gruesa del guion, y se dan debajo de la tabla; con intervalos de razón $1{,}01$ desde $10^{-30}$; la última columna es el rango en que la cota de $|\Delta\delta|$ es
-menor que la mitad de $4|b_0|\eps^n/(0{,}7\,n)$, el término principal):
+\paragraph{Resultados} (\scr{kantorovich\_datos.py}, con intervalos de razón $1{,}01$ desde $10^{-30}$; los
+parámetros del polidisco están optimizados fila por fila con \scr{optimiza\_parametros.py} y se dan debajo de la
+tabla; la última columna es la ventana en que la cota de $|\Delta\delta|$ es menor que la mitad de
+$4|b_0|\eps^n/(0{,}7\,n)$, el término principal):
 
 \begin{center}
-\begin{tabular}{cccccc}
+\begin{tabular}{ccccc}
 \toprule
 $n$ & datos & Kantorovich & déficit (borde) & $|\Delta\delta|<\frac12$ principal\\
 \midrule
-$9$ & $\sigma_{12}$ & $\eps\le4{,}31\cdot10^{-5}$ & $\le4{,}3\cdot10^{-30}$ & $\eps\le2{,}3\cdot10^{-7}$\\
-$9$ & $\sigma_\infty$ & $\eps\le2{,}03\cdot10^{-8}$ & $\le1{,}1\cdot10^{-43}$ & ninguno ($\ge10^{-30}$)\\
-$12$ & $\sigma_{15}$ & $\eps\le1{,}26\cdot10^{-3}$ & $\le1{,}6\cdot10^{-28}$ & $\eps\le1{,}3\cdot10^{-4}$\\
-$12$ & $\sigma_\infty$ & $\eps\le4{,}42\cdot10^{-9}$ & $\le2{,}5\cdot10^{-50}$ & $\eps\le5{,}5\cdot10^{-16}$\\
+$9$ & $\sigma_{12}$ & $\eps\le7{,}83\cdot10^{-5}$ & $\le5{,}2\cdot10^{-28}$ & $[9{,}2\cdot10^{-11},\,6{,}0\cdot10^{-7}]$\\
+$9$ & $\sigma_\infty$ & $\eps\le3{,}33\cdot10^{-8}$ & $\le1{,}5\cdot10^{-41}$ & ninguna\\
+$12$ & $\sigma_{15}$ & $\eps\le1{,}87\cdot10^{-3}$ & $\le2{,}0\cdot10^{-26}$ & $[3{,}8\cdot10^{-25\,*},\,2{,}1\cdot10^{-4}]$\\
+$12$ & $\sigma_\infty$ & $\eps\le7{,}35\cdot10^{-9}$ & $\le4{,}1\cdot10^{-48}$ & $[2{,}9\cdot10^{-26\,*},\,1{,}45\cdot10^{-21}]$\\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \noindent
-Parámetros $(\eps_a;R_h;R_m;R_s;w_m;w_s)$: $(0{,}0225;\,10^{-4};\,4\cdot10^{-3};\,0{,}15;\,1;\,1)$ para $n=9$ con $\sigma_{12}$;
-$(0{,}03;\,10^{-4};\,4\cdot10^{-3};\,0{,}1;\,1;\,1)$, los de la Sección~\ref{sec:prueba}, para $n=9$ con
-$\sigma_\infty$ (la rejilla da ahí $1{,}87\cdot10^{-8}$, porque elige por el borde grueso); y
-$(0{,}015;\,4\cdot10^{-5};\,2\cdot10^{-3};\,0{,}15;\,0{,}9;\,0{,}9)$ para $n=12$. Con los de la
-Sección~\ref{sec:prueba} los bordes eran $3{,}60\cdot10^{-5}$, $4{,}88\cdot10^{-4}$ y $1{,}25\cdot10^{-9}$, y la
-última columna $1{,}9\cdot10^{-7}$, $4{,}7\cdot10^{-5}$ y $7{,}0\cdot10^{-17}$: los radios dependen bastante de esa
-elección, y la rejilla no es una optimización. Para $n=9$ se usa la serie de $\partial^4$, como en la Sección~\ref{sec:prueba}. Para $n=12$ con $\sigma_{15}$, la cota de $|\Delta\delta|$ escala como $\eps^{16}=\eps^{5n/3-4}$ entre $10^{-6}$ y
-$10^{-4}$: es el término cruzado, no un artefacto. Para $\sigma_\infty$ (con $n=9$ y $12$) se usan los coeficientes de $\sigma_{15}$
+${}^*$Corte por desbordamiento de coma flotante del principal, no por fallo de la cota.
+Parámetros, redondeados (los exactos, en las notas, 9.28):
+
+\begin{center}
+\begin{tabular}{ccllllll}
+\toprule
+$n$ & datos & $\eps_a$ & $R_h$ & $R_m$ & $R_s$ & $w_m$ & $w_s$\\
+\midrule
+$9$ & $\sigma_{12}$ & $0{,}0123$ & $1{,}47\cdot10^{-4}$ & $5{,}76\cdot10^{-3}$ & $0{,}467$ & $1$ & $1$\\
+$9$ & $\sigma_\infty$ & $0{,}0129$ & $9{,}17\cdot10^{-5}$ & $7{,}06\cdot10^{-3}$ & $0{,}439$ & $1$ & $1$\\
+$12$ & $\sigma_{15}$ & $0{,}0112$ & $7{,}07\cdot10^{-5}$ & $4{,}52\cdot10^{-3}$ & $0{,}397$ & $0{,}866$ & $0{,}876$\\
+$12$ & $\sigma_\infty$ & $0{,}0125$ & $1{,}40\cdot10^{-4}$ & $4{,}25\cdot10^{-3}$ & $0{,}353$ & $0{,}863$ & $0{,}891$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+El optimizador es Nelder--Mead en el logaritmo de los parámetros, desde varios puntos de partida, sobre el borde
+de Kantorovich o el superior de la ventana de sensibilidad. Salvo en $n=12$ con $\sigma_\infty$ (donde gana el
+segundo), los dos objetivos dan prácticamente el mismo óptimo. Frente a los parámetros de la
+Sección~\ref{sec:prueba}, los bordes de Kantorovich crecen un factor entre $1{,}6$ y $5{,}9$: los radios dependen
+bastante de esa elección. Para $n=9$ se usa la serie de $\partial^4$, como en la Sección~\ref{sec:prueba}; para
+$n=12$, en el extremo superior de la ventana manda el resto $C_4(2\eta)^2$, no el término cruzado. Para $\sigma_\infty$ (con $n=9$ y $12$) se usan los coeficientes de $\sigma_{15}$
 hasta el orden $k_0=\lceil15/2\rceil-2=6$, universales por el Corolario~\ref{cor:universal}, y una cola uniforme
 en $N$ que viene de la analiticidad uniforme del cuaderno de trabajo (Z26, \texttt{celda\_k\_notas.md}, 9.22):
 $|{\rm coef}_k(\nabla e_\infty)|\le(2\bar W/t')\eps_u^{-k}$ y $|{\rm coef}_k(e_\infty)|\le\bar W\eps_u^{-k}$, con
@@ -1171,10 +1193,10 @@ $10^{-30}$):
 \toprule
 $n$ & datos & (F$_x$) certificada en & peor error/hueco\\
 \midrule
-$9$ & $\sigma_{12}$ & $\eps\le4{,}3\cdot10^{-5}$ & $4\cdot10^{-3}$\\
-$9$ & $\sigma_\infty$ & $\eps\le2{,}03\cdot10^{-8}$ & $8\cdot10^{-4}$\\
-$12$ & $\sigma_{15}$ & $\eps\le1{,}26\cdot10^{-3}$ & $0{,}18$\\
-$12$ & $\sigma_\infty$ & $\eps\le4{,}4\cdot10^{-9}$ & $2\cdot10^{-5}$\\
+$9$ & $\sigma_{12}$ & $\eps\le7{,}83\cdot10^{-5}$ & $1\cdot10^{-2}$\\
+$9$ & $\sigma_\infty$ & $\eps\le3{,}33\cdot10^{-8}$ & $4\cdot10^{-3}$\\
+$12$ & $\sigma_{15}$ & $\eps\le1{,}87\cdot10^{-3}$ & $0{,}28$\\
+$12$ & $\sigma_\infty$ & $\eps\le7{,}35\cdot10^{-9}$ & $8\cdot10^{-5}$\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1182,7 +1204,7 @@ $12$ & $\sigma_\infty$ & $\eps\le4{,}4\cdot10^{-9}$ & $2\cdot10^{-5}$\\
 \noindent
 Cada rango es todo el de Kantorovich con los mismos parámetros que la fila correspondiente de la tabla
 anterior. Así, (F$_x$) vale en todos los rangos certificados, y la sensibilidad de la tabla
-anterior es incondicional. Fuera del multiplete basta Weyl: hueco $1$ y perturbación $\ll1/2$.
+anterior es incondicional (en sus ventanas). Fuera del multiplete basta Weyl: hueco $1$ y perturbación $\ll1/2$.
 
 \paragraph{Lo que falta.} Radios razonables para $\sigma_\infty$, que piden más órdenes universales y un dominio
 uniforme mayor. Para $n=15$ y $18$ no cabe la serie de $N=18$, y sin graduar la parte demostrada de la cola de
@@ -1309,6 +1331,7 @@ Guion & Qué hace\\
 \texttt{kantorovich\_datos.py} & Newton graduado con datos $\sigma_N$ o $\sigma_\infty$, y cota de la variación del déficit (Sección~\ref{sec:datos_ext}).\\
 \texttt{newton\_datos\_ed.py} & Newton con datos $\sigma_N$ por ED: $p^*(\Theta)$, $\delta$ y la hipótesis (F$_x$).\\
 \texttt{certifica\_Fx.py} & Certificación de (F$_x$) por el complemento de Schur sobre los patrones (Sección~\ref{sec:datos_ext}).\\
+\texttt{optimiza\_\allowbreak parametros.py} & Optimización de los parámetros del polidisco, fila por fila (Sección~\ref{sec:datos_ext}).\\
 \bottomrule
 \end{tabular}
 \end{center}
