@@ -5486,15 +5486,22 @@ la bola por Taylor (parte de Θ de la tercera en 0, cuarta por la cota de L − 
 
 *n = 6 queda fuera:* h ~ ε^{2n/3−4} = ε⁰.
 
-*Resultados* (`kantorovich_datos.py`, parámetros del .tex; Kantorovich en intervalos de razón 1,01 desde 10⁻³⁰):
+*Resultados* (`kantorovich_datos.py`; en cada fila, los mejores parámetros del polidisco entre los del .tex y los de la rejilla gruesa del guion; Kantorovich en intervalos de razón 1,01 desde 10⁻³⁰):
 
 | n | datos | Kantorovich vale en | déficit en el borde | Δδ < principal/2 hasta |
 |---|---|---|---|---|
-| 12 | σ₁₅ | ε ≤ 4,88·10⁻⁴ | ≤ 1,8·10⁻³³ | **ε ≤ 4,7·10⁻⁵** |
-| 12 | σ_∞ | ε ≤ 1,25·10⁻⁹ | ≤ 7,7·10⁻⁵⁶ | ε ≤ 7,0·10⁻¹⁷ |
-| 9 | σ₁₂ | ε ≤ 3,60·10⁻⁵ (con ∂⁴ en serie) | ≤ 1,0·10⁻³⁰ | **ε ≤ 1,9·10⁻⁷** |
+| 12 | σ₁₅ | ε ≤ 1,26·10⁻³ | ≤ 1,6·10⁻²⁸ | **ε ≤ 1,3·10⁻⁴** |
+| 12 | σ_∞ | ε ≤ 4,42·10⁻⁹ | ≤ 2,5·10⁻⁵⁰ | ε ≤ 5,5·10⁻¹⁶ |
+| 9 | σ₁₂ | ε ≤ 4,31·10⁻⁵ (con ∂⁴ en serie) | ≤ 4,3·10⁻³⁰ | **ε ≤ 2,3·10⁻⁷** |
 | 9 | σ_∞ (de N = 15, k₀ = 6) | ε ≤ 2,03·10⁻⁸ | ≤ 1,1·10⁻⁴³ | ninguno (≥ 10⁻³⁰) |
 | 9 | σ_∞ (de N = 12, k₀ = 4) | sin rango | — | — |
+
+*Parámetros* (ε_a, R_h, R_m, R_s, w_m, w_s): (0,0225; 10⁻⁴; 4·10⁻³; 0,15; 1; 1) para n = 9 con σ₁₂;
+(0,03; 10⁻⁴; 4·10⁻³; 0,1; 1; 1), los del .tex, para n = 9 con σ_∞ (la rejilla da 1,87·10⁻⁸: elige por el borde
+grueso); (0,015; 4·10⁻⁵; 2·10⁻³; 0,15; 0,9; 0,9) para n = 12. Con los del .tex para todos (como en la primera
+versión) los bordes eran 3,60·10⁻⁵, 4,88·10⁻⁴ y 1,25·10⁻⁹, y la última columna 1,9·10⁻⁷, 4,7·10⁻⁵ y
+7,0·10⁻¹⁷: **la diferencia era solo la elección de parámetros** (las primeras ejecuciones los fijaban a mano; sin
+argumentos el guion recorre la rejilla). Los radios dependen bastante de ella y la rejilla no optimiza.
 
 Para n = 12 con σ₁₅, la cota de Δδ escala como ε¹⁶ = ε^{5n/3−4} (comprobado entre 10⁻⁶ y 10⁻⁴): es el término
 cruzado, no un artefacto.
@@ -5532,13 +5539,11 @@ nula. Resto: mayorante entrada a entrada con A = ε|T| + Σ|x_o||O_o|, denominad
 | n | datos | (F_x) certificada en | peor error/hueco |
 |---|---|---|---|
 | 9 | σ₁₂ | ε ≤ 4,3·10⁻⁵ | 4·10⁻³ |
-| 9 | σ_∞ | ε ≤ 1,9·10⁻⁸ | 7·10⁻⁴ |
+| 9 | σ_∞ | ε ≤ 2,03·10⁻⁸ | 8·10⁻⁴ |
 | 12 | σ₁₅ | ε ≤ 1,26·10⁻³ | 0,18 |
 | 12 | σ_∞ | ε ≤ 4,4·10⁻⁹ | 2·10⁻⁵ |
 
-Cada rango es el de Kantorovich con los parámetros que elige la rejilla del guion, y contiene el de la tabla
-de resultados. Estos bordes son mayores que los de esa tabla (4,3e-5 frente a 3,60e-5, 1,26e-3 frente a 4,88e-4, 4,4e-9
-frente a 1,25e-9): **diferencia por aclarar**; la tabla se mantiene. Con esto, **la sensibilidad de la tabla es
+Cada rango es todo el de Kantorovich con los parámetros de la fila correspondiente de la tabla de resultados. Con esto, **la sensibilidad de la tabla es
 incondicional** (módulo Z26 para σ_∞). Fuera del multiplete basta Weyl. No comprobado en el guion: la monotonía
 de E − λ_k(E) (inmediata, |λ_k'| = O(‖V‖²)).
 

@@ -1091,8 +1091,9 @@ O(\eps^{5n/3-4})$, menor que $\eps^n$ para $n\ge9$. La cota explícita que usamo
 con $\|\Delta\hat J\|$ en la bola acotada por Taylor: la parte de $\Theta$ de la tercera derivada en $0$, por su
 serie, y la cuarta por $L-L_0$.
 
-\paragraph{Resultados} (\scr{kantorovich\_datos.py}, con los parámetros de la Sección~\ref{sec:prueba} e
-intervalos de razón $1{,}01$ desde $10^{-30}$; la última columna es el rango en que la cota de $|\Delta\delta|$ es
+\paragraph{Resultados} (\scr{kantorovich\_datos.py}; los parámetros del polidisco
+son, en cada fila, los mejores entre los de la Sección~\ref{sec:prueba} y los que elige
+la rejilla gruesa del guion, y se dan debajo de la tabla; con intervalos de razón $1{,}01$ desde $10^{-30}$; la última columna es el rango en que la cota de $|\Delta\delta|$ es
 menor que la mitad de $4|b_0|\eps^n/(0{,}7\,n)$, el término principal):
 
 \begin{center}
@@ -1100,16 +1101,22 @@ menor que la mitad de $4|b_0|\eps^n/(0{,}7\,n)$, el término principal):
 \toprule
 $n$ & datos & Kantorovich & déficit (borde) & $|\Delta\delta|<\frac12$ principal\\
 \midrule
-$9$ & $\sigma_{12}$ & $\eps\le3{,}60\cdot10^{-5}$ & $\le1{,}0\cdot10^{-30}$ & $\eps\le1{,}9\cdot10^{-7}$\\
+$9$ & $\sigma_{12}$ & $\eps\le4{,}31\cdot10^{-5}$ & $\le4{,}3\cdot10^{-30}$ & $\eps\le2{,}3\cdot10^{-7}$\\
 $9$ & $\sigma_\infty$ & $\eps\le2{,}03\cdot10^{-8}$ & $\le1{,}1\cdot10^{-43}$ & ninguno ($\ge10^{-30}$)\\
-$12$ & $\sigma_{15}$ & $\eps\le4{,}88\cdot10^{-4}$ & $\le1{,}8\cdot10^{-33}$ & $\eps\le4{,}7\cdot10^{-5}$\\
-$12$ & $\sigma_\infty$ & $\eps\le1{,}25\cdot10^{-9}$ & $\le7{,}7\cdot10^{-56}$ & $\eps\le7{,}0\cdot10^{-17}$\\
+$12$ & $\sigma_{15}$ & $\eps\le1{,}26\cdot10^{-3}$ & $\le1{,}6\cdot10^{-28}$ & $\eps\le1{,}3\cdot10^{-4}$\\
+$12$ & $\sigma_\infty$ & $\eps\le4{,}42\cdot10^{-9}$ & $\le2{,}5\cdot10^{-50}$ & $\eps\le5{,}5\cdot10^{-16}$\\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \noindent
-Para $n=9$ se usa la serie de $\partial^4$, como en la Sección~\ref{sec:prueba}. Para $n=12$ con $\sigma_{15}$, la cota de $|\Delta\delta|$ escala como $\eps^{16}=\eps^{5n/3-4}$ entre $10^{-6}$ y
+Parámetros $(\eps_a;R_h;R_m;R_s;w_m;w_s)$: $(0{,}0225;\,10^{-4};\,4\cdot10^{-3};\,0{,}15;\,1;\,1)$ para $n=9$ con $\sigma_{12}$;
+$(0{,}03;\,10^{-4};\,4\cdot10^{-3};\,0{,}1;\,1;\,1)$, los de la Sección~\ref{sec:prueba}, para $n=9$ con
+$\sigma_\infty$ (la rejilla da ahí $1{,}87\cdot10^{-8}$, porque elige por el borde grueso); y
+$(0{,}015;\,4\cdot10^{-5};\,2\cdot10^{-3};\,0{,}15;\,0{,}9;\,0{,}9)$ para $n=12$. Con los de la
+Sección~\ref{sec:prueba} los bordes eran $3{,}60\cdot10^{-5}$, $4{,}88\cdot10^{-4}$ y $1{,}25\cdot10^{-9}$, y la
+última columna $1{,}9\cdot10^{-7}$, $4{,}7\cdot10^{-5}$ y $7{,}0\cdot10^{-17}$: los radios dependen bastante de esa
+elección, y la rejilla no es una optimización. Para $n=9$ se usa la serie de $\partial^4$, como en la Sección~\ref{sec:prueba}. Para $n=12$ con $\sigma_{15}$, la cota de $|\Delta\delta|$ escala como $\eps^{16}=\eps^{5n/3-4}$ entre $10^{-6}$ y
 $10^{-4}$: es el término cruzado, no un artefacto. Para $\sigma_\infty$ (con $n=9$ y $12$) se usan los coeficientes de $\sigma_{15}$
 hasta el orden $k_0=\lceil15/2\rceil-2=6$, universales por el Corolario~\ref{cor:universal}, y una cola uniforme
 en $N$ que viene de la analiticidad uniforme del cuaderno de trabajo (Z26, \texttt{celda\_k\_notas.md}, 9.22):
@@ -1165,7 +1172,7 @@ $10^{-30}$):
 $n$ & datos & (F$_x$) certificada en & peor error/hueco\\
 \midrule
 $9$ & $\sigma_{12}$ & $\eps\le4{,}3\cdot10^{-5}$ & $4\cdot10^{-3}$\\
-$9$ & $\sigma_\infty$ & $\eps\le1{,}9\cdot10^{-8}$ & $7\cdot10^{-4}$\\
+$9$ & $\sigma_\infty$ & $\eps\le2{,}03\cdot10^{-8}$ & $8\cdot10^{-4}$\\
 $12$ & $\sigma_{15}$ & $\eps\le1{,}26\cdot10^{-3}$ & $0{,}18$\\
 $12$ & $\sigma_\infty$ & $\eps\le4{,}4\cdot10^{-9}$ & $2\cdot10^{-5}$\\
 \bottomrule
@@ -1173,9 +1180,8 @@ $12$ & $\sigma_\infty$ & $\eps\le4{,}4\cdot10^{-9}$ & $2\cdot10^{-5}$\\
 \end{center}
 
 \noindent
-Cada rango es el de Kantorovich con los parámetros del polidisco que elige la rejilla del guion de certificación, y
-contiene el de la tabla anterior (estos bordes son mayores que los de la tabla, y la diferencia está por aclarar; la
-tabla anterior se mantiene). Así, (F$_x$) vale en todos los rangos certificados, y la sensibilidad de la tabla
+Cada rango es todo el de Kantorovich con los mismos parámetros que la fila correspondiente de la tabla
+anterior. Así, (F$_x$) vale en todos los rangos certificados, y la sensibilidad de la tabla
 anterior es incondicional. Fuera del multiplete basta Weyl: hueco $1$ y perturbación $\ll1/2$.
 
 \paragraph{Lo que falta.} Radios razonables para $\sigma_\infty$, que piden más órdenes universales y un dominio
