@@ -1,0 +1,1183 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla,es-noshorthands]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{icomma}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{teorema}{Teorema}
+\newtheorem{lema}[teorema]{Lema}
+\newtheorem{proposicion}[teorema]{Proposición}
+\newtheorem{corolario}[teorema]{Corolario}
+\theoremstyle{definition}
+\newtheorem{definicion}[teorema]{Definición}
+\theoremstyle{remark}
+\newtheorem*{observacion}{Observación}
+
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\ket}[1]{|#1\rangle}
+\newcommand{\bra}[1]{\langle #1|}
+\newcommand{\ev}[1]{\langle #1\rangle}
+\newcommand{\Pasc}{P_{\mathrm{asc}}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\pE}{p_{E}}
+\newcommand{\ploc}{p_{\mathrm{loc}}}
+\newcommand{\scr}[1]{\texttt{scripts/#1}}
+
+\title{Pegado de marginales en un anillo con holonomía:\\
+la sensibilidad de un orden de celda tres es exactamente de orden $\eps^{n}$}
+\author{Alejandro Gama}
+\date{27 de noviembre de 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Dados unos datos de dos sitios $\sigma$, invariantes por una carga $U(1)$, y una holonomía $\Theta$
+repartida alrededor de un anillo de $n$ sitios, sea $p(n,\Theta)$ el mayor peso $p$ para el que
+$I/d^2+p\,(\sigma-I/d^2)$, girado arista a arista, es la familia de marginales de un estado del anillo.
+Estudiamos la dependencia de $p$ en $\Theta$ para los datos de un orden clásico de celda $k=3$ en un
+anillo de espín $1$, $H=-\sum P_{\rm asc}+\eps\sum(e^{i\Theta/n}S^+S^-+\text{h.c.})$, con $n\in3\mathbb Z$.
+Los resultados son cuatro. (i) Un desarrollo por caminos muestra que, con carga entera por celda, cada
+nivel del multiplete fundamental es independiente de $\Theta$ hasta el orden $\eps^{n-1}$, y da el
+coeficiente de orden $\eps^{n}$ en forma cerrada y racional, que nunca se anula. El multiplete se separa en
+el orden $\eps^{2n/3}$ con signo fijo, así que el fundamental tiene momento $0$, con radio certificado en
+todo el rango usado. (ii) $p(n,\Theta)$ está acotado por arriba
+por un techo local ciego a $\Theta$ y por una cota de energía $\pE(n,\Theta)$ que ve $\Theta$ exactamente
+a través de la energía fundamental; numéricamente, el techo local manda en $n=6$ (SDP) y la cota de energía desde $n=9$. (iii) Con datos autoconsistentes (la marginal del propio anillo), probamos
+$p(n,\Theta)=\pE(n,\Theta)-\delta_n(\Theta)$ con $0\le\delta_n=O(\eps^{2n-4})$ ($n\le12$; $O(\eps^{2n-8})$ para
+$n=15,18$), de modo que la
+sensibilidad de $p$ es exactamente la de la energía, de orden $\eps^n$ con el coeficiente de (i).
+(iv) La prueba de (iii) es un Newton--Kantorovich graduado en una familia de Hellmann--Feynman, con
+analiticidad por Bauer--Fike, un lema de soporte ponderado y series en $\eps$ con colas de Cauchy;
+queda certificada, con constantes explícitas calculadas en coma flotante validada, para
+$0<\eps\le8{,}7\cdot10^{-5}$ ($n=6$), $1{,}18\cdot10^{-2}$ ($n=9$), $4{,}1\cdot10^{-3}$ ($n=12$),
+$6{,}9\cdot10^{-8}$ ($n=15$) y $5{,}0\cdot10^{-6}$ ($n=18$). Separamos con cuidado lo demostrado
+analíticamente de lo comprobado o certificado numéricamente, y damos los guiones que reproducen cada
+número.
+\end{abstract}
+
+\tableofcontents
+
+%=====================================================================
+\section{Introducción}
+%=====================================================================
+
+Unos estados de dos sitios se pueden \emph{pegar} en un anillo si son las marginales de arista de un
+mismo estado global. Si los datos son invariantes por una carga $U(1)$ y cada arista los ve en sus
+propios ejes, girados en un ángulo $\Theta/n$ respecto de la anterior, el giro total $\Theta$ es una
+holonomía: ninguna arista la ve, pero puede impedir el pegado. El mayor peso pegable $p(n,\Theta)$
+(Definición~\ref{def:p}) es el valor de un programa semidefinido (SDP), y su dependencia en $\Theta$
+mide cuánto nota el problema global una holonomía invisible localmente. Por dualidad, esa dependencia
+es la respuesta a un flujo de un hamiltoniano \emph{testigo}.
+
+Este trabajo estudia el caso de un orden clásico de periodo $3$ perturbado por saltos de carga, el
+ejemplo mínimo con celda $k=3$ (Sección~\ref{sec:modelo}). Con $n\in3\mathbb Z$, el orden cabe en el
+anillo y el fundamental es un multiplete de tres niveles separado del resto. La pregunta es en qué
+orden de $\eps$ ve $p$ la holonomía, y con qué coeficiente.
+
+\paragraph{Resultados.}
+\begin{enumerate}
+\item \emph{Orden del enrollamiento} (Teoremas~\ref{teo:caminos} y~\ref{teo:enrollamiento}). Los
+  coeficientes de Taylor en $\eps$ de los niveles del multiplete son sumas sobre caminos de saltos.
+  Con carga entera por celda, ningún camino de menos de $n$ saltos nota $\Theta$, y el término de orden
+  $n$ es $2\,\mathrm{Re}(b_\kappa e^{i\Theta})\eps^n$, con $b_\kappa$ una suma racional explícita sobre caminos
+  de $n$ saltos en el mismo sentido, que nunca se anula (Corolario~\ref{cor:b0}). El multiplete se
+  separa en el orden exacto $\eps^{2n/3}$ con un coeficiente negativo, así que el fundamental tiene
+  momento $0$ (Proposición~\ref{prop:tunel}). Todo es analítico y vale para todo $n\in3\mathbb Z$.
+\item \emph{Cotas generales para $p$} (Sección~\ref{sec:cotas}). Un techo local
+  $\ploc=(1/9)/(1/9-\lambda_{\min}(\sigma))$, ciego a $\Theta$; una cota de energía
+  $\pE(n,\Theta)=1+(e_R-E_0(n,\Theta)/n)/(\bar e-e_R)$, que ve $\Theta$ solo a través de la energía
+  fundamental; y una cota inferior uniforme en $n$ y en $\Theta$, por anclaje y pegado de piezas. Las
+  tres son analíticas. Numéricamente, el SDP muestra que en $n=6$ se alcanza $\ploc$ (sensibilidad
+  cero hasta $\eps\approx0{,}23$), y la evaluación de $\pE$ por ED, que desde $n=9$ se tiene $\pE<\ploc$.
+\item \emph{La sensibilidad es la de la energía} (Teorema~\ref{teo:principal}). Con datos
+  autoconsistentes,
+  \[
+    p(n,0)-p(n,\Theta)=\frac{E_0(n,\Theta)-E_0(n,0)}{n(\bar e-e_R)}+\delta_n(\Theta),\qquad
+    0\le\delta_n(\Theta)=O(\eps^{2n-4}),
+  \]
+  ($O(\eps^{2n-8})$ en la variante sin graduar que usamos para $n=15,18$), y el primer término es de orden exactamente $\eps^n$, con el coeficiente del punto 1.
+\item \emph{Certificación} (Sección~\ref{sec:prueba}). La cota inferior de $p$ se obtiene resolviendo
+  con Newton--Kantorovich las ecuaciones de marginales para el fundamental de $H+\sum_ax_aO_a$. El
+  jacobiano es la susceptibilidad estática, con direcciones blandas de orden $\eps^4$, y la prueba
+  necesita una versión graduada, con pesos $(1,\eps,\eps^2)$, apoyada en un lema de soporte ponderado.
+  Las constantes se certifican para $n=6,9,12,15,18$ con radios explícitos.
+\end{enumerate}
+
+\paragraph{Qué es analítico y qué es numérico.} La Sección~\ref{sec:estado} lo resume en una tabla.
+En corto: los Teoremas~\ref{teo:caminos} y~\ref{teo:enrollamiento}, las cotas de la
+Sección~\ref{sec:cotas}, los Lemas~\ref{lem:bf} y~\ref{lem:soporte}, la positividad graduada exacta en
+racionales y el esquema de Newton--Kantorovich son demostraciones. Los radios del
+Teorema~\ref{teo:principal} son un certificado asistido por ordenador: los coeficientes de las series
+se calculan en doble precisión (validados contra diagonalización exacta, contra los racionales exactos
+y por la estructura de corrientes), no en aritmética de intervalos. Los valores de los SDP y las
+comparaciones con diagonalización exacta (ED) son numéricos.
+
+%=====================================================================
+\section{Marco}\label{sec:marco}
+%=====================================================================
+
+Anillo $\mathbb Z_n$ con espacio local $\mathbb C^d$ y una carga $Q=\sum_sq_s\ket s\bra s$ entera. Sea
+$\sigma$ un estado de dos sitios invariante bajo $e^{-itQ}\otimes e^{-itQ}$ y $\tau=\sigma-I/d^2$. En el
+\emph{gauge uniforme}, la holonomía $\Theta$ se reparte como $\varphi=\Theta/n$ por arista, con
+$V=e^{-i\varphi Q}$, y la arista $j\to j+1$ lleva
+\begin{equation}\label{eq:rhop}
+  \rho(p;\Theta)=\frac I{d^2}+p\,\tau(\Theta),\qquad \tau(\Theta)=(1\otimes V)\,\tau\,(1\otimes V)^\dagger .
+\end{equation}
+
+\begin{definicion}\label{def:p}
+$p(n,\Theta)$ es el mayor $p$ para el que existe un estado $\omega$ del anillo con
+$\tr_{\Lambda\setminus\{j,j+1\}}\omega=\rho(p;\Theta)$ en todas las aristas $j\to j+1$.
+\end{definicion}
+
+El conjunto de los $p$ admisibles es un intervalo cerrado (por convexidad y compacidad), y
+$p(n,\Theta)$ es el valor de un SDP. Como los datos son invariantes por la $U(1)$ y por traslaciones
+(en el gauge uniforme), basta buscar $\omega$ invariante por ambas: promediar un $\omega$ admisible
+sobre traslaciones y sobre la $U(1)$ global no cambia sus marginales. La \emph{sensibilidad} es
+$s_n=\sup_{\Theta,\Theta'}|p(n,\Theta)-p(n,\Theta')|$.
+
+\paragraph{Covarianza gauge.} Si $h$ es un término hermítico de dos sitios invariante por la $U(1)$ y
+$h(\Theta)=(1\otimes V)h(1\otimes V)^\dagger$, entonces $H_n(\Theta)=\sum_jh_{j,j+1}(\Theta)$ es el
+anillo con flujo $\Theta$, y $\tr\big(h(\Theta)\rho(p;\Theta)\big)=\tr h/d^2+p\,\tr(h\tau)$ no depende
+de $\Theta$. El gauge grande $\Gamma=\prod_xe^{-i(2\pi/n)xQ_x}$ cumple $\Gamma H_n(\Theta)\Gamma^\dagger=H_n(\Theta+2\pi)$,
+porque en la arista que cierra el anillo sobra $e^{-2\pi iQ}=1$.
+
+\paragraph{Notación.} Para evitar ambigüedades, fijamos:
+\begin{center}
+\begin{tabular}{>{\raggedright}p{3.2cm}>{\raggedright\arraybackslash}p{11.3cm}}
+\toprule
+Símbolo & Significado\\
+\midrule
+$p$, $\pE$, $\ploc$ & peso pegable (Definición~\ref{def:p}) y sus cotas; $p$ no es nunca un momento\\
+$\kappa\in\{0,\pm2\pi/3\}$ & momento de un nivel del multiplete: $\lambda_\kappa$, $\chi_\kappa$, $b_\kappa$\\
+$T$; $\Gamma$; $V$ & traslación; gauge grande; giro local $e^{-i\varphi Q}$\\
+$\mathcal V$, $R$ & parte de saltos de $H$ y resolvente reducida en las series de Kato\\
+$\mathcal A$, $a_r$, $t_n$ & matriz circulante en los patrones, sus entradas y el coeficiente del túnel\\
+$\mathcal D$; $D$ & dipolo; desplazamiento de la marginal del fundamental girado\\
+$w$ & número de vueltas (frecuencia en $\Theta$) de un camino\\
+$W$ & complemento de dimensión $14$ de las direcciones nulas de $\chi$\\
+$\mathcal R_n$ & rango en $\Theta$ del fundamental\\
+$h$; $h_{\rm K}$ & término de arista; parámetro de Newton--Kantorovich\\
+$\tau$; $\varrho$, $\varpi$ & $\sigma-I/d^2$; radios de Cauchy y del polidisco\\
+$\nu=|\eps|/\eps_a$ & cociente de Schwarz y Cauchy\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%=====================================================================
+\section{El modelo}\label{sec:modelo}
+%=====================================================================
+
+Espín $1$, $s\in\{0,1,2\}$, $Q=S^z=s-1$, $d=3$. Sea $\Pasc$ el proyector sobre los pares ascendentes
+$(s,s+1\bmod3)$, es decir, $\ket{01},\ket{12},\ket{20}$. El término de arista es
+\begin{equation}\label{eq:h}
+  h(\Theta)=-\Pasc+\eps\big(e^{i\Theta/n}S^+\otimes S^-+e^{-i\Theta/n}S^-\otimes S^+\big),
+  \qquad H_n(\eps,\Theta)=\sum_{j\in\mathbb Z_n}h_{j,j+1}(\Theta),
+\end{equation}
+con $\eps$ real (o complejo cuando se hable de analiticidad). Cada salto $S^+_jS^-_{j+1}$ tiene amplitud
+$2$ entre configuraciones. $H_n$ conmuta con la traslación $T$ y con la carga total $Q_{\rm tot}$.
+
+\subsection{El orden clásico}
+
+\begin{lema}[clásico]\label{lem:clasico}
+Las configuraciones con todos los enlaces ascendentes existen si y solo si $3\mid n$. En ese caso son
+exactamente tres, los \emph{patrones} $c_r(j)=(j+r)\bmod3$, $r\in\mathbb Z_3$, y dos patrones distintos
+difieren en todos los sitios. Cualquier otra configuración, de cualquier carga, tiene al menos dos
+enlaces no ascendentes y energía clásica $-n+\#\{\text{enlaces no ascendentes}\}\ge-n+2$.
+\end{lema}
+
+\begin{proof}
+Cada valor tiene un único sucesor ascendente, así que una configuración con todos los enlaces
+ascendentes es $s_j=j+r$, y cierra si y solo si $3\mid n$. Los patrones difieren en todos los sitios
+porque $j+r\not\equiv j+r'$. Para la última afirmación: los incrementos $s_{j+1}-s_j\bmod 3$ suman
+$0\bmod3$; con exactamente una pared (incremento $0$ o $2$) la suma sería $(n-1)+\{0,2\}\not\equiv0$,
+así que hay al menos dos.
+\end{proof}
+
+Los patrones tienen carga $Q_c=\sum_{s=0}^2(s-1)=0$ por celda: \emph{carga entera por celda}.
+
+\paragraph{El multiplete.} Sea $3\mid n$. Con $\eps$ complejo pequeño (para $n$ fijo), dentro de la
+circunferencia $|z+n|=1$ hay exactamente tres autovalores de $H_n$, analíticos por la teoría de Kato. La
+traslación permuta cíclicamente los patrones, así que cada sector de momento
+$\kappa\in\{0,\pm2\pi/3\}$ contiene uno, $\lambda_\kappa(n,\Theta,\eps)$, generado a orden cero por
+$\ket{\chi_\kappa}=3^{-1/2}\sum_r e^{-i\kappa r}\ket{c_r}$.
+
+\subsection{Datos autoconsistentes}\label{sec:datos}
+
+Sea $\psi_0$ el vector del nivel $\lambda_0$ (momento $0$) de $H_n(\eps,0)$, y
+\[
+  \sigma=\sigma_n(\eps):=\text{marginal de arista de }\ket{\psi_0}\bra{\psi_0},\qquad
+  e_R=\tr(h(0)\sigma)=\lambda_0(n,0,\eps)/n,\qquad \bar e=\tr h/9=-\tfrac13 .
+\]
+Con esos datos, el propio $\psi_0$ da $p(n,0)\ge1$. Usamos además:
+
+\smallskip\noindent\textbf{(F)} \emph{El nivel de momento $0$ es el fundamental de $H_n(\eps,\Theta)$
+para toda $\Theta$.}
+
+\smallskip
+Los niveles $\lambda_\kappa$ se separan en el orden del túnel entre patrones, exactamente $\eps^{2n/3}$, con un
+coeficiente de signo fijo, mientras que su dependencia en $\Theta$ empieza en $\eps^n$
+(Teorema~\ref{teo:enrollamiento}). Por eso (F) vale para todo $n\in3\mathbb Z$ y $\eps$ real pequeño
+(Proposición~\ref{prop:tunel}). Por ED, el fundamental tiene además momento $0$ en $n=6,9,12$
+($\eps=0{,}05$ y $0{,}1$) y en $n=15$ ($\eps=0{,}1$ y $0{,}15$), muy por encima del régimen perturbativo. Con (F),
+$E_0(n,\Theta)=\lambda_0(n,\Theta,\eps)$ y $p(n,0)=1$ (Proposición~\ref{prop:energia}).
+
+%=====================================================================
+\section{Perturbaciones por caminos}\label{sec:caminos}
+%=====================================================================
+
+\begin{teorema}[caminos]\label{teo:caminos}
+Sea $3\mid n$ y $N=\lceil n/2\rceil$. Hay números $e^{(m)}$ que dependen solo de $h$ (no de $n$, de
+$\Theta$ ni de $\kappa$) tales que
+\begin{enumerate}
+\item $\lambda_\kappa^{(m)}(n,\Theta)=n\,e^{(m)}$ para $0\le m\le N-1$ y todo $\kappa$
+  (extensividad, y anchura del multiplete $O(\eps^{N})$; el orden exacto, $2n/3$, está en la
+  Proposición~\ref{prop:tunel});
+\item la media $\bar\lambda=\frac13\sum_\kappa\lambda_\kappa$ tiene coeficientes $\bar\lambda^{(m)}$ independientes
+  de $\Theta$ para $m\le n-1$;
+\item $\lambda_\kappa(n,\Theta+2\pi,\eps)=\lambda_{\kappa+2\pi Q_c/3}(n,\Theta,\eps)=\lambda_\kappa(n,\Theta,\eps)$.
+\end{enumerate}
+\end{teorema}
+
+\begin{proof}
+\emph{Caminos.} $-\Pasc$ es diagonal en la base de configuraciones, así que su resolvente reducida y
+el proyector $P_0$ sobre los patrones también lo son. Los coeficientes de orden $m$ del proyector de
+Riesz $P$, de $HP$ y de la transformación de Kato
+$U_{\rm K}=(1-(P-P_0)^2)^{-1/2}[PP_0+(1-P)(1-P_0)]$ son combinaciones de palabras $Z_0\mathcal VZ_1\mathcal V\cdots\mathcal VZ_m$, con
+$Z_i$ diagonales y $\mathcal V=\sum_bv_b(\Theta)$ la parte de saltos. Un elemento de matriz de una palabra es una
+suma sobre caminos de $m$ saltos; cada salto por un enlace $b$ mueve una unidad de carga y multiplica la
+amplitud por $e^{\pm i\Theta/n}$. Nada más depende de $\Theta$.
+
+\emph{Túnel (punto 1, mitad).} $\mathcal A=U_{\rm K}^{-1}HU_{\rm K}$ deja invariante el espacio de los patrones, sobre el que es
+circulante, $\mathcal A_{r'r}=a_{r'-r}$, con autovalores $\lambda_\kappa=\sum_ra_re^{i\kappa r}$ y $a_0=\bar\lambda$. Si
+$r\ne r'$, $\mathcal A^{(m)}_{r'r}$ es una suma sobre caminos de $c_r$ a $c_{r'}$; como difieren en los $n$ sitios
+y cada salto cambia dos, $m\ge n/2$. Luego $\lambda_\kappa^{(m)}=\bar\lambda^{(m)}$ para $m\le N-1$.
+
+\emph{Enrollamiento (punto 2).} $\bar\lambda^{(m)}=a_0^{(m)}$ es una suma sobre caminos cerrados de
+$c_0$ a $c_0$. Sea $J_b$ la carga neta que cruza el enlace $b$; la conservación en cada sitio de un
+camino cerrado da $J_b=w$ para todo $b$, y la fase total es $e^{\pm i\Theta w}$. Si $m\le n-1$, algún
+enlace no se usa, $w=0$ y la fase es $1$.
+
+\emph{Extensividad (punto 1, otra mitad).} Se dan variables $\eps_b$ independientes por enlace. El
+coeficiente de $\eps^\alpha$ en $\bar\lambda$ se anula salvo que el soporte de $\alpha$ sea conexo
+(enlaces a distancia $\le2$): si se parte en dos bloques $A,B$ cuyos sitios $S_A,S_B$ distan $\ge2$, el
+espacio $\mathcal K_r$ de configuraciones iguales a $c_r$ fuera de $S_A\cup S_B$ es invariante, los $\mathcal K_r$ son
+ortogonales y en $\mathcal K_r\cong\mathbb C^{S_A}\otimes\mathbb C^{S_B}$ el hamiltoniano es
+$-n+h_A^{(r)}\otimes1+1\otimes h_B^{(r)}$, con cero clásico único en $c_r$ (Lema~\ref{lem:clasico}
+aplicado a cada arco). Así el multiplete es $\{-n+\mu_A^{(r)}+\mu_B^{(r)}\}$, sin monomios mixtos. Un
+soporte conexo de $m\le N-1$ enlaces vive en un arco de $\le2m\le n-1$ sitios; allí el giro se elimina
+con el gauge diagonal $\prod_{x}V^{x-x_0}$, y el coeficiente es el del racimo levantado a $\mathbb Z$,
+invariante por traslación tras promediar en $r$. Sumando, $\bar\lambda^{(m)}=n\,e^{(m)}$.
+
+\emph{Gauge grande (punto 3).} $\Gamma$ lleva $H_n(\Theta)$ a $H_n(\Theta+2\pi)$ y cumple
+$T\Gamma=\Gamma e^{i(2\pi/n)Q_{\rm tot}}T$; en el multiplete $Q_{\rm tot}=nQ_c/3=0$.
+\end{proof}
+
+La misma prueba de extensividad vale si se añade a $H$ un término local invariante por traslación. Es lo
+que hace falta para la susceptibilidad de la Sección~\ref{sec:principal}.
+
+\begin{corolario}[universalidad]\label{cor:universal}
+Sea $o$ un término de arista hermítico e invariante por la $U(1)$, $O=\sum_jo_{j,j+1}$, y sea
+$\lambda_0(\eps,t)$ el nivel de momento $0$ de $H_n(\eps,0)+tO$. Si $k+l\le\lceil n/2\rceil-1$, el coeficiente
+de $\eps^kt^l$ de $\lambda_0/n$ no depende de $n$. En particular, como
+$\chi(c)=-\frac1{2n}\partial_t^2\lambda_0|_{t=0}$ para $o=\sum_ac_ao_a$, los coeficientes de $\chi$ hasta el orden
+$\eps^K$ son los mismos para todos los $n\in3\mathbb Z$ con $K+2\le\lceil n/2\rceil-1$ (con $K=8$, $n\ge21$).
+\end{corolario}
+
+\begin{proof}
+Primero se quita la parte diagonal de $o$ en los pares ascendentes. Sea $\bar o$ su media sobre
+$(01),(12),(20)$. Las desviaciones suman $0$, así que hay $g$ en $\mathbb Z_3$ con
+$g(a+1)-g(a)=o(a,a+1)-\bar o$, y $o'=o-\bar o-(g(y)-g(x))$ (en la diagonal) cumple $O=O'+n\bar o$, porque
+$\sum_j(g(s_{j+1})-g(s_j))=0$ en el anillo. Ahora $o'$ se anula en los pares ascendentes, el término $tn\bar o$
+es universal, y $-\sum\Pasc+t\,\mathrm{diag}(O')$ es diagonal, con los patrones en $-n$ y cada pared desplazada
+en $O(|t|)$. Cada movimiento de $O'$ fuera de la diagonal cambia a lo sumo dos sitios, así que el túnel entre
+patrones sigue necesitando $\ge n/2$ movimientos y los $\lambda_\kappa$ coinciden hasta el orden total
+$\lceil n/2\rceil-1$ en $(\eps,t)$. La prueba de extensividad del Teorema~\ref{teo:caminos}, con variables
+independientes $\eps_b,t_b$ por enlace, se repite sin cambios: un soporte conexo de $\le\lceil n/2\rceil-1$
+enlaces vive en un arco de $\le n-1$ sitios y da el coeficiente del racimo levantado a $\mathbb Z$.
+\end{proof}
+
+\noindent
+El corolario no dice nada de $n=18$ en orden $8$ ($K+2=10>8$). La comparación de la serie de $n=18$ con la
+universal descansa en un recuento más fino (túnel en $2n/3$ saltos simples) y en la coincidencia numérica de
+$n=15$ y $18$ hasta el orden $6$.
+
+\subsection{El túnel y la hipótesis (F)}
+
+La cota $m\ge n/2$ del túnel cuenta sitios. Si se cuenta carga, se obtiene el orden exacto, y los caminos
+mínimos tienen todos el mismo signo.
+
+\begin{proposicion}[túnel]\label{prop:tunel}
+Sea $n\in3\mathbb Z$ y sea $\eps$ real.
+\begin{enumerate}
+\item Todo camino de saltos de un patrón a otro distinto tiene al menos $2n/3$ saltos, y hay caminos de
+  $2n/3$ saltos de $c_0$ a $c_{\pm1}$ que no pasan por ningún patrón.
+\item Los coeficientes $a_{\pm1}^{(m)}$ de la matriz circulante $\mathcal A$ se anulan para $m<2n/3$, y
+  \[
+    a_{\pm1}^{(2n/3)}=t_n^\pm:=\sum_{\substack{\text{caminos de }2n/3\text{ saltos}\\ c_0\to c_{\pm1}}}\
+    \prod_{\text{saltos}}2\ \prod_{\text{intermedios }m}\frac1{-n-E_{\rm cl}(m)}\ <\ 0 ,
+  \]
+  sin dependencia en $\Theta$. Todos los sumandos tienen el signo $(-1)^{2n/3-1}=-1$.
+\item Para $\kappa=\pm2\pi/3$ y uniformemente en $\Theta$,
+  \[
+    \lambda_\kappa(n,\Theta,\eps)-\lambda_0(n,\Theta,\eps)=3|t_n|\,\eps^{2n/3}+O(\eps^{2n/3+1}).
+  \]
+  En particular, existe $\eps_F(n)>0$ tal que (F) vale para $0<|\eps|<\eps_F(n)$.
+\end{enumerate}
+\end{proposicion}
+
+\begin{proof}
+\emph{Punto 1.} De $c_0$ a $c_1$, los $2n/3$ sitios con $s\in\{0,1\}$ cambian en $+1$ y los $n/3$ con $s=2$
+en $-2$, así que $\sum_j|s_j-c_0(j)|$ pasa de $0$ a $4n/3$. Un salto cambia dos sitios en una unidad, y esa
+suma en $2$ como mucho, luego hacen falta al menos $2n/3$ saltos. De $c_0$ a $c_{-1}=c_2$ el recuento es el
+mismo, y entre otros pares de patrones se sigue por traslación. Para la existencia, en cada celda
+$(0,1,2)$ se pasa primero una unidad del sitio de valor $2$ a su vecino izquierdo, $(0,1,2)\to(0,2,1)$,
+en todas las celdas. Después, en todas, una unidad del tercer sitio al primero de la celda siguiente.
+Cada celda queda en $(1,2,0)$, es decir, en $c_1$. Los estados intermedios contienen un enlace $(0,2)$ o
+$(1,1)$ no ascendente, así que no son patrones. El camino especular lleva a $c_2$.
+
+\emph{Punto 2.} Como en la prueba del Teorema~\ref{teo:caminos}, $\mathcal A^{(m)}_{10}$ es una suma de palabras
+$Z_0\mathcal VZ_1\mathcal V\cdots\mathcal VZ_m$ entre $c_0$ y $c_1$. Las palabras que pasan por un patrón intermedio contienen un
+tramo cerrado ($\ge2$ saltos) más un tramo de túnel ($\ge2n/3$ saltos), y su orden es $>2n/3$. Así,
+$a_{\pm1}^{(m)}=0$ si $m<2n/3$, y en $m=2n/3$ solo queda el término sin retorno
+$\bra{c_{\pm1}}\mathcal V(R\mathcal V)^{2n/3-1}\ket{c_0}$ restringido a caminos mínimos, con $R$ la resolvente reducida de
+$-\sum\Pasc$ en $-n$. A $\Theta=0$, cada salto, en los dos sentidos, aporta $+2$. Cada denominador
+$-n-E_{\rm cl}(m)$ es $\le-2$ por el Lema~\ref{lem:clasico}. Con $2n/3$ saltos y $2n/3-1$ intermedios,
+cada sumando tiene signo $(-1)^{2n/3-1}=-1$, porque $2n/3$ es par. La suma no es vacía por el punto 1. La
+fase de un camino entre patrones es $e^{i\Theta J/n}$ con $J\equiv0\pmod n$ (Lema~\ref{lem:dipolo}) y
+$|J|\le2n/3<n$, así que $J=0$ y no hay $\Theta$.
+
+\emph{Punto 3.} $\mathcal A=U_{\rm K}^{-1}HU_{\rm K}$ es hermítica para $\eps$ real, así que $a_{-1}=\bar a_1$, y
+$\lambda_\kappa-\lambda_0=a_1(e^{i\kappa}-1)+a_{-1}(e^{-i\kappa}-1)$. Con $a_{\pm1}=t_n\eps^{2n/3}+O(\eps^{2n/3+1})$ y
+$t_n=t_n^+=t_n^-$ real (por la hermiticidad en el orden principal), queda
+$2t_n(\cos\kappa-1)\eps^{2n/3}=3|t_n|\eps^{2n/3}$ para $\kappa=\pm2\pi/3$. Los coeficientes son analíticos en $\eps$ y
+continuos en $\Theta$ en un compacto (periodo $2\pi$ por el punto 3 del Teorema~\ref{teo:caminos}), así que
+el resto es uniforme en $\Theta$. En los sectores de carga $Q_{\rm tot}\ne0$ no hay patrones, así que, por el
+Lema~\ref{lem:clasico}, toda configuración tiene al menos dos paredes y energía clásica $\ge-n+2$. Esos
+sectores quedan a distancia $\ge2-O(\eps)$ del multiplete.
+\end{proof}
+
+\paragraph{Coeficientes y comprobación} (\scr{tunel\_signo.py}, en fracciones). Aquí $c_0\to c_1$ y
+$c_0\to c_{-1}$ dan el mismo valor:
+
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+$n$ & $t_n$ & $3|t_n|$ & ED: $(\lambda_{\pm2\pi/3}-\lambda_0)/\eps^{2n/3}$, $\eps=0{,}01$\\
+\midrule
+$6$ & $-352/27$ & $39{,}111$ & $39{,}136$\\
+$9$ & $-6592/81$ & $244{,}15$ & $244{,}39$\\
+$12$ & $-1206016/2187$ & $1654{,}3$ & $1664$ ($\eps=0{,}02$)\\
+$15$ & $-76647680/19683$ & $11682{,}3$ & ---\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+En los tres casos con ED, el fundamental del sector $S^z=0$ tiene momento $0$. Para $n=12$ y $\eps=0{,}01$,
+la separación ($\sim10^{-13}$) está al nivel de la tolerancia del diagonalizador.
+
+\paragraph{El radio de (F)} (\scr{radio\_F.py}). La Proposición~\ref{prop:tunel} no da $\eps_F(n)$. Se
+acota con el mismo esquema de series y colas de Cauchy de la Sección~\ref{sec:prueba}, aplicado a
+$g_\kappa=\lambda_\kappa-\lambda_0$ ($\kappa=\pm2\pi/3$).
+\begin{itemize}
+\item \emph{Analiticidad.} En cada sector de carga $0$ y momento $\kappa$, $-\sum\Pasc$ es diagonal, con un único
+  nivel $-n$ y el resto $\ge-n+2$. Por Bauer--Fike (como en el Lema~\ref{lem:bf}, sin parte diagonal),
+  para $|\eps|<\varrho_0=1/(2\sqrt2\,n)$, cada $\lambda_\kappa$ es analítico y $|\lambda_\kappa+n|\le2\sqrt2\,n|\eps|$.
+  Así, $|g_\kappa|\le M(\varrho)=4\sqrt2\,n\varrho$ en $|\eps|=\varrho<\varrho_0$.
+\item \emph{Serie.} Los coeficientes de $\lambda_\kappa$ hasta el orden $K=2j+1$ salen de
+  Rayleigh--Schrödinger desde $\chi_\kappa$, con $\psi_0,\dots,\psi_j$ y el cociente de Rayleigh de
+  $\sum_{a\le j}\eps^a\psi_a$ (regla $2n+1$ de Wigner). Los de $g_\kappa$ de orden $<2n/3$ son exactamente $0$
+  (Proposición~\ref{prop:tunel}). La dependencia en $\Theta$ se recupera por FFT
+  (Lema~\ref{lem:corrientes}).
+\item \emph{Cota.} Sea $m=2n/3$. Si $\gamma_m=3|t_n|$ (menos su error de redondeo) y $\gamma_k$ acota
+  $\sup_\Theta|g_\kappa^{(k)}|$ más el redondeo, entonces
+  \[
+    \frac{g_\kappa(\eps,\Theta)}{\eps^m}\ \ge\ f(\eps):=\gamma_m-\sum_{k=m+1}^{K}\gamma_k\eps^{k-m}
+    -\frac{M(\varrho)\,\eps^{K+1-m}}{\varrho^{K+1}(1-\eps/\varrho)} .
+  \]
+  $f$ es decreciente en $\eps$, así que $f(\eps_F)>0$ da $g_\kappa>0$ en todo $(0,\eps_F]$ y para toda
+  $\Theta$. Los sectores de carga $\ne0$ tienen energía clásica $\ge-n+2$ (Lema~\ref{lem:clasico}) y, por
+  Bauer--Fike, quedan por encima del multiplete con la misma condición $|\eps|<\varrho_0$.
+\end{itemize}
+
+\begin{center}
+\begin{tabular}{cccccc}
+\toprule
+$n$ & $6$ & $9$ & $12$ & $15$ & $18$\\
+\midrule
+$j$ ($K=2j+1$), valores de $\Theta$ & $8$, $8$ & $12$, $8$ & $12$, $8$ & $10$, $4$ & $8$, $2$\\
+$\eps_F(n)$ certificado & $3{,}08\cdot10^{-2}$ & $1{,}83\cdot10^{-2}$ & $8{,}8\cdot10^{-3}$ & $2{,}1\cdot10^{-3}$ & $4{,}5\cdot10^{-5}$\\
+$\eps_n$ del Teorema~\ref{teo:principal} & $8{,}7\cdot10^{-5}$ & $1{,}18\cdot10^{-2}$ & $4{,}1\cdot10^{-3}$ & $6{,}9\cdot10^{-8}$ & $5{,}0\cdot10^{-6}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+En todos los casos el radio lo limita la serie, no el tope $\varrho_0$ de Bauer--Fike. (Una versión anterior
+exigía $\eps\le1/(4\sqrt2\,n)$ para los sectores cargados, con un hueco de $1$ en lugar de $2$; en $n=6$ ese
+tope daba $2{,}9\cdot10^{-2}$.) En todos los casos $\eps_F(n)>\eps_n$, así que (F) vale en
+todo el rango del Teorema~\ref{teo:principal}. El coeficiente principal de la serie coincide con $3|t_n|$
+exacto ($n\le15$; para $n=18$ da $3|t_{18}|\approx84572{,}79$). La serie sumada coincide con la ED
+($n=6,9$; $\Theta=0,\pi$; $\eps=0{,}02$ y $0{,}05$) hasta el redondeo de la ED. Los coeficientes de orden
+$<m$, que se ponen a cero, salen $\le10^{-13}$ relativos. La naturaleza de estos radios es la misma que la de
+los $\eps_n$: coeficientes en doble precisión validados, con un margen de redondeo de $10^{-12}$ relativo, y
+colas de Cauchy rigurosas.
+
+\subsection{El orden en que cada nivel nota $\Theta$}
+
+Sea $\mathcal D=\sum_{j=0}^{n-1}j\,q_j$ el dipolo con el corte en el enlace $(n-1,0)$. Un salto por un enlace
+interior cambia $\mathcal D$ en lo mismo que la corriente $J$ (saltos en un sentido menos en el otro); uno por el
+enlace del corte, en $J\mp n$. Así, para un camino de $a$ a $b$, $J\equiv\mathcal D(b)-\mathcal D(a)\pmod n$.
+
+\begin{lema}[dipolo]\label{lem:dipolo}
+Entre dos patrones, $\Delta\mathcal D\equiv0\pmod n$.
+\end{lema}
+
+\begin{proof}
+$c_{r+d}=T^dc_r$, y con el corte fijo $\mathcal D(T^da)-\mathcal D(a)=d\,Q_{\rm tot}-n\cdot(\text{carga que cruza el
+corte})$, con $Q_{\rm tot}=nQ_c/3=0$.
+\end{proof}
+
+\begin{teorema}[orden del enrollamiento]\label{teo:enrollamiento}
+Sea $n\in3\mathbb Z$ y $\kappa$ un momento. Los coeficientes de Taylor de $\lambda_\kappa(n,\Theta,\eps)$ de orden
+$<n$ no dependen de $\Theta$, y el de orden $n$ es
+\[
+  \lambda_\kappa^{(n)}(\Theta)=a_\kappa+e^{i\Theta}b_\kappa+e^{-i\Theta}b'_\kappa,\qquad
+  b_\kappa=\sum_{d\in\mathbb Z_3}e^{i\kappa d}B(c_0\to c_d),
+\]
+\[
+  B(a\to b)=\sum_{\text{caminos}}\ \prod_{\text{saltos}}2\ \prod_{\text{intermedios }m}\frac1{-n-E_{\rm cl}(m)},
+\]
+donde la suma recorre los caminos de $n$ saltos todos en el mismo sentido que van de $a$ a $b$ sin pasar
+por ningún patrón, $E_{\rm cl}$ es la energía de $-\sum\Pasc$ y $a_\kappa$ no depende de $\Theta$. Con $\eps$ real, $b'_\kappa=\bar b_\kappa$ y
+\[
+  \lambda_\kappa(n,\Theta,\eps)-\lambda_\kappa(n,\Theta',\eps)=2\,\mathrm{Re}\big(b_\kappa(e^{i\Theta}-e^{i\Theta'})\big)\eps^n+O(\eps^{n+1}).
+\]
+\end{teorema}
+
+\begin{proof}
+En el sector de momento $\kappa$ el espacio degenerado es unidimensional ($\ket{\chi_\kappa}$), y la serie de
+Kato de $\lambda_\kappa$ es $\lambda_\kappa^{(m)}=\sum\pm\frac1m\tr(\mathcal VS^{(k_1)}\cdots\mathcal VS^{(k_m)})$ con
+$\sum k_i=m-1$, $S^{(0)}=-\ket{\chi_\kappa}\bra{\chi_\kappa}$ y $S^{(k)}=R^k$, donde $R$ es la resolvente reducida,
+diagonal sobre las configuraciones no patrón (los otros patrones no tienen componente de momento $\kappa$
+fuera de $\chi_\kappa$). Como todo conmuta con $T$, cada factor $\bra{\chi_\kappa}\mathcal V R^{k}\cdots\mathcal V\ket{\chi_\kappa}$
+entre dos visitas a $\chi_\kappa$ es $\sum_de^{i\kappa d}\bra{c_0}\cdots\ket{c_d}$, una suma sobre tramos de caminos
+de un patrón a otro. Por el Lema~\ref{lem:dipolo}, cada tramo tiene $J\equiv0\pmod n$, y $|J|$ no supera
+su número de saltos. Si $m<n$, $J=0$ en cada tramo y no hay fase. Con $m=n$, solo un tramo de $n$ saltos
+en el mismo sentido tiene $|J|=n$; si volviera a un patrón por el camino, un subtramo tendría
+$0<|J|<n$. Así, el término de $\Theta$ es exactamente el término sin retorno
+$\bra{\chi_\kappa}\mathcal V(R\mathcal V)^{n-1}\ket{\chi_\kappa}$ restringido a esos caminos, que es la fórmula del enunciado
+(con la fase $e^{\pm i\Theta}$ de los $n$ saltos).
+\end{proof}
+
+\begin{corolario}[$b_0\ne0$]\label{cor:b0}
+Para todo $n\in3\mathbb Z$, cada $B(c_0\to c_d)$ es nulo o tiene el signo $(-1)^{n-1}$, y
+$B(c_0\to c_0)\ne0$. Por tanto $b_0=\sum_dB(c_0\to c_d)\ne0$, con $|b_0|\ge|B(c_0\to c_0)|$. La dependencia en
+$\Theta$ del fundamental es exactamente de orden $\eps^n$: $\mathcal R_n=4|b_0|\eps^n+O(\eps^{n+1})$ con
+$b_0\ne0$.
+\end{corolario}
+
+\begin{proof}
+Cada salto directo aporta $+2$, y cada uno de los $n-1$ denominadores $-n-E_{\rm cl}(m)$ es negativo
+(Lema~\ref{lem:clasico}). Así, todos los sumandos de $B(c_0\to c_d)$ tienen el signo $(-1)^{n-1}$. Hay
+al menos un camino de $c_0$ a $c_0$. Primero, en cada celda $(0,1,2)$, se da el salto directo en el enlace
+$(1,2)$ y luego en el $(0,1)$: $(0,1,2)\to(0,2,1)\to(1,1,1)$. Después se da el salto directo en cada enlace
+entre celdas, $(1,1)\to(2,0)$. Cada enlace se usa una vez, todas las celdas vuelven a $(0,1,2)$ y los
+estados intermedios contienen un enlace $(2,1)$ o $(1,1)$, así que no son patrones.
+\end{proof}
+
+\paragraph{Coeficientes exactos} (\scr{orden\_theta.py} y \scr{tunel\_signo.py}, en fracciones). Para
+el fundamental ($\kappa=0$), el rango en $\Theta$ es
+$\mathcal R_n=\max_\Theta\lambda_0-\min_\Theta\lambda_0=4|b_0|\eps^n+O(\eps^{n+1})$. Los signos alternan como
+$(-1)^{n-1}$, como predice el Corolario~\ref{cor:b0}.
+
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+$n$ & $B(c_0\to c_0)$ & $B(c_0\to c_{\pm1})$ & $4|b_0|$\\
+\midrule
+$6$ & $-5008/1215$ & $-464/81$ & $62{,}314$\\
+$9$ & $130564/10935$ & $259048/10935$ & $237{,}28$\\
+$12$ & $-6615752/177147$ & $-157162592/1476225$ & $1001{,}08$\\
+$15$ & $2904708353/23914845$ & $59645375032/119574225$ & $4476{,}36$\\
+$18$ & $-404{,}4966$ & $-2396{,}3969$ & $20789{,}16$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+La fila de $n=18$ está en coma flotante (\scr{b0\_flotante.py}): todos los sumandos tienen el mismo signo, así
+que no hay cancelaciones, y el mismo guion reproduce la fila de $n=15$.
+
+\paragraph{Comprobación por ED.} $\mathcal R_n/\eps^n$ con $24$ valores de $\Theta$:
+
+\begin{center}
+\begin{tabular}{ccccc}
+\toprule
+$n$ & $\eps=0{,}01$ & $\eps=0{,}02$ & $\eps=0{,}05$ & predicción $4|b_0|$\\
+\midrule
+$6$ & $62{,}42$ & $62{,}73$ & $64{,}92$ & $62{,}31$\\
+$9$ & (redondeo) & (redondeo) & $253{,}1$ & $237{,}3$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Las diferencias son de orden $\eps^2$ relativo. El exponente efectivo de cada cantidad entre
+$\eps=0{,}1$ y $0{,}2$ (\scr{orden\_kn.py}, 16 valores de $\Theta$) confirma el cuadro: la anchura del
+multiplete va como $\eps^{4{,}2}$ ($n=6$) y $\eps^{6{,}5}$ ($n=9$), el orden $2n/3$ del túnel, y el rango
+en $\Theta$ del fundamental como $\eps^{6{,}5}$ y $\eps^{10{,}2}$, el orden $n$. Como contraste, en una
+variante con llenado $1/3$ ($Q_c=1$) el flujo permuta los niveles (punto 3 del
+Teorema~\ref{teo:caminos}) y el rango en $\Theta$ tiene ya el orden del túnel.
+
+%=====================================================================
+\section{Cotas para $p(n,\Theta)$}\label{sec:cotas}
+%=====================================================================
+
+En esta sección $\sigma$ es cualquier estado de dos sitios invariante por la $U(1)$, salvo que se diga
+otra cosa, y $e_R=\tr(h(0)\sigma)$.
+
+\begin{proposicion}[techo local]\label{prop:local}
+$p(n,\Theta)\le\ploc:=\dfrac{1/9}{1/9-\lambda_{\min}(\sigma)}$ para todos $n$ y $\Theta$.
+\end{proposicion}
+
+\begin{proof}
+$\rho(p;\Theta)$ es unitariamente equivalente a $I/9+p\tau$, cuyo autovalor mínimo es
+$1/9+p(\lambda_{\min}(\sigma)-1/9)$, y una marginal es semidefinida positiva.
+\end{proof}
+
+En el modelo, $\lambda_{\min}(\sigma)$ está en los sectores $\ket{00}$ y $\ket{22}$ (carga $\mp2$ de la
+arista, dimensión $1$): el testigo $-\ket{00}\bra{00}-\ket{22}\bra{22}$ no ve el giro.
+
+\begin{proposicion}[cota de energía]\label{prop:energia}
+Si $\bar e>e_R$, para todo $n$ y $\Theta$,
+\[
+  p(n,\Theta)\le\pE(n,\Theta):=1+\frac{e_R-E_0(n,\Theta)/n}{\bar e-e_R},
+\]
+con $E_0(n,\Theta)$ la energía fundamental de $H_n(\eps,\Theta)$. Con datos autoconsistentes y (F),
+$\pE(n,0)=1=p(n,0)$, y el único estado que alcanza $p(n,0)$ es $\psi_0$.
+\end{proposicion}
+
+\begin{proof}
+Por la covarianza gauge, $\tr(h(\Theta)\rho(p;\Theta))=\bar e+p(e_R-\bar e)$. Un estado $\omega$ con
+esas marginales cumple $n(\bar e+p(e_R-\bar e))=\tr(\omega H_n(\Theta))\ge E_0(n,\Theta)$. Con datos
+autoconsistentes y (F), $e_R=E_0(n,0)/n$ y $\pE(n,0)=1$; $\psi_0$ lo alcanza, y un estado que lo
+alcance tiene energía mínima, luego es $\psi_0$ (nivel simple).
+\end{proof}
+
+La cota $\pE$ ve $\Theta$ exactamente a través de $E_0(n,\Theta)$, es decir, en orden $\eps^n$
+(Teorema~\ref{teo:enrollamiento}):
+$|\pE(n,\Theta)-\pE(n,\Theta')|=|E_0(n,\Theta)-E_0(n,\Theta')|/(n(\bar e-e_R))$.
+
+\subsection{Una cota inferior uniforme: anclaje y pegado}
+
+\begin{lema}[anclaje]\label{lem:anclaje}
+Sea $\omega$ un estado del anillo a $\Theta=0$, invariante por la $U(1)$, con un sitio $j_0$ en un estado
+clásico puro: $\omega=\ket v\bra v_{j_0}\otimes\eta$. Con el gauge abierto
+$U=\bigotimes_jV^{(j-j_0)\bmod n}$, el estado $U\omega U^\dagger$ tiene en cada arista la marginal
+$(1\otimes V)\rho_e(1\otimes V)^\dagger$, sin error.
+\end{lema}
+
+\begin{proof}
+En una arista interior, $U$ actúa como $(V^a\otimes V^a)(1\otimes V)$, y el primer factor no actúa sobre
+$\rho_e$ por la invariancia $U(1)$. Las dos aristas que tocan $j_0$ son productos
+$\ket v\bra v\otimes(\text{diagonal})$, fijos por cualquier unitario diagonal.
+\end{proof}
+
+\begin{lema}[pegado]\label{lem:pegado}
+Una \emph{pieza} de longitud $\ell$ es una familia $\{\eta_v\}_{v\in\mathbb Z_3}$ de estados invariantes
+por la $U(1)$ de $\ell-1$ sitios libres entre anclajes $\ket v$ y $\ket{v+\ell\bmod3}$. Sea $\mathcal C_\ell$ el
+conjunto de los promedios sobre $v$ de la suma de sus $\ell$ marginales de arista. Si $n=\sum_i\ell_i$ y
+$\ell_i\rho\in \mathcal C_{\ell_i}$ para todo $i$, entonces $\rho$ (girada) es la marginal de un estado del anillo
+$n$ invariante por traslación, para toda $\Theta$.
+\end{lema}
+
+\begin{proof}
+Se concatenan piezas compartiendo anclajes (un producto a través de cada anclaje conserva las
+marginales), se promedia sobre $v$ y sobre traslaciones, y se gira con el Lema~\ref{lem:anclaje}.
+\end{proof}
+
+Con $\ell\in\{4,5,6\}$ se cubre todo $n\in3\mathbb Z$, $n\ge6$, así que
+$p(n,\Theta)\ge\min_{\ell\in\{4,5,6\}}p_{\rm pieza}(\ell)$, un SDP finito independiente de $n$ y de
+$\Theta$. Con $\eps=0{,}1$ y los datos de la tabla siguiente (\scr{sdp\_piezas.py}),
+$\ploc-p_{\rm pieza}(\ell)=3{,}4\cdot10^{-2}$, $2{,}3\cdot10^{-2}$, $1{,}7\cdot10^{-2}$ para
+$\ell=4,5,6$: la pérdida es $\approx0{,}1/\ell$ y viene toda de las coherencias de las dos aristas que
+tocan un anclaje (sin imponer coherencias, la diagonal se alcanza ya con $\ell=4$).
+
+\subsection{Lo que dicen los SDP}
+
+\paragraph{$n=6$} (\scr{sdp\_sensibilidad.py}). Datos: la marginal del fundamental del anillo de $12$
+sitios al mismo $\eps$. El estado se parte en bloques de carga y momento ($\le25$); las igualdades
+lineales redundantes se eliminan con QR con pivoteo antes del punto interior (Clarabel).
+
+\begin{center}
+\begin{tabular}{cccccc}
+\toprule
+$\eps$ & $\ploc$ & $p(6,0)$ & $p(6,\pi/2)$ & $p(6,\pi)$ & rango en $\Theta$\\
+\midrule
+$0{,}10$ & $1{,}0000457$ & $1{,}0000457$ & $1{,}0000457$ & $1{,}0000457$ & $3\cdot10^{-8}$ (tolerancia)\\
+$0{,}20$ & $1{,}0018490$ & $1{,}0018490$ & $1{,}0018491$ & $1{,}0018490$ & $1\cdot10^{-7}$ (tolerancia)\\
+$0{,}24$ & $1{,}0072921$ & $1{,}0072922$ & $1{,}0071868$ & $1{,}0067698$ & $5{,}2\cdot10^{-4}$\\
+$0{,}28$ & $1{,}0231334$ & $1{,}0162630$ & $1{,}0097783$ & $1{,}0033214$ & $1{,}3\cdot10^{-2}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Desde $\eps=0{,}24$ el solver devuelve \emph{optimal\_inaccurate}.
+Hasta $\eps\approx0{,}23$, $p(6,\Theta)=\ploc$ para toda $\Theta$: la sensibilidad es \emph{cero}, porque
+el óptimo lo fija una cota local ciega al flujo.
+
+\paragraph{$n\ge9$: la cota de energía desplaza al techo local.} Con los mismos datos:
+
+\begin{center}
+\begin{tabular}{cccccc}
+\toprule
+$\eps$ & $\ploc$ & $\pE(6,0)$ & $\pE(6,\pi)$ & $\pE(9,0)$ & $\pE(15,0)$\\
+\midrule
+$0{,}1$ & $1{,}0000457$ & $1{,}000679$ & $1{,}000661$ & $\mathbf{1{,}0000278}$ & $0{,}9999985$\\
+$0{,}2$ & $1{,}0018490$ & $1{,}010858$ & $1{,}009359$ & $\mathbf{1{,}0017060}$ & $0{,}9995620$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Como $\pE(9,0)<\ploc$, la igualdad $p(n,\Theta)=\ploc$ falla desde $n=9$. El techo local
+$\lambda_{\min}(\sigma)$ es del orden del túnel del anillo de referencia: en anillos pequeños el túnel
+propio es mayor y manda $\ploc$, ciego a $\Theta$; en los grandes manda $\pE$, que ve $\Theta$ en orden
+$\eps^n$. El resto del trabajo muestra que, cuando manda la energía, $p$ \emph{sigue} a $\pE$ salvo un
+error de segundo orden.
+
+%=====================================================================
+\section{Teorema principal}\label{sec:principal}
+%=====================================================================
+
+\subsection{El mecanismo}
+
+El conjunto de marginales alcanzables es convexo, y con datos autoconsistentes $\sigma$ está en su
+borde con normal $h(0)$. Al girar, la marginal del fundamental de $H(\Theta)$, deshecho el giro, es
+$\sigma+D(\Theta)$, con $D=O(\eps^{n-2})$ (orden de la marginal; Sección~\ref{sec:corrientes}). La
+componente de $D$ a lo largo de la normal es lo que mide $\pE$; la componente tangencial solo cuesta en
+segundo orden. Si se perturba el fundamental, $\psi\to$ fundamental de $H+\sum_ax_aO_a$ con
+$O_a=\sum_jo_a(j,j+1)$, la marginal se mueve linealmente en $x$ y la energía cuadráticamente, con la
+\emph{susceptibilidad estática}
+\begin{equation}\label{eq:chi}
+  \chi_{ab}=\frac1n\mathrm{Re}\bra{\phi_a}(H-E_0)^{-1}\ket{\phi_b},\qquad
+  \phi_a=(1-\ket{\psi_0}\bra{\psi_0})O_a\psi_0 .
+\end{equation}
+
+Los operadores de arista hermíticos e invariantes por la $U(1)$ forman un espacio real de dimensión
+$1+4+9+4+1=19$. Cinco direcciones son nulas para $\chi$: la identidad, la carga, las dos telescópicas
+$A\otimes1-1\otimes A$ y $h$ (porque $H\psi_0=E_0\psi_0$). Las marginales de $\psi_x$ y de
+$\rho(p;\Theta)$ coinciden solas en las cuatro primeras, y la de $h$ la ajusta $p$. Sea $W$ el
+complemento, de dimensión $14$.
+
+\paragraph{Comprobación por SDP} (\scr{sdp\_sensibilidad.py} con \texttt{NREF=6}, es decir, datos
+autoconsistentes en $n=6$, tolerancias $10^{-12}$; el error del solver es $\sim4\cdot10^{-7}$, visible porque
+viola la cota exacta $p\le\pE$ en $\Theta=0$; $\chi$ con \scr{susceptibilidad.py}). La
+predicción de segundo orden $\pE-p\approx\delta e/(\bar e-e_R)$, con
+$\delta e=\frac14\delta m^{\mathsf T}\chi^+\delta m$ y $\delta m=(\pE-1)\tau-D$, acierta el orden
+cuadrático:
+
+\begin{center}
+\begin{tabular}{ccccccc}
+\toprule
+$\eps$ & $\Theta$ & $1-\pE$ & $1-p$ (SDP) & $\pE-p$ & $\|D\|_{\max}$ & $\pE-p$ predicho\\
+\midrule
+$0{,}10$ & $\pi$ & $1{,}79\cdot10^{-5}$ & $2{,}08\cdot10^{-5}$ & $3{,}0\cdot10^{-6}$ & $3{,}22\cdot10^{-4}$ & $4{,}5\cdot10^{-6}$\\
+$0{,}15$ & $\pi$ & $2{,}35\cdot10^{-4}$ & $4{,}12\cdot10^{-4}$ & $1{,}8\cdot10^{-4}$ & $1{,}93\cdot10^{-3}$ & $8{,}0\cdot10^{-5}$\\
+$0{,}20$ & $\pi$ & $1{,}48\cdot10^{-3}$ & $3{,}17\cdot10^{-3}$ & $1{,}7\cdot10^{-3}$ & $7{,}20\cdot10^{-3}$ & $6{,}2\cdot10^{-4}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+$(\pE-p)/\|D\|_{\max}^2=29$, $48$ y $33$ en $\Theta=\pi$ (y $\approx15$--$30$ en $\Theta=\pi/2$): el
+exceso es cuadrático en $D$, como predice el mecanismo, aunque desde $\eps=0{,}15$ el SDP queda por debajo de
+la predicción de segundo orden (términos de orden superior, no aclarados).
+
+\subsection{Enunciado}
+
+\begin{teorema}[la sensibilidad de $p$ es la de la energía]\label{teo:principal}
+Sean datos autoconsistentes (Sección~\ref{sec:datos}) y $n\in\{6,9,12,15,18\}$. Para todo $\eps$ real
+con $0<\eps\le\eps_n$ y toda $\Theta$ real,
+\[
+  p_E^{(0)}(n,\Theta)-\delta_n(\Theta)\ \le\ p(n,\Theta)\ \le\ \pE(n,\Theta),
+\]
+donde $p_E^{(0)}$ es $\pE$ con $\lambda_0(n,\Theta,\eps)$ en lugar de $E_0(n,\Theta)$ y $\delta_n\ge0$
+tiene la cota explícita de la Sección~\ref{sec:prueba}, que es $O(\eps^{2n-4})$ para $n=6,9,12$ y
+$O(\eps^{2n-8})$ para $n=15,18$. Los radios son
+\begin{center}
+\begin{tabular}{cccccc}
+\toprule
+$n$ & $6$ & $9$ & $12$ & $15$ & $18$\\
+\midrule
+$\eps_n$ & $8{,}7\cdot10^{-5}$ & $1{,}18\cdot10^{-2}$ & $4{,}1\cdot10^{-3}$ & $6{,}9\cdot10^{-8}$ & $5{,}0\cdot10^{-6}$\\
+cota de $\delta_n$ en el borde & $8\cdot10^{-28}$ & $8\cdot10^{-21}$ & $10^{-29}$ & $5\cdot10^{-108}$ & $6\cdot10^{-86}$\\
+término principal en el borde & $7\cdot10^{-24}$ & $2\cdot10^{-16}$ & $3\cdot10^{-27}$ & $2\cdot10^{-105}$ & $6\cdot10^{-93}$\\
+$\eps_n^*$ ($\delta_n<$ mitad del principal) & $\eps_n$ & $\eps_n$ & $\eps_n$ & $\eps_n$ & $1{,}1\cdot10^{-6}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+El estado que alcanza la cota inferior es puro: el fundamental de momento $0$ de
+$H_n(\Theta)+\sum_{a\in W}x^*_aO_a(\Theta)$. Como $\eps_n<\eps_F(n)$, vale (F) (Proposición~\ref{prop:tunel}
+y su radio certificado), $p_E^{(0)}=\pE$, y por tanto
+\[
+  p(n,0)-p(n,\Theta)=\frac{E_0(n,\Theta)-E_0(n,0)}{n(\bar e-e_R)}+\delta_n(\Theta)
+  =\frac{2\,\mathrm{Re}\big(b_0(e^{i\Theta}-1)\big)}{n(\bar e-e_R)}\,\eps^n+O(\eps^{n+1}),
+\]
+es decir, la sensibilidad de $p$ en $\Theta$ es exactamente de orden $\eps^n$, con el coeficiente
+$b_0\ne0$ del Teorema~\ref{teo:enrollamiento} y el Corolario~\ref{cor:b0}.
+\end{teorema}
+
+\noindent
+La cota superior es la Proposición~\ref{prop:energia}. La inferior se prueba en la
+Sección~\ref{sec:prueba}. La naturaleza de los radios es la de un certificado asistido por ordenador
+(Sección~\ref{sec:estado}).
+
+\paragraph{Dónde se ve el término principal.} El teorema encierra $p$ en $[\pE-\delta_n,\pE]$, así que la
+variación en $\Theta$ de $p$ solo queda determinada por la de $\pE$ si la cota de $\delta_n$ es menor que el
+rango de $\pE$, $\approx4|b_0|\eps^n/(n(\bar e-e_R))$ (con $\bar e-e_R\approx2/3$). En el borde, el término principal
+supera a la cota de $\delta_n$ en $n=6,9,12,15$ (por factores de $9\cdot10^3$, $2\cdot10^4$, $300$ y $300$),
+pero no en $n=18$. Allí la cota de $\delta_n$ va como $\eps^{2n-8}$ y el término principal como $\eps^n$, así
+que el cociente cae como $\eps^{10}$, y la sensibilidad queda identificada solo para
+$\eps\le\eps_{18}^*=1{,}1\cdot10^{-6}$ (\scr{z23\_kantorovich.py} con $4|b_0|$ de \scr{b0\_flotante.py}). En
+$(\eps_{18}^*,\eps_{18}]$ el teorema sigue valiendo como desigualdad, pero no ve $\Theta$.
+
+\begin{observacion}
+La ED sugiere que la construcción funciona de verdad hasta $\eps\sim3\cdot10^{-3}$ ($n=6$) y
+$\sim9\cdot10^{-2}$ ($n=9$). Los radios certificados están limitados por las cotas de Cauchy de las
+derivadas quinta y del resto (Sección~\ref{sec:limites}), no por la física.
+\end{observacion}
+
+%=====================================================================
+\section{Prueba de la cota inferior}\label{sec:prueba}
+%=====================================================================
+
+\subsection{La familia de Hellmann--Feynman y las ecuaciones}
+
+Sea $\{o_a\}_{a\in W}$ una base ortonormal (Hilbert--Schmidt) de $W$, $o_a(\Theta)=(1\otimes V)o_a(1\otimes
+V)^\dagger$ y $O_a(\Theta)=\sum_jo_a(\Theta)_{j,j+1}$. Para $x\in\mathbb R^{14}$ pequeño, sea $\psi_x$ el
+vector del nivel de momento $0$ de $H_x(\Theta)=H_n(\Theta)+\sum_ax_aO_a(\Theta)$ y
+$e(x)=\lambda_0(H_x)/n$. Como $H_x(\Theta)$ es la versión girada de $H_x(0)$, la marginal de $\psi_x$,
+deshecho el giro, tiene coordenadas (Hellmann--Feynman)
+\[
+  m_W(x)=\nabla e(x),\qquad m_h(x)=e(x)-x\cdot\nabla e(x).
+\]
+$\psi_x$ es invariante por traslación (autoestado de momento) y por la $U(1)$. Por tanto,
+$p\ge p^*$ si existe $x^*$ con
+\begin{equation}\label{eq:sistema}
+  g(x):=\nabla e(x)-\sigma_W-(p^*-1)\tau_W=0,\qquad e(x^*)-x^*\cdot\nabla e(x^*)=\sigma_h+(p^*-1)\tau_h .
+\end{equation}
+Son $15$ ecuaciones con $15$ incógnitas. La hessiana en $0$ es $\mathrm{Hess}\,e=-2\chi(\Theta)$, y
+$\tau_h=e_R-\bar e\approx-2/3$, así que $p$ entra por una columna transversal.
+
+\paragraph{El déficit.} $p^*$ se fija por punto fijo: $p$ entra en $g$ solo por $(p-1)\tau_W$ y
+$\partial m_h/\partial x=-x^{\mathsf T}\mathrm{Hess}\,e=O(|x|)$. Por la identidad
+$e(x)-e(0)-x\cdot\nabla e(x)=-\int_0^1s\,x^{\mathsf T}\mathrm{Hess}\,e(sx)\,x\,ds$ y
+$\mathrm{Hess}\,e(0)\,x^*=-g(0)+O(L|x^*|^2/2)$,
+\begin{equation}\label{eq:deficit}
+  0\le\pE^{(0)}-p^*\le\frac{\tfrac12|x^*||g(0)|+0{,}6\,L|x^*|^3}{|\tau_h|},
+\end{equation}
+con $L$ una cota de la tercera derivada en la bola que contiene a $x^*$. Usamos $|\tau_h|\ge0{,}6$.
+
+\paragraph{Newton--Kantorovich.} Sea $G:B(0,r)\subset\mathbb R^m\to\mathbb R^m$ de clase $C^2$ con
+jacobiano $J$. Si $\|J(0)^{-1}\|\le\beta$, $\|J(0)^{-1}G(0)\|\le\eta$, $J$ es $L$-lipschitziana en
+$B(0,2\eta)\subset B(0,r)$ y $h_{\rm K}=\beta L\eta\le\frac12$, entonces $G$ tiene un cero $u^*$ con
+$\|u^*\|\le2\eta$, único en esa bola.
+
+\subsection{Analiticidad elemental: Bauer--Fike}
+
+\begin{lema}[Bauer--Fike]\label{lem:bf}
+En el sector de carga $0$ y momento $0$, el hueco de $H_0=-\sum\Pasc$ sobre la combinación de los
+patrones es $2$. Sea $H_0'=H_0+\sum_{d}y_dO_d$ con $O_d$ diagonales que se anulan en los pares
+ascendentes y $|y_d|\le R_s$, y sea $\mathcal V'$ el resto de la perturbación. Si $\|\mathcal V'\|<1-R_s$, entonces el
+nivel de momento $0$ es el único autovalor en $|z+n|<1-R_s$, es analítico en todos los parámetros
+(complejos) y cumple $|\lambda_0+n|\le\|\mathcal V'\|$.
+\end{lema}
+
+\begin{proof}
+El hueco $2$ es la última parte del Lema~\ref{lem:clasico}, y en momento $0$ hay una sola combinación
+de patrones. Los $O_d$ no mueven la energía de los patrones y mueven cada pared en $\le R_s$, así que
+$H_0'$ es normal y diagonal con hueco $\ge2(1-R_s)$. Bauer--Fike y la continuidad del recuento de
+autovalores (homotopía en un parámetro) dan la afirmación.
+\end{proof}
+
+En las coordenadas del Newton graduado (abajo), con $|\eps|\le\eps_a$, $|y_h|\le R_h$, $|y_m|\le R_m$,
+$|y_s|\le R_s$,
+\begin{equation}\label{eq:A}
+  \frac{\|\mathcal V'\|}n\le A:=2\sqrt2\,\eps_a+\frac{8R_h}{\sqrt2}+\frac{2R_m}{\sqrt2}+\frac83\eps_aR_s,
+  \qquad nA<1-R_s,
+\end{equation}
+(la norma del bloque de carga $2$ de un enlace es $2\sqrt2$), y $F:=e$ cumple $|F+1|\le A$ en el
+polidisco.
+
+\subsection{Estructura graduada de $\chi$}
+
+\paragraph{Positividad graduada exacta} (\scr{k1\_racional.py}). El patrón se viste por
+Rayleigh--Schrödinger en fracciones hasta orden $4$ (normalización intermedia; los denominadores son
+energías enteras de $\Pasc$). Se obtiene $E/n=-1-\frac43\eps^2-\frac{872}{405}\eps^4+O(\eps^6)$ para
+$n\ge9$ (para $n=6$, $E_4/n=-2632/405$, con el túnel de orden $4=2n/3$). En una base racional de $W$
+(bloques Re e Im, que se desacoplan porque $\psi$ es real), la reducción de Schur graduada de la serie
+de la matriz de doble conmutador $K_1=(2n)^{-1}\ev{[O_a,[H,O_b]]}$ y de $\chi$ (con los tres patrones,
+\scr{k1\_serie\_rapida.py}) da:
+\begin{itemize}
+\item $8$ direcciones \emph{duras}, de orden $1$: coherencias que crean un salto desde el patrón;
+\item $2$ \emph{intermedias}, de orden $\eps^2$: funciones diagonales que distingue un solo salto;
+\item $4$ \emph{blandas}, de orden $\eps^4$: las que solo distinguen configuraciones a dos saltos, como
+  $\ket{00}$ y $\ket{22}$.
+\end{itemize}
+En cada bloque, todos los menores de Sylvester de las matrices principales son positivos, en
+aritmética exacta. Para $K_1$ con $n\ge9$, la matriz blanda $S_4$ tiene menores principales
+\[
+  \tfrac{98776}{7971615},\quad\tfrac{193298432}{261508830075},\quad
+  \tfrac{135174431965184}{694882570819440375},\quad\tfrac{2^{48}}{13677373641439044901125},
+\]
+y coincide número a número para $n=9$ y $12$. Para $\chi$ con tres patrones, el menor mínimo en
+$\eps^4$ es $4{,}1\cdot10^{-21}$ ($n=6$) y $5{,}2\cdot10^{-22}$ ($n=9,12$). Así, $\chi$ restringida a
+$W$ es $\succeq\kappa\eps^4$ para $\eps$ pequeño, con $\chi_{\min}\approx0{,}006\eps^4$ (numérico).
+
+\paragraph{Consecuencia.} Sin graduar, $\beta\sim\eps^{-4}$, y la condición de Kantorovich compara
+$|D|\sim\eps^{n-2}$ con $\eps^8/L$: hace falta $n-2>8$. Es la prueba de la
+Sección~\ref{sec:sin_graduar}, que cubre $n=15,18$. Para $n\le12$ hace falta graduar.
+
+\subsection{El Newton graduado}
+
+\paragraph{Base explícita.} Sea $y$ el vector de coordenadas en la base
+$\mathcal B(\eps)=\mathcal B_0+\eps\mathcal B_1$ de $W$ formada por:
+\begin{itemize}
+\item \emph{duras}: los cuatro saltos desde el patrón, $(01\leftrightarrow10)$, $(12\leftrightarrow21)$,
+  $(02\leftrightarrow20)$, $(11\leftrightarrow20)$, en Re e Im;
+\item \emph{intermedias}: $(02\leftrightarrow11)$, en Re e Im;
+\item \emph{blandas}: para $o_d\in\{\ket{00},\ket{11},\ket{21},\ket{22}\}$ (proyectores diagonales),
+  $\mathcal B_s=o_d+\eps\sum_y(\Delta_y/3)\cdot(\text{salto de tipo }y)$, con
+  $\Delta_1=o(21)+o(10)+o(02)$ (saltos $(01)\to(10)$ y $(12)\to(21)$) y $\Delta_2=3o(11)$ (salto inverso
+  $(20)\to(11)$).
+\end{itemize}
+La corrección de las blandas hace que la amplitud de cada excitación de un salto pase a
+$2\eps(1+\Delta y/3)$ y su energía a $3+\Delta y$, así que el orden $\eps^2$ de $e$ queda
+$-\frac43\eps^2(1+\Delta y/3)$: \emph{exactamente lineal} en $y$. Es el análogo local de la dirección
+nula $h$.
+
+\paragraph{Variables reescaladas.} $u=\mathsf Sy$ con $\mathsf S=\mathrm{diag}(1,\eps,\eps^2)$ sobre los bloques duro
+($8$), intermedio ($2$) y blando ($4$); $\hat F(u)=F(\eps,\mathsf S^{-1}u)$,
+$\hat J=-\mathsf S^{-1}\mathrm{Hess}_y F\,\mathsf S^{-1}$ (de orden $1$) y se trabaja con la norma ponderada $|u/w|$, con
+pesos $w=(1,w_m,w_s)$ por bloques.
+
+\begin{lema}[soporte ponderado]\label{lem:soporte}
+Sea $G=F$ menos su polinomio de Taylor de grado $\le2$ en $y$. Con pesos $\eps:1$, $y_{\rm duro}:2$,
+$y_{\rm interm}:1$, $y_{\rm blando}:0$, todo monomio $\eps^ky_h^ay_m^by_s^c$ de $G$ tiene peso
+$k+2a+b\ge4$.
+\end{lema}
+
+\begin{proof}
+En la serie de Kato, con la parte diagonal blanda dentro de $H_0'$, cada monomio es una suma de caminos
+cerrados desde el patrón: las $\eps$ y las $y$ duras e intermedias son movimientos; las $y$ blandas solo
+cambian denominadores. Para grado $\ge3$ en $y$:
+si $a\ge2$, el peso es $\ge4$;
+si $a=1$, hace falta otro movimiento, y con una sola $\eps$ el término de dos movimientos es
+$x_h\cdot2\eps(1+\Delta y/3)/(3+\Delta y)$, constante en $y_s$, que no contribuye a $G$; así $k+b\ge2$;
+si $a=0$, $b\ge1$, el salto intermedio no toca el patrón y desde una excitación de un salto lleva a
+distancia $2$: $k\ge3$ si $b=1$ y $k\ge2$ si $b\ge2$;
+si $a=b=0$, $c\ge3$: con $k=0$ el patrón no nota $y_s$; con $k=2$ es la identidad lineal de arriba;
+$k$ impar no cierra (cada salto simple cambia el dipolo en $1$); así $k\ge4$.
+\end{proof}
+
+\paragraph{Consecuencias.} (i) $|G|\le4A$ en el polidisco: cada parte homogénea en $y$ de $F+1$ está
+acotada por $A$ (Cauchy en una variable, $\zeta\mapsto F(\eps,\zeta y)$). (ii) Por el lema y Schwarz
+en una variable, $\zeta\mapsto G(\zeta\eps_a,\zeta^2Y_h,\zeta Y_m,y_s)$ se anula a orden $4$,
+así que $|G|\le4A\nu^4$, $\nu=\eps/\eps_a$, en el polidisco de radios
+$\varpi=(\nu^2R_h,\nu R_m,R_s)$; en $u$ esos radios son $(\nu^2R_h,\eps\nu R_m,\eps^2R_s)$.
+(iii) Cauchy con radio $\varrho=\min_i\varpi_i/w_i-2\eta$ y polarización de Banach (constante $1$ para formas
+simétricas en espacios de Hilbert) da, en la bola de radio $2\eta$,
+\[
+  \|\partial^4\hat F\|\le C_4=\frac{96A\nu^4}{\varrho^4},\qquad
+  \|\partial^5\hat F\|\le C_5=\frac{480A\nu^4}{\varrho^5}.
+\]
+
+\subsection{Estructura de corrientes: las cotas de $D$}\label{sec:corrientes}
+
+\begin{lema}[corrientes]\label{lem:corrientes}
+Sea $f(\eps,y;\Theta)$ un coeficiente de la serie de $F$ o de una de sus derivadas en $y=0$. Su
+coeficiente de orden $\eps^k$ es un polinomio trigonométrico en $\Theta$ con frecuencias enteras
+$|w|\le(k+\sum\mathrm{cur})/n$, donde $\mathrm{cur}=2$ para la dirección del salto doble
+$(02\leftrightarrow20)$, $1$ para los demás saltos y las intermedias, y $0$ para las blandas. En
+particular, la parte dependiente de $\Theta$ del gradiente en la dirección $i$ empieza en el orden
+$\eps^{n-\mathrm{cur}_i}$.
+\end{lema}
+
+\begin{proof}
+Es el argumento del Teorema~\ref{teo:enrollamiento}: un tramo de camino entre patrones con fase
+$e^{iw\Theta}$ tiene corriente $J=wn$, y cada movimiento transporta a lo sumo $1$ unidad (un salto), $2$
+(el salto doble) o $0$ (las diagonales).
+\end{proof}
+
+Así, en la base graduada, todas las componentes de $\mathsf S^{-1}\mathcal B^{\mathsf T}D$ son $O(\eps^{n-2})$ (las
+blandas, $\eps^{n}/\eps^2$; las intermedias, $\eps^{n-1}/\eps$; las duras, $\eps^{n-\mathrm{cur}}$ con
+$\mathrm{cur}\le2$), y lo mismo el término $(p-1)\tau_W$, de orden $\eps^n$ en $y$. Como $\beta=1/\lambda_{\min}(\hat J)$
+es $O(1)$, $|u^*|\le2\eta=O(\eps^{n-2})$, y el déficit~\eqref{eq:deficit}, escrito en $u$, es
+$O(\eps^{2n-4})$ (el término cúbico, $\hat L|u^*|^3=O(\eps^{3n-8})$, es menor). Numéricamente (ED, $n=6$, $\Theta=\pi$):
+$D_{\rm duro}\approx3{,}9\eps^4$, $D_{\rm interm}\sim\eps^5$, $D_{\rm blando}\sim\eps^6$.
+
+\subsection{Series en $\eps$ con colas de Cauchy}
+
+Las cotas puramente de Cauchy pierden, comparadas con la ED, un factor $\sim10^9$ en la tercera
+derivada y $\sim10^8$ en $d$: cada una paga potencias de $\eps_a^{-1}$, con $\eps_a\lesssim1/(3n)$ por
+Bauer--Fike. La solución es calcular en serie las cantidades en $y=0$, que son funciones de $\eps$ y
+$\Theta$ solas, y usar Cauchy solo para la cola.
+
+\paragraph{Las series} (\scr{serie\_respuesta.py}). Rayleigh--Schrödinger en todo el sector $S^z=0$
+desde la suma de los tres patrones (no degenerada en momento $0$), con giro uniforme y operadores girados.
+Con los vectores de respuesta $\xi_a=(H-E)^{-1}\phi_a$, resueltos orden a orden con
+$\ev{\psi|\xi_a}=0$, y la norma $\mathcal N=\ev{\psi|\psi}$ tratada como serie:
+\begin{itemize}
+\item gradiente: $\ev{O_a}/n$ (Hellmann--Feynman);
+\item hessiana: $-2\chi$;
+\item tercera derivada (regla $2n+1$ de Wigner):
+  $\partial^3_{abc}e=\frac2n\mathrm{Re}\sum_{\text{3 índices centrales}}\ev{\xi_a|O_b-\ev{O_b}|\xi_c}/\mathcal N$;
+\item cuarta derivada: con $\zeta_{cd}=R(O_c-\ev{O_c})\xi_d$,
+  \[
+    \Xi_{abcd}=-\tfrac12\ev{\xi_a|O_b-\ev{O_b}|\zeta_{cd}+\zeta_{dc}}-E^{(2)}_{ab}\ev{\xi_c|\xi_d},
+    \qquad \partial^4e=\frac1n\mathrm{Re}\sum_{\pi\in S_4}\Xi_{\pi(abcd)}/\mathcal N,
+  \]
+  con $E^{(2)}_{ab}=n\,\partial^2_{ab}e/2$.
+\end{itemize}
+Se pasa a la base $\mathcal B(\eps)$ orden a orden. Órdenes usados: $K=36$ ($n=6$), $40$ ($n=9$), $30$
+($n=12$). La dependencia en $\Theta$ se recupera exactamente por FFT con $N_\Theta>2w_{\max}$ valores
+($N_\Theta=16$, $12$, $8$), por el Lema~\ref{lem:corrientes}.
+
+\paragraph{Validación.}
+\begin{itemize}
+\item Contra la ED ($n=6$, $\eps=0{,}02$, $\Theta=0,\pi$): energía, gradiente, hessiana, cúbica y cuártica
+  con errores $10^{-16}$, $10^{-17}$, $2\cdot10^{-14}$, $10^{-12}$ y $4\cdot10^{-11}$.
+\item La fórmula de cuarto orden, en un modelo de juguete contra diferencias finitas en precisión
+  arbitraria (mpmath): $10^{-14}$.
+\item Ceros graduados: los coeficientes que anulan el Lema~\ref{lem:soporte} y la estructura graduada
+  ($\hat J$: $k<e_i+e_j$; grado $\ge3$: $k<\max(0,4-2a-b)$) salen $\le10^{-15}$ relativos hasta el orden
+  $36$--$40$.
+\item Ruido fuera de la regla de corrientes $\le10^{-14}$ relativo (se anula por el lema).
+\end{itemize}
+
+\paragraph{Las cotas.} En cada intervalo $[\eps_l,\eps_r]$ de razón $1{,}01$, desde $10^{-30}$, cada
+potencia de $\eps$ se evalúa en el extremo que la maximiza, de modo que se cubre el continuo.
+\begin{itemize}
+\item $\lambda_{\min}(\hat J)$: valor de la serie en $\eps_l$ y $\Theta=0$, menos la cota de su derivada
+  por $(\eps_r-\eps_l)$, menos la parte de $\Theta$ acotada por $2\sum_{w\ne0}|\hat c_w|$, menos la cola
+  $|\text{coef}_k(\partial_i\partial_jF)|\le(1+\delta_{ij})A/(R_iR_j\eps_a^k)$ para $k>K$, todo en norma de
+  Frobenius.
+\item $d$: parte de $\Theta$ de la serie del gradiente, más su cola $2A/R_i\cdot\nu^{K+1}/(1-\nu)$,
+  más $|p-1||\tau_W|$, con $|p-1|\le|\Delta E/n|/0{,}6$.
+\item $\|\partial^3\hat F(0)\|$ y $\|\partial^4\hat F(0)\|$: serie más parte de $\Theta$ más cola
+  $c_{\rm sim}A/(\prod R_i\,\eps_a^k)$, con $c_{\rm sim}=\prod m_i!$ según los índices repetidos.
+\item $L=\|\partial^3\hat F(0)\|+2\eta\|\partial^4\hat F(0)\|+2C_5\eta^2$ (para $n=12$, sin la serie de
+  $\partial^4$: $L=\|\partial^3\hat F(0)\|+2C_4\eta$).
+\end{itemize}
+Se pide $h_{\rm K}=\beta L\eta\le\frac12$ con $\beta=1/\lambda_{\min}(\hat J)$, y el déficit es~\eqref{eq:deficit}.
+El tramo $(0,10^{-30}]$ se cubre porque todas las cotas mejoran al bajar $\eps$ y
+$\hat J\to\hat J(0)\succ0$ (Sylvester exacto).
+
+\paragraph{Resultado} (\scr{kantorovich\_series.py}; los parámetros se eligen en una rejilla gruesa y
+luego se certifica con la rejilla fina):
+
+\begin{center}
+\begin{tabular}{ccccc}
+\toprule
+$n$ & $(\eps_a,R_h,R_m,R_s)$, $(w_m,w_s)$ & rango certificado & $h_{\rm K}$ en el borde & déficit\\
+\midrule
+$6$ & $(0{,}015,\,10^{-4},\,8\cdot10^{-3},\,0{,}4)$, $(1,1)$, con $\partial^4$ & $0<\eps\le8{,}7\cdot10^{-5}$ & $0{,}49$ & $\le8\cdot10^{-28}$\\
+$9$ & $(0{,}03,\,10^{-4},\,4\cdot10^{-3},\,0{,}1)$, $(1,1)$, con $\partial^4$ & $0<\eps\le1{,}18\cdot10^{-2}$ & $0{,}34$ & $\le8\cdot10^{-21}$\\
+$12$ & $(0{,}02,\,2\cdot10^{-5},\,10^{-3},\,0{,}1)$, $(0{,}3,0{,}3)$ & $0<\eps\le4{,}1\cdot10^{-3}$ & $0{,}50$ & $\le10^{-29}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{$n=15$ y $18$: Newton--Kantorovich sin graduar}\label{sec:sin_graduar}
+
+Para $n\ge15$ basta la versión sin graduar (\scr{z23\_kantorovich.py}), en el polidisco
+$|\eps|\le\eps_a$, $|x|\le t'$, con $|e(x)-(-1+x\cdot\bar o)|\le A_e=2\sqrt2\eps_a+2t'$
+(Lema~\ref{lem:bf}). Por Cauchy en la bola $|x|\le t'/2$: $\|\partial^3e\|\le L=216A_e/t'^3$;
+por el Lema~\ref{lem:corrientes}, $|D_W|\le(2A_e/t')\nu^{n-2}/(1-\nu)$, $|\pE-1|\le2A_e\nu^n/((1-\nu)|\tau_h|)$ y
+$|\chi(\Theta)-\chi(0)|\le4A_e\nu^{n-4}/(t'^2(1-\nu))$, con $\nu=|\eps|/\eps_a$. La positividad
+$\chi\ge1{,}3\cdot10^{-3}\eps^4$ en $W$ se obtiene de la serie de $\chi$ de orden $8$ de cada $n$ (exacta
+hasta orden $4$) y de su resto de Cauchy con la cota $|\chi|\le M_n=(4\sqrt2\eps_a+t')/t'^2$ que da
+Bauer--Fike (\scr{radio\_chi\_bf.py}), válida para $|\eps|<5{,}7\cdot10^{-5}$ ($n=15$) y
+$4{,}0\cdot10^{-5}$ ($n=18$). Kantorovich con $\beta\le1/(2\kappa''\eps^4)$ da los radios
+$6{,}9\cdot10^{-8}$ ($n=15$) y $5{,}0\cdot10^{-6}$ ($n=18$, $\eps_a=1{,}57\cdot10^{-2}$,
+$t'=1{,}11\cdot10^{-2}$), con déficit $O(|D|^2/\eps^4)=O(\eps^{2n-8})$. Aquí las condiciones se comprueban
+en una rejilla geométrica de $6000$ valores de $\eps$, no por intervalos como en $n\le12$.
+
+\begin{observacion}
+La misma vía da, para $n=21$, $24$ y $30$, los radios $2{,}8\cdot10^{-5}$, $2{,}1\cdot10^{-5}$ y
+$1{,}3\cdot10^{-5}$ para Newton--Kantorovich. No los incluimos en el Teorema~\ref{teo:principal} por tres
+razones. (a) Usan la serie de $\chi$ de orden $8$ calculada en $n=18$. El Corolario~\ref{cor:universal} prueba
+que los coeficientes son los mismos para todo $n\ge21$, pero no que coincidan con los de $n=18$, y calcularlos
+en $n=21$ no cabe en memoria. (b) Falta el radio $\eps_F(n)$ de (F), que decrece deprisa con $n$
+($2{,}1\cdot10^{-3}$ en $n=15$, $4{,}5\cdot10^{-5}$ en $n=18$). (c) En esos bordes la cota del déficit supera al
+término principal ($2\cdot10^{-80}$ frente a $\sim10^{-92}$ en $n=21$, con $4|b_0|$ extrapolado), como en $n=18$.
+\end{observacion}
+
+\subsection{Qué limita los radios}\label{sec:limites}
+
+\begin{itemize}
+\item $n=6$: con $\partial^4$ en serie, el término de variación ($2\eta\|\partial^4\hat F\|+2C_5\eta^2\approx
+  1{,}1\cdot10^{10}$) domina a $\|\partial^3\hat F\|\approx1{,}4\cdot10^8$; lo limita la cota de Cauchy de
+  $\partial^5$. Sin la serie de $\partial^4$ el radio era $1{,}17\cdot10^{-5}$.
+\item $n=9$: el corte es abrupto ($h_{\rm K}$ salta de $0{,}34$ a más de $\frac12$ en un intervalo): con
+  $\eps/\eps_a\approx0{,}4$ la cola de Cauchy de $d$ hace crecer $\eta$, la bola de radio $2\eta$ se
+  acerca al borde del polidisco y $C_5\propto\varrho^{-5}$ explota. Sin $\partial^4$, $5{,}1\cdot10^{-3}$.
+\item En general, acercarse a la ED pediría un dominio de analiticidad mayor que el de Bauer--Fike
+  ($\eps_a\sim1/(3n)$). Ese dominio existe: el test de la raíz sobre la serie de Rayleigh--Schrödinger de
+  $\lambda_0(\eps)$ hasta orden $120$ (\scr{radio\_convergencia.py}) da un radio de convergencia
+  $|E_m|^{-1/m}\approx0{,}30$ ($n=6$) y $0{,}29$ ($n=9$) en $m=120$, sin tendencia apreciable con $n$, es decir,
+  un factor $10$--$20$ por encima de los $\eps_a$ usados. Es una estimación numérica (cociente de una serie en
+  coma flotante), no una cota.
+\end{itemize}
+
+%=====================================================================
+\section{Estado de las afirmaciones}\label{sec:estado}
+%=====================================================================
+
+\begin{center}
+\begin{tabular}{>{\raggedright}p{6.2cm}>{\raggedright\arraybackslash}p{8.3cm}}
+\toprule
+Afirmación & Naturaleza\\
+\midrule
+Lema~\ref{lem:clasico}, Teoremas~\ref{teo:caminos} y~\ref{teo:enrollamiento}, Lema~\ref{lem:dipolo},
+Proposición~\ref{prop:tunel}, Corolario~\ref{cor:b0} &
+Demostrados (para todo $n\in3\mathbb Z$, con $n$ fijo y $\eps\to0$).\\
+Coeficientes $B$ y $b_0$ ($n=6,9,12,15$), $t_n$ ($n=6,9,12$) & Exactos, en fracciones; comparados con ED
+($b_0$: $n=6,9$; $t_n$: $n=6,9,12$). $b_0$ de $n=18$ en coma flotante, sin cancelaciones.\\
+Corolario~\ref{cor:universal} (universalidad de $\chi$) & Demostrado para $K+2\le\lceil n/2\rceil-1$; la
+igualdad con la serie de $n=18$ en orden $8$ no.\\
+Proposiciones~\ref{prop:local} y~\ref{prop:energia}, Lemas~\ref{lem:anclaje} y~\ref{lem:pegado} &
+Demostrados.\\
+Valores de $p$, $\ploc$, $\pE$, $p_{\rm pieza}$ & Numéricos (SDP por punto interior, tolerancias
+$10^{-8}$--$10^{-12}$).\\
+(F): fundamental en momento $0$ & Demostrado para $\eps$ pequeño y todo $n\in3\mathbb Z$
+(Proposición~\ref{prop:tunel}). Radio $\eps_F(n)>\eps_n$ para $n=6,\dots,18$: certificado asistido por
+ordenador, de la misma naturaleza que los $\eps_n$. ED hasta $\eps=0{,}15$ ($n\le15$).\\
+Positividad graduada de $K_1$ y $\chi$ en orden $\eps^4$ & Exacta (Sylvester en racionales).\\
+$\chi\ge1{,}3\cdot10^{-3}\eps^4$ ($n=15,18$) & Coeficientes de orden $5$--$8$ en coma flotante validada;
+$\lambda_{\min}$ de la serie truncada comprobada en una rejilla de $\eps$, no en intervalos.\\
+Lemas~\ref{lem:bf}, \ref{lem:soporte}, \ref{lem:corrientes}; Newton--Kantorovich y el déficit & Demostrados.\\
+Radios del Teorema~\ref{teo:principal} ($n=15,18$) & Rejilla de $\eps$ (no intervalos), con las cotas de la Sección~\ref{sec:sin_graduar}. En $n=18$, el término principal domina a $\delta_n$ solo para $\eps\le1{,}1\cdot10^{-6}$.\\
+Radios del Teorema~\ref{teo:principal} ($n=6,9,12$) & Certificado asistido por ordenador: coeficientes de serie en
+doble precisión validados (ED, racionales exactos, regla de corrientes); cotas de $\lambda_{\min}$ por
+intervalos con la derivada de la serie; sin aritmética de intervalos.\\
+Uniformidad en $n$ del Teorema~\ref{teo:principal} & No cubierta aquí (véase abajo).\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Problemas abiertos.}
+\begin{enumerate}
+\item \emph{Uniformidad en $n$.} Todas las constantes de este trabajo vienen de Bauer--Fike con $n$
+  fijo, cuyo radio decrece como $1/n$. Hay tres piezas:
+  \begin{itemize}
+  \item \emph{analiticidad uniforme} del multiplete y de $H+tO$. En el cuaderno de trabajo
+    (\texttt{celda\_k\_notas.md}, 9.5--9.13 y 9.22) hay una expansión en contornos en espacio-tiempo,
+    certificada con intervalos, con radio $\approx8\cdot10^{-3}$ uniforme en $n$. Con ella,
+    Newton--Kantorovich sin graduar vale para todo $n\ge21$ hasta $\eps\approx1{,}2\cdot10^{-5}$, que es el
+    radio de positividad de $\chi$: el desplazamiento $D\sim\nu^{n-2}$ mejora con $n$. No la incluimos aquí;
+  \item \emph{universalidad de $\chi$}: demostrada entre los $n\ge21$ (Corolario~\ref{cor:universal}). Falta
+    enlazarla con una serie calculable (la de $n=18$ en orden $8$, o la de orden $8$ en $n=21$);
+  \item \emph{(F) uniforme.} Es la pieza que falta de verdad. $\eps_F(n)$ cae deprisa con $n$, y es de
+    esperar: las correcciones relativas al túnel son de orden $n\eps^2$ (un par de saltos de ida y vuelta
+    en cualquiera de los $n$ enlaces). Un radio uniforme pide escribir $a_{\pm1}$ como $t_n\eps^{2n/3}$ por
+    $\exp(n\cdot O(\eps^2))$ con signo fijo, por ejemplo con el gas de eventos de túnel del cuaderno (Z17).
+  \end{itemize}
+  Además, sin graduar, la cota del déficit ($\propto\eps^{2n-8}$) solo queda por debajo del término
+  principal ($\propto\eps^n$) en una fracción del rango de Kantorovich: en $n=18$, hasta $1{,}1\cdot10^{-6}$ de
+  $5\cdot10^{-6}$, y en $n=21$--$30$ tampoco en el borde. Un Newton graduado para $n\ge15$, con déficit
+  $O(\eps^{2n-4})$, reduciría ese hueco.
+\item \emph{Radios realistas.} Cerrar la distancia entre los radios certificados y los que sugiere la
+  ED ($\sim3\cdot10^{-3}$ y $\sim9\cdot10^{-2}$ para $n=6,9$). El radio de convergencia de $\lambda_0(\eps)$ es
+  $\approx0{,}3$ (Sección~\ref{sec:limites}), así que el dominio de analiticidad no es el obstáculo: lo es la
+  cota de Bauer--Fike sobre él. Un dominio de radio $\eps_a\sim0{,}1$ con cotas explícitas (por ejemplo, un
+  contorno de Kato en el plano complejo de $\eps$ certificado numéricamente en cada sector de momento)
+  bastaría para el factor que falta en $n=9$.
+\item \emph{Datos de volumen infinito.} Con $\sigma_\infty$ en lugar de $\sigma_n$, el mismo argumento
+  daría $p(n,\Theta)=\pE(n,\Theta)-O(\|\sigma_n(\Theta)-\sigma_\infty\|^2)$ en el régimen en que manda la
+  energía. La corrección de tamaño finito de la marginal se ha medido por ED (\scr{marginal\_tamano.py},
+  $\sigma_6,\sigma_9$ frente a $\sigma_{12}$ y $\sigma_{12}$ frente a $\sigma_{15}$, $\eps=0{,}05$--$0{,}1$):
+  \[
+    \|\sigma_n-\sigma_\infty\|_{\max}=O(\eps^{2n/3-1}),\qquad\text{pendientes }3{,}08,\ 5{,}06,\ 7{,}12\ (n=6,9,12),
+  \]
+  es decir, del orden del túnel, no del enrollamiento. Por componentes: las coherencias de un salto van como
+  $\eps^{2n/3-1}$, las diagonales y el salto doble como $\eps^{2n/3}$ y las intermedias como $\eps^{2n/3+1}$; en
+  las variables graduadas, todas son $O(\eps^{2n/3-2})$. Esta corrección no depende de $\Theta$. Si el
+  esquema cuadrático vale, la parte del déficit que no depende de $\Theta$ es $O(\eps^{4n/3-4})$ y no afecta a
+  la sensibilidad, y la que depende es un término cruzado $O(\eps^{2n/3-2}\cdot\eps^{n-2})=O(\eps^{5n/3-4})$,
+  menor que $\eps^n$ para $n\ge9$. Se esperaría, pues, la misma sensibilidad de orden $\eps^n$ con el
+  coeficiente de $b_0$. Falta la prueba: con $\sigma_\infty$, $p(n,0)\ne1$ y el punto de partida del Newton ya
+  no es el fundamental exacto.
+\end{enumerate}
+
+%=====================================================================
+\appendix
+\section{Guiones y reproducción}\label{sec:guiones}
+%=====================================================================
+
+Todos los guiones están en \texttt{scripts/} y se ejecutan con el intérprete del entorno virtual del
+proyecto (\texttt{.venv/bin/python}).
+
+\begin{center}
+\begin{tabular}{>{\raggedright}p{4.3cm}>{\raggedright\arraybackslash}p{10.2cm}}
+\toprule
+Guion & Qué hace\\
+\midrule
+\texttt{celda\_k\_flujo.py} & Sector de carga, hamiltoniano con flujo en el gauge uniforme y ED.\\
+\texttt{orden\_kn.py} & Exponentes efectivos del Teorema~\ref{teo:caminos} (16 valores de $\Theta$).\\
+\texttt{orden\_theta.py} & Coeficientes exactos $B$, $b_\kappa$ del Teorema~\ref{teo:enrollamiento} y comparación con ED.\\
+\texttt{radio\_F.py} & Radio certificado $\eps_F(n)$ de (F): series de $\lambda_\kappa-\lambda_0$ por sectores de momento, con colas de Cauchy de Bauer--Fike.\\
+\texttt{tunel\_signo.py} & Coeficiente del túnel $t_n$ y su signo (Proposición~\ref{prop:tunel}), comparación con ED y momento del fundamental; signos de $B$ y $b_0$ hasta $n=15$ (Corolario~\ref{cor:b0}).\\
+\texttt{sdp\_sensibilidad.py} & SDP de $p(6,\Theta)$ por bloques de carga y momento (\texttt{NREF}, \texttt{NTH}, \texttt{SOLVER} en el entorno); con \texttt{NREF=12}, los datos de la Sección~\ref{sec:cotas}; con \texttt{NREF=6}, los autoconsistentes.\\
+\texttt{sdp\_piezas.py} & SDP de piezas, $p_{\rm pieza}(\ell)$.\\
+\texttt{susceptibilidad.py} & $\chi$, $K_1$, $K_3$, la varianza estática y la predicción de segundo orden $\pE-p\approx\delta e/(\bar e-e_R)$.\\
+\texttt{k1\_racional.py} & Series exactas en fracciones y positividad graduada (Sylvester).\\
+\texttt{k1\_serie\_rapida.py} & Series de $\chi$ por $n$ con tres patrones (modo \texttt{chi3}).\\
+\texttt{radio\_chi\_bf.py} & Radio de positividad de $\chi$ por Bauer--Fike.\\
+\texttt{z23\_kantorovich.py} & Newton--Kantorovich sin graduar ($n\ge12$; radios de $n=15,18$).\\
+\texttt{newton\_graduado.py}, \texttt{marg\_k0.py} & Base explícita $\mathcal B(\eps)$, comprobaciones por ED del Newton graduado.\\
+\texttt{kantorovich\_graduado.py} & Primera versión del Newton graduado, solo con cotas de Cauchy.\\
+\texttt{serie\_respuesta.py} & Series en $\eps$ de $E$, gradiente, hessiana, cúbica y cuártica, para $M$ valores de $\Theta$.\\
+\texttt{kantorovich\_series.py} & Certificación con series y colas de Cauchy (Teorema~\ref{teo:principal}, $n=6,9,12$).\\
+\texttt{b0\_flotante.py} & $B(c_0\to c_d)$ y $4|b_0|$ en coma flotante ($n=18$).\\
+\texttt{marginal\_tamano.py} & Corrección de tamaño finito $\sigma_n-\sigma_{n'}$ de la marginal por ED (problema abierto 3).\\
+\texttt{radio\_convergencia.py} & Radio de convergencia de la serie de $\lambda_0(\eps)$ por el test de la raíz (problema abierto 2).\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Reproducción de los radios de $n=6,9,12$.}
+\begin{verbatim}
+python scripts/serie_respuesta.py 6 36 sr6q.npz 16 cubica cuarta
+python scripts/kantorovich_series.py sr6q.npz
+python scripts/serie_respuesta.py 9 40 sr9q.npz 12 cubica cuarta
+python scripts/kantorovich_series.py sr9q.npz
+python scripts/serie_respuesta.py 12 30 sr12.npz 8 cubica
+python scripts/kantorovich_series.py sr12.npz
+\end{verbatim}
+
+\paragraph{Reproducción de $\eps_F(n)$} (argumentos: $n$, $j$ y número de valores de $\Theta$; menos de un
+minuto cada uno, y $3$~GB de memoria en $n=18$).
+\begin{verbatim}
+python scripts/radio_F.py 6 8 8
+python scripts/radio_F.py 9 12 8
+python scripts/radio_F.py 12 12 8
+python scripts/radio_F.py 15 10 4
+python scripts/radio_F.py 18 8 2
+\end{verbatim}
+Cada certificación imprime los ceros graduados violados, el ruido fuera de la regla de corrientes, el
+óptimo de la rejilla gruesa y el rango certificado con $h$, $\lambda_{\min}$, $\eta$ y el déficit en el
+borde. Con la serie cuártica, la búsqueda en la rejilla gruesa tarda varias horas.
+
+\end{document}
