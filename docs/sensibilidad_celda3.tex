@@ -104,8 +104,8 @@ orden de $\eps$ ve $p$ la holonomía, y con qué coeficiente.
     0\le\delta_n(\Theta)=O(\eps^{2n-4}),
   \]
   ($O(\eps^{2n-8})$ en la variante sin graduar que usamos para $n=15,18$), y el primer término es de orden exactamente $\eps^n$, con el coeficiente del punto 1.
-\item \emph{Certificación} (Sección~\ref{sec:prueba}). La cota inferior de $p$ se obtiene resolviendo
-  con Newton--Kantorovich las ecuaciones de marginales para el fundamental de $H+\sum_ax_aO_a$. El
+\item \emph{Certificación} (Sección~\ref{sec:prueba}). La cota inferior de $p$ sale de resolver
+  por Newton--Kantorovich las ecuaciones de marginales para el fundamental de $H+\sum_ax_aO_a$. El
   jacobiano es la susceptibilidad estática, con direcciones blandas de orden $\eps^4$, y la prueba
   necesita una versión graduada, con pesos $(1,\eps,\eps^2)$, apoyada en un lema de soporte ponderado.
   Las constantes se certifican para $n=6,9,12,15,18$ con radios explícitos.
@@ -213,7 +213,9 @@ $\ket{\chi_\kappa}=3^{-1/2}\sum_r e^{-i\kappa r}\ket{c_r}$.
 
 Sea $\psi_0$ el vector del nivel $\lambda_0$ (momento $0$) de $H_n(\eps,0)$, y
 \[
-  \sigma=\sigma_n(\eps):=\text{marginal de arista de }\ket{\psi_0}\bra{\psi_0},\qquad
+  \sigma=\sigma_n(\eps):=\text{marginal de arista de }\ket{\psi_0}\bra{\psi_0},
+\]
+\[
   e_R=\tr(h(0)\sigma)=\lambda_0(n,0,\eps)/n,\qquad \bar e=\tr h/9=-\tfrac13 .
 \]
 Con esos datos, el propio $\psi_0$ da $p(n,0)\ge1$. Usamos además:
@@ -442,8 +444,11 @@ Entre dos patrones, $\Delta\mathcal D\equiv0\pmod n$.
 \end{lema}
 
 \begin{proof}
-$c_{r+d}=T^dc_r$, y con el corte fijo $\mathcal D(T^da)-\mathcal D(a)=d\,Q_{\rm tot}-n\cdot(\text{carga que cruza el
-corte})$, con $Q_{\rm tot}=nQ_c/3=0$.
+$c_{r+d}=T^dc_r$, y con el corte fijo
+\[
+  \mathcal D(T^da)-\mathcal D(a)=d\,Q_{\rm tot}-n\cdot(\text{carga que cruza el corte}),
+\]
+con $Q_{\rm tot}=nQ_c/3=0$.
 \end{proof}
 
 \begin{teorema}[orden del enrollamiento]\label{teo:enrollamiento}
@@ -990,16 +995,18 @@ $\hat J\to\hat J(0)\succ0$ (Sylvester exacto).
 luego se certifica con la rejilla fina):
 
 \begin{center}
-\begin{tabular}{ccccc}
+\begin{tabular}{@{}ccccc@{}}
 \toprule
-$n$ & $(\eps_a,R_h,R_m,R_s)$, $(w_m,w_s)$ & rango certificado & $h_{\rm K}$ en el borde & déficit\\
+$n$ & $(\eps_a,R_h,R_m,R_s)$, $(w_m,w_s)$ & rango certificado & $h_{\rm K}$ & déficit\\
 \midrule
-$6$ & $(0{,}015,\,10^{-4},\,8\cdot10^{-3},\,0{,}4)$, $(1,1)$, con $\partial^4$ & $0<\eps\le8{,}7\cdot10^{-5}$ & $0{,}49$ & $\le8\cdot10^{-28}$\\
-$9$ & $(0{,}03,\,10^{-4},\,4\cdot10^{-3},\,0{,}1)$, $(1,1)$, con $\partial^4$ & $0<\eps\le1{,}18\cdot10^{-2}$ & $0{,}34$ & $\le8\cdot10^{-21}$\\
-$12$ & $(0{,}02,\,2\cdot10^{-5},\,10^{-3},\,0{,}1)$, $(1,1)$, con $\partial^4$ & $0<\eps\le5{,}2\cdot10^{-3}$ & $0{,}40$ & $\le1{,}6\cdot10^{-23}$\\
+$6$ & $(0{,}015,\,10^{-4},\,8\cdot10^{-3},\,0{,}4)$, $(1,1)$ & $0<\eps\le8{,}7\cdot10^{-5}$ & $0{,}49$ & $\le8\cdot10^{-28}$\\
+$9$ & $(0{,}03,\,10^{-4},\,4\cdot10^{-3},\,0{,}1)$, $(1,1)$ & $0<\eps\le1{,}18\cdot10^{-2}$ & $0{,}34$ & $\le8\cdot10^{-21}$\\
+$12$ & $(0{,}02,\,2\cdot10^{-5},\,10^{-3},\,0{,}1)$, $(1,1)$ & $0<\eps\le5{,}2\cdot10^{-3}$ & $0{,}40$ & $\le1{,}6\cdot10^{-23}$\\
 \bottomrule
 \end{tabular}
 \end{center}
+\noindent Las tres filas usan la serie de $\partial^4$; $h_{\rm K}$ y el déficit son los del borde.
+
 
 \subsection{$n=15$ y $18$: Newton--Kantorovich sin graduar}\label{sec:sin_graduar}
 
@@ -1340,7 +1347,7 @@ Guion & Qué hace\\
 \texttt{radio\_chi\_bf.py} & Radio de positividad de $\chi$ por Bauer--Fike.\\
 \texttt{z23\_kantorovich.py} & Newton--Kantorovich sin graduar ($n\ge12$; radios de $n=15,18$).\\
 \texttt{newton\_graduado.py}, \texttt{marg\_k0.py} & Base explícita $\mathcal B(\eps)$, comprobaciones por ED del Newton graduado.\\
-\texttt{kantorovich\_graduado.py} & Primera versión del Newton graduado, solo con cotas de Cauchy.\\
+\texttt{kantorovich\_\allowbreak graduado.py} & Primera versión del Newton graduado, solo con cotas de Cauchy.\\
 \texttt{serie\_respuesta.py} & Series en $\eps$ de $E$, gradiente, hessiana, cúbica y cuártica, para $M$ valores de $\Theta$.\\
 \texttt{kantorovich\_series.py} & Certificación con series y colas de Cauchy (Teorema~\ref{teo:principal}, $n=6,9,12$).\\
 \texttt{b0\_flotante.py} & $B(c_0\to c_d)$ y $4|b_0|$ en coma flotante ($n=18$).\\
