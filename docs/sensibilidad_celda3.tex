@@ -52,14 +52,14 @@ el orden $\eps^{2n/3}$ con signo fijo, así que el fundamental tiene momento $0$
 todo el rango usado. (ii) $p(n,\Theta)$ está acotado por arriba
 por un techo local ciego a $\Theta$ y por una cota de energía $\pE(n,\Theta)$ que ve $\Theta$ exactamente
 a través de la energía fundamental; numéricamente, el techo local manda en $n=6$ (SDP) y la cota de energía desde $n=9$. (iii) Con datos autoconsistentes (la marginal del propio anillo), probamos
-$p(n,\Theta)=\pE(n,\Theta)-\delta_n(\Theta)$ con $0\le\delta_n=O(\eps^{2n-4})$ ($n\le12$; $O(\eps^{2n-8})$ para
-$n=15,18$), de modo que la
+$p(n,\Theta)=\pE(n,\Theta)-\delta_n(\Theta)$ con $0\le\delta_n=O(\eps^{2n-4})$ ($n\le15$; $O(\eps^{2n-8})$ para
+$n=18$), de modo que la
 sensibilidad de $p$ es exactamente la de la energía, de orden $\eps^n$ con el coeficiente de (i).
 (iv) La prueba de (iii) es un Newton--Kantorovich graduado en una familia de Hellmann--Feynman, con
 analiticidad por Bauer--Fike, un lema de soporte ponderado y series en $\eps$ con colas de Cauchy;
 queda certificada, con constantes explícitas calculadas en coma flotante validada, para
 $0<\eps\le1{,}07\cdot10^{-4}$ ($n=6$), $1{,}21\cdot10^{-2}$ ($n=9$), $6{,}4\cdot10^{-3}$ ($n=12$),
-$6{,}9\cdot10^{-8}$ ($n=15$) y $5{,}0\cdot10^{-6}$ ($n=18$). Separamos con cuidado lo demostrado
+$4{,}8\cdot10^{-3}$ ($n=15$) y $5{,}0\cdot10^{-6}$ ($n=18$). Separamos con cuidado lo demostrado
 analíticamente de lo comprobado o certificado numéricamente, y damos los guiones que reproducen cada
 número.
 \end{abstract}
@@ -104,7 +104,7 @@ orden de $\eps$ ve $p$ la holonomía, y con qué coeficiente.
     p(n,0)-p(n,\Theta)=\frac{E_0(n,\Theta)-E_0(n,0)}{n(\bar e-e_R)}+\delta_n(\Theta),\qquad
     0\le\delta_n(\Theta)=O(\eps^{2n-4}),
   \]
-  ($O(\eps^{2n-8})$ en la variante sin graduar que usamos para $n=15,18$), y el primer término es de orden exactamente $\eps^n$, con el coeficiente del punto 1.
+  ($O(\eps^{2n-8})$ en la variante sin graduar que usamos para $n=18$), y el primer término es de orden exactamente $\eps^n$, con el coeficiente del punto 1.
 \item \emph{Certificación} (Sección~\ref{sec:prueba}). La cota inferior de $p$ sale de resolver
   por Newton--Kantorovich las ecuaciones de marginales para el fundamental de $H+\sum_ax_aO_a$. El
   jacobiano es la susceptibilidad estática, con direcciones blandas de orden $\eps^4$, y la prueba
@@ -416,9 +416,9 @@ $g_\kappa=\lambda_\kappa-\lambda_0$ ($\kappa=\pm2\pi/3$).
 \toprule
 $n$ & $6$ & $9$ & $12$ & $15$ & $18$\\
 \midrule
-$j$ ($K=2j+1$), valores de $\Theta$ & $8$, $8$ & $12$, $8$ & $12$, $8$ & $10$, $4$ & $8$, $2$\\
-$\eps_F(n)$ certificado & $3{,}08\cdot10^{-2}$ & $1{,}83\cdot10^{-2}$ & $8{,}8\cdot10^{-3}$ & $2{,}1\cdot10^{-3}$ & $4{,}5\cdot10^{-5}$\\
-$\eps_n$ del Teorema~\ref{teo:principal} & $1{,}07\cdot10^{-4}$ & $1{,}21\cdot10^{-2}$ & $6{,}4\cdot10^{-3}$ & $6{,}9\cdot10^{-8}$ & $5{,}0\cdot10^{-6}$\\
+$j$ ($K=2j+1$), valores de $\Theta$ & $8$, $8$ & $12$, $8$ & $12$, $8$ & $14$, $4$ & $8$, $2$\\
+$\eps_F(n)$ certificado & $3{,}08\cdot10^{-2}$ & $1{,}83\cdot10^{-2}$ & $8{,}8\cdot10^{-3}$ & $5{,}5\cdot10^{-3}$ & $4{,}5\cdot10^{-5}$\\
+$\eps_n$ del Teorema~\ref{teo:principal} & $1{,}07\cdot10^{-4}$ & $1{,}21\cdot10^{-2}$ & $6{,}4\cdot10^{-3}$ & $4{,}8\cdot10^{-3}$ & $5{,}0\cdot10^{-6}$\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -719,17 +719,17 @@ con $0<\eps\le\eps_n$ y toda $\Theta$ real,
   p_E^{(0)}(n,\Theta)-\delta_n(\Theta)\ \le\ p(n,\Theta)\ \le\ \pE(n,\Theta),
 \]
 donde $p_E^{(0)}$ es $\pE$ con $\lambda_0(n,\Theta,\eps)$ en lugar de $E_0(n,\Theta)$ y $\delta_n\ge0$
-tiene la cota explícita de la Sección~\ref{sec:prueba}, que es $O(\eps^{2n-4})$ para $n=6,9,12$ y
-$O(\eps^{2n-8})$ para $n=15,18$. Los radios son
+tiene la cota explícita de la Sección~\ref{sec:prueba}, que es $O(\eps^{2n-4})$ para $n=6,9,12,15$ y
+$O(\eps^{2n-8})$ para $n=18$. Los radios son
 \begin{center}
 \begin{tabular}{cccccc}
 \toprule
 $n$ & $6$ & $9$ & $12$ & $15$ & $18$\\
 \midrule
-$\eps_n$ & $1{,}07\cdot10^{-4}$ & $1{,}21\cdot10^{-2}$ & $6{,}4\cdot10^{-3}$ & $6{,}9\cdot10^{-8}$ & $5{,}0\cdot10^{-6}$\\
-cota de $\delta_n$ en el borde & $4\cdot10^{-27}$ & $8\cdot10^{-21}$ & $9\cdot10^{-25}$ & $5\cdot10^{-108}$ & $6\cdot10^{-86}$\\
-término principal en el borde & $7\cdot10^{-24}$ & $2\cdot10^{-16}$ & $6\cdot10^{-25}$ & $2\cdot10^{-105}$ & $6\cdot10^{-93}$\\
-$\eps_n^*$ ($\delta_n<$ mitad del principal) & $\eps_n$ & $\eps_n$ & $6{,}3\cdot10^{-3}$ & $\eps_n$ & $1{,}1\cdot10^{-6}$\\
+$\eps_n$ & $1{,}07\cdot10^{-4}$ & $1{,}21\cdot10^{-2}$ & $6{,}4\cdot10^{-3}$ & $4{,}8\cdot10^{-3}$ & $5{,}0\cdot10^{-6}$\\
+cota de $\delta_n$ en el borde & $4\cdot10^{-27}$ & $8\cdot10^{-21}$ & $9\cdot10^{-25}$ & $9\cdot10^{-26}$ & $6\cdot10^{-86}$\\
+término principal en el borde & $2\cdot10^{-23}$ & $2\cdot10^{-16}$ & $6\cdot10^{-25}$ & $8\cdot10^{-33}$ & $6\cdot10^{-93}$\\
+$\eps_n^*$ ($\delta_n<$ mitad del principal) & $\eps_n$ & $\eps_n$ & $6{,}3\cdot10^{-3}$ & $3{,}4\cdot10^{-3}$ & $1{,}1\cdot10^{-6}$\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -752,8 +752,9 @@ Sección~\ref{sec:prueba}. La naturaleza de los radios es la de un certificado a
 \paragraph{Dónde se ve el término principal.} El teorema encierra $p$ en $[\pE-\delta_n,\pE]$, así que la
 variación en $\Theta$ de $p$ solo queda determinada por la de $\pE$ si la cota de $\delta_n$ es menor que el
 rango de $\pE$, $\approx4|b_0|\eps^n/(n(\bar e-e_R))$ (con $\bar e-e_R\approx2/3$). En el borde, el término principal
-supera a la cota de $\delta_n$ en $n=6,9,15$ (por factores de $6\cdot10^3$, $3\cdot10^4$ y $300$),
-pero no en $n=12$ ni en $n=18$. En $n=12$ Kantorovich llega hasta $6{,}4\cdot10^{-3}$, donde
+supera a la cota de $\delta_n$ en $n=6,9$ (por factores de $6\cdot10^3$ y $3\cdot10^4$),
+pero no en $n=12,15,18$. En $n=15$ Kantorovich llega hasta $4{,}8\cdot10^{-3}$ y la sensibilidad queda
+identificada para $\eps\le\eps_{15}^*=3{,}4\cdot10^{-3}$. En $n=12$ Kantorovich llega hasta $6{,}4\cdot10^{-3}$, donde
 la cota de $\delta_{12}$ es $1{,}4$ veces el principal; la sensibilidad queda identificada para
 $\eps\le\eps_{12}^*=6{,}3\cdot10^{-3}$ (Sección~\ref{sec:limites}), casi todo el rango. En $n=18$ la cota de $\delta_n$ va como $\eps^{2n-8}$ y el término principal como $\eps^n$, así
 que el cociente cae como $\eps^{10}$, y la sensibilidad queda identificada solo para
@@ -765,11 +766,13 @@ $(\eps_{18}^*,\eps_{18}]$ el teorema sigue valiendo como desigualdad, pero no ve
 \centering
 \includegraphics[width=\textwidth]{figs/fig_deficit.pdf}
 \caption{Cota de $\delta_n$ (continua) frente a la mitad del término principal $4|b_0|\eps^n/(n(\bar e-e_R))$
-(discontinua), con los parámetros del borde. $n=12$: Newton graduado con $\partial^4$ en serie (intervalos de
+(discontinua), con los parámetros del borde. $n=12,15$: Newton graduado con $\partial^4$ en serie (intervalos de
 razón $1{,}01$, \scr{figuras.py}); $n=18$: sin graduar (la cuenta de \scr{z23\_kantorovich.py}). Cada curva
 llega hasta el borde de Kantorovich; la sensibilidad queda identificada a la izquierda del cruce, $\eps_n^*$.
-En $n=12$ el cruce está casi en el borde ($6{,}30$ frente a $6{,}43\cdot10^{-3}$); en $n=18$ la pendiente
-$\eps^{28}$ frente a $\eps^{18}$ lo adelanta a $1{,}1\cdot10^{-6}$, un quinto del rango.}
+En $n=12$ el cruce está casi en el borde ($6{,}30$ frente a $6{,}43\cdot10^{-3}$); en $n=15$, en
+$3{,}40\cdot10^{-3}$ de $4{,}86\cdot10^{-3}$: la cota de $\delta_{15}$ va como $\eps^{26}$ hasta
+$\sim10^{-3}$ y desde ahí crece más deprisa, por el término de $C_5$; en $n=18$ la pendiente $\eps^{28}$ frente a $\eps^{18}$ lo adelanta a $1{,}1\cdot10^{-6}$,
+un quinto del rango.}
 \label{fig:deficit}
 \end{figure}
 
@@ -868,7 +871,8 @@ $W$ es $\succeq\kappa\eps^4$ para $\eps$ pequeño, con $\chi_{\min}\approx0{,}00
 
 \paragraph{Consecuencia.} Sin graduar, $\beta\sim\eps^{-4}$, y la condición de Kantorovich compara
 $|D|\sim\eps^{n-2}$ con $\eps^8/L$: hace falta $n-2>8$. Es la prueba de la
-Sección~\ref{sec:sin_graduar}, que cubre $n=15,18$. Para $n\le12$ hace falta graduar.
+Sección~\ref{sec:sin_graduar}, que cubre $n=18$ (en $n=15$ da solo $6{,}9\cdot10^{-8}$). Para $n\le12$ hace
+falta graduar, y en $n=15$ graduar sube el radio en casi cinco órdenes.
 
 \subsection{El Newton graduado}
 
@@ -972,8 +976,12 @@ $\ev{\psi|\xi_a}=0$, y la norma $\mathcal N=\ev{\psi|\psi}$ tratada como serie:
   con $E^{(2)}_{ab}=n\,\partial^2_{ab}e/2$.
 \end{itemize}
 Se pasa a la base $\mathcal B(\eps)$ orden a orden. Órdenes usados: $K=36$ ($n=6$), $40$ ($n=9$), $30$
-($n=12$). La dependencia en $\Theta$ se recupera exactamente por FFT con $N_\Theta>2w_{\max}$ valores
-($N_\Theta=16$, $12$, $8$), por el Lema~\ref{lem:corrientes}.
+($n=12$ y $15$). La dependencia en $\Theta$ se recupera exactamente por FFT con $N_\Theta>2w_{\max}$ valores
+($N_\Theta=16$, $12$, $8$, $6$), por el Lema~\ref{lem:corrientes}. En $n=15$ el cálculo se hace en el sector
+de momento $0$ (base de órbitas de traslación normalizadas, $119183$ estados frente a $1{,}79\cdot10^6$
+con $S^z=0$): $H$, $T$ y los $O_a(\Theta)$ conmutan con la traslación y los tres patrones forman una
+órbita, así que $\psi$, las $\xi_a$ y las $\zeta_{cd}$ viven en ese sector y la serie es la misma
+(comprobado contra el sector completo en $n=6,9$ hasta $10^{-15}$).
 
 \paragraph{Validación.}
 \begin{itemize}
@@ -1019,17 +1027,21 @@ $12$ & $(0{,}026,\,2{,}1\cdot10^{-5},\,7{,}7\cdot10^{-4},\,0{,}052)$, $(0{,}4,0{
 \bottomrule
 \end{tabular}
 \end{center}
-\noindent Las tres filas usan la serie de $\partial^4$; $h_{\rm K}$ y el déficit son los del borde. Los
+\noindent Las cuatro filas usan la serie de $\partial^4$; $h_{\rm K}$ y el déficit son los del borde. Los
 parámetros salen de \scr{optimiza\_\allowbreak principal.py} (Nelder--Mead con objetivo $\eps_n^*$,
 Sección~\ref{sec:limites}); los exactos son, con $(w_m,w_s)$ al final,
 $(0{,}0210494,\,1{,}89802\cdot10^{-4},\,8{,}82334\cdot10^{-3},\,0{,}419174,\,1{,}00018,\,1{,}00076)$ para $n=6$,
 $(0{,}031471,\,1{,}39883\cdot10^{-4},\,2{,}82928\cdot10^{-3},\,0{,}0886828,\,0{,}999792,\,1{,}00001)$ para $n=9$ y
-$(0{,}0262074,\,2{,}14742\cdot10^{-5},\,7{,}66691\cdot10^{-4},\,0{,}0522126,\,0{,}401969,\,0{,}399606)$ para $n=12$.
+$(0{,}0262074,\,2{,}14742\cdot10^{-5},\,7{,}66691\cdot10^{-4},\,0{,}0522126,\,0{,}401969,\,0{,}399606)$ para $n=12$ y
+$(0{,}0208816,\,6{,}71838\cdot10^{-5},\,2{,}21054\cdot10^{-4},\,0{,}0564851,\,0{,}998908,\,0{,}99904)$ para $n=15$.
 En $n=6,9$ la cota de $\delta_n$ queda en todo el rango muy por debajo de la mitad del principal, así que
-$\eps_n^*=\eps_n$.
+$\eps_n^*=\eps_n$; en $n=15$ la cruza en $\eps_{15}^*=3{,}4\cdot10^{-3}$. En $n=15$ la comparación con el
+principal empieza en $10^{-19}$ (por debajo, $\eps^{15}$ desborda la coma flotante y el cociente solo baja), y
+el tramo $(0,10^{-30}]$ se cubre igual que en $n\le12$: $\hat J(0)$ es la misma matriz que en $n=9,12$ (hasta
+$4\cdot10^{-15}$), con el mismo certificado de Sylvester.
 
 
-\subsection{$n=15$ y $18$: Newton--Kantorovich sin graduar}\label{sec:sin_graduar}
+\subsection{$n=18$: Newton--Kantorovich sin graduar}\label{sec:sin_graduar}
 
 Para $n\ge15$ basta la versión sin graduar (\scr{z23\_kantorovich.py}), en el polidisco
 $|\eps|\le\eps_a$, $|x|\le t'$, con $|e(x)-(-1+x\cdot\bar o)|\le A_e=2\sqrt2\eps_a+2t'$
@@ -1042,7 +1054,9 @@ Bauer--Fike (\scr{radio\_chi\_bf.py}), válida para $|\eps|<5{,}7\cdot10^{-5}$ (
 $4{,}0\cdot10^{-5}$ ($n=18$). Kantorovich con $\beta\le1/(2\kappa''\eps^4)$ da los radios
 $6{,}9\cdot10^{-8}$ ($n=15$) y $5{,}0\cdot10^{-6}$ ($n=18$, $\eps_a=1{,}57\cdot10^{-2}$,
 $t'=1{,}11\cdot10^{-2}$), con déficit $O(|D|^2/\eps^4)=O(\eps^{2n-8})$. Aquí las condiciones se comprueban
-en una rejilla geométrica de $6000$ valores de $\eps$, no por intervalos como en $n\le12$.
+en una rejilla geométrica de $6000$ valores de $\eps$, no por intervalos como en $n\le15$. Para $n=15$ el
+Teorema~\ref{teo:principal} usa el Newton graduado ($4{,}8\cdot10^{-3}$); el radio sin graduar queda como
+comparación.
 
 \begin{observacion}
 La misma vía da, para $n=21$, $24$ y $30$, los radios $2{,}8\cdot10^{-5}$, $2{,}1\cdot10^{-5}$ y
@@ -1050,7 +1064,7 @@ $1{,}3\cdot10^{-5}$ para Newton--Kantorovich. No los incluimos en el Teorema~\re
 razones. (a) Usan la serie de $\chi$ de orden $8$ calculada en $n=18$. El Corolario~\ref{cor:universal} prueba
 que los coeficientes son los mismos para todo $n\ge21$, pero no que coincidan con los de $n=18$, y calcularlos
 en $n=21$ no cabe en memoria. (b) Falta el radio $\eps_F(n)$ de (F), que decrece deprisa con $n$
-($2{,}1\cdot10^{-3}$ en $n=15$, $4{,}5\cdot10^{-5}$ en $n=18$). (c) En esos bordes la cota del déficit supera al
+($5{,}5\cdot10^{-3}$ en $n=15$, $4{,}5\cdot10^{-5}$ en $n=18$). (c) En esos bordes la cota del déficit supera al
 término principal ($2\cdot10^{-80}$ frente a $\sim10^{-92}$ en $n=21$, con $4|b_0|$ extrapolado), como en $n=18$.
 \end{observacion}
 
@@ -1061,8 +1075,8 @@ término principal ($2\cdot10^{-80}$ frente a $\sim10^{-92}$ en $n=21$, con $4|b
 \includegraphics[width=\textwidth]{figs/fig_radios.pdf}
 \caption{Radios por $n$: $\eps_n$ del Teorema~\ref{teo:principal}, $\eps_n^*$ (sensibilidad identificada),
 $\eps_F(n)$ de la Proposición~\ref{prop:tunel}, el alcance que sugiere la ED y el radio de convergencia de
-$\lambda_0(\eps)$ estimado por el test de la raíz. $n=6,9,12$ usan el Newton graduado con series; $n=15,18$, la
-versión sin graduar (Sección~\ref{sec:sin_graduar}), de ahí la caída en $n=15$. Entre lo certificado y lo
+$\lambda_0(\eps)$ estimado por el test de la raíz. $n=6,\dots,15$ usan el Newton graduado con series; $n=18$, la
+versión sin graduar (Sección~\ref{sec:sin_graduar}), de ahí la caída en $n=18$. Entre lo certificado y lo
 que sugieren la ED y la serie hay, en $n=6$, de $1{,}4$ a $3{,}4$ órdenes de magnitud.}
 \label{fig:radios}
 \end{figure}
@@ -1085,6 +1099,13 @@ que sugieren la ED y la serie hay, en $n=6$, de $1{,}4$ a $3{,}4$ órdenes de ma
   El corte de Kantorovich vuelve a ser abrupto ($h_{\rm K}$ salta de $0{,}48$ a $1{,}09$ en un intervalo). La serie cuártica de $n=12$ ($N=73789$, $K=30$, $8$ valores de $\Theta$) se
   calcula por pares de índices sin guardar todas las correcciones de segundo orden: $48$~min y
   $\sim1{,}4$~GB.
+\item $n=15$: serie cuártica en el sector de momento $0$ ($K=30$, $6$ valores de $\Theta$; $77$~min en dos
+  procesos de $\sim1{,}5$~GB). Kantorovich vale hasta $4{,}8\cdot10^{-3}$, con un corte abrupto como en
+  $n=9,12$ ($h_{\rm K}$ salta de $0{,}44$ a $1{,}01$ en un intervalo, por $C_5$). La condición
+  $n\mathcal A<1-R_s$ del polidisco obliga a $\eps_a\lesssim0{,}021$. El déficit, $O(\eps^{2n-4})$, cruza la
+  mitad del principal en $\eps_{15}^*=3{,}4\cdot10^{-3}$. Con $j=10$ el radio de (F) era $2{,}1\cdot10^{-3}$ y
+  habría mandado; con $j=14$ (\scr{radio\_F.py}, $K=29$) sube a $5{,}5\cdot10^{-3}$. Sin graduar el radio era
+  $6{,}9\cdot10^{-8}$.
 \item En general, acercarse a la ED pediría un dominio de analiticidad mayor que el de Bauer--Fike
   ($\eps_a\sim1/(3n)$). Ese dominio existe: el test de la raíz sobre la serie de Rayleigh--Schrödinger de
   $\lambda_0(\eps)$ hasta orden $120$ (\scr{radio\_convergencia.py}) da un radio de convergencia
@@ -1309,8 +1330,8 @@ Positividad graduada de $K_1$ y $\chi$ en orden $\eps^4$ & Exacta (Sylvester en 
 $\chi\ge1{,}3\cdot10^{-3}\eps^4$ ($n=15,18$) & Coeficientes de orden $5$--$8$ en coma flotante validada;
 $\lambda_{\min}$ de la serie truncada comprobada en una rejilla de $\eps$, no en intervalos.\\
 Lemas~\ref{lem:bf}, \ref{lem:soporte}, \ref{lem:corrientes}; Newton--Kantorovich y el déficit & Demostrados.\\
-Radios del Teorema~\ref{teo:principal} ($n=15,18$) & Rejilla de $\eps$ (no intervalos), con las cotas de la Sección~\ref{sec:sin_graduar}. En $n=18$, el término principal domina a $\delta_n$ solo para $\eps\le1{,}1\cdot10^{-6}$.\\
-Radios del Teorema~\ref{teo:principal} ($n=6,9,12$) & Certificado asistido por ordenador: coeficientes de serie en
+Radios del Teorema~\ref{teo:principal} ($n=18$) & Rejilla de $\eps$ (no intervalos), con las cotas de la Sección~\ref{sec:sin_graduar}. En $n=18$, el término principal domina a $\delta_n$ solo para $\eps\le1{,}1\cdot10^{-6}$.\\
+Radios del Teorema~\ref{teo:principal} ($n=6,9,12,15$) & Certificado asistido por ordenador: coeficientes de serie en
 doble precisión validados (ED, racionales exactos, regla de corrientes); cotas de $\lambda_{\min}$ por
 intervalos con la derivada de la serie; sin aritmética de intervalos.\\
 Lema~\ref{lem:testigo} & Demostrado, bajo (F$_x$).\\
@@ -1340,8 +1361,10 @@ Uniformidad en $n$ del Teorema~\ref{teo:principal} & No cubierta aquí (véase a
   \end{itemize}
   Además, sin graduar, la cota del déficit ($\propto\eps^{2n-8}$) solo queda por debajo del término
   principal ($\propto\eps^n$) en una fracción del rango de Kantorovich: en $n=18$, hasta $1{,}1\cdot10^{-6}$ de
-  $5\cdot10^{-6}$, y en $n=21$--$30$ tampoco en el borde. Un Newton graduado para $n\ge15$, con déficit
-  $O(\eps^{2n-4})$, reduciría ese hueco.
+  $5\cdot10^{-6}$, y en $n=21$--$30$ tampoco en el borde. El Newton graduado, con déficit
+  $O(\eps^{2n-4})$, reduce ese hueco: en $n=15$ deja $\eps_{15}^*=3{,}4\cdot10^{-3}$ de $4{,}8\cdot10^{-3}$.
+  Para $n=18$ la serie de respuesta en el sector de momento $0$ tiene $2{,}45\cdot10^6$ estados, $20$ veces
+  los de $n=15$, y los vectores de respuesta ($\sim17$~GB con $K=30$) no caben en memoria tal cual.
 \item \emph{Radios realistas.} Cerrar la distancia entre los radios certificados y los que sugiere la
   ED ($\sim3\cdot10^{-3}$ y $\sim9\cdot10^{-2}$ para $n=6,9$). El radio de convergencia de $\lambda_0(\eps)$ es
   $\approx0{,}3$ (Sección~\ref{sec:limites}), así que el dominio de analiticidad no es el obstáculo: lo es la
@@ -1391,11 +1414,11 @@ Guion & Qué hace\\
 \texttt{k1\_racional.py} & Series exactas en fracciones y positividad graduada (Sylvester).\\
 \texttt{k1\_serie\_rapida.py} & Series de $\chi$ por $n$ con tres patrones (modo \texttt{chi3}).\\
 \texttt{radio\_chi\_bf.py} & Radio de positividad de $\chi$ por Bauer--Fike.\\
-\texttt{z23\_kantorovich.py} & Newton--Kantorovich sin graduar ($n\ge12$; radios de $n=15,18$).\\
+\texttt{z23\_kantorovich.py} & Newton--Kantorovich sin graduar ($n\ge12$; radio de $n=18$).\\
 \texttt{newton\_graduado.py}, \texttt{marg\_k0.py} & Base explícita $\mathcal B(\eps)$, comprobaciones por ED del Newton graduado.\\
 \texttt{kantorovich\_\allowbreak graduado.py} & Primera versión del Newton graduado, solo con cotas de Cauchy.\\
-\texttt{serie\_respuesta.py} & Series en $\eps$ de $E$, gradiente, hessiana, cúbica y cuártica, para $M$ valores de $\Theta$.\\
-\texttt{kantorovich\_series.py} & Certificación con series y colas de Cauchy (Teorema~\ref{teo:principal}, $n=6,9,12$).\\
+\texttt{serie\_respuesta.py} & Series en $\eps$ de $E$, gradiente, hessiana, cúbica y cuártica, para $M$ valores de $\Theta$ (opción \texttt{k0}: sector de momento $0$).\\
+\texttt{kantorovich\_series.py} & Certificación con series y colas de Cauchy (Teorema~\ref{teo:principal}, $n=6,9,12,15$).\\
 \texttt{b0\_flotante.py} & $B(c_0\to c_d)$ y $4|b_0|$ en coma flotante ($n=18$).\\
 \texttt{marginal\_tamano.py} & Corrección de tamaño finito $\sigma_n-\sigma_{n'}$ de la marginal por ED (problema abierto 3).\\
 \texttt{radio\_convergencia.py} & Radio de convergencia de la serie de $\lambda_0(\eps)$ por el test de la raíz (problema abierto 2).\\
@@ -1404,12 +1427,12 @@ Guion & Qué hace\\
 \texttt{newton\_datos\_ed.py} & Newton con datos $\sigma_N$ por ED: $p^*(\Theta)$, $\delta$ y la hipótesis (F$_x$).\\
 \texttt{certifica\_Fx.py} & Certificación de (F$_x$) por el complemento de Schur sobre los patrones (Sección~\ref{sec:datos_ext}).\\
 \texttt{optimiza\_\allowbreak parametros.py} & Optimización de los parámetros del polidisco, fila por fila (Sección~\ref{sec:datos_ext}).\\
-\texttt{optimiza\_\allowbreak principal.py} & Optimización con objetivo $\eps_n^*$ para datos autoconsistentes ($n=6,9,12$, Sección~\ref{sec:limites}).\\
+\texttt{optimiza\_\allowbreak principal.py} & Optimización con objetivo $\eps_n^*$ para datos autoconsistentes ($n=6,9,12,15$, Sección~\ref{sec:limites}).\\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\paragraph{Reproducción de los radios de $n=6,9,12$.}
+\paragraph{Reproducción de los radios de $n=6,9,12,15$.}
 \begin{verbatim}
 python scripts/serie_respuesta.py 6 36 sr6q.npz 16 cubica cuarta
 python scripts/kantorovich_series.py sr6q.npz
@@ -1420,6 +1443,8 @@ python scripts/optimiza_principal.py sr9q.npz
 python scripts/serie_respuesta.py 12 30 sr12q.npz 8 cubica cuarta
 python scripts/kantorovich_series.py sr12q.npz
 python scripts/optimiza_principal.py sr12q.npz
+python scripts/serie_respuesta.py 15 30 sr15q.npz 6 cubica cuarta k0
+python scripts/optimiza_principal.py sr15q.npz
 \end{verbatim}
 
 \paragraph{Reproducción de $\eps_F(n)$} (argumentos: $n$, $j$ y número de valores de $\Theta$; menos de un
@@ -1428,7 +1453,7 @@ minuto cada uno, y $3$~GB de memoria en $n=18$).
 python scripts/radio_F.py 6 8 8
 python scripts/radio_F.py 9 12 8
 python scripts/radio_F.py 12 12 8
-python scripts/radio_F.py 15 10 4
+python scripts/radio_F.py 15 14 4
 python scripts/radio_F.py 18 8 2
 \end{verbatim}
 Cada certificación imprime los ceros graduados violados, el ruido fuera de la regla de corrientes, el

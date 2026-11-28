@@ -2,14 +2,15 @@
 
   fig_rangos.pdf    rangos de Kantorovich, de (F_x) y ventanas de sensibilidad con datos sigma_N / sigma_inf
                     (valores de kantorovich_datos.py, optimiza_parametros.py y certifica_Fx.py; Sección sec:datos_ext);
-  fig_deficit.pdf   cota del déficit delta_n frente a la mitad del término principal, n = 12 y 18: el cruce es eps_n^*;
+  fig_deficit.pdf   cota del déficit delta_n frente a la mitad del término principal, n = 12, 15 y 18: el cruce es eps_n^*;
   fig_radios.pdf    radios por n: eps_n del Teorema principal, eps_n^*, eps_F(n), lo que sugiere la ED y el radio
                     de convergencia de lambda_0.
 
 Uso:
-  python scripts/figuras.py                    dibuja las tres (n = 12 del déficit desde docs/figs/deficit_n12.csv)
+  python scripts/figuras.py                    dibuja las tres (n = 12, 15 del déficit desde docs/figs/deficit_n*.csv)
   python scripts/figuras.py deficit sr12q.npz  recalcula docs/figs/deficit_n12.csv con la serie cuártica de n = 12
-                                               (la de serie_respuesta.py 12 30 sr12q.npz 8 cubica cuarta; ~2 min)
+                                               (la de serie_respuesta.py 12 30 sr12q.npz 8 cubica cuarta; ~2 min);
+                                               igual con sr15q.npz (serie_respuesta.py 15 30 sr15q.npz 6 cubica cuarta k0)
 """
 import os
 import sys
@@ -21,7 +22,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 FIGS = os.path.join(AQUI, '..', 'docs', 'figs')
-CSV12 = os.path.join(FIGS, 'deficit_n12.csv')
+CSV = lambda n: os.path.join(FIGS, f'deficit_n{n}.csv')
 
 # paleta categórica (orden fijo) y tintas
 AZUL, NARANJA, AQUA, AMARILLO = '#2a78d6', '#eb6834', '#1baf7a', '#eda100'
@@ -85,29 +86,33 @@ def fig_rangos():
 
 
 # ------------------------------------------------------------------ 2. déficit frente al principal
-PAR12 = (0.0262074, 2.14742e-05, 0.000766691, 0.0522126, 0.401969, 0.399606)   # optimiza_principal.py
+PAR = {12: (0.0262074, 2.14742e-05, 0.000766691, 0.0522126, 0.401969, 0.399606),   # optimiza_principal.py
+       15: (0.0208816, 6.71838e-05, 0.000221054, 0.0564851, 0.998908, 0.99904)}
+DESDE = {12: 1e-4, 15: 1e-6}
 
 
 def principal(n, b4, e):
     return b4 * e ** n / (n * (2 / 3 + (8 / 3) * e ** 2))
 
 
-def deficit_n12(npz):
+def deficit_serie(npz):
     sys.path.insert(0, AQUI)
     _a, sys.argv = sys.argv, sys.argv[:1]
     import kantorovich_series as KS
     sys.argv = _a
     S = KS.carga(npz)
     P = KS.preparar(S)
+    n = S['n']
+    par = PAR[n]
     filas = []
     # los mismos intervalos [1e-30 * 1,01^k, 1e-30 * 1,01^(k+1)] del recorrido fino de optimiza_principal.py
-    k = np.arange(np.ceil(np.log(1e-4 / 1e-30) / np.log(1.01)), 7000)
+    k = np.arange(np.ceil(np.log(DESDE[n] / 1e-30) / np.log(1.01)), 7000)
     for e in 1e-30 * 1.01 ** k:
-        c = KS.cotas(S, P, e, e * 1.01, PAR12[0], PAR12[1:4], np.array([1, PAR12[4], PAR12[5]]))
+        c = KS.cotas(S, P, e, e * 1.01, par[0], par[1:4], np.array([1, par[4], par[5]]))
         if c is None or c['h'] > 0.5:
             break
         filas.append((e, c['deficit']))
-    np.savetxt(CSV12, np.array(filas), delimiter=',', header='eps,cota_deficit (n=12, PAR12, intervalo [eps,1.01eps])')
+    np.savetxt(CSV(n), np.array(filas), delimiter=',', header=f'eps,cota_deficit (n={n}, PAR[{n}], intervalo [eps,1.01eps])')
 
 
 def deficit_n18():
@@ -150,10 +155,12 @@ def _n18(n, kap, ea, tp, TAUH=0.6):
 
 
 def fig_deficit():
-    d12 = np.loadtxt(CSV12, delimiter=',')
+    d12 = np.loadtxt(CSV(12), delimiter=',')
+    d15 = np.loadtxt(CSV(15), delimiter=',')
     d18 = deficit_n18()
-    fig, ax = plt.subplots(figsize=(6.0, 2.8))
+    fig, ax = plt.subplots(figsize=(6.0, 3.2))
     for dat, n, b4, col, emax, est in ((d12, 12, 1001.08, AZUL, 6.43e-3, 6.30e-3),
+                                       (d15, 15, 4476.36, AQUA, 4.86e-3, 3.40e-3),
                                        (d18, 18, 20789.16, NARANJA, 5.0e-6, 1.1e-6)):
         e = dat[:, 0]
         ax.loglog(e, dat[:, 1], color=col, label=fr'$n={n}$: cota de $\delta_n$')
@@ -167,8 +174,8 @@ def fig_deficit():
     ax.set_ylim(1e-160, 1e-15)
     ax.set_yticks([10.0 ** k for k in range(-160, -14, 20)])
     rejilla(ax)
-    ax.legend(loc='lower center', bbox_to_anchor=(0.62, 0.0), ncol=1)
-    ax.text(3e-8, 1e-30, r'$\delta_{18}\propto\varepsilon^{28}$, principal $\propto\varepsilon^{18}$:'
+    ax.legend(loc='upper left', bbox_to_anchor=(0.0, 0.83), ncol=1, fontsize=7.5)
+    ax.text(1.3e-8, 1e-28, r'$\delta_{18}\propto\varepsilon^{28}$, principal $\propto\varepsilon^{18}$:'
             '\n' r'el cociente cae como $\varepsilon^{10}$', fontsize=7.5, color=TINTA2)
     fig.tight_layout()
     fig.savefig(os.path.join(FIGS, 'fig_deficit.pdf'))
@@ -177,9 +184,9 @@ def fig_deficit():
 # ------------------------------------------------------------------ 3. radios por n
 def fig_radios():
     n = np.array([6, 9, 12, 15, 18])
-    eps_n = np.array([1.07e-4, 1.21e-2, 6.4e-3, 6.9e-8, 5.0e-6])
-    eps_s = np.array([1.07e-4, 1.21e-2, 6.3e-3, 6.9e-8, 1.1e-6])
-    eps_F = np.array([3.08e-2, 1.83e-2, 8.8e-3, 2.1e-3, 4.5e-5])
+    eps_n = np.array([1.07e-4, 1.21e-2, 6.4e-3, 4.8e-3, 5.0e-6])
+    eps_s = np.array([1.07e-4, 1.21e-2, 6.3e-3, 3.4e-3, 1.1e-6])
+    eps_F = np.array([3.08e-2, 1.83e-2, 8.8e-3, 5.5e-3, 4.5e-5])
     fig, ax = plt.subplots(figsize=(6.0, 3.4))
     ax.semilogy(n, eps_F, color=AQUA, marker='s', ms=5, label=r'$\varepsilon_F(n)$: (F) certificada')
     ax.semilogy(n, eps_n, color=AZUL, marker='o', ms=5, label=r'$\varepsilon_n$: Teorema principal')
@@ -202,7 +209,7 @@ def fig_radios():
 if __name__ == "__main__":
     os.makedirs(FIGS, exist_ok=True)
     if len(sys.argv) > 2 and sys.argv[1] == 'deficit':
-        deficit_n12(sys.argv[2])
+        deficit_serie(sys.argv[2])
     fig_rangos()
     fig_deficit()
     fig_radios()

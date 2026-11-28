@@ -8,7 +8,8 @@ k <= K da los coeficientes de (por sitio, e = E/n):
   cub_abc  = d^3 e / d y_a d y_b d y_c         (Wigner 2n+1: sum_sigma <psi1|O - <O>|psi1>)
 en las coordenadas W de newton_graduado (base de Hilbert-Schmidt), con y = 0.
 Todo es complejo: con eps real, la serie de Re(s) tiene coeficientes (s_k + conj(s_k))/2.
-Uso: python scripts/serie_respuesta.py n K salida.npz [M]   (M valores de Theta = 2 pi j / M)
+Uso: python scripts/serie_respuesta.py n K salida.npz [M] [cubica] [cuarta] [k0]   (M valores de Theta = 2 pi j / M;
+k0: en el sector de momento 0, que contiene al fundamental y a toda la respuesta; mismo resultado, N/n estados)
 """
 import sys
 
@@ -26,10 +27,41 @@ B = base()
 W = NG.W
 
 
-def operadores(n, th):
+def momento0(n, codes):
+    """Representantes de las órbitas de traslación (mínimo código) y tamaño de cada órbita.
+    Devuelve (R, ridx, orb): R = índices (en codes) de los representantes, ridx[i] = órbita de codes[i],
+    orb[r] = tamaño de la órbita r."""
+    top = 3 ** (n - 1)
+    rot = codes.copy()
+    rep = codes.copy()
+    per = np.zeros(codes.size, dtype=np.int64)
+    for j in range(1, n + 1):
+        rot = rot // 3 + (rot % 3) * top                     # traslación de un sitio
+        np.minimum(rep, rot, out=rep)
+        per[(per == 0) & (rot == codes)] = j
+    reps = np.unique(rep)
+    R = np.searchsorted(codes, reps)
+    ridx = np.searchsorted(reps, rep)
+    return R, ridx, per[R]
+
+
+def operadores(n, th, k0=False):
+    """H0 (diagonal), T y los O_a en el sector Sz = 0; con k0, en el de momento 0 (base de órbitas
+    normalizadas |r> = |o_r|^{-1/2} sum_{c in o_r} |c>; <r'|A|r> = sqrt(|o_r|/|o_r'|) sum_{c' in o_r'} A_{c' r})."""
     codes, dig = sector(n, 0)
-    N = codes.size
     pw = 3 ** np.arange(n, dtype=np.int64)
+    if k0:
+        R, ridx, orb = momento0(n, codes)
+        sq = np.sqrt(orb.astype(float))
+        fila = lambda new: ridx[np.searchsorted(codes_all, new)]
+        peso = lambda r, c: sq[c] / sq[r]
+        codes_c, dig_c = codes[R], dig[:, R]
+    else:
+        fila = lambda new: np.searchsorted(codes_all, new)
+        peso = lambda r, c: np.ones(np.size(r))
+        codes_c, dig_c = codes, dig
+    N = codes_c.size
+    codes_all, codes, dig = codes, codes_c, dig_c
     H0 = np.zeros(N)
     filas, cols = [], []
     for j in range(n):
@@ -38,9 +70,9 @@ def operadores(n, th):
         H0 -= ((b - a) % 3 == 1)
         m = (a < 2) & (b > 0)                       # S+_j S-_k
         new = codes[m] + pw[j] - pw[k]
-        filas.append(np.searchsorted(codes, new)); cols.append(np.nonzero(m)[0])
+        filas.append(fila(new)); cols.append(np.nonzero(m)[0])
     r = np.concatenate(filas); c = np.concatenate(cols)
-    A = sp.coo_matrix((2.0 * np.exp(1j * th / n) * np.ones(r.size), (r, c)), shape=(N, N)).tocsr()
+    A = sp.coo_matrix((2.0 * np.exp(1j * th / n) * peso(r, c), (r, c)), shape=(N, N)).tocsr()
     T = (A + A.getH()).tocsr()
     Os = []
     for w in W:
@@ -56,18 +88,23 @@ def operadores(n, th):
                     continue
                 q = row // 3 - dig[j][m]                # carga que entra en el sitio j
                 new = codes[m] + (row // 3 - dig[j][m]) * pw[j] + (row % 3 - dig[k][m]) * pw[k]
-                rows.append(np.searchsorted(codes, new)); cs.append(np.nonzero(m)[0])
-                vals.append(coef[m] * np.exp(1j * th * q / n))
+                rr, cc = fila(new), np.nonzero(m)[0]
+                rows.append(rr); cs.append(cc)
+                vals.append(coef[m] * np.exp(1j * th * q / n) * peso(rr, cc))
         Os.append(sp.coo_matrix((np.concatenate(vals), (np.concatenate(rows), np.concatenate(cs))),
                                 shape=(N, N)).tocsr())
     pats = np.array(sorted(int(np.dot(np.array([(j + c) % 3 for j in range(n)]), pw)) for c in range(3)))
-    P = np.searchsorted(codes, pats)
-    assert np.array_equal(codes[P], pats)
+    if k0:                                                    # los tres patrones son una órbita
+        P = np.unique(ridx[np.searchsorted(codes_all, pats)])
+        assert P.size == 1
+    else:
+        P = np.searchsorted(codes, pats)
+        assert np.array_equal(codes[P], pats)
     return H0, T, Os, P
 
 
-def serie(n, K, th, cubica=True, cuarta=False, verbose=False):
-    H0, T, Os, P = operadores(n, th)
+def serie(n, K, th, cubica=True, cuarta=False, verbose=False, k0=False):
+    H0, T, Os, P = operadores(n, th, k0)
     N = H0.size
     E0 = H0[P[0]]
     den = E0 - H0
@@ -213,7 +250,8 @@ if __name__ == "__main__":
     out = {}
     for j in range(M):
         th = 2 * np.pi * j / M
-        r = serie(n, K, th, cubica=(j == 0) or ('cubica' in sys.argv), cuarta='cuarta' in sys.argv)
+        r = serie(n, K, th, cubica=(j == 0) or ('cubica' in sys.argv), cuarta='cuarta' in sys.argv,
+                  k0='k0' in sys.argv, verbose='verbose' in sys.argv)
         for key, v in r.items():
             if v is not None:
                 out.setdefault(key, []).append(v)

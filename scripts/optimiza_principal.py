@@ -7,7 +7,8 @@ rebaja: la comparación queda del lado seguro. El borde se busca por bisección 
 todo [1e-30, eps*] en intervalos de razón 1,01 (Kantorovich en todos; déficit < principal/2 en todos los que el
 principal no desborda la coma flotante, 1e-25 en adelante; por debajo el cociente déficit/principal ~ eps^(n-8)
 solo baja). Nelder-Mead en log de los parámetros, desde varios puntos de partida.
-Uso: python scripts/optimiza_principal.py serie_n.npz [4|b0|]   (4|b0| por defecto: n=6, 9, 12 -> 62,314, 237,28, 1001,08)
+Uso: python scripts/optimiza_principal.py serie_n.npz [4|b0|]   (4|b0| por defecto: n=6, 9, 12, 15 -> 62,314, 237,28,
+1001,08, 4476,36)
 """
 import os
 import sys
@@ -20,12 +21,16 @@ _argv, sys.argv = sys.argv, sys.argv[:1]
 import kantorovich_series as KS  # noqa: E402
 sys.argv = _argv
 
-B4 = {6: 62.314, 9: 237.28, 12: 1001.08}
+B4 = {6: 62.314, 9: 237.28, 12: 1001.08, 15: 4476.36}
 # intervalo de búsqueda del borde (log10 eps) y puntos de partida (los de la rejilla gruesa primero)
-RANGO = {6: (-5.5, -2.5), 9: (-3.0, -1.0), 12: (-3.5, -1.8)}
+RANGO = {6: (-5.5, -2.5), 9: (-3.0, -1.0), 12: (-3.5, -1.8), 15: (-6.0, -2.0)}
 STARTS = {6: [(0.015, 1e-4, 8e-3, 0.4, 1, 1), (0.015, 1e-4, 8e-3, 0.4, 0.4, 0.4), (0.01, 3e-4, 1e-2, 0.2, 1, 1)],
           9: [(0.03, 1e-4, 4e-3, 0.1, 1, 1), (0.03, 1e-4, 4e-3, 0.1, 0.4, 0.4), (0.04, 5e-5, 2e-3, 0.15, 1, 1)],
-          12: [(0.02, 2e-5, 1e-3, 0.1, 1, 1), (0.02, 2e-5, 1e-3, 0.1, 0.3, 0.3), (0.015, 5e-5, 2e-3, 0.15, 1, 1)]}
+          12: [(0.02, 2e-5, 1e-3, 0.1, 1, 1), (0.02, 2e-5, 1e-3, 0.1, 0.3, 0.3), (0.015, 5e-5, 2e-3, 0.15, 1, 1)],
+          15: [(0.015, 2e-5, 1e-3, 0.1, 1, 1), (0.015, 2e-5, 1e-3, 0.1, 0.4, 0.4), (0.012, 5e-5, 2e-3, 0.15, 1, 1)]}
+# desde dónde se compara el déficit con el principal (por debajo, eps^n desborda la coma flotante y el
+# cociente déficit/principal ~ eps^(n-4) solo baja)
+DEF0 = {15: 1e-19}
 
 
 def principal(n, b4, c2, e):
@@ -59,11 +64,13 @@ def borde(S, P, par, b4, c2, lo=-3.5, hi=-1.8, it=30):
 
 
 def rango_fino(S, P, par, b4, c2, e0=1e-30, paso=1.01):
-    """Mayor eps tal que todos los intervalos de [e0, eps] cumplen h <= 1/2 y (desde 1e-25) déficit < principal/2."""
+    """Mayor eps tal que todos los intervalos de [e0, eps] cumplen h <= 1/2 y (desde DEF0, 1e-25 por defecto)
+    déficit < principal/2."""
     el, ult = e0, None
+    d0 = DEF0.get(S['n'], 1e-25)
     while el < 0.2:
         er = el * paso
-        ok, c = vale(S, P, par, el, er, b4, c2, deficit=el >= 1e-25)
+        ok, c = vale(S, P, par, el, er, b4, c2, deficit=el >= d0)
         if not ok:
             motivo = 'h' if c is None or c['h'] > 0.5 else 'deficit'
             return el, ult, motivo
