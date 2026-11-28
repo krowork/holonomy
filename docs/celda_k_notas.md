@@ -5576,6 +5576,8 @@ parte ε|T| del mayorante frente al hueco ∝ ε⁸, no por x. Ese rango sigue c
 incondicionales** (módulo Z26 para σ_∞). Fuera del multiplete basta Weyl. No comprobado en el guion: la monotonía
 de E − λ_k(E) (inmediata, |λ_k'| = O(‖V‖²)).
 
+*Figuras* (2026-11-28, `scripts/figuras.py` → docs/figs): fig_rangos (rangos de Kantorovich, de (F_x) y ventanas, datos σ_N/σ_∞), fig_deficit (cota de δ frente a principal/2, n = 12 y 18; el cruce es ε*; n = 12 se cachea en docs/figs/deficit_n12.csv, que `figuras.py deficit sr12q.npz` regenera en ~20 s) y fig_radios (ε_n, ε*_n, ε_F, ED y radio de convergencia por n).
+
 *Qué falta.*
 - **σ_∞ con radios razonables:** universalidad hasta el orden del túnel y un dominio uniforme mayor.
 - **n = 15, 18:** no cabe la serie de N = 18; sin graduar, la cola de d_fs solo es O(ν^{⌈n/2⌉−1}) demostrada,

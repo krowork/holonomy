@@ -7,6 +7,7 @@
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{icomma}
 \usepackage{booktabs}
+\usepackage{graphicx}
 \usepackage{array}
 \usepackage[margin=2.5cm]{geometry}
 \usepackage[hidelinks]{hyperref}
@@ -757,7 +758,20 @@ la cota de $\delta_{12}$ es $1{,}4$ veces el principal; la sensibilidad queda id
 $\eps\le\eps_{12}^*=6{,}3\cdot10^{-3}$ (Sección~\ref{sec:limites}), casi todo el rango. En $n=18$ la cota de $\delta_n$ va como $\eps^{2n-8}$ y el término principal como $\eps^n$, así
 que el cociente cae como $\eps^{10}$, y la sensibilidad queda identificada solo para
 $\eps\le\eps_{18}^*=1{,}1\cdot10^{-6}$ (\scr{z23\_kantorovich.py} con $4|b_0|$ de \scr{b0\_flotante.py}). En
-$(\eps_{18}^*,\eps_{18}]$ el teorema sigue valiendo como desigualdad, pero no ve $\Theta$.
+$(\eps_{18}^*,\eps_{18}]$ el teorema sigue valiendo como desigualdad, pero no ve $\Theta$
+(Figura~\ref{fig:deficit}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figs/fig_deficit.pdf}
+\caption{Cota de $\delta_n$ (continua) frente a la mitad del término principal $4|b_0|\eps^n/(n(\bar e-e_R))$
+(discontinua), con los parámetros del borde. $n=12$: Newton graduado con $\partial^4$ en serie (intervalos de
+razón $1{,}01$, \scr{figuras.py}); $n=18$: sin graduar (la cuenta de \scr{z23\_kantorovich.py}). Cada curva
+llega hasta el borde de Kantorovich; la sensibilidad queda identificada a la izquierda del cruce, $\eps_n^*$.
+En $n=12$ el cruce está casi en el borde ($6{,}30$ frente a $6{,}43\cdot10^{-3}$); en $n=18$ la pendiente
+$\eps^{28}$ frente a $\eps^{18}$ lo adelanta a $1{,}1\cdot10^{-6}$, un quinto del rango.}
+\label{fig:deficit}
+\end{figure}
 
 \begin{observacion}
 La ED sugiere que la construcción funciona de verdad hasta $\eps\sim3\cdot10^{-3}$ ($n=6$) y
@@ -1038,6 +1052,17 @@ término principal ($2\cdot10^{-80}$ frente a $\sim10^{-92}$ en $n=21$, con $4|b
 
 \subsection{Qué limita los radios}\label{sec:limites}
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figs/fig_radios.pdf}
+\caption{Radios por $n$: $\eps_n$ del Teorema~\ref{teo:principal}, $\eps_n^*$ (sensibilidad identificada),
+$\eps_F(n)$ de la Proposición~\ref{prop:tunel}, el alcance que sugiere la ED y el radio de convergencia de
+$\lambda_0(\eps)$ estimado por el test de la raíz. $n=6,9,12$ usan el Newton graduado con series; $n=15,18$, la
+versión sin graduar (Sección~\ref{sec:sin_graduar}), de ahí la caída en $n=15$. Entre lo certificado y lo
+que sugieren la ED y la serie hay, en $n=6$, de $1{,}5$ a $3{,}5$ órdenes de magnitud.}
+\label{fig:radios}
+\end{figure}
+
 \begin{itemize}
 \item $n=6$: con $\partial^4$ en serie, el término de variación ($2\eta\|\partial^4\hat F\|+2C_5\eta^2\approx
   1{,}1\cdot10^{10}$) domina a $\|\partial^3\hat F\|\approx1{,}4\cdot10^8$; lo limita la cota de Cauchy de
@@ -1235,7 +1260,18 @@ anterior, salvo en $n=12$ con $\sigma_{15}$: allí (F$_x$) falla a partir de $\e
 elecciones de parámetros (cociente $1{,}10$ y $1{,}11$ con $|x|\le10^{-5}$). El fallo no viene de $x$, sino de la parte
 $\eps|T|$ del mayorante frente al hueco $\propto\eps^8$. El rango demostrado de esa fila es, pues,
 $\eps\le2{,}42\cdot10^{-3}$, que sigue conteniendo las ventanas de sensibilidad. Así, (F$_x$) vale en todos los
-rangos de sensibilidad, y la sensibilidad de la tabla anterior es incondicional (en sus ventanas). Fuera del multiplete basta Weyl: hueco $1$ y perturbación $\ll1/2$.
+rangos de sensibilidad, y la sensibilidad de la tabla anterior es incondicional (en sus ventanas). La Figura~\ref{fig:rangos} resume las dos tablas.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figs/fig_rangos.pdf}
+\caption{Datos $\sigma_N$ y $\sigma_\infty$: rango de Kantorovich, rango en que (F$_x$) está certificada y
+ventana en que la cota de $|\Delta\delta|$ es menor que la mitad del término principal. El extremo inferior
+punteado de las ventanas de $n=12$ es desbordamiento de coma flotante de la cota, no un fallo; el de $n=9$,
+$\sigma_{12}$, es el suelo $C_5u^3/3$. En $n=12$, $\sigma_{15}$, (F$_x$) recorta el rango a
+$2{,}42\cdot10^{-3}$, por encima de las ventanas.}
+\label{fig:rangos}
+\end{figure} Fuera del multiplete basta Weyl: hueco $1$ y perturbación $\ll1/2$.
 
 \paragraph{Lo que falta.} Radios razonables para $\sigma_\infty$, que piden más órdenes universales y un dominio
 uniforme mayor. Para $n=15$ y $18$ no cabe la serie de $N=18$, y sin graduar la parte demostrada de la cola de
