@@ -177,8 +177,8 @@ def fig_deficit():
 # ------------------------------------------------------------------ 3. radios por n
 def fig_radios():
     n = np.array([6, 9, 12, 15, 18])
-    eps_n = np.array([8.7e-5, 1.18e-2, 6.4e-3, 6.9e-8, 5.0e-6])
-    eps_s = np.array([8.7e-5, 1.18e-2, 6.3e-3, 6.9e-8, 1.1e-6])
+    eps_n = np.array([1.07e-4, 1.21e-2, 6.4e-3, 6.9e-8, 5.0e-6])
+    eps_s = np.array([1.07e-4, 1.21e-2, 6.3e-3, 6.9e-8, 1.1e-6])
     eps_F = np.array([3.08e-2, 1.83e-2, 8.8e-3, 2.1e-3, 4.5e-5])
     fig, ax = plt.subplots(figsize=(6.0, 3.4))
     ax.semilogy(n, eps_F, color=AQUA, marker='s', ms=5, label=r'$\varepsilon_F(n)$: (F) certificada')

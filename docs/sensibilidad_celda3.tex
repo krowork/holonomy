@@ -58,7 +58,7 @@ sensibilidad de $p$ es exactamente la de la energía, de orden $\eps^n$ con el c
 (iv) La prueba de (iii) es un Newton--Kantorovich graduado en una familia de Hellmann--Feynman, con
 analiticidad por Bauer--Fike, un lema de soporte ponderado y series en $\eps$ con colas de Cauchy;
 queda certificada, con constantes explícitas calculadas en coma flotante validada, para
-$0<\eps\le8{,}7\cdot10^{-5}$ ($n=6$), $1{,}18\cdot10^{-2}$ ($n=9$), $6{,}4\cdot10^{-3}$ ($n=12$),
+$0<\eps\le1{,}07\cdot10^{-4}$ ($n=6$), $1{,}21\cdot10^{-2}$ ($n=9$), $6{,}4\cdot10^{-3}$ ($n=12$),
 $6{,}9\cdot10^{-8}$ ($n=15$) y $5{,}0\cdot10^{-6}$ ($n=18$). Separamos con cuidado lo demostrado
 analíticamente de lo comprobado o certificado numéricamente, y damos los guiones que reproducen cada
 número.
@@ -418,7 +418,7 @@ $n$ & $6$ & $9$ & $12$ & $15$ & $18$\\
 \midrule
 $j$ ($K=2j+1$), valores de $\Theta$ & $8$, $8$ & $12$, $8$ & $12$, $8$ & $10$, $4$ & $8$, $2$\\
 $\eps_F(n)$ certificado & $3{,}08\cdot10^{-2}$ & $1{,}83\cdot10^{-2}$ & $8{,}8\cdot10^{-3}$ & $2{,}1\cdot10^{-3}$ & $4{,}5\cdot10^{-5}$\\
-$\eps_n$ del Teorema~\ref{teo:principal} & $8{,}7\cdot10^{-5}$ & $1{,}18\cdot10^{-2}$ & $6{,}4\cdot10^{-3}$ & $6{,}9\cdot10^{-8}$ & $5{,}0\cdot10^{-6}$\\
+$\eps_n$ del Teorema~\ref{teo:principal} & $1{,}07\cdot10^{-4}$ & $1{,}21\cdot10^{-2}$ & $6{,}4\cdot10^{-3}$ & $6{,}9\cdot10^{-8}$ & $5{,}0\cdot10^{-6}$\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -726,8 +726,8 @@ $O(\eps^{2n-8})$ para $n=15,18$. Los radios son
 \toprule
 $n$ & $6$ & $9$ & $12$ & $15$ & $18$\\
 \midrule
-$\eps_n$ & $8{,}7\cdot10^{-5}$ & $1{,}18\cdot10^{-2}$ & $6{,}4\cdot10^{-3}$ & $6{,}9\cdot10^{-8}$ & $5{,}0\cdot10^{-6}$\\
-cota de $\delta_n$ en el borde & $8\cdot10^{-28}$ & $8\cdot10^{-21}$ & $9\cdot10^{-25}$ & $5\cdot10^{-108}$ & $6\cdot10^{-86}$\\
+$\eps_n$ & $1{,}07\cdot10^{-4}$ & $1{,}21\cdot10^{-2}$ & $6{,}4\cdot10^{-3}$ & $6{,}9\cdot10^{-8}$ & $5{,}0\cdot10^{-6}$\\
+cota de $\delta_n$ en el borde & $4\cdot10^{-27}$ & $8\cdot10^{-21}$ & $9\cdot10^{-25}$ & $5\cdot10^{-108}$ & $6\cdot10^{-86}$\\
 término principal en el borde & $7\cdot10^{-24}$ & $2\cdot10^{-16}$ & $6\cdot10^{-25}$ & $2\cdot10^{-105}$ & $6\cdot10^{-93}$\\
 $\eps_n^*$ ($\delta_n<$ mitad del principal) & $\eps_n$ & $\eps_n$ & $6{,}3\cdot10^{-3}$ & $\eps_n$ & $1{,}1\cdot10^{-6}$\\
 \bottomrule
@@ -752,7 +752,7 @@ Sección~\ref{sec:prueba}. La naturaleza de los radios es la de un certificado a
 \paragraph{Dónde se ve el término principal.} El teorema encierra $p$ en $[\pE-\delta_n,\pE]$, así que la
 variación en $\Theta$ de $p$ solo queda determinada por la de $\pE$ si la cota de $\delta_n$ es menor que el
 rango de $\pE$, $\approx4|b_0|\eps^n/(n(\bar e-e_R))$ (con $\bar e-e_R\approx2/3$). En el borde, el término principal
-supera a la cota de $\delta_n$ en $n=6,9,15$ (por factores de $9\cdot10^3$, $2\cdot10^4$ y $300$),
+supera a la cota de $\delta_n$ en $n=6,9,15$ (por factores de $6\cdot10^3$, $3\cdot10^4$ y $300$),
 pero no en $n=12$ ni en $n=18$. En $n=12$ Kantorovich llega hasta $6{,}4\cdot10^{-3}$, donde
 la cota de $\delta_{12}$ es $1{,}4$ veces el principal; la sensibilidad queda identificada para
 $\eps\le\eps_{12}^*=6{,}3\cdot10^{-3}$ (Sección~\ref{sec:limites}), casi todo el rango. En $n=18$ la cota de $\delta_n$ va como $\eps^{2n-8}$ y el término principal como $\eps^n$, así
@@ -1013,16 +1013,20 @@ luego se certifica con la rejilla fina):
 \toprule
 $n$ & $(\eps_a,R_h,R_m,R_s)$, $(w_m,w_s)$ & rango certificado & $h_{\rm K}$ & déficit\\
 \midrule
-$6$ & $(0{,}015,\,10^{-4},\,8\cdot10^{-3},\,0{,}4)$, $(1,1)$ & $0<\eps\le8{,}7\cdot10^{-5}$ & $0{,}49$ & $\le8\cdot10^{-28}$\\
-$9$ & $(0{,}03,\,10^{-4},\,4\cdot10^{-3},\,0{,}1)$, $(1,1)$ & $0<\eps\le1{,}18\cdot10^{-2}$ & $0{,}34$ & $\le8\cdot10^{-21}$\\
+$6$ & $(0{,}021,\,1{,}9\cdot10^{-4},\,8{,}8\cdot10^{-3},\,0{,}42)$, $(1,1)$ & $0<\eps\le1{,}07\cdot10^{-4}$ & $0{,}48$ & $\le4\cdot10^{-27}$\\
+$9$ & $(0{,}031,\,1{,}4\cdot10^{-4},\,2{,}8\cdot10^{-3},\,0{,}089)$, $(1,1)$ & $0<\eps\le1{,}21\cdot10^{-2}$ & $0{,}39$ & $\le8\cdot10^{-21}$\\
 $12$ & $(0{,}026,\,2{,}1\cdot10^{-5},\,7{,}7\cdot10^{-4},\,0{,}052)$, $(0{,}4,0{,}4)$ & $0<\eps\le6{,}4\cdot10^{-3}$ & $0{,}48$ & $\le9\cdot10^{-25}$\\
 \bottomrule
 \end{tabular}
 \end{center}
 \noindent Las tres filas usan la serie de $\partial^4$; $h_{\rm K}$ y el déficit son los del borde. Los
-parámetros de $n=12$ salen de \scr{optimiza\_\allowbreak principal.py} (Nelder--Mead con objetivo $\eps_{12}^*$,
-Sección~\ref{sec:limites}); los exactos son $(0{,}0262074,\,2{,}14742\cdot10^{-5},\,7{,}66691\cdot10^{-4},\,0{,}0522126)$,
-$(0{,}401969,\,0{,}399606)$.
+parámetros salen de \scr{optimiza\_\allowbreak principal.py} (Nelder--Mead con objetivo $\eps_n^*$,
+Sección~\ref{sec:limites}); los exactos son, con $(w_m,w_s)$ al final,
+$(0{,}0210494,\,1{,}89802\cdot10^{-4},\,8{,}82334\cdot10^{-3},\,0{,}419174,\,1{,}00018,\,1{,}00076)$ para $n=6$,
+$(0{,}031471,\,1{,}39883\cdot10^{-4},\,2{,}82928\cdot10^{-3},\,0{,}0886828,\,0{,}999792,\,1{,}00001)$ para $n=9$ y
+$(0{,}0262074,\,2{,}14742\cdot10^{-5},\,7{,}66691\cdot10^{-4},\,0{,}0522126,\,0{,}401969,\,0{,}399606)$ para $n=12$.
+En $n=6,9$ la cota de $\delta_n$ queda en todo el rango muy por debajo de la mitad del principal, así que
+$\eps_n^*=\eps_n$.
 
 
 \subsection{$n=15$ y $18$: Newton--Kantorovich sin graduar}\label{sec:sin_graduar}
@@ -1059,17 +1063,18 @@ término principal ($2\cdot10^{-80}$ frente a $\sim10^{-92}$ en $n=21$, con $4|b
 $\eps_F(n)$ de la Proposición~\ref{prop:tunel}, el alcance que sugiere la ED y el radio de convergencia de
 $\lambda_0(\eps)$ estimado por el test de la raíz. $n=6,9,12$ usan el Newton graduado con series; $n=15,18$, la
 versión sin graduar (Sección~\ref{sec:sin_graduar}), de ahí la caída en $n=15$. Entre lo certificado y lo
-que sugieren la ED y la serie hay, en $n=6$, de $1{,}5$ a $3{,}5$ órdenes de magnitud.}
+que sugieren la ED y la serie hay, en $n=6$, de $1{,}4$ a $3{,}4$ órdenes de magnitud.}
 \label{fig:radios}
 \end{figure}
 
 \begin{itemize}
 \item $n=6$: con $\partial^4$ en serie, el término de variación ($2\eta\|\partial^4\hat F\|+2C_5\eta^2\approx
-  1{,}1\cdot10^{10}$) domina a $\|\partial^3\hat F\|\approx1{,}4\cdot10^8$; lo limita la cota de Cauchy de
-  $\partial^5$. Sin la serie de $\partial^4$ el radio era $1{,}17\cdot10^{-5}$.
-\item $n=9$: el corte es abrupto ($h_{\rm K}$ salta de $0{,}34$ a más de $\frac12$ en un intervalo): con
+  4{,}8\cdot10^{9}$) domina a $\|\partial^3\hat F\|\approx9\cdot10^7$; lo limita la cota de Cauchy de
+  $\partial^5$. Sin la serie de $\partial^4$ el radio era $1{,}17\cdot10^{-5}$; con ella y la rejilla gruesa,
+  $8{,}7\cdot10^{-5}$; con los parámetros optimizados ($\eps_a=0{,}021$), $1{,}07\cdot10^{-4}$.
+\item $n=9$: el corte es abrupto ($h_{\rm K}$ salta de $0{,}39$ a $0{,}56$ en un intervalo): con
   $\eps/\eps_a\approx0{,}4$ la cola de Cauchy de $d$ hace crecer $\eta$, la bola de radio $2\eta$ se
-  acerca al borde del polidisco y $C_5\propto\varrho^{-5}$ explota. Sin $\partial^4$, $5{,}1\cdot10^{-3}$.
+  acerca al borde del polidisco y $C_5\propto\varrho^{-5}$ explota. Sin $\partial^4$, $5{,}1\cdot10^{-3}$; con la rejilla gruesa, $1{,}18\cdot10^{-2}$; optimizando, $1{,}21\cdot10^{-2}$.
 \item $n=12$: sin $\partial^4$ en serie el radio era $4{,}1\cdot10^{-3}$. Con $\partial^4$ y los parámetros de
   la rejilla gruesa, $5{,}2\cdot10^{-3}$, pero allí la cota del déficit ($1{,}6\cdot10^{-23}$) superaba
   $300$ veces al principal ($5\cdot10^{-26}$) y la sensibilidad solo quedaba identificada hasta
@@ -1399,7 +1404,7 @@ Guion & Qué hace\\
 \texttt{newton\_datos\_ed.py} & Newton con datos $\sigma_N$ por ED: $p^*(\Theta)$, $\delta$ y la hipótesis (F$_x$).\\
 \texttt{certifica\_Fx.py} & Certificación de (F$_x$) por el complemento de Schur sobre los patrones (Sección~\ref{sec:datos_ext}).\\
 \texttt{optimiza\_\allowbreak parametros.py} & Optimización de los parámetros del polidisco, fila por fila (Sección~\ref{sec:datos_ext}).\\
-\texttt{optimiza\_\allowbreak principal.py} & Optimización con objetivo $\eps_n^*$ para datos autoconsistentes ($n=12$, Sección~\ref{sec:limites}).\\
+\texttt{optimiza\_\allowbreak principal.py} & Optimización con objetivo $\eps_n^*$ para datos autoconsistentes ($n=6,9,12$, Sección~\ref{sec:limites}).\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1408,8 +1413,10 @@ Guion & Qué hace\\
 \begin{verbatim}
 python scripts/serie_respuesta.py 6 36 sr6q.npz 16 cubica cuarta
 python scripts/kantorovich_series.py sr6q.npz
+python scripts/optimiza_principal.py sr6q.npz
 python scripts/serie_respuesta.py 9 40 sr9q.npz 12 cubica cuarta
 python scripts/kantorovich_series.py sr9q.npz
+python scripts/optimiza_principal.py sr9q.npz
 python scripts/serie_respuesta.py 12 30 sr12q.npz 8 cubica cuarta
 python scripts/kantorovich_series.py sr12q.npz
 python scripts/optimiza_principal.py sr12q.npz

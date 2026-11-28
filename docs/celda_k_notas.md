@@ -5365,8 +5365,8 @@ el extremo que la maximiza, de modo que se cubre el continuo):
 
 | n | (ε_a, R_h, R_m, R_s), pesos (w_m, w_s) | rango certificado | h en el borde | déficit |
 |---|---|---|---|---|
-| 6 | (0,015, 10⁻⁴, 8·10⁻³, 0,4), (1, 1), con ∂⁴ en serie | **0 < ε ≤ 8,7·10⁻⁵** (1,17·10⁻⁵ sin ∂⁴; antes 1,7·10⁻¹⁴) | 0,49 | ≤ 8·10⁻²⁸ |
-| 9 | (0,03, 10⁻⁴, 4·10⁻³, 0,1), (1, 1), con ∂⁴ en serie | **0 < ε ≤ 1,18·10⁻²** (5,1·10⁻³ sin ∂⁴; antes 1,8·10⁻⁷) | 0,34 | ≤ 8·10⁻²¹ |
+| 6 | (0,0210494, 1,89802·10⁻⁴, 8,82334·10⁻³, 0,419174), (1,00018, 1,00076), con ∂⁴ en serie, optimizado para ε* (2026-11-28) | **0 < ε ≤ 1,07·10⁻⁴** (8,7·10⁻⁵ con la rejilla; 1,17·10⁻⁵ sin ∂⁴; antes 1,7·10⁻¹⁴) | 0,48 | ≤ 4·10⁻²⁷ |
+| 9 | (0,031471, 1,39883·10⁻⁴, 2,82928·10⁻³, 0,0886828), (0,999792, 1,00001), con ∂⁴ en serie, optimizado para ε* (2026-11-28) | **0 < ε ≤ 1,21·10⁻²** (1,18·10⁻² con la rejilla; 5,1·10⁻³ sin ∂⁴; antes 1,8·10⁻⁷) | 0,39 | ≤ 8·10⁻²¹ |
 | 12 | (0,0262074, 2,14742·10⁻⁵, 7,66691·10⁻⁴, 0,0522126), (0,401969, 0,399606), con ∂⁴ en serie, optimizado para ε* (2026-11-28) | **0 < ε ≤ 6,4·10⁻³** (5,2·10⁻³ con ∂⁴ y la rejilla; 4,1·10⁻³ sin ∂⁴; antes 2·10⁻¹⁵, 9.24) | 0,48 | ≤ 9·10⁻²⁵ |
 
 El tramo (0, 10⁻³⁰] se cubre como en 9.25: todas las cotas mejoran al bajar ε y Ĵ → Ĵ(0) > 0
@@ -5374,13 +5374,15 @@ El tramo (0, 10⁻³⁰] se cubre como en 9.25: todas las cotas mejoran al bajar
 
 *Qué limita ahora.*
 - **n = 9.** Sin ∂⁴ en serie (ε ≤ 5,1·10⁻³) la cuarta derivada por Cauchy, `2C₄η ≈ 7·10⁹`, superaba a
-  `‖∂³F̂‖ ≈ 10⁶`. Con ∂⁴ en serie el óptimo pasa a ε_a = 0,03, R_s = 0,1, y el radio a 1,18·10⁻². Queda a
-  un factor ~8 de la ED (~0,09). El corte es abrupto: h salta de 0,34 a > 1/2 en un intervalo de razón 1,01.
+  `‖∂³F̂‖ ≈ 10⁶`. Con ∂⁴ en serie el óptimo pasa a ε_a = 0,03, R_s = 0,1, y el radio a 1,18·10⁻²;
+  optimizando para ε* (`optimiza_principal.py`), 1,21·10⁻². Queda a un factor ~7 de la ED (~0,09). El corte
+  es abrupto: h salta de 0,39 a 0,56 en un intervalo de razón 1,01.
   Con ε/ε_a ≈ 0,4, la cola de Cauchy de d hace crecer η rápido. La bola de radio 2η se acerca entonces
   al borde del polidisco, τ → 0, y el término de C₅ ∝ τ⁻⁵ explota.
 - **n = 6.** Sin ∂⁴ en serie lo limitaba solo C₄: `2C₄η ≈ 3,6·10¹³` frente a `‖∂³F̂‖ ≈ 8·10⁹`. Con
-  ∂⁴ en serie el radio sube ×7,5, hasta 8,7·10⁻⁵. En el borde el término de variación
-  (`2η‖∂⁴F̂‖ + 2C₅η² ≈ 1,1·10¹⁰`) sigue dominando a `‖∂³F̂‖ ≈ 1,4·10⁸`, ahora por la cota de Cauchy de ∂⁵.
+  ∂⁴ en serie el radio sube ×7,5, hasta 8,7·10⁻⁵, y optimizando para ε* a 1,07·10⁻⁴ (ε_a = 0,021). En el
+  borde el término de variación (`2η‖∂⁴F̂‖ + 2C₅η² ≈ 4,8·10⁹`) sigue dominando a `‖∂³F̂‖ ≈ 9·10⁷`, ahora por
+  la cota de Cauchy de ∂⁵. En n = 6, 9 el déficit queda muy por debajo del principal: ε* = ε_n.
 - **Cómo seguir.**
   - Para acercarse a la ED (~3·10⁻³) haría falta un dominio de analiticidad mejor que el de Bauer–Fike
     (ε_a ~ 0,1).
@@ -5405,8 +5407,8 @@ El término principal del rango en Θ es `4|b₀|ε^n/(n(ē − e_R))`. En el bo
 
 | n | ε_n | cota de δ_n | término principal |
 |---|---|---|---|
-| 6 | 8,7·10⁻⁵ | 8·10⁻²⁸ | 7·10⁻²⁴ |
-| 9 | 1,18·10⁻² | 8·10⁻²¹ | 2·10⁻¹⁶ |
+| 6 | 1,07·10⁻⁴ | 4·10⁻²⁷ | 2·10⁻²³ |
+| 9 | 1,21·10⁻² | 8·10⁻²¹ | 2·10⁻¹⁶ |
 | 12 | 6,4·10⁻³ | 9·10⁻²⁵ | 6·10⁻²⁵ |
 | 15 | 6,9·10⁻⁸ | 5·10⁻¹⁰⁸ | 1,6·10⁻¹⁰⁵ |
 | 18 | 5,0·10⁻⁶ | 6·10⁻⁸⁶ | **6·10⁻⁹³** |
@@ -5627,7 +5629,7 @@ Estado de cada pieza:
 | **Teorema Z⁗ (robustez exponencial uniforme en todo n, k \| n)** | **Z15 + Z16 + Z17 + Teorema B**; `ε_2 ≈ 2,3·10⁻³` para `S⁺S⁻` (`8,2·10⁻³` en tiempo continuo, 9.13) |
 | **Teorema D‴ (banda de un defecto, k ∤ n, uniforme en n; 9.14)** | escrito: defecto como contorno que da la vuelta en tiempo, gas de excursiones ancladas, multiplicidades enteras; para `S⁺S⁻` gana la neutra, `g_orb = (56/3)ε²` o `(38/3)ε²` a segundo orden; **demostrado**, con `ε_3 ≥ 7,22·10⁻³` y `ε_4 ≥ 1,74·10⁻³` certificados (enlaces por el Lema Z18; w₂, w₃ exactos con racionales); ω_0 es par en ε y las cargadas se mueven desde el tercer orden |
 | **Teorema Z20 (orden del enrollamiento; 9.15)** | demostrado: con `Q_c ≡ 0 mod k` (y en la órbita neutra con k ∤ n), Θ entra exactamente en el orden n; coeficiente exacto, comprobado con diagonalización exacta (n = 6, 7, 8, 9); `R_n ≤ 2B(|ε|/ε_2)^n` |
-| sensibilidad de p(n,Θ) (9.16) | el puente no da el orden n; numéricamente (SDP, n = 6) p(6,Θ) = p_loc, la cota local de |00⟩ y |22⟩, ciega a Θ, hasta ε ≈ 0,23: sensibilidad **cero**; **no es uniforme en n** (9.17): la cota de energía p_E(n,Θ), que ve Θ en orden ε^n, queda por debajo de p_loc desde n = 9; el anclaje (Z21, Z22) da `p ≥ p_pieza`, ciega a Θ, con pérdida ≈ 0,1/ℓ; **Z23** (9.18, condicional a (H_χ), medida para n = 6, 9, 12): p = p_E − O(ε^{2n−4}), sensibilidad exactamente de orden ε^n con el coeficiente de Z20; (H_χ) reducida por Z24 (9.19) a la positividad uniforme de K₁, matriz de expectativas locales, y **Z25** (9.20): coeficientes racionales exactos hasta ε⁴, positividad graduada exacta (Sylvester), iguales para n = 9 y 12; (H_χ) vale para |ε| < ε_χ; **9.21:** ε_χ = 1,84·10⁻⁵ (n ≥ 15, serie de orden 8, universal n = 15 = 18), 3,2·10⁻⁷ (n = 12), 5·10⁻¹⁶ (n = 9), módulo el Lema Z26 de inserción (esquema, retirado); **Z26 + Z27** (9.22): por el autovalor de H + tO, con Z16/Z17 certificados en los parámetros desplazados, (H_χ) vale con χ ≥ 1,3·10⁻³ε⁴ para |ε| < 1,2·10⁻⁵ (n ≥ 18) y 1,7·10⁻⁷ (n = 15); **Z28 + Z29** (9.23): Bauer–Fike con la serie de cada n en momento 0 cierra n = 6, 9, 12 (ε_χ = 3,6·10⁻⁴, 1,6·10⁻⁴, 8,9·10⁻⁵): **(H_χ) vale para todo n ∈ 3Z con |ε| < 1,2·10⁻⁵**; **9.24: Z23 sin condiciones** por Newton–Kantorovich para n ≥ 12 (|ε| < 5·10⁻⁶ si n = 18, ≈ ε_χ(n) si n ≥ 21; 6,9·10⁻⁸ si n = 15; 2·10⁻¹⁵ si n = 12): p = p_E − O(ε^{2n−8}), sensibilidad exactamente la de Z20; **9.25: n = 6, 9 por Newton graduado** (Lema Z30 de soporte ponderado, base blanda explícita o_d + ε(Δ/3)·salto): ε ≤ 1,7·10⁻¹⁴ (n = 6), 1,8·10⁻⁷ (n = 9). **Z23 vale para todo n ∈ 3Z, n ≥ 6**; **9.26: series en ε con colas de Cauchy**: ε ≤ 8,7·10⁻⁵ (n = 6), 1,18·10⁻² (n = 9) y 6,4·10⁻³ (n = 12; todos con ∂⁴ en serie; identificación hasta 6,3·10⁻³); **9.27:** en n = 18 el término principal solo domina a δ para ε ≤ 1,1·10⁻⁶; σ_n − σ_∞ = O(ε^{2n/3−1}) (no ε^{n−2}); radio de convergencia de λ₀ ≈ 0,3; universalidad de χ demostrada entre n ≥ 21, no con n = 18 |
+| sensibilidad de p(n,Θ) (9.16) | el puente no da el orden n; numéricamente (SDP, n = 6) p(6,Θ) = p_loc, la cota local de |00⟩ y |22⟩, ciega a Θ, hasta ε ≈ 0,23: sensibilidad **cero**; **no es uniforme en n** (9.17): la cota de energía p_E(n,Θ), que ve Θ en orden ε^n, queda por debajo de p_loc desde n = 9; el anclaje (Z21, Z22) da `p ≥ p_pieza`, ciega a Θ, con pérdida ≈ 0,1/ℓ; **Z23** (9.18, condicional a (H_χ), medida para n = 6, 9, 12): p = p_E − O(ε^{2n−4}), sensibilidad exactamente de orden ε^n con el coeficiente de Z20; (H_χ) reducida por Z24 (9.19) a la positividad uniforme de K₁, matriz de expectativas locales, y **Z25** (9.20): coeficientes racionales exactos hasta ε⁴, positividad graduada exacta (Sylvester), iguales para n = 9 y 12; (H_χ) vale para |ε| < ε_χ; **9.21:** ε_χ = 1,84·10⁻⁵ (n ≥ 15, serie de orden 8, universal n = 15 = 18), 3,2·10⁻⁷ (n = 12), 5·10⁻¹⁶ (n = 9), módulo el Lema Z26 de inserción (esquema, retirado); **Z26 + Z27** (9.22): por el autovalor de H + tO, con Z16/Z17 certificados en los parámetros desplazados, (H_χ) vale con χ ≥ 1,3·10⁻³ε⁴ para |ε| < 1,2·10⁻⁵ (n ≥ 18) y 1,7·10⁻⁷ (n = 15); **Z28 + Z29** (9.23): Bauer–Fike con la serie de cada n en momento 0 cierra n = 6, 9, 12 (ε_χ = 3,6·10⁻⁴, 1,6·10⁻⁴, 8,9·10⁻⁵): **(H_χ) vale para todo n ∈ 3Z con |ε| < 1,2·10⁻⁵**; **9.24: Z23 sin condiciones** por Newton–Kantorovich para n ≥ 12 (|ε| < 5·10⁻⁶ si n = 18, ≈ ε_χ(n) si n ≥ 21; 6,9·10⁻⁸ si n = 15; 2·10⁻¹⁵ si n = 12): p = p_E − O(ε^{2n−8}), sensibilidad exactamente la de Z20; **9.25: n = 6, 9 por Newton graduado** (Lema Z30 de soporte ponderado, base blanda explícita o_d + ε(Δ/3)·salto): ε ≤ 1,7·10⁻¹⁴ (n = 6), 1,8·10⁻⁷ (n = 9). **Z23 vale para todo n ∈ 3Z, n ≥ 6**; **9.26: series en ε con colas de Cauchy**: ε ≤ 1,07·10⁻⁴ (n = 6), 1,21·10⁻² (n = 9) y 6,4·10⁻³ (n = 12; todos con ∂⁴ en serie; identificación hasta 6,3·10⁻³); **9.27:** en n = 18 el término principal solo domina a δ para ε ≤ 1,1·10⁻⁶; σ_n − σ_∞ = O(ε^{2n/3−1}) (no ε^{n−2}); radio de convergencia de λ₀ ≈ 0,3; universalidad de χ demostrada entre n ≥ 21, no con n = 18 |
 | paso entre escalas (8.5) | pierde un peso fijo `λ = O(|ε|)` por escala: cubre `n ≤ n_*(ε)`, `log n_* ≍ 1/|ε|`; **uniforme en n: abierto** |
 | polímeros | son contornos, no islas: el vacío exacto lo muestra con c = 2 |
 | Lema Z11 (cambio de base, paso 3) | demostrado (serie de Neumann pesada); comprobado con n = 6 |

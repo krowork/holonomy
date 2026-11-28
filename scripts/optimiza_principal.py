@@ -7,7 +7,7 @@ rebaja: la comparación queda del lado seguro. El borde se busca por bisección 
 todo [1e-30, eps*] en intervalos de razón 1,01 (Kantorovich en todos; déficit < principal/2 en todos los que el
 principal no desborda la coma flotante, 1e-25 en adelante; por debajo el cociente déficit/principal ~ eps^(n-8)
 solo baja). Nelder-Mead en log de los parámetros, desde varios puntos de partida.
-Uso: python scripts/optimiza_principal.py serie_n.npz [4|b0|]   (4|b0| por defecto: n=12 -> 1001,08)
+Uso: python scripts/optimiza_principal.py serie_n.npz [4|b0|]   (4|b0| por defecto: n=6, 9, 12 -> 62,314, 237,28, 1001,08)
 """
 import os
 import sys
@@ -20,7 +20,12 @@ _argv, sys.argv = sys.argv, sys.argv[:1]
 import kantorovich_series as KS  # noqa: E402
 sys.argv = _argv
 
-B4 = {12: 1001.08}
+B4 = {6: 62.314, 9: 237.28, 12: 1001.08}
+# intervalo de búsqueda del borde (log10 eps) y puntos de partida (los de la rejilla gruesa primero)
+RANGO = {6: (-5.5, -2.5), 9: (-3.0, -1.0), 12: (-3.5, -1.8)}
+STARTS = {6: [(0.015, 1e-4, 8e-3, 0.4, 1, 1), (0.015, 1e-4, 8e-3, 0.4, 0.4, 0.4), (0.01, 3e-4, 1e-2, 0.2, 1, 1)],
+          9: [(0.03, 1e-4, 4e-3, 0.1, 1, 1), (0.03, 1e-4, 4e-3, 0.1, 0.4, 0.4), (0.04, 5e-5, 2e-3, 0.15, 1, 1)],
+          12: [(0.02, 2e-5, 1e-3, 0.1, 1, 1), (0.02, 2e-5, 1e-3, 0.1, 0.3, 0.3), (0.015, 5e-5, 2e-3, 0.15, 1, 1)]}
 
 
 def principal(n, b4, c2, e):
@@ -74,8 +79,9 @@ if __name__ == "__main__":
     b4 = float(sys.argv[2]) if len(sys.argv) > 2 else B4[n]
     c2 = abs(np.real(S['E'][0, 2]))
     print(f"n={n}: 4|b0| = {b4}, c2 = {c2:.4f}", flush=True)
-    starts = [(0.02, 2e-5, 1e-3, 0.1, 1, 1), (0.02, 2e-5, 1e-3, 0.1, 0.3, 0.3), (0.015, 5e-5, 2e-3, 0.15, 1, 1)]
-    f = lambda z: -borde(S, P, np.exp(z), b4, c2)
+    starts = STARTS[n]
+    lo, hi = RANGO[n]
+    f = lambda z: -borde(S, P, np.exp(z), b4, c2, lo, hi)
     best = None
     for p0 in starts:
         r = minimize(f, np.log(np.array(p0, float)), method='Nelder-Mead',
